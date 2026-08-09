@@ -1,0 +1,33 @@
+{
+  "user_id": "varun",
+  "schemaVersion": "0.1",
+  "displayName": "Varun",
+  "role": "Director, Science (AI/ML in ERP)",
+  "goals": [
+    "Stay on the AI/ML productivity frontier",
+    "Implement new concepts and understand their tradeoffs",
+    "Build toward founding a company / CTO / CSPO"
+  ],
+  "interests": {
+    "core": ["multi-agent systems", "reinforcement learning", "MCP architecture", "agentic coding"],
+    "adjacent": ["model releases", "serving & inference", "evals", "harness engineering"],
+    "explore": []
+  },
+  "categories": ["AI", "Market", "Investment", "Geopolitical", "Policy"],
+  "preferences": {
+    "doThisCategory": "AI",
+    "dailyReadMinutesTarget": 5,
+    "homeworkMinutes": 60,
+    "homeworkSetupExcluded": true,
+    "quietDayAllowed": true,
+    "examplesOnlyForCategories": ["AI"],
+    "weaveConnections": true
+  },
+  "tuner": {
+    "gatekeeperBias": "recall-over-precision",
+    "sourceReputation": {},
+    "topicPriors": {},
+    "lastRecalibrated": null
+  },
+  "_seamNote": "Single user today. Every data record carries user_id so going multi-tenant is a data change, not a rewrite. Agents take (profile, data) -> output; no personal facts are hardcoded in prompts."
+}

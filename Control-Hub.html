@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control Hub — AI/ML Signal (private)</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2b313c;
+    --text:#e7eaf0; --muted:#9aa3b2; --soft:#c7cddb;
+    --ai:#7aa2ff; --do:#54d6a0; --radar:#f0b866; --geo:#c58bf0; --red:#e0656a;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;font-size:14.5px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:12px 22px}
+  .brand{font-weight:700;font-size:16px}.brand span{color:var(--radar)}
+  .tabs{display:flex;gap:4px}
+  .tab{background:none;border:0;color:var(--muted);font-family:var(--sans);font-size:14px;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer}
+  .tab.active{background:var(--panel2);color:var(--text)}.tab:hover{color:var(--text)}
+  .who{margin-left:auto;color:var(--red);font-size:12px;font-family:var(--mono)}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 22px 70px}
+  .page{display:none}.page.active{display:block}
+  h1{font-size:22px;margin:0 0 4px}
+  .seed{background:rgba(240,184,102,.08);border:1px solid var(--radar);border-radius:10px;padding:10px 14px;color:var(--soft);font-size:13px;margin:12px 0 20px}
+  h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:26px 0 10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card .an{font-weight:700;font-size:14px}
+  .card .m{color:var(--soft);font-size:12.5px;margin:4px 0}
+  .val{font-family:var(--mono);font-size:20px;font-weight:700;margin:6px 0 2px}
+  .await{color:var(--muted);font-family:var(--mono);font-size:12px;background:var(--panel2);border-radius:6px;padding:2px 8px;display:inline-block}
+  .tgt{color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+  .gtype{color:var(--muted);font-size:11px;margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+  .guard{border-color:var(--geo)}
+  .action{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+  .abadge{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid}
+  .b-auto{color:var(--do);border-color:var(--do)}.b-human{color:var(--radar);border-color:var(--radar)}
+  .arow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .diag{color:var(--soft);font-size:13px;margin:4px 0}
+  .rec{color:var(--text);font-size:13px;margin:4px 0}.rec b{color:var(--ai)}
+  .impact{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .conf{height:7px;width:120px;background:var(--panel2);border-radius:5px;overflow:hidden;display:inline-block;vertical-align:middle}
+  .conf i{display:block;height:100%;background:var(--ai)}
+  .btns{display:flex;gap:8px;margin-top:10px}
+  .btn{border:1px solid var(--line);background:var(--panel2);color:var(--soft);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer}
+  .btn.ok{border-color:var(--do);color:var(--do)}.btn.no{border-color:var(--red);color:var(--red)}
+  .empty{color:var(--muted);font-size:12.5px;font-style:italic;padding:10px 0}
+  .q{background:var(--panel);border:1px solid var(--ai);border-radius:12px;padding:14px 16px;margin:10px 0}
+  .q p{margin:0 0 8px;color:var(--text);font-size:13.5px}
+  .q input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px 10px;font-size:12.5px}
+  .q .fl{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px}
+  /* backlog */
+  .bitem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;border-left:3px solid var(--ai)}
+  .bhead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .chk{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;flex:none}
+  .chk.doing{border-color:var(--radar);background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(240,184,102,.35) 3px,rgba(240,184,102,.35) 6px)}
+  .chk.done{border-color:var(--do);background:var(--do)}
+  .btitle{font-weight:700;font-size:14.5px}
+  .status{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid;margin-left:auto}
+  .s-todo{color:var(--muted);border-color:var(--muted)}.s-doing{color:var(--radar);border-color:var(--radar)}.s-done{color:var(--do);border-color:var(--do)}
+  .bmeta{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11.5px;font-family:var(--mono);margin:4px 0 8px}
+  .goal{color:var(--soft);font-size:13px;margin:4px 0}
+  .steps{margin:6px 0 6px 2px;padding-left:18px}.steps li{color:var(--soft);font-size:12.5px;margin:3px 0}
+  .notes{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--soft);padding:8px 10px;font-size:12.5px;font-family:var(--sans);min-height:44px;margin-top:6px}
+  .acc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 16px;margin-top:10px}
+  .acc div{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--soft)}
+  .acc div:last-child{border-bottom:0}
+  .acc .d{font-family:var(--mono);font-size:11px;color:var(--do);flex:none;width:80px}
+  .foot{color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;margin-top:26px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Control Hub<span>.</span></div>
+  <div class="tabs">
+    <button class="tab active" data-p="control">Control Room</button>
+    <button class="tab" data-p="backlog">Backlog</button>
+  </div>
+  <div class="who">private · not for public</div>
+</div>
+
+<!-- ===== CONTROL ROOM ===== -->
+<section class="page active" id="control">
+<div class="wrap">
+  <h1>Control Room</h1>
+  <div class="seed">⚠ Seed state. Metrics are placeholders until the system runs and you provide feedback over several weeks. Trends need time before they mean anything — this page shows the <em>shape</em> of what you'll see, not real numbers yet.</div>
+
+  <h2>Agent metrics</h2>
+  <div class="grid">
+    <div class="card"><div class="an" style="color:var(--ai)">Scout</div><div class="m">Recall — of items that mattered, how many were fetched</div><span class="await">awaiting first-week data</span><div class="tgt">target: ≥ 0.95</div><div class="gtype">graded by: retrospective oracle + your "you missed X" feedback</div></div>
+    <div class="card"><div class="an" style="color:var(--ai)">Gatekeeper</div><div class="m">Precision &amp; Recall (classifier)</div><span class="await">awaiting data</span><div class="tgt">target: recall ≥ 0.9 (biased over precision — FOMO)</div><div class="gtype">graded by: your signal/noise ratings + Suppressed-drawer audit</div></div>
+    <div class="card"><div class="an" style="color:var(--ai)">Framer</div><div class="m">Faithfulness (objective) + Usefulness (subjective)</div><span class="await">awaiting data</span><div class="tgt">target: faithfulness = 1.0 (hard gate); usefulness ≥ 0.8</div><div class="gtype">graded by: claim decomposition (auto) + rubric ratings (you → LLM-judge)</div></div>
+    <div class="card"><div class="an" style="color:var(--ai)">Coach</div><div class="m">Code-grounding (objective) + doability/skill (behavioral)</div><span class="await">awaiting data</span><div class="tgt">target: grounding = 1.0; completion ≥ 0.7; time ≤ 60 min</div><div class="gtype">graded by: repo assertions (auto) + your completion behavior</div></div>
+    <div class="card"><div class="an" style="color:var(--ai)">Tuner</div><div class="m">Slope of every other metric over time (meta-eval)</div><span class="await">needs weeks of data</span><div class="tgt">target: curves bending the right way</div><div class="gtype">graded by: longitudinal trend, not level</div></div>
+    <div class="card guard"><div class="an" style="color:var(--geo)">Guardrail · Diversity</div><div class="m">Anti-echo-chamber. Stops the Tuner boosting ratings by only feeding what you already believe.</div><span class="await">awaiting data</span><div class="tgt">target: ≥ 20% of items outside your priors</div><div class="gtype">protects: balancing your thinking with new thinking</div></div>
+  </div>
+
+  <h2>Pending actions</h2>
+  <div class="action">
+    <div class="arow"><span class="abadge b-auto">AUTO · safe</span><span class="tgt">target: Scout</span></div>
+    <div class="diag"><b>Diagnosis:</b> Scout seed list has no dedicated MCP-ecosystem source beyond the spec blog.</div>
+    <div class="rec"><b>Recommend:</b> add <b>LangGraph + CrewAI release notes</b> to Scout Tier B.</div>
+    <div class="impact">predicted impact: <b style="color:var(--do)">+8% recall</b> on agent-framework items · confidence <span class="conf"><i style="width:55%"></i></span> 0.55 · <span>status: awaiting first-week data</span></div>
+  </div>
+  <div class="action">
+    <div class="arow"><span class="abadge b-human">HUMAN-GATED · needs you</span><span class="tgt">target: Gatekeeper</span></div>
+    <div class="diag"><b>Diagnosis:</b> corroboration threshold may be too strict for fast-moving releases (Kimi K3 was held for a primary source).</div>
+    <div class="rec"><b>Recommend:</b> allow a single high-reputation primary (lab blog) to surface without a 2nd source.</div>
+    <div class="impact">predicted impact: <b style="color:var(--radar)">−1 day latency</b> on major releases; small precision risk · confidence <span class="conf"><i style="width:40%"></i></span> 0.40</div>
+    <div class="btns"><button class="btn ok">Approve</button><button class="btn no">Reject</button><button class="btn">Ask a question</button></div>
+  </div>
+
+  <h2>Actions taken</h2>
+  <div class="empty">None yet. When actions ship, they appear here with predicted vs. actual impact (prescriber accountability).</div>
+
+  <h2>Questions for you <span style="text-transform:none;color:var(--muted);font-size:12px">(your answers become gold labels)</span></h2>
+  <div class="q"><p>For a new agent-framework release, do you want it surfaced immediately from one primary source, or held until corroborated?</p><input placeholder="Type your answer…" disabled><div class="fl">feeds: gatekeeper_corroboration_preference</div></div>
+  <div class="q"><p>When these collide on one weekend, rank them for DO THIS priority: MCP infra · RL technique · agentic-coding harness.</p><input placeholder="e.g. RL &gt; harness &gt; MCP…" disabled><div class="fl">feeds: coach_topic_priority</div></div>
+</div>
+</section>
+
+<!-- ===== BACKLOG ===== -->
+<section class="page" id="backlog">
+<div class="wrap">
+  <h1>Backlog</h1>
+  <div class="seed" style="border-color:var(--do);background:rgba(84,214,160,.07)">Your durable workbench. The Coach appends 60-min exercises on Fridays; you check off status and add notes during the week. Skippable — no weekly pressure.</div>
+
+  <h2>Active</h2>
+
+  <div class="bitem">
+    <div class="bhead"><span class="chk doing"></span><span class="btitle">Set up the project repo using the Claude Code CLI</span><span class="status s-doing">DOING</span></div>
+    <div class="bmeta"><span>AI</span><span>~60 min (setup excl.)</span><span>repo: aiml-signal-system</span><span>Claude Code CLI basics</span></div>
+    <div class="goal"><b>Goal:</b> end with a new GitHub repo, Claude Code running, and one commit it made for you.</div>
+    <ul class="steps">
+      <li>Create empty GitHub repo aiml-signal-system ✓</li>
+      <li>Clone locally &amp; cd in ✓</li>
+      <li>Install Claude Code CLI + authenticate ✓</li>
+      <li>Run <code>claude</code> and ask it to scaffold README + folders</li>
+      <li>Ask Claude Code to make the first commit, then push</li>
+    </ul>
+    <textarea class="notes" disabled>Repo, clone, CLI install + login all complete. Remaining: first scaffolding prompt + commit.</textarea>
+  </div>
+
+  <div class="bitem">
+    <div class="bhead"><span class="chk"></span><span class="btitle">Have Claude Code build a minimal stateless 'echo' MCP server</span><span class="status s-todo">TODO</span></div>
+    <div class="bmeta"><span>AI</span><span>~60 min (setup excl.)</span><span>repo: aiml-signal-system</span><span>MCP 2026-07-28 stateless spec</span></div>
+    <div class="goal"><b>Goal:</b> feel the stateless model firsthand — one 'echo' tool, no session state, any instance answers.</div>
+    <ul class="steps">
+      <li>Ask Claude Code to create a minimal MCP server with one 'echo' tool on the 2026-07-28 stateless spec</li>
+      <li>Have it comment where state would have lived in the old model</li>
+      <li>Run it, call the tool twice, confirm no session needed</li>
+    </ul>
+    <textarea class="notes" disabled>Queued after hw-01. Good second CLI session.</textarea>
+  </div>
+
+  <h2>Accomplishments</h2>
+  <div class="acc">
+    <div><span class="d">2026-08-04</span><span>Created private GitHub repo aiml-signal-system (description, Python .gitignore, no license).</span></div>
+    <div><span class="d">2026-08-04</span><span>Cloned repo locally; PAT auth saved in Keychain.</span></div>
+    <div><span class="d">2026-08-04</span><span>Installed Claude Code CLI (v2.1.222), fixed PATH, logged in on Max plan, first session live.</span></div>
+  </div>
+
+  <div class="foot">Control Hub · Backlog — renders <code>data/backlog.json</code>. Private telemetry; never publish.</div>
+</div>
+</section>
+
+<script>
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      document.getElementById(t.dataset.p).classList.add('active');
+      window.scrollTo(0,0);
+    });
+  });
+</script>
+</body>
+</html>

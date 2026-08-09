@@ -1,0 +1,106 @@
+{
+  "user_id": "varun",
+  "date": "2026-08-04",
+  "tunerStateVersion": "v0-seed",
+  "readingTimeMin": 5,
+  "counts": { "items": 7, "doThis": 2, "byCategory": { "AI": 4, "Market": 1, "Investment": 1, "Geopolitical": 1 } },
+  "thread": "Capability is decentralizing while capital and policy centralize. Kimi K3 ships massive open weights and Terminal-Bench shows the top models in a near-tie — capability is spreading out. Yet ~$1T closed-lab rounds and the Blackwell export ban concentrate money and control. The two forces point opposite ways: if open models keep closing the gap, the moat moves from the model to the harness and distribution — which is why the MCP stateless shift matters more than any single model drop this week.",
+  "items": [
+    {
+      "id": "2026-08-04-mcp",
+      "rank": 1,
+      "category": "AI",
+      "tags": ["DO THIS", "KNOW"],
+      "headline": "MCP's 2026-07-28 spec moves the core from stateful to stateless request/response",
+      "why": "Stateless lets you scale MCP servers horizontally behind a plain load balancer — no sticky sessions, no shared session store. Cost: it breaks cross-version compatibility, and Roots / Sampling / Logging + Dynamic Client Registration are now deprecated (12-month runway).",
+      "example": "Today a stateful server needs sticky sessions — if your 2nd call lands on a different node than your 1st, the session context is gone and the call fails. Stateless means any node can answer any request.",
+      "connection": "Ties to the thread: the 'harness > model' shift made concrete — as models converge, infrastructure like MCP is where differentiation moves.",
+      "diagram": "mcp_stateful_vs_stateless",
+      "sources": [
+        { "label": "modelcontextprotocol.io", "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28/", "tier": "primary" },
+        { "label": "GitHub Changelog", "url": "https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/", "tier": "corroboration" },
+        { "label": "The Register", "url": "https://www.theregister.com/devops/2026/07/23/model-context-protocol-prepares-to-break-with-its-stateful-past/5276722", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-kimi-k3",
+      "rank": 2,
+      "category": "AI",
+      "tags": ["KNOW"],
+      "headline": "Kimi K3 — largest open-weight model yet (2.8T params, 1M context)",
+      "why": "Open weights at this scale change build-vs-buy for agents, where per-call cost compounds fast. The tradeoff is raw capability vs. serving cost + latency.",
+      "example": "An agent making 20 calls/task — a small model at ~1/10th cost wins for routing & tool steps; reserve a K3-class model only for the one hard reasoning step.",
+      "connection": "Contrast: open weights this strong vs. the ~$1T closed-lab rounds (Investment) — capability decentralizing while capital centralizes.",
+      "diagram": "capability_vs_cost",
+      "sources": [
+        { "label": "AI Agents News", "url": "https://aiagentstore.ai/ai-agent-news/this-week", "tier": "corroboration", "note": "awaiting primary Moonshot source" }
+      ]
+    },
+    {
+      "id": "2026-08-04-istar",
+      "rank": 3,
+      "category": "AI",
+      "tags": ["DO THIS", "RADAR"],
+      "headline": "Paper: iStar — implicit step rewards for multi-turn agentic RL",
+      "ninety": { "method": "Per-step implicit rewards so the agent gets credit on intermediate actions, not just the final outcome.", "result": "+6.3% success on WebShop & VisualSokoban.", "caveat": "Benchmark-only; step-reward design is where the difficulty hides." },
+      "example": "An agent finishes a 12-step task but fails at step 11 — with only a final reward it can't tell which step was good. Step rewards give signal along the way.",
+      "diagram": "sparse_vs_step_rewards",
+      "sources": [
+        { "label": "agentic RL papers index", "url": "https://github.com/VoltAgent/awesome-ai-agent-papers", "tier": "corroboration", "note": "resolve to arXiv PDF on ingest" }
+      ]
+    },
+    {
+      "id": "2026-08-04-terminal-bench",
+      "rank": 4,
+      "category": "AI",
+      "tags": ["RADAR"],
+      "headline": "Terminal-Bench 2.1: GPT-5.6 Sol (89.5%) edges Opus 5 (89.1%)",
+      "why": "The top of the coding-agent frontier is now a near-tie, so the model is decreasingly the differentiator — the harness and eval design are.",
+      "example": "A 0.4-pt model gap is smaller than the swing you get from a better retrieval/scaffold around the same model.",
+      "connection": "Reinforces Kimi K3: if the best models are converging, the moat is the harness, not the model — the thread's core claim.",
+      "diagram": "near_tie_bars",
+      "sources": [
+        { "label": "Terminal-Bench writeup", "url": "https://www.morphllm.com/best-ai-coding-agents-2026", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-mega-rounds",
+      "rank": 5,
+      "category": "Investment",
+      "tags": ["KNOW"],
+      "headline": "OpenAI closes record $122B round ($852B post); Anthropic at $965B",
+      "why": "The frontier-lab capital arms race sets the pricing umbrella everyone builds under — when top labs raise at ~$1T valuations, downstream API pricing and talent costs move with it.",
+      "connection": "Contradiction with Kimi K3: money concentrates in closed labs even as open weights close the capability gap. Which force wins is the open question.",
+      "diagram": "valuation_bars",
+      "sources": [
+        { "label": "Crunchbase", "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-vc-record",
+      "rank": 6,
+      "category": "Market",
+      "tags": ["KNOW"],
+      "headline": "Global VC hit record $510B in H1 2026; AI took ~80% of Q1 dollars",
+      "why": "Capital is concentrating hard into AI, and valuations are priced for perfection — every non-AI startup competes for the remaining ~20% of dollars.",
+      "diagram": "ai_share_of_vc",
+      "sources": [
+        { "label": "Crunchbase H1 2026", "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-export-controls",
+      "rank": 7,
+      "category": "Geopolitical",
+      "tags": ["RADAR"],
+      "headline": "House advances AI OVERWATCH Act; Blackwell export ban, H200 to case-by-case",
+      "why": "Chip access is now a policy variable, not just a supply one — vendor and region choices can shift based on where you and your customers operate.",
+      "connection": "Tension with Kimi K3: policy restricts hardware, but open weights let capability route around it — controls on chips don't fully control capability.",
+      "diagram": "export_gate",
+      "sources": [
+        { "label": "Mayer Brown", "url": "https://www.mayerbrown.com/en/insights/publications/2026/01/administration-policies-on-advanced-ai-chips-codified", "tier": "corroboration" },
+        { "label": "Semiconductors Insight", "url": "https://semiconductorsinsight.com/us-china-chip-export-controls-h200-2026/", "tier": "corroboration" }
+      ]
+    }
+  ]
+}

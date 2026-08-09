@@ -1,0 +1,101 @@
+{
+  "user_id": "varun",
+  "generated": "2026-08-04",
+  "state": "seed",
+  "note": "Seed/sample values. Real metrics populate once the system runs and you provide feedback over several weeks. Trends need time before they mean anything.",
+  "agents": [
+    {
+      "agent": "Scout",
+      "primaryMetric": "Recall (of items that mattered, how many were fetched)",
+      "value": null,
+      "target": ">= 0.95",
+      "trend": "n/a",
+      "gradeType": "retrospective oracle + your 'you missed X' feedback",
+      "notes": "Can't be measured on day one — needs a week of retrospective labels."
+    },
+    {
+      "agent": "Gatekeeper",
+      "primaryMetric": "Precision & Recall (classifier)",
+      "value": { "precision": null, "recall": null },
+      "target": "recall >= 0.9 (biased over precision to avoid FOMO)",
+      "trend": "n/a",
+      "gradeType": "your signal/noise ratings + Suppressed-drawer audit",
+      "notes": "False negatives = FOMO. Suppressed drawer is the measuring instrument."
+    },
+    {
+      "agent": "Framer",
+      "primaryMetric": "Faithfulness (objective) + Usefulness (subjective)",
+      "value": { "faithfulness": null, "usefulness": null },
+      "target": "faithfulness = 1.0 (hard gate); usefulness >= 0.8",
+      "trend": "n/a",
+      "gradeType": "claim decomposition (auto) + rubric ratings (you -> calibrated LLM-judge)",
+      "notes": "Faithfulness is a fixed gate; usefulness is a personalized target."
+    },
+    {
+      "agent": "Coach",
+      "primaryMetric": "Code-grounding (objective) + doability/skill (behavioral)",
+      "value": { "grounding": null, "completionRate": null, "avgActualMinutes": null },
+      "target": "grounding = 1.0; completion >= 0.7; time <= 60 (setup excluded)",
+      "trend": "n/a",
+      "gradeType": "assertions on repo (auto) + your completion behavior",
+      "notes": "Highest hallucination risk, but hallucinations are cheapest to catch here."
+    },
+    {
+      "agent": "Tuner",
+      "primaryMetric": "Slope of every other agent's metric over time",
+      "value": null,
+      "target": "curves bending the right way over weeks",
+      "trend": "n/a",
+      "gradeType": "longitudinal / meta-eval",
+      "notes": "Graded on trend, not level. Cannot run on day one."
+    }
+  ],
+  "guardrails": [
+    {
+      "name": "Diversity / exploration rate",
+      "purpose": "Anti-echo-chamber. Stops the Tuner from boosting your ratings by only feeding what you already believe.",
+      "value": null,
+      "target": ">= 0.2 of items outside your established priors",
+      "protects": "Your goal of balancing your thinking with new thinking."
+    }
+  ],
+  "pendingActions": [
+    {
+      "id": "act-001",
+      "diagnosis": "Scout seed list has no dedicated MCP-ecosystem source beyond the spec blog.",
+      "recommendation": "Add LangGraph + CrewAI release notes to Scout Tier B.",
+      "targetAgent": "Scout",
+      "tier": "auto",
+      "predictedImpact": "+8% recall on agent-framework items",
+      "confidence": 0.55,
+      "status": "awaiting first-week data"
+    },
+    {
+      "id": "act-002",
+      "diagnosis": "Gatekeeper corroboration threshold may be too strict for fast-moving model releases (Kimi K3 held for a primary source).",
+      "recommendation": "Allow single high-reputation primary (lab blog) to surface without a 2nd source.",
+      "targetAgent": "Gatekeeper",
+      "tier": "human-gated",
+      "predictedImpact": "-1 day latency on major releases; small precision risk",
+      "confidence": 0.4,
+      "status": "needs your approval (touches FOMO/precision tradeoff)"
+    }
+  ],
+  "actionsTaken": [],
+  "predictionLedger": {
+    "note": "When an action ships, record predicted vs actual impact here so the Prescriber earns trust over time.",
+    "entries": []
+  },
+  "openQuestions": [
+    {
+      "id": "q-001",
+      "question": "For a new agent-framework release, do you want it surfaced immediately from one primary source, or held until corroborated?",
+      "feedsLabel": "gatekeeper_corroboration_preference"
+    },
+    {
+      "id": "q-002",
+      "question": "Rank these for 'DO THIS' priority when they collide on one weekend: MCP infra, RL technique, agentic-coding harness.",
+      "feedsLabel": "coach_topic_priority"
+    }
+  ]
+}

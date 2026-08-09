@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Plan — AI/ML Signal System</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2b313c;
+    --text:#e7eaf0; --muted:#9aa3b2; --soft:#c7cddb;
+    --ai:#7aa2ff; --do:#54d6a0; --radar:#f0b866; --geo:#c58bf0; --muteb:#5a6270;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;font-size:14.5px}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 24px 80px}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+  .how{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 18px}
+  .how b{color:var(--text)} .how p{margin:6px 0;color:var(--soft);font-size:13.5px}
+  .status-now{background:linear-gradient(180deg,rgba(122,162,255,.08),transparent);border:1px solid var(--ai);border-radius:12px;padding:12px 16px;margin:0 0 22px;font-size:13.5px;color:var(--soft)}
+  .status-now b{color:var(--text)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--muted);margin:0 0 22px}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .d-done{background:var(--do)}.d-now{background:var(--ai)}.d-next{background:var(--radar)}.d-later{background:var(--muteb)}
+  .phase{border:1px solid var(--line);border-radius:14px;padding:0;margin:0 0 18px;overflow:hidden}
+  .phase.now{border-color:var(--ai)}
+  .ph{padding:14px 18px;display:flex;align-items:flex-start;gap:12px;background:var(--panel)}
+  .pnum{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px;white-space:nowrap}
+  .pmain{flex:1}
+  .ptitle{font-size:16px;font-weight:700;margin:0 0 2px}
+  .pbadge{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid;margin-left:8px;vertical-align:middle}
+  .pb-done{color:var(--do);border-color:var(--do)}.pb-now{color:var(--ai);border-color:var(--ai)}.pb-next{color:var(--radar);border-color:var(--radar)}.pb-later{color:var(--muteb);border-color:var(--muteb)}
+  .time{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;padding-top:3px}
+  .endstate{color:var(--soft);font-size:13.5px;margin:6px 0 2px}.endstate b{color:var(--text)}
+  .why{color:var(--muted);font-size:12.5px;font-style:italic;margin:4px 0 0}
+  .body{padding:0 18px 16px;background:var(--panel)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em}
+  td .act{font-weight:600;color:var(--text)}
+  a{color:var(--ai);text-decoration:none}a:hover{text-decoration:underline}
+  .prompt-link{font-family:var(--mono);font-size:11.5px}
+  .pending{color:var(--muted);font-family:var(--mono);font-size:11px;font-style:italic}
+  .notes{background:var(--panel2);border-left:2px solid var(--geo);border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0 2px}
+  .notes .lbl{font-family:var(--mono);font-size:10px;color:var(--geo);letter-spacing:.04em;font-weight:700}
+  .notes ul{margin:6px 0 0;padding-left:18px}.notes li{color:var(--soft);font-size:12.5px;margin:3px 0}
+  .notes .empty{color:var(--muted);font-style:italic;font-size:12.5px;margin:6px 0 0}
+  .outline .body{display:none}
+  .foot{color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;margin-top:24px}
+  code{font-family:var(--mono);font-size:12px;color:var(--do)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Build Plan — AI/ML Signal System</h1>
+  <p class="sub">Rolling, session-sized. Each phase is timeboxed to ~1 hour. Design detail lives in <a href="Signal.html">Signal.html → System</a>.</p>
+
+  <div class="how">
+    <p><b>How this plan works</b></p>
+    <p>• <b>Rolling:</b> the next few phases are detailed; later ones are outlined and filled in as we reach them.</p>
+    <p>• <b>1-hour phases:</b> each phase has an end state and fits one working session.</p>
+    <p>• <b>Milestone activities:</b> each says what it accomplishes and why; the <b>how</b> lives in a canonical prompt under <a href="docs/prompts/">docs/prompts/</a> (final &amp; holistic — see the folder README).</p>
+    <p>• <b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.</p>
+  </div>
+
+  <div class="status-now"><b>Current status (2026-08-04):</b> Dev environment set up (GitHub repo, clone, Claude Code CLI installed + logged in). Repo scaffolded locally with Signal.html, Control-Hub.html, data/, design/, docs/ — <b>not yet committed to GitHub</b>. Next: Phase 1.</div>
+
+  <div class="legend">
+    <span><span class="dot d-now"></span>now</span>
+    <span><span class="dot d-next"></span>next</span>
+    <span><span class="dot d-later"></span>later (outline)</span>
+    <span><span class="dot d-done"></span>done</span>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase now">
+    <div class="ph">
+      <div class="pnum">Phase&nbsp;1</div>
+      <div class="pmain">
+        <div class="ptitle">First commit &amp; the Claude Code loop <span class="pbadge pb-now">NOW</span></div>
+        <div class="endstate"><b>End state:</b> all scaffolding committed &amp; pushed to GitHub via a Claude Code session you drove yourself.</div>
+        <div class="why">Why it matters: your work becomes versioned and accessible anywhere, and you learn the core approve-edits loop on a low-stakes task before building agents.</div>
+      </div>
+      <div class="time">~60 min</div>
+    </div>
+    <div class="body">
+      <table>
+        <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
+        <tr><td class="act">Review repo with Claude Code</td><td>You see how it reads the codebase before editing</td><td>Builds trust in what it will change</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+        <tr><td class="act">Flesh out README</td><td>README describes the project + real folder structure</td><td>Entry point for you and, later, the public</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+        <tr><td class="act">First commit + push</td><td>Everything lands on GitHub</td><td>Versioned source of truth</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+      </table>
+      <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
+        <ul>
+          <li>Repo stays private now; when exposed later, exclude <code>Control-Hub.html</code> + <code>data/</code> from the public build (personal telemetry).</li>
+          <li>Deliberately low-stakes (README + commit) to learn the CLI loop before touching agents.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="ph">
+      <div class="pnum">Phase&nbsp;2</div>
+      <div class="pmain">
+        <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-next">NEXT</span></div>
+        <div class="endstate"><b>End state:</b> a Framer agent that turns <code>data/2026-08-04.json</code> into a brief matching the <a href="design/News-reference.html">Bento reference</a> voice.</div>
+        <div class="why">Why it matters: Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.</div>
+      </div>
+      <div class="time">~60 min</div>
+    </div>
+    <div class="body">
+      <table>
+        <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
+        <tr><td class="act">Finalize the Framer build prompt (+ Evals)</td><td>Canonical prompt with faithfulness/usefulness graders baked in</td><td>Reproducible recipe; evals from day one</td><td class="prompt-link"><span class="pending">docs/prompts/p2-build-framer.md — authored in this phase</span></td></tr>
+        <tr><td class="act">Generate the Framer agent via Claude Code</td><td><code>agents/framer.py</code> runs on the sample day</td><td>Your first real agent</td><td class="prompt-link"><a href="docs/Framer-Prompt-and-Sources.md">Framer-Prompt-and-Sources.md</a></td></tr>
+        <tr><td class="act">Eyeball output vs the reference</td><td>You judge whether the voice sounds right</td><td>The go / no-go on the whole system</td><td class="prompt-link"><span class="pending">— your taste is the gate</span></td></tr>
+      </table>
+      <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
+        <ul>
+          <li>Locked Framer rules: worked examples on <b>AI items only</b>; synthesis "thread" required; <b>DO THIS</b> reserved for AI; reading-time header; inline connections.</li>
+          <li>Faithfulness = hard zero-hallucination gate (objective); usefulness = soft, learned target (subjective).</li>
+          <li>Test against <code>design/News-reference.html</code>, not vibes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="ph">
+      <div class="pnum">Phase&nbsp;3</div>
+      <div class="pmain">
+        <div class="ptitle">Framer eval harness (golden set) <span class="pbadge pb-next">NEXT</span></div>
+        <div class="endstate"><b>End state:</b> a tiny offline eval that scores the Framer (faithfulness assertion + usefulness rubric) against 1–2 labeled days.</div>
+        <div class="why">Why it matters: turns "is the voice right?" from a vibe into a number, and makes every future prompt tweak safe via regression.</div>
+      </div>
+      <div class="time">~60 min</div>
+    </div>
+    <div class="body">
+      <table>
+        <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
+        <tr><td class="act">Build a golden set from labeled days</td><td>2 days of items + your ratings in <code>evals/golden/</code></td><td>The fixed yardstick for regression</td><td class="prompt-link"><span class="pending">docs/prompts/p3-framer-evals.md — authored in this phase</span></td></tr>
+        <tr><td class="act">Faithfulness grader (claim decomposition)</td><td>Auto check: every factual claim traces to source</td><td>Objective hard gate; catches hallucination</td><td class="prompt-link"><span class="pending">same</span></td></tr>
+        <tr><td class="act">Usefulness rubric + run script</td><td>Rubric scoring; one command runs the eval</td><td>Safe iteration on the Framer prompt</td><td class="prompt-link"><span class="pending">same</span></td></tr>
+      </table>
+      <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
+        <ul>
+          <li>Eval harness lives in the repo from early on; the Tuner-driven learning matures later (needs weeks of data).</li>
+          <li>Held-out slice kept separate from anything the Tuner adapts on (train/test hygiene).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTLINE PHASES -->
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;4</div><div class="pmain"><div class="ptitle">Scout — seed sources + fetch <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> Scout pulls candidate items from the fixed seed list into <code>data/</code>.</div><div class="why">Why it matters: turns on real intake so the Framer runs on live items, not a sample.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;5</div><div class="pmain"><div class="ptitle">Gatekeeper basics + Suppressed drawer <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer.</div><div class="why">Why it matters: kills noise and gives you the false-negative audit trail that keeps FOMO dead.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;6</div><div class="pmain"><div class="ptitle">Daily loop end-to-end (News renders from data/) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> a real daily brief generated Scout→Gatekeeper→Framer→News.html, with quiet-day behavior.</div><div class="why">Why it matters: the anti-FOMO daily value goes live — you start using it every morning.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;7</div><div class="pmain"><div class="ptitle">Coach — standalone homework <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> a weekly 60-min exercise generated from the week's items, written to the backlog.</div><div class="why">Why it matters: turns reading into doing (job b), before the harder repo-grounding step.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;8</div><div class="pmain"><div class="ptitle">Coach — repo grounding <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> homework that fits a real spot in your repos, verified by assertions against the code.</div><div class="why">Why it matters: the magic feature — and the highest hallucination risk, so it comes after trust is built.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;9</div><div class="pmain"><div class="ptitle">Control Room live (metrics.json) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> the Control Room renders real eval metrics, pending actions, and elicitation questions.</div><div class="why">Why it matters: closes the report→elicit→label loop so the system can improve deliberately.</div></div><div class="time">~60 min</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;10</div><div class="pmain"><div class="ptitle">Tuner — learned personalization <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> source reputation + topic priors that adapt from your feedback, with the diversity guardrail.</div><div class="why">Why it matters: the system starts getting better at <em>you</em> — but only after weeks of data exist.</div></div><div class="time">multi-session</div></div>
+  </div>
+  <div class="phase outline">
+    <div class="ph"><div class="pnum">Phase&nbsp;11</div><div class="pmain"><div class="ptitle">Commercial prep (documented) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> shared-base / per-user split proven; auth + multi-tenant scoped when/if productizing.</div><div class="why">Why it matters: the path from personal system to product, kept open by the <code>user_id</code> seam.</div></div><div class="time">multi-session</div></div>
+  </div>
+
+  <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="docs/prompts/">docs/prompts/</a> · Design: <a href="Signal.html">Signal.html → System</a> · Backlog: <a href="Control-Hub.html">Control-Hub.html</a>.</div>
+</div>
+</body>
+</html>

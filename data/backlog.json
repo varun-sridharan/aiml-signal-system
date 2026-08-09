@@ -1,0 +1,52 @@
+{
+  "user_id": "varun",
+  "updated": "2026-08-04",
+  "schemaNote": "Source of truth for the backlog. Coach appends items on Fridays; you edit status/notes during the week. Control-Hub.html Backlog tab renders this. status: todo | doing | done.",
+  "items": [
+    {
+      "id": "hw-2026-08-04-01",
+      "title": "Set up the project repo using the Claude Code CLI (your first CLI session)",
+      "category": "AI",
+      "concept": "Claude Code CLI basics — install, auth, first prompt, first commit",
+      "status": "doing",
+      "estMinutes": 60,
+      "setupExcluded": true,
+      "targetRepo": "aiml-signal-system (new)",
+      "sourceItem": "Onboarding — learn the CLI before building the agents",
+      "goal": "End the session with a new GitHub repo, Claude Code running in your terminal, and one commit that Claude Code made for you.",
+      "steps": [
+        "Create an empty GitHub repo named aiml-signal-system. [done]",
+        "Clone it locally and cd into it. [done]",
+        "Install the Claude Code CLI and authenticate. [done]",
+        "Run `claude` in the repo and ask it to scaffold README + folders (agents/, data/, design/).",
+        "Ask Claude Code to make the first git commit, then push."
+      ],
+      "doneWhen": "The repo on GitHub shows a README and folders, committed by a Claude Code session you drove.",
+      "notes": "Repo, clone, CLI install + login all complete. Remaining: first scaffolding prompt + commit."
+    },
+    {
+      "id": "hw-2026-08-04-02",
+      "title": "Have Claude Code build a minimal stateless 'echo' MCP server",
+      "category": "AI",
+      "concept": "MCP 2026-07-28 stateless request/response (from today's lead item)",
+      "status": "todo",
+      "estMinutes": 60,
+      "setupExcluded": true,
+      "targetRepo": "aiml-signal-system",
+      "sourceItem": "News 2026-08-04 · MCP stateless spec",
+      "goal": "Feel the stateless model firsthand: a tiny MCP server with one 'echo' tool, no session state, that any process instance can answer.",
+      "steps": [
+        "In a new Claude Code session, ask it to create a minimal MCP server exposing one 'echo' tool on the 2026-07-28 stateless spec.",
+        "Ask it to explain, in comments, where state would have lived in the old stateful model.",
+        "Run it locally and call the tool twice; confirm no session is required between calls."
+      ],
+      "doneWhen": "You can call the echo tool from a fresh connection with zero shared session state, and can explain why that's the point of the spec.",
+      "notes": "Queued after hw-01. Good second CLI session."
+    }
+  ],
+  "accomplishments": [
+    { "date": "2026-08-04", "text": "Created private GitHub repo aiml-signal-system with description, Python .gitignore, no license." },
+    { "date": "2026-08-04", "text": "Cloned repo locally; PAT auth saved in Keychain." },
+    { "date": "2026-08-04", "text": "Installed Claude Code CLI (v2.1.222), fixed PATH, logged in on Max plan, first session live." }
+  ]
+}

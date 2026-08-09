@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal — AI/ML</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2b313c;
+    --text:#e7eaf0; --muted:#9aa3b2; --soft:#c7cddb;
+    --ai:#7aa2ff; --market:#54d6a0; --invest:#f0b866; --geo:#c58bf0;
+    --do:#54d6a0; --radar:#f0b866; --know:#8b93a3; --link:#c58bf0;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;font-size:14.5px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:12px 22px}
+  .brand{font-weight:700;font-size:16px;letter-spacing:.02em}
+  .brand span{color:var(--ai)}
+  .tabs{display:flex;gap:4px}
+  .tab{background:none;border:0;color:var(--muted);font-family:var(--sans);font-size:14px;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer}
+  .tab.active{background:var(--panel2);color:var(--text)}
+  .tab:hover{color:var(--text)}
+  .who{margin-left:auto;color:var(--muted);font-size:12px;font-family:var(--mono)}
+  .page{display:none}.page.active{display:block}
+  /* ===== NEWS ===== */
+  .shell{display:grid;grid-template-columns:1fr 300px;gap:16px;max-width:1180px;margin:0 auto;padding:22px}
+  .ntop{grid-column:1/-1}
+  .titlerow{display:flex;justify-content:space-between;align-items:baseline}
+  h1{font-size:21px;margin:0}
+  .date{color:var(--muted);font-size:12px;font-family:var(--mono)}
+  .meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:8px 0 2px;color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+  .meta b{color:var(--text)} .meta .do{color:var(--do)}
+  .thread{grid-column:1/-1;background:linear-gradient(180deg,rgba(197,139,240,.08),transparent);border:1px solid var(--geo);border-radius:14px;padding:14px 18px;margin:8px 0 2px}
+  .thread .lbl{font-family:var(--mono);font-size:11px;color:var(--geo);letter-spacing:.05em;font-weight:700}
+  .thread p{margin:6px 0 0;color:var(--soft);font-size:14px}.thread b{color:var(--text)}
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-content:start}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column}
+  .hero{grid-column:span 4}.half{grid-column:span 2}
+  .cat{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:6px;color:#0f1115}
+  .c-ai{background:var(--ai)} .c-market{background:var(--market)} .c-invest{background:var(--invest)} .c-geo{background:var(--geo)}
+  .tag{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid;margin-left:6px}
+  .t-do{color:var(--do);border-color:var(--do)} .t-radar{color:var(--radar);border-color:var(--radar)} .t-know{color:var(--know);border-color:var(--know)}
+  .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .head{font-size:16px;font-weight:700;line-height:1.3;margin:2px 0 8px}.hero .head{font-size:20px}
+  .why{color:var(--soft);margin:0 0 8px;font-size:13.5px}.why b{color:var(--text)}
+  .ex{color:var(--muted);font-size:12.5px;font-style:italic;margin:0 0 10px;border-left:2px solid var(--line);padding-left:10px}
+  .conn{font-size:12px;color:var(--link);background:rgba(197,139,240,.07);border:1px solid rgba(197,139,240,.3);border-radius:8px;padding:6px 10px;margin:0 0 10px}.conn b{color:var(--soft)}
+  svg{width:100%;height:auto;background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin:2px 0 8px}
+  .ninety{background:var(--panel2);border-left:2px solid var(--radar);border-radius:0 8px 8px 0;padding:8px 12px;margin:2px 0 8px;font-size:12.5px;color:var(--soft)}
+  .ninety .lbl{font-family:var(--mono);font-size:10px;color:var(--radar);display:block;margin-bottom:2px}
+  .src{font-size:11px;color:var(--muted);margin-top:auto;padding-top:6px}.src a{color:var(--ai);text-decoration:none}
+  .chat{position:sticky;top:70px;align-self:start;background:var(--panel);border:1px solid var(--ai);border-radius:14px;display:flex;flex-direction:column;height:calc(100vh - 100px);min-height:440px}
+  .chat h3{margin:0;padding:14px 16px 6px;font-size:14px}
+  .chat .ctx{padding:0 16px 10px;color:var(--muted);font-size:11.5px;border-bottom:1px solid var(--line)}
+  .stream{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+  .msg{font-size:12.5px;padding:8px 11px;border-radius:12px;max-width:92%}
+  .u{align-self:flex-end;background:var(--ai);color:#0f1115}.a{align-self:flex-start;background:var(--panel2);color:var(--soft);border:1px solid var(--line)}
+  .compose{border-top:1px solid var(--line);padding:10px;display:flex;gap:8px}
+  .compose input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:8px 10px;font-size:12.5px}
+  .compose button{background:var(--ai);border:0;border-radius:10px;color:#0f1115;font-weight:700;padding:0 12px;cursor:pointer}
+  /* ===== SYSTEM ===== */
+  .doc{max-width:900px;margin:0 auto;padding:26px 24px 80px}
+  .doc h2{font-size:19px;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .doc h3{font-size:15px;color:var(--ai);margin:20px 0 6px}
+  .doc p{margin:8px 0;color:var(--soft)}
+  .kicker{color:var(--market);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .accent{border-color:var(--ai);background:linear-gradient(180deg,rgba(122,162,255,.06),transparent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+  td code,.doc code{font-family:var(--mono);font-size:12.5px;color:var(--market)}
+  .doc ul{margin:8px 0 8px 2px;padding-left:18px}.doc li{margin:5px 0;color:var(--soft)}
+  .log{border-left:2px solid var(--geo);padding-left:14px;margin:6px 0}
+  .log .d{font-family:var(--mono);font-size:11px;color:var(--geo)}
+  .foot{color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;margin-top:30px}
+  text{font-family:var(--sans)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Signal<span>.</span></div>
+  <div class="tabs">
+    <button class="tab active" data-p="news">News</button>
+    <button class="tab" data-p="system">System</button>
+  </div>
+  <div class="who">user: varun · public-safe</div>
+</div>
+
+<!-- ===================== NEWS ===================== -->
+<section class="page active" id="news">
+<div class="shell">
+  <div class="ntop">
+    <div class="titlerow"><h1>News</h1><span class="date">Tue · 2026-08-04</span></div>
+    <div class="meta"><span>⏱ <b>~5 min read</b></span><span>·</span><span><b>7</b> items</span><span>·</span><span class="do"><b>2</b> DO THIS</span><span>·</span><span>4 AI · 1 Market · 1 Investment · 1 Geopolitical</span></div>
+  </div>
+
+  <div class="thread">
+    <span class="lbl">TODAY'S THREAD — how these connect</span>
+    <p>Capability is <b>decentralizing</b> while capital and policy <b>centralize</b>. Kimi K3 ships massive open weights and Terminal-Bench shows the top models in a near-tie — capability is spreading out. Yet ≈$1T closed-lab rounds and the Blackwell export ban concentrate money and control. The forces point opposite ways: if open models keep closing the gap, the <b>moat moves from the model to the harness and distribution</b> — which is why the MCP stateless shift matters more than any single model drop this week.</p>
+  </div>
+
+  <div class="bento">
+
+    <div class="tile hero">
+      <div class="row"><span class="cat c-ai">AI</span><span><span class="tag t-do">DO THIS</span><span class="tag t-know">KNOW</span></span></div>
+      <div class="head">MCP's 2026-07-28 spec moves the core from stateful to stateless request/response</div>
+      <p class="why"><b>Why it matters:</b> Stateless lets you scale MCP servers horizontally behind a plain load balancer — no sticky sessions, no shared session store. Cost: it breaks cross-version compatibility, and Roots / Sampling / Logging + Dynamic Client Registration are now deprecated (12-month runway).</p>
+      <p class="ex">Example: a stateful server needs sticky sessions — if your 2nd call lands on a different node than your 1st, the session is gone and the call fails. Stateless means any node can answer any request.</p>
+      <div class="conn"><b>↔ Ties to the thread:</b> the "harness &gt; model" shift made concrete — as models converge, infrastructure like MCP is where differentiation moves.</div>
+      <svg viewBox="0 0 640 150" role="img"><title>Stateful vs stateless MCP</title>
+        <text x="12" y="18" fill="#f0b866" font-size="12" font-weight="700">BEFORE — stateful (sticky sessions)</text>
+        <rect x="12" y="30" width="70" height="30" rx="6" fill="#1e222b" stroke="#2b313c"/><text x="47" y="49" fill="#c7cddb" font-size="11" text-anchor="middle">Client</text>
+        <line x1="82" y1="45" x2="120" y2="45" stroke="#6b7686" stroke-width="1.5" marker-end="url(#a)"/>
+        <rect x="120" y="30" width="54" height="30" rx="6" fill="#1e222b" stroke="#2b313c"/><text x="147" y="49" fill="#c7cddb" font-size="11" text-anchor="middle">LB</text>
+        <line x1="174" y1="45" x2="212" y2="45" stroke="#54d6a0" stroke-width="2" marker-end="url(#a)"/>
+        <rect x="212" y="30" width="86" height="30" rx="6" fill="#22303a" stroke="#54d6a0"/><text x="255" y="49" fill="#e7eaf0" font-size="11" text-anchor="middle">Node A ✓ses</text>
+        <line x1="174" y1="45" x2="212" y2="82" stroke="#e0656a" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#x)"/>
+        <rect x="212" y="70" width="86" height="26" rx="6" fill="#1e222b" stroke="#e0656a"/><text x="255" y="87" fill="#e0656a" font-size="10.5" text-anchor="middle">Node B ✗ no ses</text>
+        <text x="352" y="18" fill="#54d6a0" font-size="12" font-weight="700">AFTER — stateless (round-robin)</text>
+        <rect x="352" y="30" width="66" height="30" rx="6" fill="#1e222b" stroke="#2b313c"/><text x="385" y="49" fill="#c7cddb" font-size="11" text-anchor="middle">Client</text>
+        <line x1="418" y1="45" x2="452" y2="45" stroke="#6b7686" stroke-width="1.5" marker-end="url(#a)"/>
+        <rect x="452" y="30" width="48" height="30" rx="6" fill="#1e222b" stroke="#2b313c"/><text x="476" y="49" fill="#c7cddb" font-size="11" text-anchor="middle">LB</text>
+        <line x1="500" y1="45" x2="536" y2="34" stroke="#54d6a0" stroke-width="1.5" marker-end="url(#a)"/><line x1="500" y1="45" x2="536" y2="60" stroke="#54d6a0" stroke-width="1.5" marker-end="url(#a)"/><line x1="500" y1="45" x2="536" y2="86" stroke="#54d6a0" stroke-width="1.5" marker-end="url(#a)"/>
+        <rect x="536" y="22" width="90" height="22" rx="6" fill="#22303a" stroke="#54d6a0"/><text x="581" y="37" fill="#e7eaf0" font-size="10" text-anchor="middle">any node ✓</text>
+        <rect x="536" y="50" width="90" height="22" rx="6" fill="#22303a" stroke="#54d6a0"/><text x="581" y="65" fill="#e7eaf0" font-size="10" text-anchor="middle">any node ✓</text>
+        <rect x="536" y="78" width="90" height="22" rx="6" fill="#22303a" stroke="#54d6a0"/><text x="581" y="93" fill="#e7eaf0" font-size="10" text-anchor="middle">any node ✓</text>
+        <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7686"/></marker><marker id="x" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e0656a"/></marker></defs>
+      </svg>
+      <div class="src">Primary: <a href="https://blog.modelcontextprotocol.io/posts/2026-07-28/">modelcontextprotocol.io</a> · <a href="https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/">GitHub Changelog</a> · <a href="https://www.theregister.com/devops/2026/07/23/model-context-protocol-prepares-to-break-with-its-stateful-past/5276722">The Register</a></div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-ai">AI</span><span class="tag t-know">KNOW</span></div>
+      <div class="head">Kimi K3 — largest open-weight model yet (2.8T params, 1M context)</div>
+      <p class="why"><b>Why it matters:</b> Open weights at this scale change build-vs-buy for agents, where per-call cost compounds fast. The tradeoff is capability vs. serving cost + latency.</p>
+      <p class="ex">Example: an agent making 20 calls/task — a small model at ~1/10th cost wins for routing &amp; tool steps; reserve a K3-class model for the one hard reasoning step.</p>
+      <div class="conn"><b>↔ Contrast:</b> open weights this strong <b>vs.</b> the ~$1T closed-lab rounds (Investment) — capability decentralizing while capital centralizes.</div>
+      <svg viewBox="0 0 300 110" role="img"><title>Capability vs cost</title>
+        <text x="10" y="30" fill="#8b93a3" font-size="11">Small model</text><rect x="90" y="22" width="70" height="12" rx="3" fill="#54d6a0"/><text x="200" y="31" fill="#54d6a0" font-size="10">$ low · fast</text>
+        <text x="10" y="58" fill="#e7eaf0" font-size="11">Kimi K3</text><rect x="90" y="50" width="180" height="12" rx="3" fill="#7aa2ff"/>
+        <text x="10" y="84" fill="#9aa3b2" font-size="10">serving cost →</text><rect x="90" y="76" width="40" height="10" rx="3" fill="#54d6a0"/><rect x="90" y="90" width="150" height="10" rx="3" fill="#f0b866"/><text x="248" y="99" fill="#f0b866" font-size="10">K3 = high $</text>
+      </svg>
+      <div class="src"><a href="https://aiagentstore.ai/ai-agent-news/this-week">AI Agents News</a> (awaiting primary Moonshot source)</div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-ai">AI</span><span><span class="tag t-do">DO THIS</span><span class="tag t-radar">RADAR</span></span></div>
+      <div class="head">Paper: iStar — implicit step rewards for multi-turn agentic RL</div>
+      <div class="ninety"><span class="lbl">IN 90 SECONDS</span><b>Method:</b> per-step implicit rewards so the agent gets credit on intermediate actions, not just the final outcome. <b>Result:</b> +6.3% success on WebShop &amp; VisualSokoban. <b>Caveat:</b> benchmark-only; step-reward design is where the difficulty hides.</div>
+      <p class="ex">Example: an agent finishes a 12-step task but fails at step 11 — with only a final reward it can't tell which step was good. Step rewards give signal along the way.</p>
+      <svg viewBox="0 0 300 110" role="img"><title>Sparse vs step rewards</title>
+        <text x="8" y="16" fill="#e0656a" font-size="10">sparse: reward only at end</text>
+        <circle cx="30" cy="34" r="7" fill="#1e222b" stroke="#6b7686"/><circle cx="90" cy="34" r="7" fill="#1e222b" stroke="#6b7686"/><circle cx="150" cy="34" r="7" fill="#1e222b" stroke="#6b7686"/><circle cx="210" cy="34" r="7" fill="#1e222b" stroke="#6b7686"/><circle cx="270" cy="34" r="8" fill="#e0656a"/>
+        <line x1="37" y1="34" x2="83" y2="34" stroke="#6b7686"/><line x1="97" y1="34" x2="143" y2="34" stroke="#6b7686"/><line x1="157" y1="34" x2="203" y2="34" stroke="#6b7686"/><line x1="217" y1="34" x2="262" y2="34" stroke="#6b7686"/>
+        <text x="8" y="74" fill="#54d6a0" font-size="10">iStar: reward every step</text>
+        <circle cx="30" cy="92" r="7" fill="#54d6a0"/><circle cx="90" cy="92" r="7" fill="#54d6a0"/><circle cx="150" cy="92" r="7" fill="#54d6a0"/><circle cx="210" cy="92" r="7" fill="#54d6a0"/><circle cx="270" cy="92" r="8" fill="#54d6a0"/>
+        <line x1="37" y1="92" x2="83" y2="92" stroke="#54d6a0"/><line x1="97" y1="92" x2="143" y2="92" stroke="#54d6a0"/><line x1="157" y1="92" x2="203" y2="92" stroke="#54d6a0"/><line x1="217" y1="92" x2="262" y2="92" stroke="#54d6a0"/>
+      </svg>
+      <div class="src"><a href="https://github.com/VoltAgent/awesome-ai-agent-papers">agentic RL papers index</a> → resolve to arXiv</div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-ai">AI</span><span class="tag t-radar">RADAR</span></div>
+      <div class="head">Terminal-Bench 2.1: GPT-5.6 Sol (89.5%) edges Opus 5 (89.1%)</div>
+      <p class="why"><b>Why it matters:</b> The top of the coding-agent frontier is now a near-tie, so the model is decreasingly the differentiator — the harness and eval design are.</p>
+      <p class="ex">Example: a 0.4-pt model gap is smaller than the swing you get from a better retrieval/scaffold around the same model.</p>
+      <div class="conn"><b>↔ Reinforces Kimi K3:</b> if the best models are converging, the moat is the harness, not the model.</div>
+      <svg viewBox="0 0 300 90" role="img"><title>Near-tie leaderboard</title>
+        <text x="8" y="24" fill="#c7cddb" font-size="11">GPT-5.6</text><rect x="70" y="14" width="200" height="14" rx="3" fill="#7aa2ff"/><text x="276" y="25" fill="#7aa2ff" font-size="10">89.5</text>
+        <text x="8" y="52" fill="#c7cddb" font-size="11">Opus 5</text><rect x="70" y="42" width="199" height="14" rx="3" fill="#8b93a3"/><text x="276" y="53" fill="#8b93a3" font-size="10">89.1</text>
+        <text x="70" y="80" fill="#9aa3b2" font-size="10">frontier flattening → harness &gt; model</text>
+      </svg>
+      <div class="src"><a href="https://www.morphllm.com/best-ai-coding-agents-2026">Terminal-Bench writeup</a></div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-invest">Investment</span><span class="tag t-know">KNOW</span></div>
+      <div class="head">OpenAI closes record $122B round ($852B post); Anthropic at $965B</div>
+      <p class="why"><b>Why it matters:</b> The frontier-lab capital arms race sets the pricing umbrella everyone builds under — when top labs raise at ~$1T valuations, downstream API pricing and talent costs move with it.</p>
+      <div class="conn"><b>↔ Contradiction with Kimi K3:</b> money concentrates in closed labs even as open weights close the capability gap. Which force wins is the open question.</div>
+      <svg viewBox="0 0 300 90" role="img"><title>Valuations</title>
+        <text x="8" y="24" fill="#c7cddb" font-size="11">Anthropic</text><rect x="80" y="14" width="200" height="14" rx="3" fill="#f0b866"/><text x="200" y="25" fill="#0f1115" font-size="10" text-anchor="middle">$965B</text>
+        <text x="8" y="52" fill="#c7cddb" font-size="11">OpenAI</text><rect x="80" y="42" width="176" height="14" rx="3" fill="#f0b866" opacity=".8"/><text x="168" y="53" fill="#0f1115" font-size="10" text-anchor="middle">$852B</text>
+        <text x="80" y="80" fill="#9aa3b2" font-size="10">private valuations, 2026</text>
+      </svg>
+      <div class="src"><a href="https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/">Crunchbase</a></div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-market">Market</span><span class="tag t-know">KNOW</span></div>
+      <div class="head">Global VC hit record $510B in H1 2026; AI took ~80% of Q1 dollars</div>
+      <p class="why"><b>Why it matters:</b> Capital is concentrating hard into AI, and valuations are priced for perfection — every non-AI startup competes for the remaining ~20% of dollars.</p>
+      <svg viewBox="0 0 300 80" role="img"><title>AI share of VC</title>
+        <rect x="10" y="24" width="228" height="22" rx="4" fill="#54d6a0"/><text x="124" y="40" fill="#0f1115" font-size="11" text-anchor="middle">AI ≈ 80%</text>
+        <rect x="242" y="24" width="48" height="22" rx="4" fill="#2b313c"/><text x="266" y="40" fill="#9aa3b2" font-size="10" text-anchor="middle">20%</text>
+        <text x="10" y="66" fill="#9aa3b2" font-size="10">Q1 2026 global venture $</text>
+      </svg>
+      <div class="src"><a href="https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/">Crunchbase H1 2026</a></div>
+    </div>
+
+    <div class="tile half">
+      <div class="row"><span class="cat c-geo">Geopolitical</span><span class="tag t-radar">RADAR</span></div>
+      <div class="head">House advances AI OVERWATCH Act; Blackwell export ban, H200 to case-by-case</div>
+      <p class="why"><b>Why it matters:</b> Chip access is now a policy variable, not just a supply one — vendor and region choices can shift based on where you and your customers operate.</p>
+      <div class="conn"><b>↔ Tension with Kimi K3:</b> policy restricts hardware, but open weights let capability route around it.</div>
+      <svg viewBox="0 0 300 96" role="img"><title>Export gate</title>
+        <rect x="8" y="38" width="60" height="26" rx="6" fill="#1e222b" stroke="#2b313c"/><text x="38" y="55" fill="#c7cddb" font-size="10" text-anchor="middle">US chips</text>
+        <line x1="68" y1="51" x2="104" y2="51" stroke="#6b7686" stroke-width="1.5" marker-end="url(#g)"/>
+        <rect x="104" y="34" width="54" height="34" rx="6" fill="#22222f" stroke="#c58bf0"/><text x="131" y="55" fill="#c58bf0" font-size="10" text-anchor="middle">policy gate</text>
+        <line x1="158" y1="46" x2="196" y2="26" stroke="#e0656a" stroke-width="1.5" marker-end="url(#gx)"/><rect x="196" y="14" width="96" height="22" rx="6" fill="#1e222b" stroke="#e0656a"/><text x="244" y="29" fill="#e0656a" font-size="10" text-anchor="middle">Blackwell ✗ ban</text>
+        <line x1="158" y1="54" x2="196" y2="54" stroke="#f0b866" stroke-width="1.5" marker-end="url(#gy)"/><rect x="196" y="43" width="96" height="22" rx="6" fill="#1e222b" stroke="#f0b866"/><text x="244" y="58" fill="#f0b866" font-size="10" text-anchor="middle">H200 ? case</text>
+        <line x1="158" y1="62" x2="196" y2="82" stroke="#54d6a0" stroke-width="1.5" marker-end="url(#gz)"/><rect x="196" y="72" width="96" height="20" rx="6" fill="#1e222b" stroke="#54d6a0"/><text x="244" y="86" fill="#54d6a0" font-size="10" text-anchor="middle">others ✓</text>
+        <defs><marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7686"/></marker><marker id="gx" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e0656a"/></marker><marker id="gy" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f0b866"/></marker><marker id="gz" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#54d6a0"/></marker></defs>
+      </svg>
+      <div class="src"><a href="https://www.mayerbrown.com/en/insights/publications/2026/01/administration-policies-on-advanced-ai-chips-codified">Mayer Brown</a> · <a href="https://semiconductorsinsight.com/us-china-chip-export-controls-h200-2026/">Semiconductors Insight</a></div>
+    </div>
+
+  </div>
+
+  <aside class="chat">
+    <h3>Ask the brief</h3>
+    <div class="ctx">Contextual — knows today's 7 items, the thread &amp; sources.</div>
+    <div class="stream">
+      <div class="msg u">Capability is decentralizing but capital is centralizing — which wins?</div>
+      <div class="msg a">Open question. Open weights (Kimi K3) close capability, but closed labs' ~$1T war chests buy distribution &amp; talent. Short-term distribution usually wins; open wins the long tail. Want the bull/bear on each?</div>
+      <div class="msg u">Why does MCP going stateless matter for my server?</div>
+      <div class="msg a">Drop sticky sessions, scale horizontally — any node answers. Catch: breaks old clients. Want the migration checklist?</div>
+    </div>
+    <div class="compose"><input placeholder="Ask about any item or the thread…" disabled><button>Send</button></div>
+  </aside>
+</div>
+</section>
+
+<!-- ===================== SYSTEM ===================== -->
+<section class="page" id="system">
+<div class="doc">
+  <h1 style="font-size:26px">The Signal System</h1>
+  <p style="color:var(--muted)">A living design record. Updated whenever the system changes — see the Decision Log at the end.</p>
+
+  <h2>Problem</h2>
+  <p>Staying current on AI/ML means drowning in hundreds of clickbait articles a day, which produces FOMO and impostor anxiety and eats time that should go to building. Existing news apps make this worse — they are engineered to always surface <em>something</em>, which is the exact incentive that feeds the anxiety.</p>
+
+  <h2>North Star</h2>
+  <div class="card accent"><p style="margin:0"><b>Kill FOMO, don't feed it.</b> Success is the fewest items you'd regret missing — not the most items covered. The system is explicitly allowed to say "quiet day, go build." Two jobs: <b>(a)</b> be aware and understand <em>why it matters</em> (conversational currency), and <b>(b)</b> get hands-on and understand tradeoffs (weekly homework grounded in your repos).</p></div>
+
+  <h2>High-level architecture</h2>
+  <p>Five production agents on a pipeline, plus an eval/learning subsystem that measures the pipeline and adapts it to you over time.</p>
+
+  <svg viewBox="0 0 960 300" role="img" style="max-width:100%"><title>Production pipeline</title>
+    <defs><marker id="p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7686"/></marker><marker id="pA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7aa2ff"/></marker></defs>
+    <text x="20" y="26" fill="#e7eaf0" font-size="15" font-weight="700">Production pipeline</text>
+    <rect x="20" y="120" width="130" height="70" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="85" y="150" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Scout</text><text x="85" y="170" fill="#9aa3b2" font-size="10" text-anchor="middle">discover + ingest</text>
+    <rect x="185" y="120" width="140" height="70" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="255" y="150" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Gatekeeper</text><text x="255" y="170" fill="#9aa3b2" font-size="10" text-anchor="middle">verify + kill noise</text>
+    <rect x="360" y="70" width="130" height="64" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="425" y="97" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Framer</text><text x="425" y="115" fill="#9aa3b2" font-size="10" text-anchor="middle">daily brief</text>
+    <rect x="360" y="176" width="130" height="64" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="425" y="203" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Coach</text><text x="425" y="221" fill="#9aa3b2" font-size="10" text-anchor="middle">weekly homework</text>
+    <rect x="525" y="70" width="140" height="64" rx="10" fill="#12202a" stroke="#7aa2ff"/><text x="595" y="97" fill="#e7eaf0" font-size="12" font-weight="700" text-anchor="middle">News (Signal)</text><text x="595" y="115" fill="#9aa3b2" font-size="10" text-anchor="middle">you read daily</text>
+    <rect x="525" y="176" width="140" height="64" rx="10" fill="#12202a" stroke="#7aa2ff"/><text x="595" y="203" fill="#e7eaf0" font-size="12" font-weight="700" text-anchor="middle">Backlog (Hub)</text><text x="595" y="221" fill="#9aa3b2" font-size="10" text-anchor="middle">you work weekly</text>
+    <rect x="710" y="120" width="130" height="70" rx="10" fill="#1e222b" stroke="#3a4150" stroke-dasharray="4 3"/><text x="775" y="150" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Tuner</text><text x="775" y="170" fill="#9aa3b2" font-size="10" text-anchor="middle">learns you</text>
+    <line x1="150" y1="155" x2="183" y2="155" stroke="#6b7686" stroke-width="1.5" marker-end="url(#p)"/>
+    <path d="M325 150 Q345 110 358 108" fill="none" stroke="#6b7686" stroke-width="1.5" marker-end="url(#p)"/>
+    <path d="M325 160 Q345 205 358 205" fill="none" stroke="#6b7686" stroke-width="1.5" marker-end="url(#p)"/>
+    <line x1="490" y1="102" x2="523" y2="102" stroke="#7aa2ff" stroke-width="1.6" marker-end="url(#pA)"/>
+    <line x1="490" y1="208" x2="523" y2="208" stroke="#7aa2ff" stroke-width="1.6" marker-end="url(#pA)"/>
+    <path d="M665 118 Q740 118 760 122" fill="none" stroke="#7aa2ff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#pA)"/>
+    <path d="M665 208 Q740 208 762 190" fill="none" stroke="#7aa2ff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#pA)"/>
+    <path d="M775 190 Q775 265 255 265 Q120 265 100 192" fill="none" stroke="#9aa3b2" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#p)"/>
+    <text x="360" y="285" fill="#9aa3b2" font-size="10">Tuner feeds updated priors + interest graph back to Scout &amp; Gatekeeper</text>
+  </svg>
+
+  <h3>Agents &amp; purpose</h3>
+  <table>
+    <tr><th>Agent</th><th>Purpose</th><th>You touch?</th></tr>
+    <tr><td><b>Scout</b></td><td>Discover + ingest candidate items across your interest graph</td><td>No</td></tr>
+    <tr><td><b>Gatekeeper</b></td><td>Verify (provenance, corroboration, dedup, reputation, materiality) and kill noise</td><td>Suppressed drawer</td></tr>
+    <tr><td><b>Framer</b></td><td>Write the daily brief — why-it-matters, 90-sec papers, the thread, quiet-day</td><td>Via News</td></tr>
+    <tr><td><b>Coach</b></td><td>Design weekly 60-min homework grounded in your repos</td><td>Via Backlog</td></tr>
+    <tr><td><b>Tuner</b></td><td>Learn your taste over time; recalibrate the other agents</td><td>Via feedback</td></tr>
+  </table>
+
+  <h2>Evals — how we know it works</h2>
+  <p>Every agent is measured, component-wise and end-to-end. The recurring split: <b>objective</b> checks (fixed gates, automatable) vs <b>subjective</b> checks (personal, learned targets).</p>
+  <table>
+    <tr><th>Agent</th><th>What we measure</th><th>Type</th></tr>
+    <tr><td><b>Scout</b></td><td>Recall — of what mattered, how much did it fetch? (invisible-miss problem → retrospective oracle)</td><td>objective</td></tr>
+    <tr><td><b>Gatekeeper</b></td><td>Precision &amp; recall (classifier). Biased toward recall — false negatives = FOMO</td><td>objective</td></tr>
+    <tr><td><b>Framer</b></td><td>Faithfulness (claim decomposition → grounded, hard zero-hallucination gate) + Usefulness (rubric ratings)</td><td>obj + subj</td></tr>
+    <tr><td><b>Coach</b></td><td>Code-grounding (assertions on your repo) + doability/skill (completion, actual time, reuse)</td><td>obj + subj</td></tr>
+    <tr><td><b>Tuner</b></td><td>Slope of every other metric over time (meta-eval). Graded on trend, not level</td><td>longitudinal</td></tr>
+  </table>
+  <p><b>Two grading modes:</b> offline regression against a golden set of labeled past days (makes prompt iteration safe), and online production feedback (your ratings + a dashboard).</p>
+
+  <h2>The eval / learning loop</h2>
+  <p>Measurement and fixing are kept separate. The <b>Evaluator</b> is a read-only sensor; the <b>Prescriber</b> turns diagnoses into recommended actions; the <b>Tuner</b> is the actuator that recalibrates agents; the <b>Control Room</b> reports and asks you questions, whose answers become new gold labels.</p>
+
+  <svg viewBox="0 0 960 330" role="img" style="max-width:100%"><title>Eval and learning loop</title>
+    <defs><marker id="e" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7686"/></marker><marker id="eG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#54d6a0"/></marker><marker id="eP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#c58bf0"/></marker></defs>
+    <text x="20" y="24" fill="#e7eaf0" font-size="14" font-weight="700">Sensor → Prescribe → Gate → Actuate → Report → Elicit</text>
+    <rect x="20" y="44" width="920" height="66" rx="10" fill="#141922" stroke="#2b313c"/><text x="34" y="66" fill="#9aa3b2" font-size="10">PRODUCTION</text>
+    <text x="150" y="84" fill="#c7cddb" font-size="12" text-anchor="middle">Scout → Gatekeeper → Framer / Coach → News + Backlog</text>
+    <text x="150" y="100" fill="#6b7686" font-size="10" text-anchor="middle">(the pipeline above)</text>
+
+    <rect x="20" y="150" width="150" height="70" rx="10" fill="#1e222b" stroke="#54d6a0"/><text x="95" y="180" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Evaluator</text><text x="95" y="199" fill="#54d6a0" font-size="10" text-anchor="middle">sensor · read-only</text>
+    <rect x="210" y="150" width="150" height="70" rx="10" fill="#1e222b" stroke="#c58bf0"/><text x="285" y="180" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Prescriber</text><text x="285" y="199" fill="#c58bf0" font-size="10" text-anchor="middle">diagnosis → action</text>
+    <rect x="400" y="150" width="150" height="70" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="475" y="176" fill="#e7eaf0" font-size="12" font-weight="700" text-anchor="middle">Action gate</text><text x="475" y="193" fill="#54d6a0" font-size="10" text-anchor="middle">auto (safe)</text><text x="475" y="207" fill="#f0b866" font-size="10" text-anchor="middle">human-gated (risky)</text>
+    <rect x="590" y="150" width="150" height="70" rx="10" fill="#1e222b" stroke="#3a4150" stroke-dasharray="4 3"/><text x="665" y="180" fill="#e7eaf0" font-size="13" font-weight="700" text-anchor="middle">Tuner</text><text x="665" y="199" fill="#9aa3b2" font-size="10" text-anchor="middle">actuator</text>
+    <rect x="780" y="150" width="160" height="70" rx="10" fill="#12202a" stroke="#7aa2ff"/><text x="860" y="176" fill="#e7eaf0" font-size="12" font-weight="700" text-anchor="middle">Control Room</text><text x="860" y="193" fill="#9aa3b2" font-size="10" text-anchor="middle">report + ask you</text>
+
+    <line x1="150" y1="110" x2="120" y2="148" stroke="#54d6a0" stroke-width="1.5" marker-end="url(#eG)"/>
+    <line x1="170" y1="185" x2="208" y2="185" stroke="#6b7686" stroke-width="1.5" marker-end="url(#e)"/>
+    <line x1="360" y1="185" x2="398" y2="185" stroke="#6b7686" stroke-width="1.5" marker-end="url(#e)"/>
+    <line x1="550" y1="185" x2="588" y2="185" stroke="#6b7686" stroke-width="1.5" marker-end="url(#e)"/>
+    <path d="M665 150 Q665 120 300 118" fill="none" stroke="#9aa3b2" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#e)"/>
+    <text x="360" y="135" fill="#9aa3b2" font-size="10">recalibrate agents</text>
+    <line x1="740" y1="185" x2="778" y2="185" stroke="#6b7686" stroke-width="1.5" marker-end="url(#e)"/>
+    <rect x="300" y="255" width="360" height="52" rx="10" fill="#1e222b" stroke="#3a4150"/><text x="480" y="278" fill="#e7eaf0" font-size="12" font-weight="700" text-anchor="middle">Eval dataset (data/)</text><text x="480" y="295" fill="#9aa3b2" font-size="10" text-anchor="middle">human gold · implicit signals · automated checks — held-out slice kept honest</text>
+    <path d="M860 220 Q860 281 662 281" fill="none" stroke="#7aa2ff" stroke-width="1.5" marker-end="url(#eP)"/>
+    <text x="690" y="248" fill="#7aa2ff" font-size="10">your answers → new labels</text>
+    <path d="M300 281 Q120 281 95 222" fill="none" stroke="#6b7686" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#e)"/>
+    <text x="120" y="248" fill="#9aa3b2" font-size="10">feeds Evaluator</text>
+  </svg>
+
+  <h3>Guardrail: anti-echo-chamber</h3>
+  <p>The Tuner could raise your ratings by only feeding you what you already believe — a filter bubble that betrays the goal of balancing your thinking with new thinking. A standing <b>diversity / exploration</b> metric in the Control Room prevents this: a minimum share of items must sit outside your established priors.</p>
+
+  <h3>Prescriber accountability</h3>
+  <p>Every recommended action records a <b>predicted impact with a confidence</b>. After it ships, the Control Room shows <b>predicted vs. actual</b> — so the prescriptive layer earns trust instead of just asserting it, and every recalibration is regression-tested against the held-out set before shipping and is reversible.</p>
+
+  <h2>System design &amp; data</h2>
+  <p>Data is separated from presentation. Agents write JSON to <code>data/</code>; the pages (<code>Signal.html</code>, <code>Control-Hub.html</code>) render it. Files: <code>profile.json</code> (the user profile), <code>YYYY-MM-DD.json</code> (immutable daily brief record + archive), <code>backlog.json</code>, <code>metrics.json</code>. Every record carries <code>user_id</code>.</p>
+  <p><b>Loop / token engineering:</b> the daily path is cheap (small models for Scout/dedup, mid for Framer); the expensive repo-grounded synthesis (Coach) runs only Friday night / Saturday morning.</p>
+
+  <h2>Tradeoffs (chosen deliberately)</h2>
+  <ul>
+    <li><b>Recall over precision</b> at the Gatekeeper — better a little noise than a missed item (FOMO).</li>
+    <li><b>Depth over coverage</b> in homework — one or two coherent exercises, the rest benched to the backlog.</li>
+    <li><b>Faithfulness is a hard gate; usefulness is a soft, learned target.</b></li>
+    <li><b>Build for one, don't hardcode one</b> — profile object + <code>user_id</code> seam keep the multi-tenant path open at near-zero cost today.</li>
+  </ul>
+
+  <h2>Commercial path (documented, not built)</h2>
+  <p><b>The brain transfers; the body doesn't.</b> Agent logic is ~80% portable to a product; the local/single-user scaffolding is not. Key economics insight: most of the pipeline is <b>shared</b> — the news is the same for everyone, so run <b>Scout → Gatekeeper once</b> to produce a canonical verified pool, then apply a cheap <b>per-user personalization layer</b> (Framer framing + materiality + Coach) on top. What a product adds: auth + multi-tenant isolation, per-user LLM cost management, per-user cold-start onboarding, and cloud scheduling. Defensibility is the <b>action loop</b> (news → hands-on skill grounded in the user's code) and adaptive personalization — not the news itself.</p>
+
+  <h2>Science methodology</h2>
+  <p>Treat the system as an experiment: hypotheses (each agent's value), metrics (the evals above), controlled iteration (offline regression before shipping any prompt change), and honest reporting of predicted vs. actual. The append-only Decision Log below is the lab notebook.</p>
+
+  <h2>Decision Log</h2>
+  <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Reframed from "news app" to a synthesis + practice system. North star = kill FOMO, not maximize coverage; system may declare a quiet day.</p></div>
+  <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Two jobs split: (a) conversational currency (daily), (b) hands-on tradeoff learning (weekly homework grounded in repos, off-domain allowed).</p></div>
+  <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Layout = Bento. Added reading-time header, a synthesis "thread," inline connections; worked examples on AI items only; DO THIS reserved for AI.</p></div>
+  <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Added the eval subsystem: Evaluator (sensor) / Prescriber / Tuner (actuator) / Control Room, with a held-out dataset, two-tier action gating, anti-echo-chamber guardrail, and prescriber accountability.</p></div>
+  <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Split surfaces into <code>Signal.html</code> (News + System, public-safe) and <code>Control-Hub.html</code> (Control Room + Backlog, private). Baked in <code>profile</code> + <code>user_id</code> seam for a future multi-tenant product.</p></div>
+
+  <div class="foot">Signal · System page — living design record for <code>aiml-signal-system</code>. Public-safe. Personal telemetry lives in the private Control Hub.</div>
+</div>
+</section>
+
+<script>
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+      document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});
+      t.classList.add('active');
+      document.getElementById(t.dataset.p).classList.add('active');
+      window.scrollTo(0,0);
+    });
+  });
+</script>
+</body>
+</html>
