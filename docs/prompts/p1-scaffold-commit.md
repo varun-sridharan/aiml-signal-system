@@ -43,3 +43,9 @@ Review the files in this repository, then:
 
 - Repo is private; when public later, exclude `Control-Hub.html` + `data/` from the public build (they hold personal telemetry).
 - This is deliberately low-stakes to learn the Claude Code approve-edits loop before building agents.
+
+## Generated with (for reproducibility)
+
+- **Model:** Claude Opus 5 (via Claude Code v2.1.222)
+- **Result commit:** `e1661d7` on `origin/main`
+- **Deviation from prompt:** Claude Code also appended `.DS_Store` to `.gitignore` (macOS hygiene) — outside the prompt's stated scope but correct. Not added to the prompt body since it's environment-specific, not part of the intended output.

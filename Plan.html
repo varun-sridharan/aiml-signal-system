@@ -65,7 +65,7 @@
     <p>• <b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.</p>
   </div>
 
-  <div class="status-now"><b>Current status (2026-08-04):</b> Dev environment set up (GitHub repo, clone, Claude Code CLI installed + logged in). Repo scaffolded locally with Signal.html, Control-Hub.html, data/, design/, docs/ — <b>not yet committed to GitHub</b>. Next: Phase 1.</div>
+  <div class="status-now"><b>Current status (updated 2026-08-09):</b> Phase 1 complete — scaffolding committed &amp; pushed to GitHub (commit <code>e1661d7</code>). Repo live at github.com/varun-sridharan/aiml-signal-system. Next: <b>Phase 2 — build &amp; prove the Framer.</b></div>
 
   <div class="legend">
     <span><span class="dot d-now"></span>now</span>
@@ -75,11 +75,11 @@
   </div>
 
   <!-- PHASE 1 -->
-  <div class="phase now">
+  <div class="phase">
     <div class="ph">
       <div class="pnum">Phase&nbsp;1</div>
       <div class="pmain">
-        <div class="ptitle">First commit &amp; the Claude Code loop <span class="pbadge pb-now">NOW</span></div>
+        <div class="ptitle">First commit &amp; the Claude Code loop <span class="pbadge pb-done">DONE</span></div>
         <div class="endstate"><b>End state:</b> all scaffolding committed &amp; pushed to GitHub via a Claude Code session you drove yourself.</div>
         <div class="why">Why it matters: your work becomes versioned and accessible anywhere, and you learn the core approve-edits loop on a low-stakes task before building agents.</div>
       </div>
@@ -96,17 +96,21 @@
         <ul>
           <li>Repo stays private now; when exposed later, exclude <code>Control-Hub.html</code> + <code>data/</code> from the public build (personal telemetry).</li>
           <li>Deliberately low-stakes (README + commit) to learn the CLI loop before touching agents.</li>
+          <li><b>Done 2026-08-09:</b> committed as <code>e1661d7</code>, pushed to <code>origin/main</code>, generated with Opus 5.</li>
+          <li>Claude Code added <code>.DS_Store</code> to <code>.gitignore</code> (macOS junk) — one change beyond prompt scope, flagged transparently. Environment hygiene, not a code decision.</li>
+          <li>Confirmed the pages don't read <code>data/</code> yet (content inline) — wiring deferred to Phases 6 &amp; 9, as designed.</li>
+          <li>Practice: approved each step individually rather than blanket "don't ask again" — the right habit while learning.</li>
         </ul>
       </div>
     </div>
   </div>
 
   <!-- PHASE 2 -->
-  <div class="phase">
+  <div class="phase now">
     <div class="ph">
       <div class="pnum">Phase&nbsp;2</div>
       <div class="pmain">
-        <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-next">NEXT</span></div>
+        <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-now">NOW</span></div>
         <div class="endstate"><b>End state:</b> a Framer agent that turns <code>data/2026-08-04.json</code> into a brief matching the <a href="design/News-reference.html">Bento reference</a> voice.</div>
         <div class="why">Why it matters: Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.</div>
       </div>
