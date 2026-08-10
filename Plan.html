@@ -24,8 +24,14 @@
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--muted);margin:0 0 22px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
   .d-done{background:var(--do)}.d-now{background:var(--ai)}.d-next{background:var(--radar)}.d-later{background:var(--muteb)}
-  .phase{border:1px solid var(--line);border-radius:14px;padding:0;margin:0 0 18px;overflow:hidden}
-  .phase.now{border-color:var(--ai)}
+  .phase{border:1px solid var(--line);border-left:5px solid var(--muteb);border-radius:14px;padding:0;margin:0 0 18px;overflow:hidden}
+  .phase.done{border-left-color:var(--do)}
+  .phase.now{border-left-color:var(--ai);border-color:var(--ai)}
+  .phase.next{border-left-color:var(--radar)}
+  .phase.later{border-left-color:var(--muteb)}
+  .phase.done .ph{background:linear-gradient(180deg,rgba(84,214,160,.10),var(--panel))}
+  .phase.now .ph{background:linear-gradient(180deg,rgba(122,162,255,.16),var(--panel))}
+  .phase.next .ph{background:linear-gradient(180deg,rgba(240,184,102,.12),var(--panel))}
   .ph{padding:14px 18px;display:flex;align-items:flex-start;gap:12px;background:var(--panel)}
   .pnum{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px;white-space:nowrap}
   .pmain{flex:1}
@@ -65,7 +71,7 @@
     <p>• <b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.</p>
   </div>
 
-  <div class="status-now"><b>Current status (updated 2026-08-09):</b> Phase 1 complete — scaffolding committed &amp; pushed to GitHub (commit <code>e1661d7</code>). Repo live at github.com/varun-sridharan/aiml-signal-system. Next: <b>Phase 2 — build &amp; prove the Framer.</b></div>
+  <div class="status-now"><b>Current status (updated 2026-08-09):</b> Phase 2 complete — Framer agent built &amp; proven; first real brief generated for ~$0.10 (commit <code>df8adfd</code>). Next: <b>Phase 3 — Framer eval harness</b>, starting with the faithfulness-grader bug the run surfaced.</div>
 
   <div class="legend">
     <span><span class="dot d-now"></span>now</span>
@@ -75,7 +81,7 @@
   </div>
 
   <!-- PHASE 1 -->
-  <div class="phase">
+  <div class="phase done">
     <div class="ph">
       <div class="pnum">Phase&nbsp;1</div>
       <div class="pmain">
@@ -106,11 +112,11 @@
   </div>
 
   <!-- PHASE 2 -->
-  <div class="phase now">
+  <div class="phase done">
     <div class="ph">
       <div class="pnum">Phase&nbsp;2</div>
       <div class="pmain">
-        <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-now">NOW</span></div>
+        <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-done">DONE</span></div>
         <div class="endstate"><b>End state:</b> a Framer agent that turns <code>data/2026-08-04.json</code> into a brief matching the <a href="design/News-reference.html">Bento reference</a> voice.</div>
         <div class="why">Why it matters: Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.</div>
       </div>
@@ -119,7 +125,7 @@
     <div class="body">
       <table>
         <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
-        <tr><td class="act">Finalize the Framer build prompt (+ Evals)</td><td>Canonical prompt with faithfulness/usefulness graders baked in</td><td>Reproducible recipe; evals from day one</td><td class="prompt-link"><span class="pending">docs/prompts/p2-build-framer.md — authored in this phase</span></td></tr>
+        <tr><td class="act">Finalize the Framer build prompt (+ Evals)</td><td>Canonical prompt with faithfulness/usefulness graders baked in</td><td>Reproducible recipe; evals from day one</td><td class="prompt-link"><a href="docs/prompts/p2-build-framer.md">p2-build-framer.md</a></td></tr>
         <tr><td class="act">Generate the Framer agent via Claude Code</td><td><code>agents/framer.py</code> runs on the sample day</td><td>Your first real agent</td><td class="prompt-link"><a href="docs/Framer-Prompt-and-Sources.md">Framer-Prompt-and-Sources.md</a></td></tr>
         <tr><td class="act">Eyeball output vs the reference</td><td>You judge whether the voice sounds right</td><td>The go / no-go on the whole system</td><td class="prompt-link"><span class="pending">— your taste is the gate</span></td></tr>
       </table>
@@ -128,17 +134,21 @@
           <li>Locked Framer rules: worked examples on <b>AI items only</b>; synthesis "thread" required; <b>DO THIS</b> reserved for AI; reading-time header; inline connections.</li>
           <li>Faithfulness = hard zero-hallucination gate (objective); usefulness = soft, learned target (subjective).</li>
           <li>Test against <code>design/News-reference.html</code>, not vibes.</li>
+          <li><b>Done 2026-08-09 (commit df8adfd, Opus 5):</b> Framer built &amp; run — 7 items, 2 DO THIS, ~5 min read, <b>$0.10</b>. Batched to 2 calls (Opus framing + Haiku check) with prompt caching + cost breaker, all working.</li>
+          <li><b>Voice verdict = GO:</b> thread carries a real correlation + contradiction and reaches its own conclusion; connections genuine. Two weak spots to tune later: iStar example clause doesn't parse; Kimi K3 example vaguer than the reference's concrete "~1/10th cost".</li>
+          <li><b>Key finding → Phase 3:</b> the faithfulness check produced a <b>false positive</b> (flagged $965B as unsupported though it was in the excerpt). Two grader bugs: it missed a clause, and it graded thread/headline text against a single item's excerpt. The grader needs its own eval; the thread must be checked against the <em>union</em> of excerpts.</li>
+          <li>Deviations, both fine: built the prompt file fresh (option 3, no invented Scout list); switched the framing call to streaming after the SDK blocked a 24k-token non-streaming request (no spend).</li>
         </ul>
       </div>
     </div>
   </div>
 
   <!-- PHASE 3 -->
-  <div class="phase">
+  <div class="phase now">
     <div class="ph">
       <div class="pnum">Phase&nbsp;3</div>
       <div class="pmain">
-        <div class="ptitle">Framer eval harness (golden set) <span class="pbadge pb-next">NEXT</span></div>
+        <div class="ptitle">Framer eval harness (golden set) <span class="pbadge pb-now">NOW</span></div>
         <div class="endstate"><b>End state:</b> a tiny offline eval that scores the Framer (faithfulness assertion + usefulness rubric) against 1–2 labeled days.</div>
         <div class="why">Why it matters: turns "is the voice right?" from a vibe into a number, and makes every future prompt tweak safe via regression.</div>
       </div>
@@ -155,35 +165,43 @@
         <ul>
           <li>Eval harness lives in the repo from early on; the Tuner-driven learning matures later (needs weeks of data).</li>
           <li>Held-out slice kept separate from anything the Tuner adapts on (train/test hygiene).</li>
+          <li><b>First golden-set case comes free:</b> the Phase 2 grader false positive. Fix the check to (a) not miss clauses and (b) grade the thread against the union of all item excerpts, not one item's.</li>
         </ul>
       </div>
     </div>
   </div>
 
   <!-- OUTLINE PHASES -->
-  <div class="phase outline">
-    <div class="ph"><div class="pnum">Phase&nbsp;4</div><div class="pmain"><div class="ptitle">Scout — seed sources + fetch <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> Scout pulls candidate items from the fixed seed list into <code>data/</code>.</div><div class="why">Why it matters: turns on real intake so the Framer runs on live items, not a sample.</div></div><div class="time">~60 min</div></div>
+  <div class="phase outline next">
+    <div class="ph"><div class="pnum">Phase&nbsp;4</div><div class="pmain"><div class="ptitle">Scout — seed sources + fetch <span class="pbadge pb-next">NEXT</span></div><div class="endstate"><b>End state:</b> Scout pulls candidate items from the fixed seed list into <code>data/</code>.</div><div class="why">Why it matters: turns on real intake so the Framer runs on live items, not a sample.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;5</div><div class="pmain"><div class="ptitle">Gatekeeper basics + Suppressed drawer <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer.</div><div class="why">Why it matters: kills noise and gives you the false-negative audit trail that keeps FOMO dead.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;6</div><div class="pmain"><div class="ptitle">Daily loop end-to-end (News renders from data/) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> a real daily brief generated Scout→Gatekeeper→Framer→News.html, with quiet-day behavior.</div><div class="why">Why it matters: the anti-FOMO daily value goes live — you start using it every morning.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;7</div><div class="pmain"><div class="ptitle">Coach — standalone homework <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> a weekly 60-min exercise generated from the week's items, written to the backlog.</div><div class="why">Why it matters: turns reading into doing (job b), before the harder repo-grounding step.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;8</div><div class="pmain"><div class="ptitle">Coach — repo grounding <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> homework that fits a real spot in your repos, verified by assertions against the code.</div><div class="why">Why it matters: the magic feature — and the highest hallucination risk, so it comes after trust is built.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;9</div><div class="pmain"><div class="ptitle">Control Room live (metrics.json) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> the Control Room renders real eval metrics, pending actions, and elicitation questions.</div><div class="why">Why it matters: closes the report→elicit→label loop so the system can improve deliberately.</div></div><div class="time">~60 min</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;10</div><div class="pmain"><div class="ptitle">Tuner — learned personalization <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> source reputation + topic priors that adapt from your feedback, with the diversity guardrail.</div><div class="why">Why it matters: the system starts getting better at <em>you</em> — but only after weeks of data exist.</div></div><div class="time">multi-session</div></div>
   </div>
-  <div class="phase outline">
+  <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;11</div><div class="pmain"><div class="ptitle">Commercial prep (documented) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> shared-base / per-user split proven; auth + multi-tenant scoped when/if productizing.</div><div class="why">Why it matters: the path from personal system to product, kept open by the <code>user_id</code> seam.</div></div><div class="time">multi-session</div></div>
+  </div>
+
+  <div class="how" style="border-color:var(--muteb)">
+    <p><b>Cross-cutting infrastructure</b> <span style="color:var(--muted)">(trajectory, not a single phase)</span></p>
+    <p>• <b>Data layer:</b> JSON files now → <b>SQLite</b> when history/queries get awkward (~Phase 6–9) → <b>Postgres + pgvector</b> incl. auth <code>sessions</code> at multi-tenant (Phase 11). The <code>user_id</code> seam keeps the migration mechanical.</p>
+    <p>• <b>Observability:</b> extend <code>usage.json</code> into a structured per-run trace now → an LLM-observability tool at deploy (~Phase 6+).</p>
+    <p>• <b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9.</p>
   </div>
 
   <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="docs/prompts/">docs/prompts/</a> · Design: <a href="Signal.html">Signal.html → System</a> · Backlog: <a href="Control-Hub.html">Control-Hub.html</a>.</div>

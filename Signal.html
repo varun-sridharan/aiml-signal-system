@@ -281,6 +281,18 @@
     <tr><td><b>Tuner</b></td><td>Learn your taste over time; recalibrate the other agents</td><td>Via feedback</td></tr>
   </table>
 
+  <h3>Architecture concepts per agent</h3>
+  <p>Which LLM / agentic concept each agent uses, and for what. Built for the Framer today; the rest are the intended design. Agents are decoupled from each other via <b>JSON contracts</b>, and from their tools via <b>MCP</b> where a real boundary exists.</p>
+  <table>
+    <tr><th>Agent</th><th>Concepts used</th></tr>
+    <tr><td><b>Scout</b></td><td><b>MCP servers</b> for source fetching (web / arXiv / GitHub) · <b>source-reputation priors</b> (Tier A–D) · <b>deterministic ingestion</b> (no LLM where a fetch suffices) · graded on <b>recall</b></td></tr>
+    <tr><td><b>Gatekeeper</b></td><td><b>Verification harness</b> for provenance / corroboration / dedup · <b>classifier</b> scored on precision + recall (recall-biased to avoid FOMO) · <b>reputation priors</b> for materiality · <b>Suppressed-drawer</b> audit log (false-negative eval)</td></tr>
+    <tr><td><b>Framer</b></td><td><b>Batched single structured call</b> (frames all items at once) · <b>structured output</b> (JSON schema) · <b>prompt caching</b> on the reused system prompt · <b>model routing</b> (Opus frames, Haiku checks) · <b>reflection loop</b> for the faithfulness self-check · <b>context injection</b> from profile (no hardcoded facts) · <b>prompt-as-file</b> (verbatim markers) · <b>cost circuit-breaker</b> + usage ledger</td></tr>
+    <tr><td><b>Coach</b></td><td><b>MCP (GitHub server)</b> for grounding homework in your repos · <b>code-grounding assertions</b> for verification · <b>behavioral outcome signals</b> (completion, actual time) · <b>batched heavy run</b> Fridays (model routing / cost) · <b>streaming</b> for long outputs</td></tr>
+    <tr><td><b>Tuner</b></td><td><b>Longitudinal meta-eval</b> (graded on slope over time) · <b>credit assignment</b> across the pipeline (delayed reward) · <b>human-in-the-loop labels</b> · <b>two-tier action gating</b> (auto vs human-gated) · <b>anti-echo-chamber</b> diversity guardrail · <b>held-out set</b> (train/test hygiene)</td></tr>
+    <tr><td><b>Eval subsystem</b><br><span style="color:var(--muted);font-size:11px">Evaluator · Prescriber · Control Room</span></td><td><b>Read-only sensor</b> (Evaluator) · <b>diagnosis → action</b> with predicted-vs-actual accountability (Prescriber) · <b>report + elicitation</b>, where your answers become gold labels (Control Room) · <b>regression gate</b> on a golden set before shipping</td></tr>
+  </table>
+
   <h2>Evals — how we know it works</h2>
   <p>Every agent is measured, component-wise and end-to-end. The recurring split: <b>objective</b> checks (fixed gates, automatable) vs <b>subjective</b> checks (personal, learned targets).</p>
   <table>
@@ -353,6 +365,11 @@
   <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Layout = Bento. Added reading-time header, a synthesis "thread," inline connections; worked examples on AI items only; DO THIS reserved for AI.</p></div>
   <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Added the eval subsystem: Evaluator (sensor) / Prescriber / Tuner (actuator) / Control Room, with a held-out dataset, two-tier action gating, anti-echo-chamber guardrail, and prescriber accountability.</p></div>
   <div class="log"><span class="d">2026-08-04</span><p style="margin:2px 0">Split surfaces into <code>Signal.html</code> (News + System, public-safe) and <code>Control-Hub.html</code> (Control Room + Backlog, private). Baked in <code>profile</code> + <code>user_id</code> seam for a future multi-tenant product.</p></div>
+  <div class="log"><span class="d">2026-08-09</span><p style="margin:2px 0"><b>Phase 2 done (commit df8adfd, Opus 5).</b> Framer built &amp; proven — one batched structured framing call + a cheap Haiku faithfulness self-check, prompt caching, cost circuit-breaker. First real brief for ~$0.10. Voice verdict: GO.</p></div>
+  <div class="log"><span class="d">2026-08-09</span><p style="margin:2px 0"><b>Eval finding.</b> The faithfulness check produced a false positive (missed a clause; graded the thread against a single item's excerpt). Decision: the grader needs its own eval, and the thread is checked against the <em>union</em> of all excerpts — Phase 3's first golden-set case.</p></div>
+  <div class="log"><span class="d">2026-08-09</span><p style="margin:2px 0"><b>Tool layer &amp; decoupling.</b> Agents are decoupled from each other via JSON contracts, and from their tools via <b>MCP</b> where a real boundary exists (Scout fetching, Coach GitHub). Captured as the per-agent concept map above rather than a one-line entry.</p></div>
+  <div class="log"><span class="d">2026-08-09</span><p style="margin:2px 0"><b>Process.</b> Decisions are now recorded in both <code>Plan.html</code> and this Decision Log (see <code>docs/CONVENTIONS.md</code> §3).</p></div>
+  <div class="log"><span class="d">2026-08-09</span><p style="margin:2px 0"><b>Infrastructure trajectory.</b> <b>Data:</b> JSON files now → <b>SQLite</b> when history/queries get awkward (~Phase 6–9) → <b>Postgres + pgvector</b> (incl. auth <code>sessions</code>) at multi-tenant (Phase 11); the <code>user_id</code> seam keeps the migration mechanical. <b>Observability:</b> extend <code>usage.json</code> into a structured per-run trace now → an LLM-observability tool at deploy (~Phase 6+); it overlaps the eval subsystem and feeds the Control Room. <b>Cost tracker:</b> the <code>usage.json</code> ledger + cost circuit-breaker exist now; the Control Room charts it live in Phase 9.</p></div>
 
   <div class="foot">Signal · System page — living design record for <code>aiml-signal-system</code>. Public-safe. Personal telemetry lives in the private Control Hub.</div>
 </div>

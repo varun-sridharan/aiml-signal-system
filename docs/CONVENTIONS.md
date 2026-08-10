@@ -25,3 +25,12 @@ Keep comments short. The goal is that reading the code teaches the concept behin
 - Prompts in `docs/prompts/` are canonical and holistic (overwritten wholesale, never diffed).
 - Record the model used + result commit at the bottom of each prompt file.
 - Git-committed code is the true source of truth; the prompt is the recipe.
+
+## 3. Record decisions in TWO places
+
+Every decision, tradeoff, or prioritization gets recorded in both:
+
+- **`Plan.html`** — in the phase it relates to (status + phase notes).
+- **`Signal.html` → System tab** — the append-only **Decision Log**, plus the relevant architecture section (e.g., the per-agent concept map or the eval loop) whenever the decision changes the design.
+
+Updating only the plan is incomplete. The Plan tracks *what we're doing and when*; the System page is the durable *why* — the design record. A decision that isn't in the System page effectively didn't happen for anyone reading the repo later.
