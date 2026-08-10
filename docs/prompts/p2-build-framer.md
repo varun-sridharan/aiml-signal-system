@@ -86,5 +86,9 @@ Constraints:
 3. Confirm `.env` is gitignored (the Python .gitignore already ignores it) so the key is never committed.
 
 ## Generated with (for reproducibility)
-- Model: _(fill after running — e.g., Claude Opus 5 via Claude Code)_
-- Result commit: _(fill after running)_
+- **Model:** Claude Opus 5 (via Claude Code v2.1.222)
+- **Result commit:** `df8adfd` on `origin/main`
+- **Deviations from prompt (both correct):**
+  - Built `docs/Framer-Prompt-and-Sources.md` fresh (the file didn't exist; option 3) — no Scout content invented.
+  - Switched the framing call from `messages.create` to `messages.stream` + `get_final_message()` because the SDK blocks a non-streaming request with `max_tokens=24000` (would outlast the HTTP timeout). No API spend on the blocked attempt.
+- **Run result:** 7 items, 2 DO THIS, ~5 min read, $0.0998. One faithfulness false positive — see Phase 3.
