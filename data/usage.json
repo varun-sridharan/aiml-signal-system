@@ -1,0 +1,27 @@
+{
+  "note": "Append-only API spend log. Every call records tokens + estimated cost so the Control Room can chart cost per brief against MONTHLY_BUDGET_USD.",
+  "calls": [
+    {
+      "user_id": "varun",
+      "timestamp": "2026-08-10T01:00:42+00:00",
+      "phase": "framing",
+      "model": "claude-opus-5",
+      "input_tokens": 1884,
+      "output_tokens": 3024,
+      "cache_creation_input_tokens": 1726,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.095808
+    },
+    {
+      "user_id": "varun",
+      "timestamp": "2026-08-10T01:00:42+00:00",
+      "phase": "faithfulness",
+      "model": "claude-haiku-4-5",
+      "input_tokens": 2651,
+      "output_tokens": 269,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.003996
+    }
+  ]
+}
