@@ -24,22 +24,32 @@ Each agent has its own metric: Scout on recall, Gatekeeper on precision/recall (
 
 ## Structure
 
+Folders are organised by **role**, and data files are **named after the agent that produced them**.
+
 ```
-Signal.html        Public-safe — the daily News brief
-System-Design.html Public-safe — living design record & decision log
-Control-Hub.html   Private surface — Control Room (eval metrics, pending actions, questions) + Backlog (weekly homework)
-Plan.html          Rolling build plan, one ~60-minute phase per session
-data/              Source-of-truth JSON, one record per day; every record carries user_id
-design/            News-reference.html — the Bento layout/voice reference the Framer is built against
-docs/              plan + prompts (docs/prompts/ holds the canonical Claude Code prompt for each phase)
+agents/            Agent code (framer.py today; scout, gatekeeper, coach, tuner later)
+application/       The surfaces you use — Signal.html (daily News) · Control-Hub.html (private)
+config/            Hand-authored, rarely changes — profile.json · scout-sources.md
+data/
+  verified/        Gatekeeper output: the verified pool  → gatekeeper_YYYY-MM-DD.json
+  briefs/          Framer output: the framed daily brief → framer_YYYY-MM-DD.json
+  state/           Running telemetry — usage.json · metrics.json · backlog.json
+  evals/           Eval harness + golden/ (labelled reference cases)
+design/            System-Design.html — living design record & decision log
+plan/              Plan.html — rolling build plan, one ~60-minute phase per session
+prompts/           Canonical Claude Code prompt per phase + CONVENTIONS.md + the Framer system prompt
 ```
 
-Inside `data/`:
+Naming rule: a data file is prefixed with the agent that wrote it, so the producer is obvious at a glance. The same file is one agent's output and the next agent's input — e.g. `data/verified/gatekeeper_2026-08-04.json` is the Gatekeeper's output *and* the Framer's input.
 
-- `profile.json` — the user profile: goals, interests, categories, preferences, Tuner state
-- `YYYY-MM-DD.json` — one immutable record per day (currently `2026-08-04.json`): items, thread, counts
-- `backlog.json` — homework items and accomplishments
-- `metrics.json` — agent metrics, guardrails, pending actions, prediction ledger, open questions
+Key files:
+
+- `config/profile.json` — goals, interests, categories, preferences, Tuner state (injected at runtime; never hardcoded in prompts)
+- `config/scout-sources.md` — Scout's Tier A–D seed source list
+- `data/state/usage.json` — append-only API cost ledger the circuit-breaker reads before each run
+- `data/state/metrics.json` — agent metrics, guardrails, pending actions, prediction ledger, open questions
+- `data/state/backlog.json` — homework items and accomplishments
+- `data/evals/golden/` — labelled reference cases; the yardstick for regression
 
 Data is separated from presentation by design: agents write JSON to `data/`, and the pages render it. Wiring the pages to read from `data/` is a later phase — today they hold the same content inline.
 

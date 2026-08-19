@@ -10,7 +10,7 @@
 ```
 Review the files in this repository, then:
 
-1. Rewrite the repository ROOT readme — ./README.md (NOT docs/prompts/README.md,
+1. Rewrite the repository ROOT readme — ./README.md (NOT prompts/README.md,
    which must be left unchanged) — to describe the project clearly:
    - One-paragraph summary: a multi-agent system that turns the AI/ML firehose
      into a daily signal brief and weekly hands-on exercises, designed to kill

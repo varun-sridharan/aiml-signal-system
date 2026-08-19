@@ -8,17 +8,17 @@ single source of truth for that voice.
 `FRAMER_SYSTEM_PROMPT` markers. Edit the prompt here, not in the Python.
 
 > **Scope note.** This file covers the Framer only. The Scout seed source list
-> (Tier A–D) referenced by the Control Room's pending action in `data/metrics.json`
-> is not yet in this repo — it lands in `docs/scout-sources.md` in Phase 4.
+> (Tier A–D) referenced by the Control Room's pending action in `data/state/metrics.json`
+> is not yet in this repo — it lands in `config/scout-sources.md` in Phase 4.
 
 ## Sources of truth this was assembled from
 
 - `System-Design.html`: agent table, evals, tradeoffs, decision log.
 - `Plan.html` → Phase 2 notes: "worked examples on AI items only; synthesis
   'thread' required; DO THIS reserved for AI; reading-time header; inline connections."
-- `data/profile.json`: categories, `preferences`, `tuner` state — read at runtime,
+- `config/profile.json`: categories, `preferences`, `tuner` state — read at runtime,
   never hardcoded into the prompt.
-- `design/News-reference.html` and `data/2026-08-04.json`: the target voice.
+- `application/Signal.html` and `data/evals/golden/reference_2026-08-04.json`: the target voice.
 
 ## Input contract
 

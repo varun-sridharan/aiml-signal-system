@@ -9,18 +9,18 @@
 ## Prompt (canonical)
 
 ```
-Build the Framer agent for this repo. Follow docs/CONVENTIONS.md — every meaningful
+Build the Framer agent for this repo. Follow prompts/CONVENTIONS.md — every meaningful
 code block gets a comment saying WHAT it does and WHICH agentic concept it uses.
 
 Context to read first:
-- docs/Framer-Prompt-and-Sources.md  (the Framer's role, rules, and output contract)
-- data/profile.json                  (the user profile; the agent takes profile as input)
-- data/2026-08-04.json               (a fully-framed sample day — the TARGET quality)
-- design/News-reference.html         (the Bento voice/layout to match)
+- prompts/Framer-Prompt-and-Sources.md  (the Framer's role, rules, and output contract)
+- config/profile.json                  (the user profile; the agent takes profile as input)
+- data/evals/golden/reference_2026-08-04.json               (a fully-framed sample day — the TARGET quality)
+- application/Signal.html         (the Bento voice/layout to match)
 
 Step 1 — create a raw input fixture (the Framer must generate framing, not copy it):
-- Write data/raw/2026-08-04-raw.json by stripping the generated framing out of
-  data/2026-08-04.json. KEEP only: date, and per item -> id, category, headline,
+- Write data/verified/gatekeeper_2026-08-04.json by stripping the generated framing out of
+  data/evals/golden/reference_2026-08-04.json. KEEP only: date, and per item -> id, category, headline,
   tags (KNOW/DO/RADAR), sources, and a `source_excerpt` field (a 1-3 sentence factual
   blurb of what the source says; derive it from the existing `why`/`ninety` text).
   REMOVE: thread, why, example, connection, ninety, readingTimeMin, counts.
@@ -29,7 +29,7 @@ Step 2 — build agents/framer.py:
 - Input: (profile.json, a raw day file). No personal facts hardcoded — read them from
   profile. [CONCEPT: harness — context injection]
 - Frame ALL items in ONE structured API call (NOT one call per item). Send the Framer
-  system prompt from docs/Framer-Prompt-and-Sources.md plus all raw items, and request a
+  system prompt from prompts/Framer-Prompt-and-Sources.md plus all raw items, and request a
   single JSON response containing, per item: why-it-matters; a worked example ONLY for
   category == "AI"; a connection line where a real link exists; and for papers an "in 90
   seconds" (method/result/caveat); AND the day-level THREAD (correlations AND
@@ -45,8 +45,8 @@ Step 2 — build agents/framer.py:
   [CONCEPT: harness — model routing + prompt caching]
 
 Step 3 — output:
-- Write the result to data/2026-08-04.framed.json (DO NOT overwrite the hand-authored
-  data/2026-08-04.json — we want to compare the two).
+- Write the result to data/briefs/framer_2026-08-04.json (DO NOT overwrite the hand-authored
+  data/evals/golden/reference_2026-08-04.json — we want to compare the two).
 - Print a short summary: item count, DO THIS count, any faithfulness flags.
 
 Cost controls (required):
@@ -54,7 +54,7 @@ Cost controls (required):
   check. Target <= 2 API calls/day.
 - Set a max_tokens cap on output; pin models in constants; use prompt caching.
 - Define MONTHLY_BUDGET_USD at the top. Append every call's input/output tokens +
-  estimated cost to data/usage.json. Before a run, if month-to-date estimate exceeds
+  estimated cost to data/state/usage.json. Before a run, if month-to-date estimate exceeds
   MONTHLY_BUDGET_USD, abort with a clear message.
   [CONCEPT: loop — cost circuit-breaker guardrail]
 - Leave a TODO noting production scheduled runs should use the Anthropic Message
@@ -70,8 +70,8 @@ Constraints:
 
 ## Milestone / done when
 
-- `agents/framer.py` runs on `data/raw/2026-08-04-raw.json` and writes `data/2026-08-04.framed.json`.
-- You open the framed output next to `design/News-reference.html` and judge: does the voice land? (This is the go/no-go on the whole system.)
+- `agents/framer.py` runs on `data/verified/gatekeeper_2026-08-04.json` and writes `data/briefs/framer_2026-08-04.json`.
+- You open the framed output next to `application/Signal.html` and judge: does the voice land? (This is the go/no-go on the whole system.)
 
 ## Notes (decisions/tradeoffs — maintained by Claude)
 
@@ -89,6 +89,6 @@ Constraints:
 - **Model:** Claude Opus 5 (via Claude Code v2.1.222)
 - **Result commit:** `df8adfd` on `origin/main`
 - **Deviations from prompt (both correct):**
-  - Built `docs/Framer-Prompt-and-Sources.md` fresh (the file didn't exist; option 3) — no Scout content invented.
+  - Built `prompts/Framer-Prompt-and-Sources.md` fresh (the file didn't exist; option 3) — no Scout content invented.
   - Switched the framing call from `messages.create` to `messages.stream` + `get_final_message()` because the SDK blocks a non-streaming request with `max_tokens=24000` (would outlast the HTTP timeout). No API spend on the blocked attempt.
 - **Run result:** 7 items, 2 DO THIS, ~5 min read, $0.0998. One faithfulness false positive — see Phase 3.

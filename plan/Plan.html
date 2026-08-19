@@ -62,13 +62,13 @@
 <body>
 <div class="wrap">
   <h1>Build Plan — AI/ML Signal System</h1>
-  <p class="sub">Rolling, session-sized. Each phase is timeboxed to ~1 hour. Design detail lives in <a href="System-Design.html">System-Design.html</a>.</p>
+  <p class="sub">Rolling, session-sized. Each phase is timeboxed to ~1 hour. Design detail lives in <a href="../design/System-Design.html">System-Design.html</a>.</p>
 
   <div class="how">
     <p><b>How this plan works</b></p>
     <p>• <b>Rolling:</b> the next few phases are detailed; later ones are outlined and filled in as we reach them.</p>
     <p>• <b>1-hour phases:</b> each phase has an end state and fits one working session.</p>
-    <p>• <b>Milestone activities:</b> each says what it accomplishes and why; the <b>how</b> lives in a canonical prompt under <a href="docs/prompts/">docs/prompts/</a> (final &amp; holistic — see the folder README).</p>
+    <p>• <b>Milestone activities:</b> each says what it accomplishes and why; the <b>how</b> lives in a canonical prompt under <a href="../prompts/">prompts/</a> (final &amp; holistic — see the folder README).</p>
     <p>• <b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.</p>
     <p>• <b>Knowledge Hub ritual:</b> after every session, Claude also updates the concepts reference at <code>Personal/Knowledge Hub/AI-ML-Concepts.html</code> with any AI/ML or agentic concepts we covered.</p>
   </div>
@@ -96,9 +96,9 @@
     <div class="body">
       <table>
         <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
-        <tr><td class="act">Review repo with Claude Code</td><td>You see how it reads the codebase before editing</td><td>Builds trust in what it will change</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
-        <tr><td class="act">Flesh out README</td><td>README describes the project + real folder structure</td><td>Entry point for you and, later, the public</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
-        <tr><td class="act">First commit + push</td><td>Everything lands on GitHub</td><td>Versioned source of truth</td><td class="prompt-link"><a href="docs/prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+        <tr><td class="act">Review repo with Claude Code</td><td>You see how it reads the codebase before editing</td><td>Builds trust in what it will change</td><td class="prompt-link"><a href="../prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+        <tr><td class="act">Flesh out README</td><td>README describes the project + real folder structure</td><td>Entry point for you and, later, the public</td><td class="prompt-link"><a href="../prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
+        <tr><td class="act">First commit + push</td><td>Everything lands on GitHub</td><td>Versioned source of truth</td><td class="prompt-link"><a href="../prompts/p1-scaffold-commit.md">p1-scaffold-commit.md</a></td></tr>
       </table>
       <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
         <ul>
@@ -119,7 +119,7 @@
       <div class="pnum">Phase&nbsp;2</div>
       <div class="pmain">
         <div class="ptitle">Build &amp; prove the Framer <span class="pbadge pb-done">DONE</span></div>
-        <div class="endstate"><b>End state:</b> a Framer agent that turns <code>data/2026-08-04.json</code> into a brief matching the <a href="design/News-reference.html">Bento reference</a> voice.</div>
+        <div class="endstate"><b>End state:</b> a Framer agent that turns <code>data/evals/golden/reference_2026-08-04.json</code> into a brief matching the <a href="../application/Signal.html">Bento reference</a> voice.</div>
         <div class="why">Why it matters: Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.</div>
       </div>
       <div class="time">~60 min</div>
@@ -127,15 +127,15 @@
     <div class="body">
       <table>
         <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
-        <tr><td class="act">Finalize the Framer build prompt (+ Evals)</td><td>Canonical prompt with faithfulness/usefulness graders baked in</td><td>Reproducible recipe; evals from day one</td><td class="prompt-link"><a href="docs/prompts/p2-build-framer.md">p2-build-framer.md</a></td></tr>
-        <tr><td class="act">Generate the Framer agent via Claude Code</td><td><code>agents/framer.py</code> runs on the sample day</td><td>Your first real agent</td><td class="prompt-link"><a href="docs/Framer-Prompt-and-Sources.md">Framer-Prompt-and-Sources.md</a></td></tr>
+        <tr><td class="act">Finalize the Framer build prompt (+ Evals)</td><td>Canonical prompt with faithfulness/usefulness graders baked in</td><td>Reproducible recipe; evals from day one</td><td class="prompt-link"><a href="../prompts/p2-build-framer.md">p2-build-framer.md</a></td></tr>
+        <tr><td class="act">Generate the Framer agent via Claude Code</td><td><code>agents/framer.py</code> runs on the sample day</td><td>Your first real agent</td><td class="prompt-link"><a href="../prompts/Framer-Prompt-and-Sources.md">Framer-Prompt-and-Sources.md</a></td></tr>
         <tr><td class="act">Eyeball output vs the reference</td><td>You judge whether the voice sounds right</td><td>The go / no-go on the whole system</td><td class="prompt-link"><span class="pending">— your taste is the gate</span></td></tr>
       </table>
       <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
         <ul>
           <li>Locked Framer rules: worked examples on <b>AI items only</b>; synthesis "thread" required; <b>DO THIS</b> reserved for AI; reading-time header; inline connections.</li>
           <li>Faithfulness = hard zero-hallucination gate (objective); usefulness = soft, learned target (subjective).</li>
-          <li>Test against <code>design/News-reference.html</code>, not vibes.</li>
+          <li>Test against <code>application/Signal.html</code>, not vibes.</li>
           <li><b>Done 2026-08-09 (commit df8adfd, Opus 5):</b> Framer built &amp; run — 7 items, 2 DO THIS, ~5 min read, <b>$0.10</b>. Batched to 2 calls (Opus framing + Haiku check) with prompt caching + cost breaker, all working.</li>
           <li><b>Voice verdict = GO:</b> thread carries a real correlation + contradiction and reaches its own conclusion; connections genuine. Two weak spots to tune later: iStar example clause doesn't parse; Kimi K3 example vaguer than the reference's concrete "~1/10th cost".</li>
           <li><b>Key finding → Phase 3:</b> the faithfulness check produced a <b>false positive</b> (flagged $965B as unsupported though it was in the excerpt). Two grader bugs: it missed a clause, and it graded thread/headline text against a single item's excerpt. The grader needs its own eval; the thread must be checked against the <em>union</em> of excerpts.</li>
@@ -159,7 +159,7 @@
     <div class="body">
       <table>
         <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
-        <tr><td class="act">Build a golden set from labeled days</td><td>2 days of items + your ratings in <code>evals/golden/</code></td><td>The fixed yardstick for regression</td><td class="prompt-link"><span class="pending">docs/prompts/p3-framer-evals.md — authored in this phase</span></td></tr>
+        <tr><td class="act">Build a golden set from labeled days</td><td>2 days of items + your ratings in <code>data/evals/golden/</code></td><td>The fixed yardstick for regression</td><td class="prompt-link"><span class="pending">prompts/p3-framer-evals.md — authored in this phase</span></td></tr>
         <tr><td class="act">Faithfulness grader (claim decomposition)</td><td>Auto check: every factual claim traces to source</td><td>Objective hard gate; catches hallucination</td><td class="prompt-link"><span class="pending">same</span></td></tr>
         <tr><td class="act">Usefulness rubric + run script</td><td>Rubric scoring; one command runs the eval</td><td>Safe iteration on the Framer prompt</td><td class="prompt-link"><span class="pending">same</span></td></tr>
       </table>
@@ -206,7 +206,7 @@
     <p>• <b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9.</p>
   </div>
 
-  <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="docs/prompts/">docs/prompts/</a> · Design: <a href="System-Design.html">System-Design.html</a> · Backlog: <a href="Control-Hub.html">Control-Hub.html</a>.</div>
+  <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="../prompts/">prompts/</a> · Design: <a href="../design/System-Design.html">System-Design.html</a> · Backlog: <a href="../application/Control-Hub.html">Control-Hub.html</a>.</div>
 </div>
 </body>
 </html>

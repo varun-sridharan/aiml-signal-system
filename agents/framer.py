@@ -6,10 +6,10 @@ against the sources. Everything that is arithmetic rather than judgment (reading
 time, counts, rank) is computed here in Python.
 
     python agents/framer.py                          # defaults to the 2026-08-04 sample
-    python agents/framer.py data/raw/2026-08-05-raw.json
+    python agents/framer.py data/verified/gatekeeper_2026-08-05.json
 
-See docs/Framer-Prompt-and-Sources.md for the prompt and the output contract, and
-docs/CONVENTIONS.md for why each block carries a WHAT/CONCEPT comment.
+See prompts/Framer-Prompt-and-Sources.md for the prompt and the output contract, and
+prompts/CONVENTIONS.md for why each block carries a WHAT/CONCEPT comment.
 """
 
 from __future__ import annotations
@@ -50,10 +50,10 @@ CACHE_WRITE_MULTIPLIER = 1.25
 WORDS_PER_MINUTE = 200
 
 REPO = Path(__file__).resolve().parent.parent
-PROFILE_PATH = REPO / "data" / "profile.json"
-PROMPT_PATH = REPO / "docs" / "Framer-Prompt-and-Sources.md"
-USAGE_PATH = REPO / "data" / "usage.json"
-DEFAULT_RAW_PATH = REPO / "data" / "raw" / "2026-08-04-raw.json"
+PROFILE_PATH = REPO / "config" / "profile.json"
+PROMPT_PATH = REPO / "prompts" / "Framer-Prompt-and-Sources.md"
+USAGE_PATH = REPO / "data" / "state" / "usage.json"
+DEFAULT_RAW_PATH = REPO / "data" / "verified" / "gatekeeper_2026-08-04.json"
 
 # TODO: production scheduled runs should submit these through the Anthropic Message
 # Batches API (client.messages.batches.create) — ~50% cheaper and async, which suits
@@ -404,7 +404,7 @@ def main() -> None:
 
     load_dotenv(REPO / ".env")
     if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY is not set. Add it to .env (see docs/prompts/p2-build-framer.md).")
+        sys.exit("ANTHROPIC_API_KEY is not set. Add it to .env (see prompts/p2-build-framer.md).")
 
     profile = load_json(PROFILE_PATH)
     raw_day = load_json(raw_path)
@@ -436,7 +436,7 @@ def main() -> None:
 
     day = assemble_day(profile, raw_day, framing, verdicts)
 
-    out_path = REPO / "data" / f"{raw_day['date']}.framed.json"
+    out_path = REPO / "data" / "briefs" / f"framer_{raw_day['date']}.json"
     out_path.write_text(json.dumps(day, indent=2, ensure_ascii=False) + "\n")
     USAGE_PATH.write_text(json.dumps(usage_log, indent=2) + "\n")
 

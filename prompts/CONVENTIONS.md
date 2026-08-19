@@ -1,6 +1,6 @@
 # Coding conventions
 
-Standing rules that every agent build prompt in `docs/prompts/` must include, so generated code is consistent and teaches as it runs.
+Standing rules that every agent build prompt in `prompts/` must include, so generated code is consistent and teaches as it runs.
 
 ## 1. Comment every code block with intent + concept
 
@@ -22,7 +22,7 @@ Keep comments short. The goal is that reading the code teaches the concept behin
 
 ## 2. Reproducibility
 
-- Prompts in `docs/prompts/` are canonical and holistic (overwritten wholesale, never diffed).
+- Prompts in `prompts/` are canonical and holistic (overwritten wholesale, never diffed).
 - Record the model used + result commit at the bottom of each prompt file.
 - Git-committed code is the true source of truth; the prompt is the recipe.
 
