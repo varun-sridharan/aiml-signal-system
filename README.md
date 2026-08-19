@@ -25,7 +25,8 @@ Each agent has its own metric: Scout on recall, Gatekeeper on precision/recall (
 ## Structure
 
 ```
-Signal.html        Public-safe surface — News tab (the daily brief) + System tab (living design record & decision log)
+Signal.html        Public-safe — the daily News brief
+System-Design.html Public-safe — living design record & decision log
 Control-Hub.html   Private surface — Control Room (eval metrics, pending actions, questions) + Backlog (weekly homework)
 Plan.html          Rolling build plan, one ~60-minute phase per session
 data/              Source-of-truth JSON, one record per day; every record carries user_id

@@ -6,9 +6,9 @@
 <title>Build Plan — AI/ML Signal System</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2b313c;
-    --text:#e7eaf0; --muted:#9aa3b2; --soft:#c7cddb;
-    --ai:#7aa2ff; --do:#54d6a0; --radar:#f0b866; --geo:#c58bf0; --muteb:#5a6270;
+    --bg:#EEF1EC; --panel:#FBFAF6; --panel2:#F3EEE2; --line:#DED7C6;
+    --text:#23231e; --muted:#867f70; --soft:#4d4a41;
+    --ai:#E2733F; --do:#1B3A2F; --radar:#C99A4A; --geo:#a06a3f; --muteb:#b3a892; --donebg:#E4EEDA;
     --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   }
@@ -17,21 +17,22 @@
   .wrap{max-width:960px;margin:0 auto;padding:28px 24px 80px}
   h1{font-size:24px;margin:0 0 4px}
   .sub{color:var(--muted);font-size:13px;margin:0 0 20px}
-  .how{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 18px}
+  .how{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 18px;box-shadow:0 1px 2px rgba(27,58,47,.05)}
   .how b{color:var(--text)} .how p{margin:6px 0;color:var(--soft);font-size:13.5px}
-  .status-now{background:linear-gradient(180deg,rgba(122,162,255,.08),transparent);border:1px solid var(--ai);border-radius:12px;padding:12px 16px;margin:0 0 22px;font-size:13.5px;color:var(--soft)}
+  .status-now{background:linear-gradient(180deg,rgba(226,115,63,.12),var(--panel));border:1px solid var(--ai);border-radius:12px;padding:12px 16px;margin:0 0 22px;font-size:13.5px;color:var(--soft);box-shadow:0 1px 2px rgba(27,58,47,.05)}
   .status-now b{color:var(--text)}
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--muted);margin:0 0 22px}
   .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
   .d-done{background:var(--do)}.d-now{background:var(--ai)}.d-next{background:var(--radar)}.d-later{background:var(--muteb)}
-  .phase{border:1px solid var(--line);border-left:5px solid var(--muteb);border-radius:14px;padding:0;margin:0 0 18px;overflow:hidden}
-  .phase.done{border-left-color:var(--do)}
+  .phase{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--muteb);border-radius:14px;padding:0;margin:0 0 18px;overflow:hidden;box-shadow:0 1px 3px rgba(27,58,47,.06)}
+  .phase.done{border-left-color:var(--do);background:var(--donebg);border-color:#cfe0c2}
   .phase.now{border-left-color:var(--ai);border-color:var(--ai)}
   .phase.next{border-left-color:var(--radar)}
   .phase.later{border-left-color:var(--muteb)}
-  .phase.done .ph{background:linear-gradient(180deg,rgba(84,214,160,.10),var(--panel))}
-  .phase.now .ph{background:linear-gradient(180deg,rgba(122,162,255,.16),var(--panel))}
-  .phase.next .ph{background:linear-gradient(180deg,rgba(240,184,102,.12),var(--panel))}
+  .phase.done .ph{background:linear-gradient(180deg,rgba(27,58,47,.10),var(--donebg))}
+  .phase.done .body{background:var(--donebg)}
+  .phase.now .ph{background:linear-gradient(180deg,rgba(226,115,63,.14),var(--panel))}
+  .phase.next .ph{background:linear-gradient(180deg,rgba(201,154,74,.16),var(--panel))}
   .ph{padding:14px 18px;display:flex;align-items:flex-start;gap:12px;background:var(--panel)}
   .pnum{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px;white-space:nowrap}
   .pmain{flex:1}
@@ -61,7 +62,7 @@
 <body>
 <div class="wrap">
   <h1>Build Plan — AI/ML Signal System</h1>
-  <p class="sub">Rolling, session-sized. Each phase is timeboxed to ~1 hour. Design detail lives in <a href="Signal.html">Signal.html → System</a>.</p>
+  <p class="sub">Rolling, session-sized. Each phase is timeboxed to ~1 hour. Design detail lives in <a href="System-Design.html">System-Design.html</a>.</p>
 
   <div class="how">
     <p><b>How this plan works</b></p>
@@ -69,6 +70,7 @@
     <p>• <b>1-hour phases:</b> each phase has an end state and fits one working session.</p>
     <p>• <b>Milestone activities:</b> each says what it accomplishes and why; the <b>how</b> lives in a canonical prompt under <a href="docs/prompts/">docs/prompts/</a> (final &amp; holistic — see the folder README).</p>
     <p>• <b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.</p>
+    <p>• <b>Knowledge Hub ritual:</b> after every session, Claude also updates the concepts reference at <code>Personal/Knowledge Hub/AI-ML-Concepts.html</code> with any AI/ML or agentic concepts we covered.</p>
   </div>
 
   <div class="status-now"><b>Current status (updated 2026-08-09):</b> Phase 2 complete — Framer agent built &amp; proven; first real brief generated for ~$0.10 (commit <code>df8adfd</code>). Next: <b>Phase 3 — Framer eval harness</b>, starting with the faithfulness-grader bug the run surfaced.</div>
@@ -188,7 +190,7 @@
     <div class="ph"><div class="pnum">Phase&nbsp;8</div><div class="pmain"><div class="ptitle">Coach — repo grounding <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> homework that fits a real spot in your repos, verified by assertions against the code.</div><div class="why">Why it matters: the magic feature — and the highest hallucination risk, so it comes after trust is built.</div></div><div class="time">~60 min</div></div>
   </div>
   <div class="phase outline later">
-    <div class="ph"><div class="pnum">Phase&nbsp;9</div><div class="pmain"><div class="ptitle">Control Room live (metrics.json) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> the Control Room renders real eval metrics, pending actions, and elicitation questions.</div><div class="why">Why it matters: closes the report→elicit→label loop so the system can improve deliberately.</div></div><div class="time">~60 min</div></div>
+    <div class="ph"><div class="pnum">Phase&nbsp;9</div><div class="pmain"><div class="ptitle">Control Room live (metrics.json) <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> the Control Room renders real eval metrics, pending actions, and elicitation questions — plus the front-door <b>Orchestrator</b> goes live (routes user actions: add-source → Scout, question → chat, feedback/intent → Tuner; the one live-API agent).</div><div class="why">Why it matters: closes the report→elicit→label loop so the system can improve deliberately.</div></div><div class="time">~60 min</div></div>
   </div>
   <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;10</div><div class="pmain"><div class="ptitle">Tuner — learned personalization <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> source reputation + topic priors that adapt from your feedback, with the diversity guardrail.</div><div class="why">Why it matters: the system starts getting better at <em>you</em> — but only after weeks of data exist.</div></div><div class="time">multi-session</div></div>
@@ -204,7 +206,7 @@
     <p>• <b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9.</p>
   </div>
 
-  <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="docs/prompts/">docs/prompts/</a> · Design: <a href="Signal.html">Signal.html → System</a> · Backlog: <a href="Control-Hub.html">Control-Hub.html</a>.</div>
+  <div class="foot">Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href="docs/prompts/">docs/prompts/</a> · Design: <a href="System-Design.html">System-Design.html</a> · Backlog: <a href="Control-Hub.html">Control-Hub.html</a>.</div>
 </div>
 </body>
 </html>

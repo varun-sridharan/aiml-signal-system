@@ -6,15 +6,15 @@
 <title>Control Hub — AI/ML Signal (private)</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2b313c;
-    --text:#e7eaf0; --muted:#9aa3b2; --soft:#c7cddb;
-    --ai:#7aa2ff; --do:#54d6a0; --radar:#f0b866; --geo:#c58bf0; --red:#e0656a;
+    --bg:#EEF1EC; --panel:#FBFAF6; --panel2:#F3EEE2; --line:#DED7C6;
+    --text:#23231e; --muted:#867f70; --soft:#4d4a41;
+    --ai:#E2733F; --do:#1B3A2F; --radar:#C99A4A; --geo:#a06a3f; --red:#b00020; --donebg:#E4EEDA;
     --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
     --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;font-size:14.5px}
-  .topbar{position:sticky;top:0;z-index:20;background:rgba(15,17,21,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:12px 22px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(238,241,236,.9);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:12px 22px}
   .brand{font-weight:700;font-size:16px}.brand span{color:var(--radar)}
   .tabs{display:flex;gap:4px}
   .tab{background:none;border:0;color:var(--muted);font-family:var(--sans);font-size:14px;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer}
@@ -23,7 +23,7 @@
   .wrap{max-width:1000px;margin:0 auto;padding:24px 22px 70px}
   .page{display:none}.page.active{display:block}
   h1{font-size:22px;margin:0 0 4px}
-  .seed{background:rgba(240,184,102,.08);border:1px solid var(--radar);border-radius:10px;padding:10px 14px;color:var(--soft);font-size:13px;margin:12px 0 20px}
+  .seed{background:rgba(201,154,74,.16);border:1px solid var(--radar);border-radius:10px;padding:10px 14px;color:var(--soft);font-size:13px;margin:12px 0 20px}
   h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:26px 0 10px}
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   @media(max-width:680px){.grid{grid-template-columns:1fr}}
@@ -56,8 +56,9 @@
   .bitem{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;border-left:3px solid var(--ai)}
   .bhead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
   .chk{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;flex:none}
-  .chk.doing{border-color:var(--radar);background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(240,184,102,.35) 3px,rgba(240,184,102,.35) 6px)}
+  .chk.doing{border-color:var(--radar);background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(201,154,74,.4) 3px,rgba(201,154,74,.4) 6px)}
   .chk.done{border-color:var(--do);background:var(--do)}
+  .card,.action,.bitem,.q,.acc{box-shadow:0 1px 2px rgba(27,58,47,.05)}
   .btitle{font-weight:700;font-size:14.5px}
   .status{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid;margin-left:auto}
   .s-todo{color:var(--muted);border-color:var(--muted)}.s-doing{color:var(--radar);border-color:var(--radar)}.s-done{color:var(--do);border-color:var(--do)}
@@ -127,7 +128,7 @@
 <section class="page" id="backlog">
 <div class="wrap">
   <h1>Backlog</h1>
-  <div class="seed" style="border-color:var(--do);background:rgba(84,214,160,.07)">Your durable workbench. The Coach appends 60-min exercises on Fridays; you check off status and add notes during the week. Skippable — no weekly pressure.</div>
+  <div class="seed" style="border-color:var(--do);background:var(--donebg)">Your durable workbench. The Coach appends 60-min exercises on Fridays; you check off status and add notes during the week. Skippable — no weekly pressure.</div>
 
   <h2>Active</h2>
 

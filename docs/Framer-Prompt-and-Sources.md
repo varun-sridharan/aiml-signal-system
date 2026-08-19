@@ -13,7 +13,7 @@ single source of truth for that voice.
 
 ## Sources of truth this was assembled from
 
-- `Signal.html` → System tab: agent table, evals, tradeoffs, decision log.
+- `System-Design.html`: agent table, evals, tradeoffs, decision log.
 - `Plan.html` → Phase 2 notes: "worked examples on AI items only; synthesis
   'thread' required; DO THIS reserved for AI; reading-time header; inline connections."
 - `data/profile.json`: categories, `preferences`, `tuner` state — read at runtime,
@@ -36,7 +36,7 @@ pool — no framing in it yet:
 | `items[].source_excerpt` | 1–3 factual sentences of what the source says — **the only ground truth the Framer may use** |
 
 Raw days carry no `user_id`: the verified pool is shared across users by design
-(Signal.html → Commercial path). Personalization starts at the Framer, so the
+(System-Design.html → Commercial path). Personalization starts at the Framer, so the
 framed output carries `user_id` from the profile.
 
 ## Output contract

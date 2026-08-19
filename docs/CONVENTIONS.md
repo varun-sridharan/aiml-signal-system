@@ -31,6 +31,10 @@ Keep comments short. The goal is that reading the code teaches the concept behin
 Every decision, tradeoff, or prioritization gets recorded in both:
 
 - **`Plan.html`** — in the phase it relates to (status + phase notes).
-- **`Signal.html` → System tab** — the append-only **Decision Log**, plus the relevant architecture section (e.g., the per-agent concept map or the eval loop) whenever the decision changes the design.
+- **`System-Design.html`** — the append-only **Decision Log**, plus the relevant architecture section (e.g., the per-agent concept map or the eval loop) whenever the decision changes the design.
 
 Updating only the plan is incomplete. The Plan tracks *what we're doing and when*; the System page is the durable *why* — the design record. A decision that isn't in the System page effectively didn't happen for anyone reading the repo later.
+
+## 4. Update the Knowledge Hub concepts reference (after every session)
+
+After every session, add any AI/ML or agentic-architecture concepts we covered to the project-agnostic reference at `Personal/Knowledge Hub/AI-ML-Concepts.html` — each concept gets: one-liner, example, a visual, why it matters, and an "Applied" block with real code + a worked explanation. This file lives **outside** this repo (it grows across all projects), but maintaining it is part of the session ritual.
