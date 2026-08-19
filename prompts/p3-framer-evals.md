@@ -112,7 +112,7 @@ by routing it to a stronger model, which is also what the usefulness judge needs
 
 ## Generated with (for reproducibility)
 - Model: claude-opus-5 (Claude Code)
-- Result commit: _(fill after running)_
+- Result commit: `04a4203`
 - Verified: `python data/evals/run_evals.py` → structural PASS · faithfulness PASS (FP 0, FN 0) ·
   usefulness rele 4.2 / insi 3.8 / conc 4.1 / trad 4.0 · $0.0189. Negative tests (fabricated
   valuation, date, investor, benchmark number, and a thread-level fact) all caught, exit 1.
