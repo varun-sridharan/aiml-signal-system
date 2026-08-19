@@ -73,7 +73,7 @@
     <p>• <b>Knowledge Hub ritual:</b> after every session, Claude also updates the concepts reference at <code>Personal/Knowledge Hub/AI-ML-Concepts.html</code> with any AI/ML or agentic concepts we covered.</p>
   </div>
 
-  <div class="status-now"><b>Current status (updated 2026-08-09):</b> Phase 2 complete — Framer agent built &amp; proven; first real brief generated for ~$0.10 (commit <code>df8adfd</code>). Next: <b>Phase 3 — Framer eval harness</b>, starting with the faithfulness-grader bug the run surfaced.</div>
+  <div class="status-now"><b>Current status (updated 2026-08-19):</b> Phase 3 complete — the faithfulness grader is fixed and now has its own eval. <code>python data/evals/run_evals.py</code> gates on faithfulness + structural assertions and reports usefulness, for ~$0.02 a run; both seeded false-positive regressions pass. Next: <b>Phase 4 — Scout</b>, so the Framer runs on live items instead of the sample day.</div>
 
   <div class="legend">
     <span><span class="dot d-now"></span>now</span>
@@ -146,11 +146,11 @@
   </div>
 
   <!-- PHASE 3 -->
-  <div class="phase now">
+  <div class="phase done">
     <div class="ph">
       <div class="pnum">Phase&nbsp;3</div>
       <div class="pmain">
-        <div class="ptitle">Framer eval harness (golden set) <span class="pbadge pb-now">NOW</span></div>
+        <div class="ptitle">Framer eval harness (golden set) <span class="pbadge pb-done">DONE</span></div>
         <div class="endstate"><b>End state:</b> a tiny offline eval that scores the Framer (faithfulness assertion + usefulness rubric) against 1–2 labeled days.</div>
         <div class="why">Why it matters: turns "is the voice right?" from a vibe into a number, and makes every future prompt tweak safe via regression.</div>
       </div>
@@ -159,15 +159,21 @@
     <div class="body">
       <table>
         <tr><th>Activity</th><th>Outcome</th><th>Why it matters</th><th>Prompt</th></tr>
-        <tr><td class="act">Build a golden set from labeled days</td><td>2 days of items + your ratings in <code>data/evals/golden/</code></td><td>The fixed yardstick for regression</td><td class="prompt-link"><span class="pending">prompts/p3-framer-evals.md — authored in this phase</span></td></tr>
-        <tr><td class="act">Faithfulness grader (claim decomposition)</td><td>Auto check: every factual claim traces to source</td><td>Objective hard gate; catches hallucination</td><td class="prompt-link"><span class="pending">same</span></td></tr>
-        <tr><td class="act">Usefulness rubric + run script</td><td>Rubric scoring; one command runs the eval</td><td>Safe iteration on the Framer prompt</td><td class="prompt-link"><span class="pending">same</span></td></tr>
+        <tr><td class="act">Build a golden set from labeled days</td><td>1 day frozen in <code>data/evals/golden/2026-08-04/</code> (input + output + labels)</td><td>The fixed yardstick for regression</td><td class="prompt-link"><a href="../prompts/p3-framer-evals.md">p3-framer-evals.md</a></td></tr>
+        <tr><td class="act">Faithfulness grader (claim decomposition)</td><td>Grader rewritten: claim ledger with quoted spans, correct scope, code-verified evidence</td><td>Objective hard gate; catches hallucination</td><td class="prompt-link"><a href="../prompts/p3-framer-evals.md">same</a></td></tr>
+        <tr><td class="act">Usefulness rubric + run script</td><td><code>data/evals/run_evals.py</code> — one command, exit code gates</td><td>Safe iteration on the Framer prompt</td><td class="prompt-link"><a href="../prompts/p3-framer-evals.md">same</a></td></tr>
       </table>
       <div class="notes"><span class="lbl">NOTES — decisions / tradeoffs</span>
         <ul>
           <li>Eval harness lives in the repo from early on; the Tuner-driven learning matures later (needs weeks of data).</li>
           <li>Held-out slice kept separate from anything the Tuner adapts on (train/test hygiene).</li>
           <li><b>First golden-set case comes free:</b> the Phase 2 grader false positive. Fix the check to (a) not miss clauses and (b) grade the thread against the union of all item excerpts, not one item's.</li>
+          <li><b>Done 2026-08-19 (Opus 5):</b> <code>run_evals.py</code> runs three checks — faithfulness (hard gate, 1 Haiku call), structural assertions (hard gate, free), usefulness rubric (soft, reported). Both seeded regressions pass; run costs <b>~$0.02</b>.</li>
+          <li><b>The grader's real bug was scope, not carelessness.</b> It was shown the excerpt first and the writing second, so it enumerated the <em>excerpt's</em> claims and never checked the framing at all — which is why $965B "failed" and why fabricated facts sailed through. Writing now comes first in the payload, the excerpt is labelled ground truth, and each claim must carry a verbatim span.</li>
+          <li><b>Second false positive found while labelling:</b> the 2026-08-13 re-run flagged "~80% of Q1 dollars", which the excerpt states word for word. Seeded as a second regression case.</li>
+          <li><b>Two extras beyond the brief,</b> both earned by a failing test: a code check that every quoted span is literally in the excerpt (a grader can invent a citation; a substring match can't), and <code>temperature=0</code> on the grader — at default sampling it disagreed with itself on ~1 run in 3, which would have failed builds at random. 5/5 clean runs after.</li>
+          <li><b>Known limit, carried to Phase 8:</b> the gate is deterministic per input, but on <em>unseen</em> days the grader still sometimes enumerates an inference as a claim. Fine for regression (the golden day is fixed); revisit before the grader guards live briefs — likely by moving it to a stronger model.</li>
+          <li>Usefulness stays ungated until calibrated against your own ratings. Judge runs on Haiku to keep spend low; upgrade it the day it starts gating.</li>
         </ul>
       </div>
     </div>
@@ -175,7 +181,7 @@
 
   <!-- OUTLINE PHASES -->
   <div class="phase outline next">
-    <div class="ph"><div class="pnum">Phase&nbsp;4</div><div class="pmain"><div class="ptitle">Scout — seed sources + fetch <span class="pbadge pb-next">NEXT</span></div><div class="endstate"><b>End state:</b> Scout pulls candidate items from the fixed seed list into <code>data/</code>.</div><div class="why">Why it matters: turns on real intake so the Framer runs on live items, not a sample.</div></div><div class="time">~60 min</div></div>
+    <div class="ph"><div class="pnum">Phase&nbsp;4</div><div class="pmain"><div class="ptitle">Scout — seed sources + fetch <span class="pbadge pb-now">NOW</span></div><div class="endstate"><b>End state:</b> Scout pulls candidate items from the fixed seed list into <code>data/</code>.</div><div class="why">Why it matters: turns on real intake so the Framer runs on live items, not a sample.</div></div><div class="time">~60 min</div></div>
   </div>
   <div class="phase outline later">
     <div class="ph"><div class="pnum">Phase&nbsp;5</div><div class="pmain"><div class="ptitle">Gatekeeper basics + Suppressed drawer <span class="pbadge pb-later">LATER</span></div><div class="endstate"><b>End state:</b> provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer.</div><div class="why">Why it matters: kills noise and gives you the false-negative audit trail that keeps FOMO dead.</div></div><div class="time">~60 min</div></div>

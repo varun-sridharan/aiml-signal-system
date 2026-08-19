@@ -1,0 +1,90 @@
+{
+  "case": "2026-08-04",
+  "input": "input.json",
+  "output": "output.json",
+  "_note": "Hand-labelled expectations for one golden day. `input.json` and `output.json` are FROZEN copies of data/verified/gatekeeper_2026-08-04.json and the committed data/briefs/framer_2026-08-04.json — the eval regrades this framing from scratch and compares the grader's verdicts to the labels here. The `faithfulness` blocks still embedded in output.json are the OLD grader's output, kept as evidence of the regressions seeded below. They are not labels.",
+  "_labelledBy": "varun",
+  "_labelledOn": "2026-08-19",
+  "_heldOut": "Measurement only. The Tuner never adapts on this file; if it ever needs labelled data, it gets its own set.",
+
+  "_schema": {
+    "units": "One entry per graded unit: every item id in the framed day, plus the reserved key `thread`.",
+    "expected_unsupported": "Claim substrings the grader MUST flag. A miss is a false negative.",
+    "tolerated": "Claim substrings the grader MAY flag. Genuinely borderline under the Framer's own contract — neither a false positive nor a false negative either way. Keep this list short; it is a hole in the gate.",
+    "regression_cases": "Named hard gates checked against the grader's claim ledger, not just its flag list. `claim_pattern` (lowercased substring) must appear in a claim the grader enumerated, and that claim's `supported` must equal `expected_supported`. Anything else FAILS the run.",
+    "adding_a_day": "Drop a new <date>/ directory with input.json, output.json and this same labels.json shape next to this one. run_evals.py globs the directories; it needs no change."
+  },
+
+  "units": {
+    "2026-08-04-mcp": {
+      "expected_unsupported": [],
+      "tolerated": [
+        "call back into the model"
+      ],
+      "_why": "why/example/connection all trace to the MCP excerpt: stateless request/response, horizontal scale behind an ordinary load balancer, no sticky sessions, no shared session store, broken cross-version compatibility, and the four deprecations on a 12-month runway. Tolerated: the worked example explains that Sampling let a server call back into the model mid-tool. That mechanism is not in the excerpt, but Sampling is — a defensible flag either way, so it is not scored."
+    },
+    "2026-08-04-kimi-k3": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "2.8T parameters, 1M context, build-vs-buy, per-call cost compounding across many calls per task, and the capability-vs-serving-cost tradeoff are all in the excerpt. The worked example's '20 calls per task' is an invented scenario quantity, which the Framer's contract explicitly permits and the grader is told not to flag — flagging it is a false positive, not a tolerated call."
+    },
+    "2026-08-04-istar": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "ninety.method/result/caveat restate the excerpt almost verbatim: per-step implicit rewards, credit on intermediate actions, +6.3% on WebShop and VisualSokoban, benchmark-only, difficulty concentrated in step-reward design."
+    },
+    "2026-08-04-terminal-bench": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "89.5% / 89.1% / 0.4-point gap / Terminal-Bench 2.1 and the harness-over-model conclusion are all in the excerpt."
+    },
+    "2026-08-04-mega-rounds": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "regression_cases": [
+        {
+          "id": "965b-is-supported",
+          "claim_pattern": "965",
+          "expected_supported": true,
+          "expected_span_contains": "965",
+          "why": "THE seeded regression. The excerpt's first sentence is 'OpenAI closed a record $122B round at an $852B post-money valuation; Anthropic is valued at $965B.' The $965B figure is in that sentence's second clause, in this item's own excerpt.",
+          "seeded_from": "Phase 2 run, commit df8adfd — the grader returned confidence 0.95 and flagged \"Anthropic is valued at $965B — the excerpt does not provide Anthropic's valuation, only OpenAI's $852B post-money valuation\". It had read the first clause and stopped. A grader that flags this is WRONG and must fail the run."
+        }
+      ],
+      "_why": "$122B round, $852B post, $965B, the pricing umbrella, and the move in API pricing and talent costs are all in the excerpt."
+    },
+    "2026-08-04-vc-record": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "regression_cases": [
+        {
+          "id": "80pct-q1-is-supported",
+          "claim_pattern": "80%",
+          "expected_supported": true,
+          "expected_span_contains": "80%",
+          "why": "Second seeded regression, same failure class. The excerpt reads 'Global venture funding reached a record $510B in H1 2026, with AI companies taking roughly 80% of Q1 dollars' and the framing says '$510B in H1 with AI taking ~80% of Q1 dollars' — the same two periods, the same way round.",
+          "seeded_from": "Re-run of 2026-08-13, commit cc8fb9d — the grader dropped this item to 0.85 and flagged '~80% of Q1 dollars', arguing the framing 'conflates H1 and Q1'. That is a clarity opinion about a claim the excerpt states verbatim, not an unsupported claim. A grader that flags it is WRONG and must fail the run."
+        }
+      ],
+      "_why": "$510B, H1 2026, ~80% of Q1 dollars, valuations priced for perfection, and the remaining ~20% are all in the excerpt."
+    },
+    "2026-08-04-export-controls": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "AI OVERWATCH Act, House advanced it, Blackwell-class export ban, H200 to case-by-case licensing, and chip access as a policy variable are all in the excerpt."
+    },
+    "thread": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "regression_cases": [
+        {
+          "id": "thread-graded-against-union",
+          "claim_pattern": "0.4",
+          "expected_supported": true,
+          "why": "The thread names GPT-5.6 Sol's 0.4-point edge, the $852B and $965B valuations, ~80% of Q1 dollars, the 2026-07-28 MCP spec, Kimi K3's 2.8T weights, iStar's step rewards and the Blackwell ban — facts spread across SEVEN different excerpts. Every one is supported by the union. Graded against any single item's excerpt, nearly all of them look invented, which is the second defect this phase fixes."
+        }
+      ],
+      "_why": "Synthesis across items is the thread's job. It must be graded against the union of every excerpt, never one of them."
+    }
+  }
+}

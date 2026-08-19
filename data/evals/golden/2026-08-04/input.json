@@ -1,0 +1,79 @@
+{
+  "date": "2026-08-04",
+  "_note": "Raw Gatekeeper output — verified items with no framing. The Framer generates why/example/connection/ninety/thread from source_excerpt alone. No user_id: the verified pool is shared across users; personalization starts at the Framer.",
+  "items": [
+    {
+      "id": "2026-08-04-mcp",
+      "category": "AI",
+      "headline": "MCP's 2026-07-28 spec moves the core from stateful to stateless request/response",
+      "tags": ["DO THIS", "KNOW"],
+      "source_excerpt": "The 2026-07-28 MCP specification changes the core transport from stateful sessions to stateless request/response. Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store. The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.",
+      "sources": [
+        { "label": "modelcontextprotocol.io", "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28/", "tier": "primary" },
+        { "label": "GitHub Changelog", "url": "https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/", "tier": "corroboration" },
+        { "label": "The Register", "url": "https://www.theregister.com/devops/2026/07/23/model-context-protocol-prepares-to-break-with-its-stateful-past/5276722", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-kimi-k3",
+      "category": "AI",
+      "headline": "Kimi K3 — largest open-weight model yet (2.8T params, 1M context)",
+      "tags": ["KNOW"],
+      "source_excerpt": "Kimi K3 is the largest open-weight model released to date, at 2.8T parameters with a 1M-token context window. Open weights at this scale change the build-vs-buy calculation for agents, where per-call cost compounds across many calls per task. The tradeoff is raw capability against serving cost and latency.",
+      "sources": [
+        { "label": "AI Agents News", "url": "https://aiagentstore.ai/ai-agent-news/this-week", "tier": "corroboration", "note": "awaiting primary Moonshot source" }
+      ]
+    },
+    {
+      "id": "2026-08-04-istar",
+      "category": "AI",
+      "headline": "Paper: iStar — implicit step rewards for multi-turn agentic RL",
+      "tags": ["DO THIS", "RADAR"],
+      "source_excerpt": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions rather than only on the final outcome. It reports a +6.3% success improvement on WebShop and VisualSokoban. Results are benchmark-only, and the paper notes that step-reward design is where the difficulty concentrates.",
+      "sources": [
+        { "label": "agentic RL papers index", "url": "https://github.com/VoltAgent/awesome-ai-agent-papers", "tier": "corroboration", "note": "resolve to arXiv PDF on ingest" }
+      ]
+    },
+    {
+      "id": "2026-08-04-terminal-bench",
+      "category": "AI",
+      "headline": "Terminal-Bench 2.1: GPT-5.6 Sol (89.5%) edges Opus 5 (89.1%)",
+      "tags": ["RADAR"],
+      "source_excerpt": "On Terminal-Bench 2.1, GPT-5.6 Sol scores 89.5% and Opus 5 scores 89.1% — a 0.4-point gap at the top of the coding-agent leaderboard. The frontier is effectively a near-tie, which reduces how much the model itself differentiates a coding agent relative to the harness and eval design around it.",
+      "sources": [
+        { "label": "Terminal-Bench writeup", "url": "https://www.morphllm.com/best-ai-coding-agents-2026", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-mega-rounds",
+      "category": "Investment",
+      "headline": "OpenAI closes record $122B round ($852B post); Anthropic at $965B",
+      "tags": ["KNOW"],
+      "source_excerpt": "OpenAI closed a record $122B round at an $852B post-money valuation; Anthropic is valued at $965B. Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under, moving both API pricing and talent costs.",
+      "sources": [
+        { "label": "Crunchbase", "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-vc-record",
+      "category": "Market",
+      "headline": "Global VC hit record $510B in H1 2026; AI took ~80% of Q1 dollars",
+      "tags": ["KNOW"],
+      "source_excerpt": "Global venture funding reached a record $510B in H1 2026, with AI companies taking roughly 80% of Q1 dollars. Capital is concentrating into AI at valuations priced for perfection, leaving non-AI startups competing for the remaining ~20% of dollars.",
+      "sources": [
+        { "label": "Crunchbase H1 2026", "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/", "tier": "corroboration" }
+      ]
+    },
+    {
+      "id": "2026-08-04-export-controls",
+      "category": "Geopolitical",
+      "headline": "House advances AI OVERWATCH Act; Blackwell export ban, H200 to case-by-case",
+      "tags": ["RADAR"],
+      "source_excerpt": "The House advanced the AI OVERWATCH Act, which bans export of Blackwell-class chips and moves H200 exports to case-by-case licensing. Chip access becomes a policy variable rather than only a supply constraint, so vendor and region choices can shift based on where a company and its customers operate.",
+      "sources": [
+        { "label": "Mayer Brown", "url": "https://www.mayerbrown.com/en/insights/publications/2026/01/administration-policies-on-advanced-ai-chips-codified", "tier": "corroboration" },
+        { "label": "Semiconductors Insight", "url": "https://semiconductorsinsight.com/us-china-chip-export-controls-h200-2026/", "tier": "corroboration" }
+      ]
+    }
+  ]
+}

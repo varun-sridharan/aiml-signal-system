@@ -76,6 +76,45 @@ Constraints:
 - Golden set starts with one real case; the structure must accept more days without runner changes.
 - Held-out hygiene: labels used for measurement stay separate from anything the Tuner later adapts on.
 
+### What the build actually found
+
+- **The grader's bug was scope, not carelessness.** It was handed `source_excerpt` first and the
+  framing second, so it enumerated the *excerpt's* claims and checked them against the excerpt —
+  grading the ground truth against itself. It never read the framing. That explains both symptoms:
+  a supported claim looked unsupported, and (proven with a seeded fabrication test) invented facts
+  passed clean. Fix: writing first in the payload, named `writing_under_test`; excerpt named
+  `ground_truth_excerpt`; every claim phrased as the *writing* phrases it, with a verbatim span.
+- **A second false positive turned up while hand-labelling.** The 2026-08-13 re-run flagged
+  "~80% of Q1 dollars", which that item's excerpt states word for word. Seeded as a second
+  regression case alongside `$965B`.
+- **Golden input/output are frozen copies,** not references to the live files — otherwise a Framer
+  re-run silently moves the baseline. (This is also why the two false positives come from two
+  *different* runs: the committed brief was regenerated after Phase 2.)
+- **Labels carry a `tolerated` tier** for claims that are genuinely borderline under the Framer's
+  own contract (e.g. a worked example explaining a mechanism the excerpt only names). Scored
+  neither way. It is a hole in the gate, so it is kept short and documented.
+
+### Two additions beyond the brief, each forced by a failing test
+
+- **Code-verified evidence.** Every quoted span is checked as a literal substring of the excerpt;
+  a claim "supported" by a span that isn't there is downgraded and recorded as a *grader error*,
+  gated separately from false positives. A grader can invent a citation; a substring match can't.
+- **`temperature=0` on the grader.** At default sampling it disagreed with itself on borderline
+  sentences roughly one run in three — a gate that flickers fails builds at random. 5/5 clean runs
+  after; fabrication detection unaffected. (Haiku 4.5 still accepts `temperature`; Opus 5 rejects it.)
+
+### Known limit
+
+The gate is deterministic for a fixed input, which is what regression needs. On *unseen* days the
+Haiku grader still sometimes enumerates an inference ("X means Y no longer matters") as a checkable
+claim. Fine while the golden day is fixed; revisit before the grader guards live briefs — probably
+by routing it to a stronger model, which is also what the usefulness judge needs before it can gate.
+
 ## Generated with (for reproducibility)
-- Model: _(fill after running)_
+- Model: claude-opus-5 (Claude Code)
 - Result commit: _(fill after running)_
+- Verified: `python data/evals/run_evals.py` → structural PASS · faithfulness PASS (FP 0, FN 0) ·
+  usefulness rele 4.2 / insi 3.8 / conc 4.1 / trad 4.0 · $0.0189. Negative tests (fabricated
+  valuation, date, investor, benchmark number, and a thread-level fact) all caught, exit 1.
+- Deviations from the prompt: none in scope. Two additions listed above; both were responses to a
+  test failure rather than speculative work.

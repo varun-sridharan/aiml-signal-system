@@ -34,7 +34,7 @@ data/
   verified/        Gatekeeper output: the verified pool  → gatekeeper_YYYY-MM-DD.json
   briefs/          Framer output: the framed daily brief → framer_YYYY-MM-DD.json
   state/           Running telemetry — usage.json · metrics.json · backlog.json
-  evals/           Eval harness + golden/ (labelled reference cases)
+  evals/           run_evals.py + golden/<date>/ (frozen input + output + hand labels)
 design/            System-Design.html — living design record & decision log
 plan/              Plan.html — rolling build plan, one ~60-minute phase per session
 prompts/           Canonical Claude Code prompt per phase + CONVENTIONS.md + the Framer system prompt
@@ -49,7 +49,8 @@ Key files:
 - `data/state/usage.json` — append-only API cost ledger the circuit-breaker reads before each run
 - `data/state/metrics.json` — agent metrics, guardrails, pending actions, prediction ledger, open questions
 - `data/state/backlog.json` — homework items and accomplishments
-- `data/evals/golden/` — labelled reference cases; the yardstick for regression
+- `data/evals/run_evals.py` — the Framer's offline eval. `python data/evals/run_evals.py` gates on faithfulness (regrades a golden day and compares to hand labels, reporting FP/FN) and structural assertions, and reports a usefulness rubric it does not yet gate on. Exits non-zero on a failed gate, so it can guard a prompt change. `--no-api` runs the free half; `--show-claims` prints the grader's full claim ledger. ~$0.02 a run, on the same ledger and circuit-breaker as the Framer.
+- `data/evals/golden/<date>/` — one golden case: frozen `input.json` + `output.json` and hand-written `labels.json`. Copies, not references — evaluating the live files would let a Framer re-run move the baseline. Adding a day is a new directory; the runner needs no change.
 
 Data is separated from presentation by design: agents write JSON to `data/`, and the pages render it. Wiring the pages to read from `data/` is a later phase — today they hold the same content inline.
 
