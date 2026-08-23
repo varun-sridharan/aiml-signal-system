@@ -13,7 +13,7 @@ Build the Framer agent for this repo. Follow prompts/CONVENTIONS.md — every me
 code block gets a comment saying WHAT it does and WHICH agentic concept it uses.
 
 Context to read first:
-- prompts/Framer-Prompt-and-Sources.md  (the Framer's role, rules, and output contract)
+- prompts/framer-prompt.md + prompts/framer-contract.md  (the Framer's voice, role, rules, contract)
 - config/profile.json                  (the user profile; the agent takes profile as input)
 - data/evals/golden/reference_2026-08-04.json               (a fully-framed sample day — the TARGET quality)
 - application/Signal.html         (the Bento voice/layout to match)
@@ -29,7 +29,7 @@ Step 2 — build agents/framer.py:
 - Input: (profile.json, a raw day file). No personal facts hardcoded — read them from
   profile. [CONCEPT: harness — context injection]
 - Frame ALL items in ONE structured API call (NOT one call per item). Send the Framer
-  system prompt from prompts/Framer-Prompt-and-Sources.md plus all raw items, and request a
+  system prompt from prompts/framer-prompt.md plus all raw items, and request a
   single JSON response containing, per item: why-it-matters; a worked example ONLY for
   category == "AI"; a connection line where a real link exists; and for papers an "in 90
   seconds" (method/result/caveat); AND the day-level THREAD (correlations AND
@@ -89,6 +89,6 @@ Constraints:
 - **Model:** Claude Opus 5 (via Claude Code v2.1.222)
 - **Result commit:** `df8adfd` on `origin/main`
 - **Deviations from prompt (both correct):**
-  - Built `prompts/Framer-Prompt-and-Sources.md` fresh (the file didn't exist; option 3) — no Scout content invented.
+  - Built the Framer prompt doc fresh (the file didn't exist; option 3) — later split into `framer-prompt.md` + `framer-contract.md` — no Scout content invented.
   - Switched the framing call from `messages.create` to `messages.stream` + `get_final_message()` because the SDK blocks a non-streaming request with `max_tokens=24000` (would outlast the HTTP timeout). No API spend on the blocked attempt.
 - **Run result:** 7 items, 2 DO THIS, ~5 min read, $0.0998. One faithfulness false positive — see Phase 3.

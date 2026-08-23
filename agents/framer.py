@@ -8,7 +8,8 @@ time, counts, rank) is computed here in Python.
     python agents/framer.py                          # defaults to the 2026-08-04 sample
     python agents/framer.py data/verified/gatekeeper_2026-08-05.json
 
-See prompts/Framer-Prompt-and-Sources.md for the prompt and the output contract, and
+See prompts/framer-prompt.md for the prompt and prompts/framer-contract.md for the
+output contract, and
 prompts/CONVENTIONS.md for why each block carries a WHAT/CONCEPT comment.
 """
 
@@ -54,7 +55,7 @@ WORDS_PER_MINUTE = 200
 
 REPO = Path(__file__).resolve().parent.parent
 PROFILE_PATH = REPO / "config" / "profile.json"
-PROMPT_PATH = REPO / "prompts" / "Framer-Prompt-and-Sources.md"
+PROMPT_PATH = REPO / "prompts" / "framer-prompt.md"
 USAGE_PATH = REPO / "data" / "state" / "usage.json"
 DEFAULT_RAW_PATH = REPO / "data" / "verified" / "gatekeeper_2026-08-04.json"
 
@@ -225,19 +226,13 @@ def load_json(path: Path) -> dict:
 
 
 def load_framer_system_prompt() -> str:
-    """Pull the system prompt out of the markdown spec so prose and prompt can't drift."""
-    # WHAT: read the Framer's system prompt verbatim from docs/, not from a string here.
-    # CONCEPT: harness — one source of truth. The doc is the canonical recipe; this
-    # file is the runner. Editing the prompt never means editing Python.
-    text = PROMPT_PATH.read_text()
-    match = re.search(
-        r"<!--\s*FRAMER_SYSTEM_PROMPT:START\s*-->(.*?)<!--\s*FRAMER_SYSTEM_PROMPT:END\s*-->",
-        text,
-        re.DOTALL,
-    )
-    if not match:
-        sys.exit(f"No FRAMER_SYSTEM_PROMPT markers found in {PROMPT_PATH}")
-    return match.group(1).strip()
+    """Read the Framer's system prompt from its own file."""
+    # WHAT: the prompt file contains the prompt and nothing else, so this is a plain read.
+    # CONCEPT: harness — one source of truth. The voice is content, not code: editing it
+    # never means touching Python, and a prompt-only change shows as a prompt-only diff.
+    # (The contract that describes this prompt's I/O lives in prompts/framer-contract.md.)
+    return PROMPT_PATH.read_text().strip()
+
 
 
 def estimate_cost_usd(model: str, usage) -> float:
@@ -404,6 +399,30 @@ def _normalise_text(text: str) -> str:
     return " ".join((text or "").split()).lower()
 
 
+# WHAT: distinctive, checkable tokens inside a claim — numbers, dates, versions, names.
+# CONCEPT: harness — a cheap deterministic signal where a semantic check is impossible.
+# Numbers, money, percentages and dates only. Proper nouns are too weak a signal —
+# every claim about an item names that item, so they fire on fabrications too.
+_TOKEN_RE = re.compile(r"\$?\d[\d,.]*[%BMTK]?|\b\d{4}-\d{2}-\d{2}\b")
+
+
+def suspicious_unsupported(claim: str, ground_truth: str) -> list[str]:
+    """Tokens the grader called unsupported that are sitting in the excerpt verbatim."""
+    # WHAT: when the grader says "no evidence", look for its own distinctive tokens in
+    # the source. A hit does NOT prove the claim — "$122B" appearing says nothing about
+    # who raised it — so this warns rather than overruling the verdict.
+    # CONCEPT: eval — the one false-alarm signal code can produce. Verifying that
+    # evidence is ABSENT is a semantic judgement Python cannot make; spotting that the
+    # grader's own numbers are present is mechanical, and it is how $965B slipped past.
+    truth = _normalise_text(ground_truth)
+    hits = []
+    for tok in _TOKEN_RE.findall(claim or ""):
+        t = _normalise_text(tok)
+        if len(t) >= 3 and t in truth and t not in hits:
+            hits.append(tok)
+    return hits
+
+
 def normalise_verdict(raw: dict, ground_truth: str) -> dict:
     """Verify the grader's evidence, then derive the flag list from the claim ledger."""
     # WHAT: check that every span the grader quoted is literally in the excerpt, and
@@ -413,7 +432,7 @@ def normalise_verdict(raw: dict, ground_truth: str) -> dict:
     # unsupported regardless of what the grader said, and is recorded as a grader
     # error so the eval can see the checker itself misbehaving.
     truth = _normalise_text(ground_truth)
-    claims, unsupported, grader_errors = [], [], []
+    claims, unsupported, grader_errors, possible_false_alarms = [], [], [], []
 
     for claim in raw.get("claims", []):
         span = claim.get("supporting_span")
@@ -422,6 +441,11 @@ def normalise_verdict(raw: dict, ground_truth: str) -> dict:
             reason = "quoted a span that is not in the excerpt" if span else "supported with no span"
             grader_errors.append(f"{claim['claim']!r}: {reason}")
         supported = claim["supported"] and span_found
+        if not supported:
+            hits = suspicious_unsupported(claim["claim"], ground_truth)
+            if hits:
+                possible_false_alarms.append(
+                    f"{claim['claim']!r} — but {', '.join(hits)} appears in the excerpt")
         claims.append({**claim, "supported": supported, "span_verified": span_found})
         if not supported:
             unsupported.append(claim["claim"])
@@ -431,6 +455,7 @@ def normalise_verdict(raw: dict, ground_truth: str) -> dict:
         "claims": claims,
         "unsupported_claims": unsupported,
         "grader_errors": grader_errors,
+        "possible_false_alarms": possible_false_alarms,
     }
 
 
@@ -545,6 +570,7 @@ def assemble_day(
         item["faithfulness"] = {
             "confidence": verdict.get("confidence"),
             "unsupported_claims": verdict.get("unsupported_claims", []),
+            "possible_false_alarms": verdict.get("possible_false_alarms", []),
         }
         items.append(item)
 
@@ -561,6 +587,7 @@ def assemble_day(
         "threadFaithfulness": {
             "confidence": thread_verdict.get("confidence"),
             "unsupported_claims": thread_verdict.get("unsupported_claims", []),
+            "possible_false_alarms": thread_verdict.get("possible_false_alarms", []),
         },
         "items": items,
         "_enforcements": enforcements,
@@ -631,6 +658,12 @@ def main() -> None:
           + (f", confidence {thread_conf:.2f}" if thread_conf is not None else ""))
     for claim in thread_flags:
         print(f"        {claim}")
+    alarms = [(i["id"], a) for i in day["items"]
+              for a in i["faithfulness"].get("possible_false_alarms", [])]
+    alarms += [("thread", a) for a in day["threadFaithfulness"].get("possible_false_alarms", [])]
+    for unit, note in alarms:
+        print(f"  ? possible false alarm — {unit}: {note}")
+
     for note in day["_enforcements"]:
         print(f"  enforced: {note}")
     print(f"  cost: ${cost:.4f} this run · ${spent + cost:.2f} month-to-date "

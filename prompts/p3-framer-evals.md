@@ -12,7 +12,7 @@
 Build a small offline eval harness for the Framer. Follow prompts/CONVENTIONS.md — every
 meaningful code block gets a comment saying WHAT it does and WHICH agentic concept it uses.
 
-Read first: agents/framer.py, prompts/Framer-Prompt-and-Sources.md,
+Read first: agents/framer.py, prompts/framer-prompt.md, prompts/framer-contract.md,
 data/verified/gatekeeper_2026-08-04.json, data/briefs/framer_2026-08-04.json (a real Framer run).
 
 PART 1 — Fix the faithfulness grader in agents/framer.py

@@ -37,7 +37,9 @@ data/
   evals/           run_evals.py + golden/<date>/ (frozen input + output + hand labels)
 design/            System-Design.html — living design record & decision log
 plan/              Plan.html — rolling build plan, one ~60-minute phase per session
-prompts/           Canonical Claude Code prompt per phase + CONVENTIONS.md + the Framer system prompt
+prompts/           Canonical Claude Code prompt per phase + CONVENTIONS.md
+                   <agent>-prompt.md   = that agent's system prompt, nothing else
+                   <agent>-contract.md = its input/output contract + hard rules
 ```
 
 Naming rule: a data file is prefixed with the agent that wrote it, so the producer is obvious at a glance. The same file is one agent's output and the next agent's input — e.g. `data/verified/gatekeeper_2026-08-04.json` is the Gatekeeper's output *and* the Framer's input.
