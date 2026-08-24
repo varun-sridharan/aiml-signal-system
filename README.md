@@ -2,9 +2,9 @@
 
 A multi-agent system that turns the AI/ML firehose into a daily signal brief and weekly hands-on exercises. The goal is to kill FOMO rather than feed it: success is the fewest items you'd regret missing, not the most items covered — the system is explicitly allowed to declare a quiet day and tell you to go build. It does two jobs. First, awareness: a short daily brief that explains *why* each item matters, with the thread connecting them. Second, skill: a weekly 60-minute exercise grounded in your own repos, so reading turns into doing.
 
-## The five agents
+## The six agents
 
-Five production agents on a pipeline:
+Five production agents on a pipeline, plus a front door:
 
 | Agent | Purpose | You touch it via |
 | --- | --- | --- |
@@ -13,6 +13,7 @@ Five production agents on a pipeline:
 | **Framer** | Write the daily brief — why-it-matters, 90-second papers, the thread, quiet-day | News |
 | **Coach** | Design weekly 60-minute homework grounded in your repos | Backlog |
 | **Tuner** | Learn your taste over time and recalibrate the other agents | Your feedback |
+| **Orchestrator** | Front door: classifies what you ask for and routes it (URL → Scout, question → chat, feedback → Tuner), collates the answer | Directly — UI / chat |
 
 ## The eval subsystem
 
@@ -28,15 +29,16 @@ Folders are organised by **role**, and data files are **named after the agent th
 
 ```
 agents/            Agent code (framer.py today; scout, gatekeeper, coach, tuner later)
-application/       The surfaces you use — Signal.html (daily News) · Control-Hub.html (private)
+application/       The surfaces you use — Signal (daily News) · Control-Hub (private)
+                   each is <name>.json (content contract) → <name>.html (generated)
 config/            Hand-authored, rarely changes — profile.json · scout-sources.md
 data/
   verified/        Gatekeeper output: the verified pool  → gatekeeper_YYYY-MM-DD.json
   briefs/          Framer output: the framed daily brief → framer_YYYY-MM-DD.json
   state/           Running telemetry — usage.json · metrics.json · backlog.json
   evals/           run_evals.py + golden/<date>/ (frozen input + output + hand labels)
-design/            System-Design.html — living design record & decision log
-plan/              Plan.html — rolling build plan, one ~60-minute phase per session
+design/            System_Design.json → System-Design.html — design record & decision log
+plan/              Plan.json → Plan.html — rolling build plan, one ~60-min phase per session
 prompts/           Canonical Claude Code prompt per phase + CONVENTIONS.md
                    <agent>-prompt.md   = that agent's system prompt, nothing else
                    <agent>-contract.md = its input/output contract + hard rules
@@ -57,6 +59,23 @@ Key files:
 Data is separated from presentation by design: agents write JSON to `data/`, and the pages render it. Wiring the pages to read from `data/` is a later phase — today they hold the same content inline.
 
 **`data/` holds seed/sample values until the system runs.** The metrics are placeholders; real numbers need several weeks of usage and feedback before any trend means anything. The pages show the shape of what you'll see, not real measurements.
+
+## Documents — content vs design
+
+Every page here is **JSON content rendered by a design produced in Claude Design**. The JSON is the source of truth; the HTML is generated and never hand-edited.
+
+Two classes behave differently:
+
+- **Static docs** — the build plan, the design record, and the concepts reference. Content changes weekly-ish; the page is regenerated on demand, and at the end of every phase.
+- **Live surfaces** — `Signal.html` and `Control-Hub.html` render *agent output* that changes daily, so regeneration isn't possible. They get a **renderer with a data slot** instead, and their design is **locked at Phase 5** before the backend is wired.
+
+See `prompts/CONVENTIONS.md` §4 and §6.
+
+## Companion — the concepts reference
+
+Lives **outside this repo**, at `~/Desktop/Personal/Knowledge Hub/`, because it is project-agnostic and grows across everything. It explains the agentic concepts this system uses — harness engineering, loop engineering, prompt caching, hard vs soft gates, golden sets, verify-the-verifier, gate determinism, omission vs fabrication — each with a one-liner, an everyday example, a diagram, why it matters, and the real code from this repo.
+
+Content and design are separated: `Agentic_Concepts.json` is the source of truth and the only file edited; `Agentic-Concepts.html` is generated from it in Claude Design and never hand-edited. See `prompts/CONVENTIONS.md` §4.
 
 ## Notes
 

@@ -1,0 +1,876 @@
+{
+  "version": 1,
+  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption).",
+  "site": {
+    "kicker": "AI/ML Signal · design record",
+    "title": "The Signal System",
+    "lede": "A living design record. Updated whenever the system changes — see the Decision Log at the end.",
+    "sidebarTitle": "System Design",
+    "sidebarSub": "A living design record for the Signal system",
+    "footerNote": "Signal · System page — living design record for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe. Personal telemetry lives in the private Control Hub.",
+    "backLink": {
+      "href": "../application/Signal.html",
+      "label": "← News"
+    },
+    "stats": [
+      "6 agents",
+      "1 built · 5 designed",
+      "public-safe",
+      "updated 2026-08-23"
+    ]
+  },
+  "sections": [
+    {
+      "id": "problem",
+      "title": "Problem",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Staying current on AI/ML means drowning in hundreds of clickbait articles a day, which produces FOMO and impostor anxiety and eats time that should go to building. Existing news apps make this worse — they are engineered to always surface <em>something</em>, which is the exact incentive that feeds the anxiety."
+        }
+      ]
+    },
+    {
+      "id": "north-star",
+      "title": "North Star",
+      "blocks": [
+        {
+          "t": "card",
+          "accent": true,
+          "blocks": [
+            {
+              "t": "p",
+              "html": "<b>Kill FOMO, don't feed it.</b> Success is the fewest items you'd regret missing — not the most items covered. The system is explicitly allowed to say \"quiet day, go build.\" Two jobs: <b>(a)</b> be aware and understand <em>why it matters</em> (conversational currency), and <b>(b)</b> get hands-on and understand tradeoffs (weekly homework grounded in your repos)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "high-level-architecture",
+      "title": "High-level architecture",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Five production agents on a pipeline, plus an eval/learning subsystem that measures the pipeline and adapts it to you over time."
+        },
+        {
+          "t": "figure",
+          "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 820 248\" role=\"img\" aria-label=\"Production pipeline\">\n<defs><marker id=\"p1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#C3CCD4\"/></marker><marker id=\"p2\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#2F6FB2\"/></marker><marker id=\"p3\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#8A939C\"/></marker></defs>\n<text x=\"12\" y=\"18\" font-size=\"10.5\" letter-spacing=\"1.4\" fill=\"#8A939C\">PRODUCTION PIPELINE</text>\n<rect x=\"12\" y=\"84\" width=\"132\" height=\"60\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/><text x=\"78\" y=\"112\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Scout</text><text x=\"78\" y=\"129\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">discover + ingest</text>\n<rect x=\"172\" y=\"84\" width=\"132\" height=\"60\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/><text x=\"238\" y=\"112\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Gatekeeper</text><text x=\"238\" y=\"129\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">verify + kill noise</text>\n<rect x=\"332\" y=\"48\" width=\"132\" height=\"56\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/><text x=\"398\" y=\"74\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Framer</text><text x=\"398\" y=\"91\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">daily brief</text>\n<rect x=\"332\" y=\"140\" width=\"132\" height=\"56\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/><text x=\"398\" y=\"166\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Coach</text><text x=\"398\" y=\"183\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">weekly homework</text>\n<rect x=\"492\" y=\"48\" width=\"132\" height=\"56\" rx=\"8\" fill=\"#FFFFFF\" stroke=\"#2F6FB2\"/><text x=\"558\" y=\"74\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#2F6FB2\">News (Signal)</text><text x=\"558\" y=\"91\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">you read daily</text>\n<rect x=\"492\" y=\"140\" width=\"132\" height=\"56\" rx=\"8\" fill=\"#FFFFFF\" stroke=\"#2F6FB2\"/><text x=\"558\" y=\"166\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#2F6FB2\">Backlog (Hub)</text><text x=\"558\" y=\"183\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">you work weekly</text>\n<rect x=\"652\" y=\"84\" width=\"132\" height=\"60\" rx=\"8\" fill=\"none\" stroke=\"#C3CCD4\" stroke-dasharray=\"4 3\"/><text x=\"718\" y=\"112\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Tuner</text><text x=\"718\" y=\"129\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">learns you</text>\n<line x1=\"144\" y1=\"114\" x2=\"168\" y2=\"114\" stroke=\"#C3CCD4\" marker-end=\"url(#p1)\"/>\n<path d=\"M304 106 Q320 76 328 76\" fill=\"none\" stroke=\"#C3CCD4\" marker-end=\"url(#p1)\"/>\n<path d=\"M304 122 Q320 168 328 168\" fill=\"none\" stroke=\"#C3CCD4\" marker-end=\"url(#p1)\"/>\n<line x1=\"464\" y1=\"76\" x2=\"488\" y2=\"76\" stroke=\"#2F6FB2\" marker-end=\"url(#p2)\"/>\n<line x1=\"464\" y1=\"168\" x2=\"488\" y2=\"168\" stroke=\"#2F6FB2\" marker-end=\"url(#p2)\"/>\n<path d=\"M624 68 Q650 68 660 82\" fill=\"none\" stroke=\"#2F6FB2\" stroke-dasharray=\"4 4\" marker-end=\"url(#p2)\"/>\n<path d=\"M624 176 Q650 176 660 146\" fill=\"none\" stroke=\"#2F6FB2\" stroke-dasharray=\"4 4\" marker-end=\"url(#p2)\"/>\n<path d=\"M718 144 V 208 H 78 V 148\" fill=\"none\" stroke=\"#8A939C\" stroke-dasharray=\"4 4\" marker-end=\"url(#p3)\"/>\n<text x=\"398\" y=\"232\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">Tuner feeds updated priors and the interest graph back to Scout and Gatekeeper</text>\n</svg>",
+          "caption": "Five agents on one line. Everything downstream of Framer and Coach is what you actually read; the Tuner watches it and feeds priors back to the front."
+        },
+        {
+          "t": "h3",
+          "id": "agents-and-purpose",
+          "title": "Agents &amp; purpose",
+          "status": null
+        },
+        {
+          "t": "table",
+          "head": [
+            "Agent",
+            "Purpose",
+            "You touch?"
+          ],
+          "rows": [
+            [
+              "<b>Scout</b>",
+              "Discover + ingest candidate items across your interest graph",
+              "No"
+            ],
+            [
+              "<b>Gatekeeper</b>",
+              "Verify (provenance, corroboration, dedup, reputation, materiality) and kill noise",
+              "Suppressed drawer"
+            ],
+            [
+              "<b>Framer</b>",
+              "Write the daily brief — why-it-matters, 90-sec papers, the thread, quiet-day",
+              "Via News"
+            ],
+            [
+              "<b>Coach</b>",
+              "Design weekly 60-min homework grounded in your repos",
+              "Via Backlog"
+            ],
+            [
+              "<b>Tuner</b>",
+              "Learn your taste over time; recalibrate the other agents",
+              "Via feedback"
+            ],
+            [
+              "<b>Orchestrator</b>",
+              "Front door: routes user actions to the right agent, collates responses, feeds the Tuner (merges the original Interactive + Feedback)",
+              "Directly (UI / chat)"
+            ]
+          ]
+        },
+        {
+          "t": "h3",
+          "id": "architecture-concepts-per-agent",
+          "title": "Architecture concepts per agent",
+          "status": null
+        },
+        {
+          "t": "p",
+          "html": "Which LLM / agentic concept each agent uses, and for what. Built for the Framer today; the rest are the intended design. Agents are decoupled from each other via <b>JSON contracts</b>, and from their tools via <b>MCP</b> where a real boundary exists."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Agent",
+            "Concepts used"
+          ],
+          "rows": [
+            [
+              "<b>Scout</b>",
+              "<b>MCP servers</b> for source fetching (web / arXiv / GitHub) · <b>source-reputation priors</b> (Tier A–D) · <b>deterministic ingestion</b> (no LLM where a fetch suffices) · graded on <b>recall</b>"
+            ],
+            [
+              "<b>Gatekeeper</b>",
+              "<b>Verification harness</b> for provenance / corroboration / dedup · <b>classifier</b> scored on precision + recall (recall-biased to avoid FOMO) · <b>reputation priors</b> for materiality · <b>Suppressed-drawer</b> audit log (false-negative eval)"
+            ],
+            [
+              "<b>Framer</b>",
+              "<b>Batched single structured call</b> (frames all items at once) · <b>structured output</b> (JSON schema) · <b>prompt caching</b> on the reused system prompt · <b>model routing</b> (Opus frames, Haiku checks) · <b>reflection loop</b> for the faithfulness self-check · <b>context injection</b> from profile (no hardcoded facts) · <b>prompt-as-file</b> (verbatim markers) · <b>cost circuit-breaker</b> + usage ledger"
+            ],
+            [
+              "<b>Coach</b>",
+              "<b>MCP (GitHub server)</b> for grounding homework in your repos · <b>code-grounding assertions</b> for verification · <b>behavioral outcome signals</b> (completion, actual time) · <b>batched heavy run</b> Fridays (model routing / cost) · <b>streaming</b> for long outputs"
+            ],
+            [
+              "<b>Tuner</b>",
+              "<b>Longitudinal meta-eval</b> (graded on slope over time) · <b>credit assignment</b> across the pipeline (delayed reward) · <b>human-in-the-loop labels</b> · <b>two-tier action gating</b> (auto vs human-gated) · <b>anti-echo-chamber</b> diversity guardrail · <b>held-out set</b> (train/test hygiene)"
+            ],
+            [
+              "<b>Orchestrator</b><br><span style=\"color:var(--faint);font-size:11px\">front door · Interactive + Feedback</span>",
+              "<b>LLM intent-routing</b> with <b>deterministic fast-paths</b> (don't LLM-route what a button can) · <b>agent dispatch</b> (URL → Scout, question → chat, feedback / \"explore X\" → Tuner) · <b>response collation</b> + guardrail checks · the <b>one live-API agent</b> in front of the otherwise-batch pipeline"
+            ],
+            [
+              "<b>Eval subsystem</b><br><span style=\"color:var(--faint);font-size:11px\">Evaluator · Prescriber · Control Room</span>",
+              "<b>Read-only sensor</b> (Evaluator) · <b>diagnosis → action</b> with predicted-vs-actual accountability (Prescriber) · <b>report + elicitation</b>, where your answers become gold labels (Control Room) · <b>regression gate</b> on a golden set before shipping"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "low-level-architecture",
+      "title": "Low-level architecture",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "One subsection per agent: what it reads, what it does, what it writes — plus the internals worth knowing. <b>Living section</b>, updated as each agent lands. <b style=\"color:var(--ok)\">BUILT</b> = running code · <b style=\"color:var(--faint)\">DESIGNED</b> = specified, not yet implemented."
+        },
+        {
+          "t": "h3",
+          "id": "agent-framer-built",
+          "title": "Agent · Framer",
+          "status": "BUILT"
+        },
+        {
+          "t": "p",
+          "html": "Turns a verified day of news into the daily brief, checks its own faithfulness, and logs what it spent."
+        },
+        {
+          "t": "figure",
+          "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 820 322\" role=\"img\" aria-label=\"Framer inputs, process and outputs\">\n<defs><marker id=\"f1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#C3CCD4\"/></marker></defs>\n<rect x=\"6\" y=\"34\" width=\"254\" height=\"264\" rx=\"12\" fill=\"none\" stroke=\"#C3CCD4\"/>\n<text x=\"133\" y=\"26\" font-size=\"10.5\" letter-spacing=\"1.3\" text-anchor=\"middle\" fill=\"#8A939C\">INPUT FILES</text>\n<rect x=\"20\" y=\"52\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#C3CCD4\"/><text x=\"133\" y=\"73\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">config/profile.json</text><text x=\"133\" y=\"88\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">who to write for + the rules</text>\n<rect x=\"20\" y=\"104\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#C3CCD4\"/><text x=\"133\" y=\"125\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">prompts/framer-prompt.md</text><text x=\"133\" y=\"140\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">how to write (cached)</text>\n<rect x=\"20\" y=\"156\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#C3CCD4\"/><text x=\"133\" y=\"177\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">data/verified/gatekeeper_&lt;date&gt;.json</text><text x=\"133\" y=\"192\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">the day’s news + source excerpts</text>\n<rect x=\"20\" y=\"208\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#C3CCD4\"/><text x=\"133\" y=\"229\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">data/state/usage.json</text><text x=\"133\" y=\"244\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">spend so far, vs the budget</text>\n<line x1=\"264\" y1=\"166\" x2=\"279\" y2=\"166\" stroke=\"#C3CCD4\" marker-end=\"url(#f1)\"/>\n<rect x=\"283\" y=\"34\" width=\"254\" height=\"264\" rx=\"12\" fill=\"none\" stroke=\"#C3CCD4\"/>\n<text x=\"410\" y=\"26\" font-size=\"10.5\" letter-spacing=\"1.3\" text-anchor=\"middle\" fill=\"#2F6FB2\">PROCESS</text>\n<rect x=\"297\" y=\"52\" width=\"226\" height=\"32\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#E3C8BC\"/><text x=\"410\" y=\"72\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#B5502A\">1 · check budget — abort if over</text>\n<rect x=\"297\" y=\"92\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#F4F8FC\" stroke=\"#2F6FB2\"/><text x=\"410\" y=\"113\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#2F6FB2\">2 · WRITE — Opus, one call</text><text x=\"410\" y=\"128\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\">all items + the thread</text>\n<rect x=\"297\" y=\"144\" width=\"226\" height=\"44\" rx=\"7\" fill=\"#F4F8FC\" stroke=\"#2F6FB2\"/><text x=\"410\" y=\"165\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#2F6FB2\">3 · GRADE — Haiku, one call</text><text x=\"410\" y=\"180\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\">claims + quoted evidence</text>\n<rect x=\"297\" y=\"196\" width=\"226\" height=\"32\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#2F6B52\"/><text x=\"410\" y=\"216\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#2F6B52\">4 · VERIFY — is each quote real?</text>\n<rect x=\"297\" y=\"236\" width=\"226\" height=\"32\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#2F6B52\"/><text x=\"410\" y=\"256\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#2F6B52\">5 · enforce rules · do the maths</text>\n<line x1=\"541\" y1=\"166\" x2=\"556\" y2=\"166\" stroke=\"#C3CCD4\" marker-end=\"url(#f1)\"/>\n<rect x=\"560\" y=\"34\" width=\"254\" height=\"264\" rx=\"12\" fill=\"none\" stroke=\"#C3CCD4\"/>\n<text x=\"687\" y=\"26\" font-size=\"10.5\" letter-spacing=\"1.3\" text-anchor=\"middle\" fill=\"#2F6B52\">OUTPUT FILES</text>\n<rect x=\"574\" y=\"60\" width=\"226\" height=\"56\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#2F6B52\"/><text x=\"687\" y=\"87\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">data/briefs/framer_&lt;date&gt;.json</text><text x=\"687\" y=\"102\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">the brief: thread, framing, verdicts</text>\n<rect x=\"574\" y=\"128\" width=\"226\" height=\"48\" rx=\"7\" fill=\"#FFFFFF\" stroke=\"#2F6B52\"/><text x=\"687\" y=\"151\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#1B1F24\" font-family=\"IBM Plex Mono, monospace\">data/state/usage.json</text><text x=\"687\" y=\"166\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-family=\"IBM Plex Sans, sans-serif\">tokens + cost appended</text>\n<text x=\"687\" y=\"208\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">read by Signal.html (you)</text>\n<text x=\"687\" y=\"226\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">and by the eval harness</text>\n<text x=\"687\" y=\"256\" font-size=\"10\" text-anchor=\"middle\" fill=\"#8A939C\" font-style=\"italic\">usage.json loops back to step 1</text>\n<text x=\"410\" y=\"316\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">blue = the only two API calls · green = deterministic code</text>\n</svg>",
+          "caption": "Two API calls per run. Every green step is deterministic code, and the usage ledger written at the end gates the next run."
+        },
+        {
+          "t": "h4",
+          "id": null,
+          "label": "Module map"
+        },
+        {
+          "t": "p",
+          "html": "Ordered input → process → output. Paths carry a plain description; where a file is a contract between agents, its shape is given."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Kind",
+            "Path — what it is",
+            "Status"
+          ],
+          "rows": [
+            [
+              "INPUT",
+              "<code>config/profile.json</code><br><span style=\"color:var(--soft)\">Who the reader is and what the rules are: role, interests, categories, plus <code>doThisCategory</code> and <code>examplesOnlyForCategories</code>. Injected at run time so nothing personal is hardcoded. Later written by the Tuner.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "INPUT",
+              "<code>prompts/framer-prompt.md</code><br><span style=\"color:var(--soft)\">The system prompt, verbatim and nothing else. This is the text sent to the model and the text that gets cached.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "INPUT<br><span style=\"color:var(--soft)\">humans</span>",
+              "<code>prompts/framer-contract.md</code><br><span style=\"color:var(--soft)\">The I/O contract and hard rules. Documentation — <b>never sent to the model</b>.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "INPUT<br><span style=\"color:var(--soft)\">= Gatekeeper output</span>",
+              "<code>data/verified/gatekeeper_&lt;date&gt;.json</code> — <b>the contract between two agents</b><br><span style=\"color:var(--soft)\">Shape: <code>date</code>, <code>items[]</code> → <code>id · category · headline · tags · source_excerpt · sources[]</code>. No <code>user_id</code>: the verified pool is shared across readers. <code>source_excerpt</code> is the only text the Framer may draw facts from.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b> <span style=\"color:var(--soft)\">(fixture)</span>"
+            ],
+            [
+              "INPUT",
+              "<code>config/scout-sources.md</code><br><span style=\"color:var(--soft)\">Scout’s Tier A–D seed source list with reputation priors.</span>",
+              "<b style=\"color:var(--faint)\">DESIGNED</b>"
+            ],
+            [
+              "<b>PROCESS</b>",
+              "<code>agents/framer.py</code><br><span style=\"color:var(--soft)\">Reads all of the above; makes two API calls (write, then grade); verifies quotes; enforces the profile rules in code; computes reading time and counts; writes the brief and appends its spend.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "<b>PROCESS</b>",
+              "<code>data/evals/run_evals.py</code><br><span style=\"color:var(--soft)\">Regrades a frozen golden case with the current grader, asserts the structural rules, scores usefulness, and exits non-zero on any hard-gate failure.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "OUTPUT",
+              "<code>data/briefs/framer_&lt;date&gt;.json</code> — <b>the Framer’s product</b><br><span style=\"color:var(--soft)\">Shape: the verified item fields <em>plus</em> <code>user_id</code> (personalization starts here), <code>generatedBy</code>, <code>readingTimeMin</code>, <code>counts</code>, <code>thread</code>, <code>threadFaithfulness</code>, and per item <code>why · example · connection · ninety · faithfulness</code>, plus <code>_enforcements</code> listing anything code stripped.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "OUTPUT<br><span style=\"color:var(--soft)\">→ input next run</span>",
+              "<code>data/state/usage.json</code><br><span style=\"color:var(--soft)\">Append-only ledger: tokens and estimated cost per call. Read at the start of the next run by the circuit-breaker — this is the cost feedback loop.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ],
+            [
+              "OUTPUT",
+              "<code>data/evals/golden/&lt;date&gt;/</code><br><span style=\"color:var(--soft)\">A frozen case: <code>input.json</code> (copy of that day’s verified file), <code>output.json</code> (copy of the brief), <code>labels.json</code> (hand-written verdicts). Copies, never references — so a re-run cannot move the baseline.</span>",
+              "<b style=\"color:var(--ok)\">BUILT</b>"
+            ]
+          ]
+        },
+        {
+          "t": "p",
+          "html": "Two rows are deliberately both directions — <code>gatekeeper_&lt;date&gt;.json</code> (one agent’s output is the next one’s input) and <code>usage.json</code> (written by a run, read by the next). That is why <code>data/</code> is organised by lifecycle stage rather than “input” and “output” folders."
+        },
+        {
+          "t": "h4",
+          "id": null,
+          "label": "Execution order"
+        },
+        {
+          "t": "table",
+          "head": [
+            "#",
+            "Step",
+            "Where"
+          ],
+          "rows": [
+            [
+              "1",
+              "Load profile, raw day, system prompt (plain file read)",
+              "local"
+            ],
+            [
+              "2",
+              "<b>Cost circuit-breaker</b>: month-to-date spend vs <code>MONTHLY_BUDGET_USD</code>; abort before spending",
+              "local"
+            ],
+            [
+              "3",
+              "<code>frame_day()</code> — one <b>streamed</b> call, all items + thread, schema-enforced, prompt cached",
+              "Opus 5"
+            ],
+            [
+              "4",
+              "<code>build_check_payload()</code> — writing first, ground truth second; headlines excluded",
+              "local"
+            ],
+            [
+              "5",
+              "<code>check_faithfulness()</code> — claim ledger with quoted spans, <code>temperature=0</code>",
+              "Haiku 4.5"
+            ],
+            [
+              "6",
+              "<code>normalise_verdict()</code> — verify spans are literal substrings; downgrade invented citations; derive the flag list; warn on numeric tokens that <em>are</em> present",
+              "local"
+            ],
+            [
+              "7",
+              "<code>assemble_day()</code> — merge framing, enforce DO-THIS and example scope, compute reading time + counts",
+              "local"
+            ],
+            [
+              "8",
+              "Write the brief; append to the usage ledger",
+              "local"
+            ]
+          ]
+        },
+        {
+          "t": "h4",
+          "id": null,
+          "label": "Model routing &amp; cost knobs"
+        },
+        {
+          "t": "table",
+          "head": [
+            "Constant",
+            "Value",
+            "Why"
+          ],
+          "rows": [
+            [
+              "<code>FRAMER_MODEL</code>",
+              "claude-opus-5",
+              "Judgment-heavy: framing, synthesis, the thread"
+            ],
+            [
+              "<code>CHECK_MODEL</code>",
+              "claude-haiku-4-5",
+              "Mechanical grounding check; a second pair of eyes beats a bigger model marking its own work"
+            ],
+            [
+              "<code>FRAMER_MAX_TOKENS</code> / <code>CHECK_MAX_TOKENS</code>",
+              "24k / 16k",
+              "Check cap is large because the grader must enumerate claims <em>and</em> quote spans"
+            ],
+            [
+              "<code>temperature</code> (grader only)",
+              "0",
+              "A gate that flickers is not a gate. The writer keeps sampling; the judge does not"
+            ],
+            [
+              "<code>MONTHLY_BUDGET_USD</code>",
+              "20",
+              "In-code breaker, under the $10 workspace cap and $25 org cap"
+            ],
+            [
+              "caching / streaming",
+              "prompt cached; framing streamed",
+              "Cache pays off on clustered calls; streaming is required above the non-streaming token ceiling"
+            ]
+          ]
+        },
+        {
+          "t": "p",
+          "html": "Observed: <b>~$0.10</b> per Framer run, <b>~$0.02</b> per eval run."
+        },
+        {
+          "t": "h4",
+          "id": null,
+          "label": "The two graders, side by side"
+        },
+        {
+          "t": "table",
+          "head": [
+            "",
+            "Faithfulness",
+            "Usefulness"
+          ],
+          "rows": [
+            [
+              "<b>Question</b>",
+              "Is every fact traceable to a source?",
+              "Is this worth the reader’s time?"
+            ],
+            [
+              "<b>Nature</b>",
+              "Objective — same answer for anyone",
+              "Subjective — personal to one reader"
+            ],
+            [
+              "<b>Scope</b>",
+              "Per item → its own excerpt. Thread → the <b>union</b> of all excerpts. Headlines excluded (Gatekeeper wrote them)",
+              "Every unit, item and thread alike"
+            ],
+            [
+              "<b>Sees</b>",
+              "The writing + the source excerpts. <b>No profile</b> — truth doesn’t depend on the reader",
+              "The writing + <b>the profile</b>. <b>No sources</b> — value doesn’t depend on truth"
+            ],
+            [
+              "<b>Returns</b>",
+              "A claim ledger: each claim, its quoted span, supported true/false, plus confidence",
+              "Scores 1–5 on relevance, insight, concision, tradeoff_named, plus a comment"
+            ],
+            [
+              "<b>Verified by code?</b>",
+              "Yes — every span must be a literal substring of the excerpt",
+              "No — nothing to verify mechanically"
+            ],
+            [
+              "<b>Gates?</b>",
+              "<b style=\"color:var(--ok)\">Hard</b> — a failure blocks the change",
+              "<b style=\"color:var(--faint)\">Soft</b> — reported only, until calibrated against real ratings"
+            ],
+            [
+              "<b>Model</b>",
+              "Haiku, <code>temperature=0</code>",
+              "Haiku (upgrade before it ever gates)"
+            ]
+          ]
+        },
+        {
+          "t": "h4",
+          "id": null,
+          "label": "Terminology, with examples"
+        },
+        {
+          "t": "p",
+          "html": "Excerpt used throughout: <em>“OpenAI closed a record $122B round at an $852B post-money valuation; Anthropic is valued at $965B.”</em>"
+        },
+        {
+          "t": "table",
+          "head": [
+            "Term",
+            "Plain meaning",
+            "Example"
+          ],
+          "rows": [
+            [
+              "<code>source_excerpt</code>",
+              "What the news actually said. The only ground truth; lives in the Gatekeeper file",
+              "the sentence above"
+            ],
+            [
+              "<code>claim</code>",
+              "One checkable statement the <b>grader extracted from the writing</b> — phrased as the writing phrased it",
+              "“Anthropic is valued at $965B”"
+            ],
+            [
+              "<code>supporting_span</code>",
+              "The grader’s <b>receipt</b>: the exact quote from the excerpt it says backs the claim (or <code>null</code>)",
+              "“Anthropic is valued at $965B” — code confirms it really appears"
+            ],
+            [
+              "<code>supported</code>",
+              "The grader’s verdict. Advisory: code overrules it to false if the span isn’t real",
+              "<code>true</code>"
+            ],
+            [
+              "<code>expected_span_contains</code>",
+              "In the labels: <b>what a valid receipt should mention</b>. A pattern, not the text itself",
+              "<code>&quot;965&quot;</code>"
+            ],
+            [
+              "<code>expected_unsupported</code>",
+              "In the labels: which claims <em>should</em> be flagged. Empty means “flag nothing here”",
+              "<code>[]</code>"
+            ],
+            [
+              "<b>False alarm</b><br><span style=\"color:var(--soft)\">= false positive</span>",
+              "Flagged something that <em>was</em> supported. Erodes trust in the gate",
+              "grader flags “$965B” though it is in the excerpt — the original bug"
+            ],
+            [
+              "<b>Missed hallucination</b><br><span style=\"color:var(--soft)\">= false negative</span>",
+              "Failed to flag something invented. Erodes trust in the brief — the dangerous direction",
+              "writing says “$1.4T”; grader returns no flag"
+            ],
+            [
+              "<b>Omission</b>",
+              "The subset of missed hallucinations where the claim was <b>never enumerated</b>. Code cannot see it — no span was offered",
+              "“$1.4T” appears nowhere in the ledger, neither supported nor flagged"
+            ],
+            [
+              "<b>Grader error</b>",
+              "The grader quoted a span that isn’t in the excerpt — an invented citation. Gated separately, because it means the <em>checker</em> misbehaved",
+              "span “Anthropic is valued at $1.4T” — not present, so downgraded"
+            ],
+            [
+              "<b>Possible false alarm</b>",
+              "New: a claim marked unsupported whose <b>numbers appear verbatim</b> in the excerpt. Warns, never promotes — a number’s presence doesn’t prove the claim built on it",
+              "“$965B” flagged, but “$965B” is in the excerpt → warning raised"
+            ],
+            [
+              "<b>Precision</b>",
+              "Of everything flagged, how much deserved it",
+              "flags 4, three were real → 0.75"
+            ],
+            [
+              "<b>Recall</b>",
+              "Of everything that deserved flagging, how much was caught. <b>Only measurable where labels exist</b>",
+              "6 real problems, caught 5 → 0.83"
+            ]
+          ]
+        },
+        {
+          "t": "h4",
+          "id": "framer-evals",
+          "label": "Evals for the Framer — how the gate works"
+        },
+        {
+          "t": "p",
+          "html": "The harness answers one question: <b>“did my last change break something that used to work?”</b> It does that by holding the data still and re-running the current code against it."
+        },
+        {
+          "t": "card",
+          "accent": false,
+          "blocks": [
+            {
+              "t": "list",
+              "items": [
+                "<b>The yardstick is frozen.</b> <code>data/evals/golden/2026-08-04/</code> is a copy of one past day — input, output and labels — that never changes. Today’s news flows through <code>data/verified/</code> and <code>data/briefs/</code> and never touches it.",
+                "<b>What varies between runs is your system, not the data.</b> Same seven items, same labels; only the prompt and code differ. So a red run can only have been caused by your edit — that attribution is the entire point.",
+                "<b>It calls the real grader,</b> not a copy: <code>framer.check_faithfulness()</code> is imported and invoked, so what you test is what runs. The stored verdicts in the frozen brief are historical and ignored.",
+                "<b>It compares conclusions, not text.</b> Labels match by pattern, so the grader may rephrase a claim freely; what must hold is the verdict.",
+                "<b>Three checks:</b> faithfulness (hard gate, ~$0.013) · structural assertions (hard gate, free — DO-THIS scope, example scope, sources, thread, counts recomputed with the Framer’s own functions) · usefulness rubric (soft, ~$0.006).",
+                "<b>The output is an exit code.</b> Non-zero blocks the change. A gate that cannot fail is not a gate — which is why the harness is itself tested by deliberately corrupting a copy and confirming it goes red.",
+                "<b>Labels grow, never mutate.</b> Every new bug becomes a permanent case; editing an old label to make a red test green deletes your own safety net."
+              ]
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "html": "<b>Known gaps, all queued for Phase 6:</b> the harness regrades the <em>frozen</em> brief, so a change to the <em>Framer’s</em> prompt is never exercised (needs a regenerate mode); flagged claims are surfaced but not regenerated (needs a bounded retry); and the free structural checks don’t run on live days (needs a daily smoke test). Also: every golden unit currently has <code>expected_unsupported: []</code>, so the missed-hallucination path is exercised only by manual negative tests, not automatically."
+        },
+        {
+          "t": "h3",
+          "id": "agent-scout-designed",
+          "title": "Agent · Scout",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "Discovers and ingests candidate items across the interest graph. <b>In:</b> <code>config/scout-sources.md</code> (Tier A–D seed list), <code>config/profile.json</code>. <b>Process:</b> fetch — likely via MCP servers for web/arXiv/GitHub — deduplicate, tag each item with its source and tier. <b>Out:</b> a raw candidate pool for the Gatekeeper. <b>Graded on:</b> recall — of what mattered, how much did it fetch. Its hard problem is that misses are invisible without an independent oracle."
+        },
+        {
+          "t": "h3",
+          "id": "agent-gatekeeper-designed",
+          "title": "Agent · Gatekeeper",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "Kills noise. <b>In:</b> Scout’s candidate pool. <b>Process:</b> provenance → corroboration (single-source rumour is held) → novelty dedup → reputation priors → materiality against the profile; everything killed is logged to the Suppressed drawer. <b>Out:</b> <code>data/verified/gatekeeper_&lt;date&gt;.json</code> — the contract the Framer consumes. <b>Graded on:</b> precision and recall, deliberately biased toward recall, because a false negative here <em>is</em> FOMO. <b>Also owns the volume guard</b> that protects the Framer’s single-call design."
+        },
+        {
+          "t": "h3",
+          "id": "agent-coach-designed",
+          "title": "Agent · Coach",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "Turns the week into practice. <b>In:</b> the week’s briefs + your GitHub repos. <b>Process:</b> pick one or two coherent concepts, design a 60-minute exercise (setup excluded), ground it in a real module or propose a new repo; runs Friday evening / Saturday morning so the expensive repo reasoning is batched. <b>Out:</b> backlog items in <code>data/state/backlog.json</code>. <b>Graded on:</b> code-grounding (assertion-checkable — does the module it names exist?) plus behavioural signals: completion rate, actual time, later reuse. <b>Refactor due here:</b> lift the faithfulness grader out of <code>framer.py</code> into a shared module rather than copying it."
+        },
+        {
+          "t": "h3",
+          "id": "agent-tuner-designed",
+          "title": "Agent · Tuner",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "Learns your taste. <b>In:</b> signal/noise ratings, homework completions, and explicit “explore X” intent. <b>Process:</b> adjust source reputation and topic priors; assign credit backwards across a delayed pipeline; never act on n=1. <b>Out:</b> updated <code>config/profile.json</code>. <b>Graded on:</b> the <em>slope</em> of every other metric over weeks — it cannot be evaluated on a single run. <b>Guardrails:</b> a diversity floor against echo chambers, and no automated prompt edits — optimising to satisfy your own gate is how a system learns to write vaguer claims and pass."
+        },
+        {
+          "t": "h3",
+          "id": "agent-orchestrator-designed",
+          "title": "Agent · Orchestrator",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "The front door, and the only agent wired to a live API. <b>In:</b> whatever you do in the UI — a dropped URL, a question, a rating, an intent. <b>Process:</b> classify intent and route (URL → Scout, question → chat over the brief, feedback → Tuner), collate responses, run checks. <b>LLM-routed with deterministic fast-paths:</b> explicit button actions dispatch directly; only ambiguous natural language needs the model. <b>Out:</b> answers to you, and labelled feedback into the eval dataset."
+        },
+        {
+          "t": "h3",
+          "id": "extension-points-adding-the-next-agent",
+          "title": "Extension points — adding the next agent",
+          "status": null
+        },
+        {
+          "t": "card",
+          "accent": false,
+          "blocks": [
+            {
+              "t": "list",
+              "items": [
+                "Code in <code>agents/&lt;name&gt;.py</code>; prompt and contract as <code>prompts/&lt;name&gt;-prompt.md</code> and <code>-contract.md</code>.",
+                "Write output to <code>data/&lt;stage&gt;/&lt;name&gt;_&lt;date&gt;.json</code> — named for the agent that produced it.",
+                "Reuse the shared plumbing: cost breaker + usage ledger, stop-reason guard, schema-enforced output, models pinned in top-of-file constants.",
+                "Add a golden case before the agent guards anything live; hard-gate the objective axis, keep the subjective axis reported until calibrated."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evals-how-we-know-it-works",
+      "title": "Evals — how we know it works",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Every agent is measured, component-wise and end-to-end. The recurring split: <b>objective</b> checks (fixed gates, automatable) vs <b>subjective</b> checks (personal, learned targets)."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Agent",
+            "What we measure",
+            "Type"
+          ],
+          "rows": [
+            [
+              "<b>Scout</b>",
+              "Recall — of what mattered, how much did it fetch? (invisible-miss problem → retrospective oracle)",
+              "objective"
+            ],
+            [
+              "<b>Gatekeeper</b>",
+              "Precision &amp; recall (classifier). Biased toward recall — false negatives = FOMO",
+              "objective"
+            ],
+            [
+              "<b>Framer</b>",
+              "Faithfulness (claim ledger → each claim carries a verbatim excerpt span; per-item vs own excerpt, thread vs the <em>union</em>; hard zero-hallucination gate) + Structural assertions (deterministic, no API) + Usefulness (rubric ratings, reported not gated until calibrated). <b>The grader is itself under test</b> against hand labels — see <code>data/evals/</code>",
+              "obj + subj"
+            ],
+            [
+              "<b>Coach</b>",
+              "Code-grounding (assertions on your repo) + doability/skill (completion, actual time, reuse)",
+              "obj + subj"
+            ],
+            [
+              "<b>Tuner</b>",
+              "Slope of every other metric over time (meta-eval). Graded on trend, not level",
+              "longitudinal"
+            ]
+          ]
+        },
+        {
+          "t": "p",
+          "html": "<b>Two grading modes:</b> offline regression against a golden set of labeled past days (makes prompt iteration safe), and online production feedback (your ratings + a dashboard). The offline half is live as of Phase 3 — <code>python data/evals/run_evals.py</code>, exit code gates."
+        },
+        {
+          "t": "p",
+          "html": "<b>Who checks the checker.</b> A grader is an agent too, and it fails the same ways. So it gets the same treatment: hand labels are the ground truth, the grader's verdicts are the prediction, and the harness reports its <b>false positives and false negatives</b> explicitly. Three habits fell out of finding two real false positives in our own graded output — <b>make it show its work</b> (enumerate every claim with a quoted span <em>before</em> judging), <b>verify the evidence in code</b> (a quoted span must literally appear in the excerpt), and <b>give each unit only the ground truth it is entitled to</b> (own excerpt for an item, the union for a thread that synthesizes across the day)."
+        }
+      ]
+    },
+    {
+      "id": "the-eval-learning-loop",
+      "title": "The eval / learning loop",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Measurement and fixing are kept separate. The <b>Evaluator</b> is a read-only sensor; the <b>Prescriber</b> turns diagnoses into recommended actions; the <b>Tuner</b> is the actuator that recalibrates agents; the <b>Control Room</b> reports and asks you questions, whose answers become new gold labels."
+        },
+        {
+          "t": "figure",
+          "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 820 300\" role=\"img\" aria-label=\"Eval and learning loop\">\n<defs><marker id=\"g1\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#C3CCD4\"/></marker><marker id=\"g2\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#2F6B52\"/></marker><marker id=\"g3\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 1L9 5L0 9z\" fill=\"#2F6FB2\"/></marker></defs>\n<text x=\"6\" y=\"18\" font-size=\"10.5\" letter-spacing=\"1.3\" fill=\"#8A939C\">SENSOR → PRESCRIBE → GATE → ACTUATE → REPORT → ELICIT</text>\n<rect x=\"6\" y=\"30\" width=\"808\" height=\"52\" rx=\"10\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/>\n<text x=\"20\" y=\"50\" font-size=\"10\" letter-spacing=\"1.2\" fill=\"#8A939C\">PRODUCTION</text>\n<text x=\"20\" y=\"70\" font-size=\"12\" fill=\"#1B1F24\">Scout → Gatekeeper → Framer / Coach → News + Backlog</text>\n<rect x=\"6\" y=\"120\" width=\"150\" height=\"62\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#2F6B52\"/><text x=\"81\" y=\"149\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#2F6B52\">Evaluator</text><text x=\"81\" y=\"166\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">sensor · read-only</text>\n<rect x=\"171\" y=\"120\" width=\"150\" height=\"62\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/><text x=\"246\" y=\"149\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Prescriber</text><text x=\"246\" y=\"166\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">diagnosis → action</text>\n<rect x=\"336\" y=\"120\" width=\"150\" height=\"62\" rx=\"8\" fill=\"#F6F8FA\" stroke=\"#C3CCD4\"/>\n<text x=\"411\" y=\"142\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Action gate</text>\n<text x=\"411\" y=\"158\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#2F6B52\">auto (safe)</text>\n<text x=\"411\" y=\"172\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#B5502A\">human-gated (risky)</text>\n<rect x=\"501\" y=\"120\" width=\"150\" height=\"62\" rx=\"8\" fill=\"none\" stroke=\"#C3CCD4\" stroke-dasharray=\"4 3\"/><text x=\"576\" y=\"149\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Tuner</text><text x=\"576\" y=\"166\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">actuator</text>\n<rect x=\"666\" y=\"120\" width=\"148\" height=\"62\" rx=\"8\" fill=\"#FFFFFF\" stroke=\"#2F6FB2\"/><text x=\"740\" y=\"149\" font-size=\"12.5\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#2F6FB2\">Control Room</text><text x=\"740\" y=\"166\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">report + ask you</text>\n<line x1=\"120\" y1=\"82\" x2=\"96\" y2=\"116\" stroke=\"#2F6B52\" marker-end=\"url(#g2)\"/>\n<line x1=\"156\" y1=\"151\" x2=\"167\" y2=\"151\" stroke=\"#C3CCD4\" marker-end=\"url(#g1)\"/>\n<line x1=\"321\" y1=\"151\" x2=\"332\" y2=\"151\" stroke=\"#C3CCD4\" marker-end=\"url(#g1)\"/>\n<line x1=\"486\" y1=\"151\" x2=\"497\" y2=\"151\" stroke=\"#C3CCD4\" marker-end=\"url(#g1)\"/>\n<line x1=\"651\" y1=\"151\" x2=\"662\" y2=\"151\" stroke=\"#C3CCD4\" marker-end=\"url(#g1)\"/>\n<path d=\"M576 120 Q576 96 250 94\" fill=\"none\" stroke=\"#8A939C\" stroke-dasharray=\"4 4\" marker-end=\"url(#g1)\"/>\n<text x=\"300\" y=\"110\" font-size=\"10.5\" fill=\"#8A939C\">recalibrate agents</text>\n<rect x=\"230\" y=\"222\" width=\"360\" height=\"48\" rx=\"10\" fill=\"#EDF1F5\" stroke=\"#C3CCD4\"/>\n<text x=\"410\" y=\"243\" font-size=\"12\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#1B1F24\">Eval dataset (data/)</text>\n<text x=\"410\" y=\"259\" font-size=\"10.5\" text-anchor=\"middle\" fill=\"#8A939C\">human gold · implicit signals · automated checks — held-out slice kept honest</text>\n<path d=\"M740 182 Q740 246 594 246\" fill=\"none\" stroke=\"#2F6FB2\" marker-end=\"url(#g3)\"/>\n<text x=\"606\" y=\"208\" font-size=\"10.5\" fill=\"#2F6FB2\">your answers → new labels</text>\n<path d=\"M230 246 Q86 246 81 186\" fill=\"none\" stroke=\"#8A939C\" stroke-dasharray=\"4 4\" marker-end=\"url(#g1)\"/>\n<text x=\"96\" y=\"212\" font-size=\"10.5\" fill=\"#8A939C\">feeds Evaluator</text>\n</svg>",
+          "caption": "Measurement, prescription and actuation are kept in separate boxes, and your answers to the Control Room become new gold labels."
+        },
+        {
+          "t": "h3",
+          "id": "guardrail-anti-echo-chamber",
+          "title": "Guardrail: anti-echo-chamber",
+          "status": null
+        },
+        {
+          "t": "p",
+          "html": "The Tuner could raise your ratings by only feeding you what you already believe — a filter bubble that betrays the goal of balancing your thinking with new thinking. A standing <b>diversity / exploration</b> metric in the Control Room prevents this: a minimum share of items must sit outside your established priors."
+        },
+        {
+          "t": "h3",
+          "id": "prescriber-accountability",
+          "title": "Prescriber accountability",
+          "status": null
+        },
+        {
+          "t": "p",
+          "html": "Every recommended action records a <b>predicted impact with a confidence</b>. After it ships, the Control Room shows <b>predicted vs. actual</b> — so the prescriptive layer earns trust instead of just asserting it, and every recalibration is regression-tested against the held-out set before shipping and is reversible."
+        }
+      ]
+    },
+    {
+      "id": "system-design-and-data",
+      "title": "System design & data",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Data is separated from presentation. Agents write JSON to <code>data/</code>; the pages (<code>Signal.html</code>, <code>Control-Hub.html</code>) render it. Files: <code>profile.json</code> (the user profile), <code>YYYY-MM-DD.json</code> (immutable daily brief record + archive), <code>backlog.json</code>, <code>metrics.json</code>. Every record carries <code>user_id</code>."
+        },
+        {
+          "t": "p",
+          "html": "<b>Loop / token engineering:</b> the daily path is cheap (small models for Scout/dedup, mid for Framer); the expensive repo-grounded synthesis (Coach) runs only Friday night / Saturday morning."
+        }
+      ]
+    },
+    {
+      "id": "tradeoffs-chosen-deliberately",
+      "title": "Tradeoffs (chosen deliberately)",
+      "blocks": [
+        {
+          "t": "list",
+          "items": [
+            "<b>Recall over precision</b> at the Gatekeeper — better a little noise than a missed item (FOMO).",
+            "<b>Depth over coverage</b> in homework — one or two coherent exercises, the rest benched to the backlog.",
+            "<b>Faithfulness is a hard gate; usefulness is a soft, learned target.</b>",
+            "<b>Build for one, don't hardcode one</b> — profile object + <code>user_id</code> seam keep the multi-tenant path open at near-zero cost today."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "commercial-path-documented-not-built",
+      "title": "Commercial path (documented, not built)",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "<b>The brain transfers; the body doesn't.</b> Agent logic is ~80% portable to a product; the local/single-user scaffolding is not. Key economics insight: most of the pipeline is <b>shared</b> — the news is the same for everyone, so run <b>Scout → Gatekeeper once</b> to produce a canonical verified pool, then apply a cheap <b>per-user personalization layer</b> (Framer framing + materiality + Coach) on top. What a product adds: auth + multi-tenant isolation, per-user LLM cost management, per-user cold-start onboarding, and cloud scheduling. Defensibility is the <b>action loop</b> (news → hands-on skill grounded in the user's code) and adaptive personalization — not the news itself."
+        }
+      ]
+    },
+    {
+      "id": "science-methodology",
+      "title": "Science methodology",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Treat the system as an experiment: hypotheses (each agent's value), metrics (the evals above), controlled iteration (offline regression before shipping any prompt change), and honest reporting of predicted vs. actual. The append-only Decision Log below is the lab notebook."
+        }
+      ]
+    },
+    {
+      "id": "decision-log",
+      "title": "Decision Log",
+      "blocks": [],
+      "log": true
+    }
+  ],
+  "decisionLog": [
+    {
+      "date": "2026-08-23",
+      "lead": "Content/design split adopted for every document — with two classes.",
+      "body": "All pages become <b>JSON content + a design produced in Claude Design</b>; the JSON is the source of truth and the HTML is never hand-edited. But the two classes need different deliverables. <b>Static docs</b> (Concepts, Plan, System-Design) carry content I maintain, change weekly, and can be regenerated on demand — a finished page is fine. <b>Live surfaces</b> (<code>Signal.html</code>, <code>Control-Hub.html</code>) render <em>agent output</em> that changes daily, so regeneration is impossible: Claude Design must deliver a <b>renderer with a data slot</b>, and the design has to be <b>locked before Phase 6</b> so the backend can be wired into a fixed template. Locking means freezing the data contract the template reads, not just the visuals. First working example of the pattern: the Knowledge Hub (<code>Agentic_Concepts.json</code> → generated page)."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Low-level architecture restructured per agent.",
+      "body": "One subsection each for Framer (built, in depth) and Scout · Gatekeeper · Coach · Tuner · Orchestrator (designed, one paragraph each: in / process / out / graded on). The Framer's dense internals diagram was replaced with a three-tile <b>inputs → process → outputs</b> flow after it proved hard to read. Module map reordered input → process → output, with the data-contract shapes folded into the path descriptions rather than living in a separate section. Added a side-by-side <b>faithfulness vs usefulness</b> comparison, a <b>terminology table with worked examples</b> (claim, supporting_span, expected_span_contains, false alarm, missed hallucination, omission, grader error, precision, recall), and a plain-language <b>\"how the Framer eval gate works\"</b> subsection capturing the walkthrough — frozen yardstick, same-function-not-a-copy, conclusions-not-text, and the four known gaps."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Deterministic false-alarm signal added to the grader.",
+      "body": "When a claim is marked <em>unsupported</em> with no span, Python now scans the claim for <b>numeric tokens</b> (money, percentages, dates) and warns if they appear verbatim in the excerpt — the $965B case, catchable for free. It <b>warns, never promotes</b>: a number's presence says nothing about the claim built on it (\"$122B\" is in the excerpt; \"SoftBank invested $122B\" is still false). Proper nouns were dropped from the check — every claim names its own subject, so they fired on fabrications too. This is the only false-alarm signal code can produce: verifying evidence is <em>present</em> is mechanical; verifying it is <em>absent</em> is a semantic judgement Python cannot make."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Three gaps found by walking the design, all deferred to Phase 6.",
+      "body": "(1) <b>Flagged ≠ fixed</b> — the Framer's faithfulness check surfaces unsupported claims but writes the brief anyway; the reflection loop is one turn, not a retry. (2) <b>No daily check</b> — <code>run_evals.py</code> only runs against frozen golden cases when something changes, so a contract violation on a live day goes unnoticed until the next prompt edit; the free structural checks should run daily as a smoke test. (3) <b>The harness regression-tests the grader, not the writer</b> — it regrades the <em>frozen</em> brief, so a change to the Framer's own prompt is never exercised. Closing that needs an opt-in \"regenerate mode\" that re-runs the Framer on the golden input before grading (costs one Opus call)."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Batching is a default, not a hard requirement — corrected.",
+      "body": "Framing all items in one call makes cross-item connections free, but a multi-call design is viable: chunk the items, then add an explicit <b>reduce</b> call to write the thread (N+1 calls), accepting weaker per-item connections across chunk boundaries. The real ceiling is <b>output</b> tokens (~60–70 items at the current 24k cap), not context. No dynamic chunking is built, and it may never be needed: the Gatekeeper is supposed to cap volume — a 60-item day means the Gatekeeper failed, not that the Framer needs sharding. <b>Action for Phase 5:</b> add a loud assertion on item count rather than silently truncating."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Added a Low-level architecture section.",
+      "body": "The page had the architectural <em>why</em> but no implementation depth, so detail lived only in code and commit messages. Now captured: module map with <b>BUILT / DESIGNED</b> status tags, the Framer's 8-step execution order (2 API calls, everything else deterministic), model-routing and cost knobs with observed spend, the raw→framed data contract, grader internals, eval harness structure, and extension points for the next agent. Living section — updated as each agent lands."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Prompt and contract split into separate files.",
+      "body": "<code>prompts/framer-prompt.md</code> now holds the system prompt and nothing else; <code>prompts/framer-contract.md</code> holds the I/O contract and hard rules. The tell was the marker-extraction regex in <code>framer.py</code> — machinery that existed only to separate two things sharing one file; the loader is now a plain read. Rationale: a prompt-only change shows as a prompt-only diff, and future <b>voice variants</b> map cleanly as N prompt files against one shared contract instead of N duplicated copies. Drift is managed by discipline (change both in the same commit) and by the structural assertions, which already test the contract's rules. Pattern generalises: each agent gets <code>&lt;agent&gt;-prompt.md</code> + <code>&lt;agent&gt;-contract.md</code> in <code>prompts/</code>."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Known limit, carried forward.",
+      "body": "The gate is deterministic for a fixed input, which is what regression needs, but on <em>unseen</em> days the Haiku grader still occasionally enumerates an inference (\"X means Y no longer matters\") as a checkable claim. Acceptable while the golden day is fixed; revisit before the grader guards live briefs — most likely by routing it to a stronger model, which is also what the usefulness judge needs before it can gate."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Golden set: frozen copies, and labels that admit uncertainty.",
+      "body": "<code>data/evals/golden/&lt;date&gt;/</code> holds <code>input.json</code> + <code>output.json</code> as <em>frozen copies</em> — evaluating the live files would let a Framer re-run silently move the baseline. Labels carry three tiers per unit: <code>expected_unsupported</code> (must flag), <code>tolerated</code> (genuinely borderline under the Framer's own contract — scored neither way, deliberately kept short), and named <code>regression_cases</code> asserted against the claim ledger rather than merely the flag list, so we can demand the grader <em>looked at</em> the $965B clause and found the span. Adding a day is a new directory; the runner globs and needs no edit. A second false positive surfaced during labelling — the 2026-08-13 re-run flagged \"~80% of Q1 dollars\", which its excerpt states word for word — and is seeded as the second regression case."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Verify the verifier's evidence, in code.",
+      "body": "Every span the grader quotes is checked as a literal substring of the excerpt; a claim \"supported\" by a span that isn't there is downgraded to unsupported and recorded as a <b>grader error</b>, gated separately from false positives. A grader can invent a citation; a substring match cannot. Paired with <code>temperature=0</code> on the grader — at default sampling it disagreed with itself on borderline sentences roughly one run in three, which would have failed builds at random (5/5 clean runs after; fabrication detection unaffected)."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Root cause of the $965B false positive: grading scope, not carelessness.",
+      "body": "The grader was handed <code>source_excerpt</code> first and the framing second, and so enumerated the <em>excerpt's</em> claims and checked them against the excerpt — grading the ground truth against itself. It never read the framing, which is why a supported claim looked unsupported and, as a seeded fabrication test proved, why invented facts passed clean. Fixes: the writing under test comes <b>first</b> in the payload and is named <code>writing_under_test</code>; the excerpt is named <code>ground_truth_excerpt</code>; each claim must be phrased as the <em>writing</em> phrases it and carry a verbatim supporting span before any verdict; headlines are excluded (the Gatekeeper wrote them); and the day-level <b>thread is graded against the union of every excerpt</b>, never one item's. Flag lists are now <b>derived in code</b> from the claim ledger rather than taken as a second free-text field."
+    },
+    {
+      "date": "2026-08-19",
+      "lead": "Phase 3 done (Opus 5). The Framer grader is now itself under test.",
+      "body": "<code>data/evals/run_evals.py</code> runs three checks over each frozen golden day: <b>faithfulness</b> (hard gate, one Haiku call — regrades the committed framing and compares to hand labels, reporting false positives and false negatives), <b>structural assertions</b> (hard gate, no API — DO&nbsp;THIS only on AI, worked examples only on allowed categories, sources present, thread non-empty, reading time and counts recomputed with the Framer's own functions), and <b>usefulness</b> (LLM judge on a four-part rubric, printed but <em>not</em> gating until calibrated against real ratings). Non-zero exit gates future prompt changes. ~$0.02 per run, on the same ledger and circuit-breaker as the Framer."
+    },
+    {
+      "date": "2026-08-18",
+      "lead": "Repo reorganised by role; data named by producing agent.",
+      "body": "Flat root replaced with <code>agents/ · application/ · config/ · data/ · design/ · plan/ · prompts/</code>. Three principles: (1) <b>config vs data</b> — hand-authored files that rarely change (<code>profile.json</code>, <code>scout-sources.md</code>) live in <code>config/</code>, machine-generated files in <code>data/</code>; (2) <b>no input/output folders</b> — the same file is one agent's output and the next agent's input, so <code>data/</code> splits by lifecycle (<code>verified/ · briefs/ · state/ · evals/</code>) and each file is <b>prefixed with the agent that wrote it</b> (<code>gatekeeper_YYYY-MM-DD.json</code> → <code>framer_YYYY-MM-DD.json</code>); (3) <b>telemetry is its own tier</b> (<code>data/state/</code>). Retired <code>News-reference.html</code> — <code>application/Signal.html</code> now renders that design live, so the p2 prompt points there instead. All hardcoded paths in <code>agents/framer.py</code>, every doc/prompt reference, and all cross-page links were updated and verified."
+    },
+    {
+      "date": "2026-08-18",
+      "lead": "Visual design system adopted.",
+      "body": "All surfaces now share one theme: warm cream <code>#f2ebdc</code> page, <code>#faf5ea</code> cards, rust-terracotta <code>#b5502a</code> accent, forest green <code>#2f6b52</code> for positive/DO&nbsp;THIS, Newsreader serif headlines + Public&nbsp;Sans body. Applied to Signal, System-Design, Plan, Control-Hub, and the Knowledge Hub concepts reference. Architecture diagrams stay on dark cards for legibility on the light page."
+    },
+    {
+      "date": "2026-08-18",
+      "lead": "Surfaces split by lifecycle.",
+      "body": "The combined Signal page became two single-purpose files: <code>Signal.html</code> (the daily News brief — regenerated by the Framer) and <code>System-Design.html</code> (this living design record — hand-updated each session). Rationale: the two have different update rhythms, and a compiled/bundled design page can't be hand-edited, which broke the decision-log ritual. Both stay editable plain HTML so the design and maintainability coexist. Cross-references updated in <code>CONVENTIONS.md</code>, <code>Plan.html</code>, README, and the Framer docs."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "New agent: Orchestrator (front door).",
+      "body": "Merges the original Interactive + Feedback agents. Sits between the UI and the agents: classifies user intent, routes (add-source → Scout, question → chat, feedback / \"explore X\" → Tuner), collates responses, runs checks, surfaces results. <b>LLM-routed with deterministic fast-paths</b> — explicit UI actions dispatch directly; the LLM handles only ambiguous natural-language input. It's the <b>single live-API agent</b> in front of the otherwise-batch pipeline (this bounds the hosting/backend work). Lands ~Phase 9; its v0 is the chatbot."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "Infrastructure trajectory.",
+      "body": "<b>Data:</b> JSON files now → <b>SQLite</b> when history/queries get awkward (~Phase 6–9) → <b>Postgres + pgvector</b> (incl. auth <code>sessions</code>) at multi-tenant (Phase 11); the <code>user_id</code> seam keeps the migration mechanical. <b>Observability:</b> extend <code>usage.json</code> into a structured per-run trace now → an LLM-observability tool at deploy (~Phase 6+); it overlaps the eval subsystem and feeds the Control Room. <b>Cost tracker:</b> the <code>usage.json</code> ledger + cost circuit-breaker exist now; the Control Room charts it live in Phase 9."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "Process.",
+      "body": "Decisions are now recorded in both <code>Plan.html</code> and this Decision Log (see <code>prompts/CONVENTIONS.md</code> §5)."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "Tool layer &amp; decoupling.",
+      "body": "Agents are decoupled from each other via JSON contracts, and from their tools via <b>MCP</b> where a real boundary exists (Scout fetching, Coach GitHub). Captured as the per-agent concept map above rather than a one-line entry."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "Eval finding.",
+      "body": "The faithfulness check produced a false positive (missed a clause; graded the thread against a single item's excerpt). Decision: the grader needs its own eval, and the thread is checked against the <em>union</em> of all excerpts — Phase 3's first golden-set case."
+    },
+    {
+      "date": "2026-08-09",
+      "lead": "Phase 2 done (commit df8adfd, Opus 5).",
+      "body": "Framer built &amp; proven — one batched structured framing call + a cheap Haiku faithfulness self-check, prompt caching, cost circuit-breaker. First real brief for ~$0.10. Voice verdict: GO."
+    },
+    {
+      "date": "2026-08-04",
+      "lead": "Split surfaces into <code>Signal.html</code> (News + System, public-safe) and <code>Control-Hub.html</code> (Control Room + Backlog, private).",
+      "body": "Baked in <code>profile</code> + <code>user_id</code> seam for a future multi-tenant product."
+    },
+    {
+      "date": "2026-08-04",
+      "lead": "Added the eval subsystem: Evaluator (sensor) / Prescriber / Tuner (actuator) / Control Room, with a held-out dataset, two-tier action gating, anti-echo-chamber guardrail, and prescriber accountability.",
+      "body": ""
+    },
+    {
+      "date": "2026-08-04",
+      "lead": "Layout = Bento.",
+      "body": "Added reading-time header, a synthesis \"thread,\" inline connections; worked examples on AI items only; DO THIS reserved for AI."
+    },
+    {
+      "date": "2026-08-04",
+      "lead": "Two jobs split: (a) conversational currency (daily), (b) hands-on tradeoff learning (weekly homework grounded in repos, off-domain allowed).",
+      "body": ""
+    },
+    {
+      "date": "2026-08-04",
+      "lead": "Reframed from \"news app\" to a synthesis + practice system.",
+      "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "note": "Content contract for the private Control Hub. build-controlhub.js renders it. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes.",
+  "site": {
+    "brand": "Control Hub",
+    "privacy": "private · never publish",
+    "controlKicker": "Evaluator · Prescriber · Elicitation",
+    "controlTitle": "Control Room",
+    "backlogKicker": "Coach · weekly practice",
+    "backlogTitle": "Backlog",
+    "signalLink": {
+      "label": "Signal →",
+      "href": "../application/Signal.html"
+    }
+  },
+  "seed": {
+    "title": "Seed state — no real numbers yet",
+    "body": "Metrics are placeholders until the system runs and you rate it over several weeks. Trends need time before they mean anything; this page shows the <em>shape</em> of what you will see."
+  },
+  "backlogIntro": {
+    "title": "Your durable workbench",
+    "body": "The Coach appends 60-minute exercises on Fridays. Check items off and add notes during the week. Skippable by design — no weekly pressure, nothing expires."
+  },
+  "actionsTakenEmpty": "Nothing shipped yet. Approved actions land here with <span style=\"color:var(--soft)\">predicted vs actual</span> impact, so the prescriber earns trust instead of asserting it.",
+  "metrics": [
+    {
+      "name": "Scout",
+      "kind": "agent",
+      "measures": "Recall — of items that mattered, how many were fetched",
+      "status": "awaiting first-week data",
+      "target": "target: ≥ 0.95",
+      "gradedBy": "graded by: retrospective oracle + your \"you missed X\" feedback"
+    },
+    {
+      "name": "Gatekeeper",
+      "kind": "agent",
+      "measures": "Precision &amp; Recall (classifier)",
+      "status": "awaiting data",
+      "target": "target: recall ≥ 0.9 (biased over precision — FOMO)",
+      "gradedBy": "graded by: your signal/noise ratings + Suppressed-drawer audit"
+    },
+    {
+      "name": "Framer",
+      "kind": "agent",
+      "measures": "Faithfulness (objective) + Usefulness (subjective)",
+      "status": "awaiting data",
+      "target": "target: faithfulness = 1.0 (hard gate); usefulness ≥ 0.8",
+      "gradedBy": "graded by: claim decomposition (auto) + rubric ratings (you → LLM-judge)"
+    },
+    {
+      "name": "Coach",
+      "kind": "agent",
+      "measures": "Code-grounding (objective) + doability/skill (behavioral)",
+      "status": "awaiting data",
+      "target": "target: grounding = 1.0; completion ≥ 0.7; time ≤ 60 min",
+      "gradedBy": "graded by: repo assertions (auto) + your completion behavior"
+    },
+    {
+      "name": "Tuner",
+      "kind": "agent",
+      "measures": "Slope of every other metric over time (meta-eval)",
+      "status": "needs weeks of data",
+      "target": "target: curves bending the right way",
+      "gradedBy": "graded by: longitudinal trend, not level"
+    },
+    {
+      "name": "Guardrail · Diversity",
+      "kind": "guardrail",
+      "measures": "Anti-echo-chamber. Stops the Tuner boosting ratings by only feeding what you already believe.",
+      "status": "awaiting data",
+      "target": "target: ≥ 20% of items outside your priors",
+      "gradedBy": "protects: balancing your thinking with new thinking"
+    }
+  ],
+  "actions": [
+    {
+      "id": "a1",
+      "gate": "auto",
+      "badge": "AUTO · safe",
+      "target": "target: Scout",
+      "diagnosis": "<b>Diagnosis:</b> Scout seed list has no dedicated MCP-ecosystem source beyond the spec blog.",
+      "recommendation": "<b>Recommend:</b> add <b>LangGraph + CrewAI release notes</b> to Scout Tier B.",
+      "impact": "predicted impact: +8% recall on agent-framework items · confidence 0.55 · status: awaiting first-week data",
+      "confidence": 0.55
+    },
+    {
+      "id": "a2",
+      "gate": "human",
+      "badge": "HUMAN-GATED · needs you",
+      "target": "target: Gatekeeper",
+      "diagnosis": "<b>Diagnosis:</b> corroboration threshold may be too strict for fast-moving releases (Kimi K3 was held for a primary source).",
+      "recommendation": "<b>Recommend:</b> allow a single high-reputation primary (lab blog) to surface without a 2nd source.",
+      "impact": "predicted impact: −1 day latency on major releases; small precision risk · confidence 0.40",
+      "confidence": 0.4
+    }
+  ],
+  "questions": [
+    {
+      "prompt": "For a new agent-framework release, do you want it surfaced immediately from one primary source, or held until corroborated?",
+      "placeholder": "Type your answer…",
+      "feeds": "gatekeeper_corroboration_preference"
+    },
+    {
+      "prompt": "When these collide on one weekend, rank them for DO THIS priority: MCP infra · RL technique · agentic-coding harness.",
+      "placeholder": "e.g. RL &gt; harness &gt; MCP…",
+      "feeds": "coach_topic_priority"
+    }
+  ],
+  "backlog": [
+    {
+      "id": "hw1",
+      "title": "Set up the project repo using the Claude Code CLI",
+      "status": "DOING",
+      "meta": [
+        "AI",
+        "~60 min (setup excl.)",
+        "repo: aiml-signal-system",
+        "Claude Code CLI basics"
+      ],
+      "goal": "<b>Goal:</b> end with a new GitHub repo, Claude Code running, and one commit it made for you.",
+      "steps": [
+        "Create empty GitHub repo aiml-signal-system ✓",
+        "Clone locally &amp; cd in ✓",
+        "Install Claude Code CLI + authenticate ✓",
+        "Run <code>claude</code> and ask it to scaffold README + folders",
+        "Ask Claude Code to make the first commit, then push"
+      ],
+      "note": "Repo, clone, CLI install + login all complete. Remaining: first scaffolding prompt + commit."
+    },
+    {
+      "id": "hw2",
+      "title": "Have Claude Code build a minimal stateless 'echo' MCP server",
+      "status": "TODO",
+      "meta": [
+        "AI",
+        "~60 min (setup excl.)",
+        "repo: aiml-signal-system",
+        "MCP 2026-07-28 stateless spec"
+      ],
+      "goal": "<b>Goal:</b> feel the stateless model firsthand — one 'echo' tool, no session state, any instance answers.",
+      "steps": [
+        "Ask Claude Code to create a minimal MCP server with one 'echo' tool on the 2026-07-28 stateless spec",
+        "Have it comment where state would have lived in the old model",
+        "Run it, call the tool twice, confirm no session needed"
+      ],
+      "note": "Queued after hw-01. Good second CLI session."
+    }
+  ],
+  "accomplishments": [
+    {
+      "date": "2026-08-04",
+      "text": "Created private GitHub repo aiml-signal-system (description, Python .gitignore, no license)."
+    },
+    {
+      "date": "2026-08-04",
+      "text": "Cloned repo locally; PAT auth saved in Keychain."
+    },
+    {
+      "date": "2026-08-04",
+      "text": "Installed Claude Code CLI (v2.1.222), fixed PATH, logged in on Max plan, first session live."
+    }
+  ],
+  "footer": "Control Hub · Backlog renders <span style=\"font-family:var(--mono);font-size:11.5px\">data/state/backlog.json</span>. Private telemetry; never publish."
+}

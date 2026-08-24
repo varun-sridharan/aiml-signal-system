@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "note": "Content contract for Signal, the reader-facing daily brief. The page is a renderer: the pipeline writes this file, build-signal.js regenerates the HTML. items[].provenance is what the 'Why this?' control shows — tone 'warn' also renders the UNVERIFIED chip and counts into brief.counts.unverified. items[].figure is an inline SVG authored in the light diagram style; an item may ship without one.",
+  "site": {
+    "brand": "Signal",
+    "links": [
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Control Hub",
+        "href": "../application/Control-Hub.html"
+      }
+    ]
+  },
+  "brief": {
+    "date": "2026-08-04",
+    "dayLabel": "Tuesday · 2026-08-04",
+    "title": "Today's brief",
+    "generatedAt": "06:04",
+    "readingTime": "~5 min",
+    "counts": {
+      "items": 7,
+      "doThis": 2,
+      "unverified": 2,
+      "byCategory": {
+        "AI": 4,
+        "Market": 1,
+        "Investment": 1,
+        "Geopolitical": 1
+      }
+    },
+    "startHere": {
+      "label": "2 items ask something of you today",
+      "body": "MCP's spec moved to stateless, and iStar's step rewards are worth an hour. Everything else is context."
+    },
+    "thread": {
+      "label": "Today's thread — how these connect",
+      "body": "Capability is <b>decentralizing</b> while capital and policy <b>centralize</b>. Kimi K3 ships massive open weights and Terminal-Bench shows the top models in a near-tie — capability is spreading out. Yet ≈$1T closed-lab rounds and the Blackwell export ban concentrate money and control. The forces point opposite ways: if open models keep closing the gap, the <b>moat moves from the model to the harness and distribution</b> — which is why the MCP stateless shift matters more than any single model drop this week."
+    }
+  },
+  "items": [
+    {
+      "id": "item-1",
+      "size": "hero",
+      "category": "AI",
+      "tags": [
+        "DO THIS",
+        "KNOW"
+      ],
+      "unverified": false,
+      "headline": "MCP's 2026-07-28 spec moves the core from stateful to stateless request/response",
+      "why": "<b>Why it matters:</b> Stateless lets you scale MCP servers horizontally behind a plain load balancer — no sticky sessions, no shared session store. Cost: it breaks cross-version compatibility, and Roots / Sampling / Logging + Dynamic Client Registration are now deprecated (12-month runway).",
+      "ninety": "",
+      "example": "Example: a stateful server needs sticky sessions — if your 2nd call lands on a different node than your 1st, the session is gone and the call fails. Stateless means any node can answer any request.",
+      "connection": "<b>↔ Ties to the thread:</b> the \"harness &gt; model\" shift made concrete — as models converge, infrastructure like MCP is where differentiation moves.",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 150\" role=\"img\"><title>Stateful vs stateless MCP</title>\n        <text x=\"12\" y=\"18\" fill=\"#A9762A\" font-size=\"12\" font-weight=\"700\">BEFORE — stateful (sticky sessions)</text>\n        <rect x=\"12\" y=\"30\" width=\"70\" height=\"30\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#D8D0BE\"/><text x=\"47\" y=\"49\" fill=\"#201C17\" font-size=\"11\" text-anchor=\"middle\">Client</text>\n        <line x1=\"82\" y1=\"45\" x2=\"120\" y2=\"45\" stroke=\"#B9AF9B\" stroke-width=\"1.5\" marker-end=\"url(#a)\"/>\n        <rect x=\"120\" y=\"30\" width=\"54\" height=\"30\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#D8D0BE\"/><text x=\"147\" y=\"49\" fill=\"#201C17\" font-size=\"11\" text-anchor=\"middle\">LB</text>\n        <line x1=\"174\" y1=\"45\" x2=\"212\" y2=\"45\" stroke=\"#2F6B52\" stroke-width=\"2\" marker-end=\"url(#a)\"/>\n        <rect x=\"212\" y=\"30\" width=\"86\" height=\"30\" rx=\"6\" fill=\"#EAF1EC\" stroke=\"#2F6B52\"/><text x=\"255\" y=\"49\" fill=\"#201C17\" font-size=\"11\" text-anchor=\"middle\">Node A ✓ses</text>\n        <line x1=\"174\" y1=\"45\" x2=\"212\" y2=\"82\" stroke=\"#B5502A\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\" marker-end=\"url(#x)\"/>\n        <rect x=\"212\" y=\"70\" width=\"86\" height=\"26\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#B5502A\"/><text x=\"255\" y=\"87\" fill=\"#B5502A\" font-size=\"10.5\" text-anchor=\"middle\">Node B ✗ no ses</text>\n        <text x=\"352\" y=\"18\" fill=\"#2F6B52\" font-size=\"12\" font-weight=\"700\">AFTER — stateless (round-robin)</text>\n        <rect x=\"352\" y=\"30\" width=\"66\" height=\"30\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#D8D0BE\"/><text x=\"385\" y=\"49\" fill=\"#201C17\" font-size=\"11\" text-anchor=\"middle\">Client</text>\n        <line x1=\"418\" y1=\"45\" x2=\"452\" y2=\"45\" stroke=\"#B9AF9B\" stroke-width=\"1.5\" marker-end=\"url(#a)\"/>\n        <rect x=\"452\" y=\"30\" width=\"48\" height=\"30\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#D8D0BE\"/><text x=\"476\" y=\"49\" fill=\"#201C17\" font-size=\"11\" text-anchor=\"middle\">LB</text>\n        <line x1=\"500\" y1=\"45\" x2=\"536\" y2=\"34\" stroke=\"#2F6B52\" stroke-width=\"1.5\" marker-end=\"url(#a)\"/><line x1=\"500\" y1=\"45\" x2=\"536\" y2=\"60\" stroke=\"#2F6B52\" stroke-width=\"1.5\" marker-end=\"url(#a)\"/><line x1=\"500\" y1=\"45\" x2=\"536\" y2=\"86\" stroke=\"#2F6B52\" stroke-width=\"1.5\" marker-end=\"url(#a)\"/>\n        <rect x=\"536\" y=\"22\" width=\"90\" height=\"22\" rx=\"6\" fill=\"#EAF1EC\" stroke=\"#2F6B52\"/><text x=\"581\" y=\"37\" fill=\"#201C17\" font-size=\"10\" text-anchor=\"middle\">any node ✓</text>\n        <rect x=\"536\" y=\"50\" width=\"90\" height=\"22\" rx=\"6\" fill=\"#EAF1EC\" stroke=\"#2F6B52\"/><text x=\"581\" y=\"65\" fill=\"#201C17\" font-size=\"10\" text-anchor=\"middle\">any node ✓</text>\n        <rect x=\"536\" y=\"78\" width=\"90\" height=\"22\" rx=\"6\" fill=\"#EAF1EC\" stroke=\"#2F6B52\"/><text x=\"581\" y=\"93\" fill=\"#201C17\" font-size=\"10\" text-anchor=\"middle\">any node ✓</text>\n        <defs><marker id=\"a\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#B9AF9B\"/></marker><marker id=\"x\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#B5502A\"/></marker></defs>\n      </svg>",
+      "sources": "Primary: <a href=\"https://blog.modelcontextprotocol.io/posts/2026-07-28/\">modelcontextprotocol.io</a> · <a href=\"https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/\">GitHub Changelog</a> · <a href=\"https://www.theregister.com/devops/2026/07/23/model-context-protocol-prepares-to-break-with-its-stateful-past/5276722\">The Register</a>",
+      "provenance": {
+        "tone": "ok",
+        "text": "Matched your <b>AI</b> interest. Three sources with the spec blog as primary. Every claim was checked against the source excerpt before it was written."
+      }
+    },
+    {
+      "id": "item-2",
+      "size": "half",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "unverified": true,
+      "headline": "Kimi K3 — largest open-weight model yet (2.8T params, 1M context)",
+      "why": "<b>Why it matters:</b> Open weights at this scale change build-vs-buy for agents, where per-call cost compounds fast. The tradeoff is capability vs. serving cost + latency.",
+      "ninety": "",
+      "example": "Example: an agent making 20 calls/task — a small model at ~1/10th cost wins for routing &amp; tool steps; reserve a K3-class model for the one hard reasoning step.",
+      "connection": "<b>↔ Contrast:</b> open weights this strong <b>vs.</b> the ~$1T closed-lab rounds (Investment) — capability decentralizing while capital centralizes.",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 110\" role=\"img\"><title>Capability vs cost</title>\n        <text x=\"10\" y=\"30\" fill=\"#8B8375\" font-size=\"11\">Small model</text><rect x=\"90\" y=\"22\" width=\"70\" height=\"12\" rx=\"3\" fill=\"#2F6B52\"/><text x=\"200\" y=\"31\" fill=\"#2F6B52\" font-size=\"10\">$ low · fast</text>\n        <text x=\"10\" y=\"58\" fill=\"#201C17\" font-size=\"11\">Kimi K3</text><rect x=\"90\" y=\"50\" width=\"180\" height=\"12\" rx=\"3\" fill=\"#2F5D7C\"/>\n        <text x=\"10\" y=\"84\" fill=\"#8B8375\" font-size=\"10\">serving cost →</text><rect x=\"90\" y=\"76\" width=\"40\" height=\"10\" rx=\"3\" fill=\"#2F6B52\"/><rect x=\"90\" y=\"90\" width=\"150\" height=\"10\" rx=\"3\" fill=\"#A9762A\"/><text x=\"248\" y=\"99\" fill=\"#A9762A\" font-size=\"10\">K3 = high $</text>\n      </svg>",
+      "sources": "<a href=\"https://aiagentstore.ai/ai-agent-news/this-week\">AI Agents News</a> (awaiting primary Moonshot source)",
+      "provenance": {
+        "tone": "warn",
+        "text": "Matched your <b>AI</b> interest. <b>Aggregator only</b> — no primary Moonshot source yet, so the parameter and context figures are reported, not verified. The framing was still checked against the excerpt we have."
+      }
+    },
+    {
+      "id": "item-3",
+      "size": "half",
+      "category": "AI",
+      "tags": [
+        "DO THIS",
+        "RADAR"
+      ],
+      "unverified": true,
+      "headline": "Paper: iStar — implicit step rewards for multi-turn agentic RL",
+      "why": "",
+      "ninety": "<span class=\"lbl\">IN 90 SECONDS</span><b>Method:</b> per-step implicit rewards so the agent gets credit on intermediate actions, not just the final outcome. <b>Result:</b> +6.3% success on WebShop &amp; VisualSokoban. <b>Caveat:</b> benchmark-only; step-reward design is where the difficulty hides.",
+      "example": "Example: an agent finishes a 12-step task but fails at step 11 — with only a final reward it can't tell which step was good. Step rewards give signal along the way.",
+      "connection": "",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 110\" role=\"img\"><title>Sparse vs step rewards</title>\n        <text x=\"8\" y=\"16\" fill=\"#B5502A\" font-size=\"10\">sparse: reward only at end</text>\n        <circle cx=\"30\" cy=\"34\" r=\"7\" fill=\"#FBF9F3\" stroke=\"#B9AF9B\"/><circle cx=\"90\" cy=\"34\" r=\"7\" fill=\"#FBF9F3\" stroke=\"#B9AF9B\"/><circle cx=\"150\" cy=\"34\" r=\"7\" fill=\"#FBF9F3\" stroke=\"#B9AF9B\"/><circle cx=\"210\" cy=\"34\" r=\"7\" fill=\"#FBF9F3\" stroke=\"#B9AF9B\"/><circle cx=\"270\" cy=\"34\" r=\"8\" fill=\"#B5502A\"/>\n        <line x1=\"37\" y1=\"34\" x2=\"83\" y2=\"34\" stroke=\"#B9AF9B\"/><line x1=\"97\" y1=\"34\" x2=\"143\" y2=\"34\" stroke=\"#B9AF9B\"/><line x1=\"157\" y1=\"34\" x2=\"203\" y2=\"34\" stroke=\"#B9AF9B\"/><line x1=\"217\" y1=\"34\" x2=\"262\" y2=\"34\" stroke=\"#B9AF9B\"/>\n        <text x=\"8\" y=\"74\" fill=\"#2F6B52\" font-size=\"10\">iStar: reward every step</text>\n        <circle cx=\"30\" cy=\"92\" r=\"7\" fill=\"#2F6B52\"/><circle cx=\"90\" cy=\"92\" r=\"7\" fill=\"#2F6B52\"/><circle cx=\"150\" cy=\"92\" r=\"7\" fill=\"#2F6B52\"/><circle cx=\"210\" cy=\"92\" r=\"7\" fill=\"#2F6B52\"/><circle cx=\"270\" cy=\"92\" r=\"8\" fill=\"#2F6B52\"/>\n        <line x1=\"37\" y1=\"92\" x2=\"83\" y2=\"92\" stroke=\"#2F6B52\"/><line x1=\"97\" y1=\"92\" x2=\"143\" y2=\"92\" stroke=\"#2F6B52\"/><line x1=\"157\" y1=\"92\" x2=\"203\" y2=\"92\" stroke=\"#2F6B52\"/><line x1=\"217\" y1=\"92\" x2=\"262\" y2=\"92\" stroke=\"#2F6B52\"/>\n      </svg>",
+      "sources": "<a href=\"https://github.com/VoltAgent/awesome-ai-agent-papers\">agentic RL papers index</a> → resolve to arXiv",
+      "provenance": {
+        "tone": "warn",
+        "text": "Matched your <b>AI</b> interest. Found via a papers index; the <b>arXiv primary is unresolved</b>, so treat the benchmark numbers as claimed by the index."
+      }
+    },
+    {
+      "id": "item-4",
+      "size": "half",
+      "category": "AI",
+      "tags": [
+        "RADAR"
+      ],
+      "unverified": false,
+      "headline": "Terminal-Bench 2.1: GPT-5.6 Sol (89.5%) edges Opus 5 (89.1%)",
+      "why": "<b>Why it matters:</b> The top of the coding-agent frontier is now a near-tie, so the model is decreasingly the differentiator — the harness and eval design are.",
+      "ninety": "",
+      "example": "Example: a 0.4-pt model gap is smaller than the swing you get from a better retrieval/scaffold around the same model.",
+      "connection": "<b>↔ Reinforces Kimi K3:</b> if the best models are converging, the moat is the harness, not the model.",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 90\" role=\"img\"><title>Near-tie leaderboard</title>\n        <text x=\"8\" y=\"24\" fill=\"#201C17\" font-size=\"11\">GPT-5.6</text><rect x=\"70\" y=\"14\" width=\"200\" height=\"14\" rx=\"3\" fill=\"#2F5D7C\"/><text x=\"276\" y=\"25\" fill=\"#2F5D7C\" font-size=\"10\">89.5</text>\n        <text x=\"8\" y=\"52\" fill=\"#201C17\" font-size=\"11\">Opus 5</text><rect x=\"70\" y=\"42\" width=\"199\" height=\"14\" rx=\"3\" fill=\"#8B8375\"/><text x=\"276\" y=\"53\" fill=\"#8B8375\" font-size=\"10\">89.1</text>\n        <text x=\"70\" y=\"80\" fill=\"#8B8375\" font-size=\"10\">frontier flattening → harness &gt; model</text>\n      </svg>",
+      "sources": "<a href=\"https://www.morphllm.com/best-ai-coding-agents-2026\">Terminal-Bench writeup</a>",
+      "provenance": {
+        "tone": "ok",
+        "text": "Matched your <b>AI</b> interest. One secondary writeup of the benchmark run, no contradicting source found. Claims checked against its excerpt."
+      }
+    },
+    {
+      "id": "item-5",
+      "size": "half",
+      "category": "Investment",
+      "tags": [
+        "KNOW"
+      ],
+      "unverified": false,
+      "headline": "OpenAI closes record $122B round ($852B post); Anthropic at $965B",
+      "why": "<b>Why it matters:</b> The frontier-lab capital arms race sets the pricing umbrella everyone builds under — when top labs raise at ~$1T valuations, downstream API pricing and talent costs move with it.",
+      "ninety": "",
+      "example": "",
+      "connection": "<b>↔ Contradiction with Kimi K3:</b> money concentrates in closed labs even as open weights close the capability gap. Which force wins is the open question.",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 90\" role=\"img\"><title>Valuations</title>\n        <text x=\"8\" y=\"24\" fill=\"#201C17\" font-size=\"11\">Anthropic</text><rect x=\"80\" y=\"14\" width=\"200\" height=\"14\" rx=\"3\" fill=\"#A9762A\"/><text x=\"200\" y=\"25\" fill=\"#FFFDF8\" font-size=\"10\" text-anchor=\"middle\">$965B</text>\n        <text x=\"8\" y=\"52\" fill=\"#201C17\" font-size=\"11\">OpenAI</text><rect x=\"80\" y=\"42\" width=\"176\" height=\"14\" rx=\"3\" fill=\"#A9762A\" opacity=\".8\"/><text x=\"168\" y=\"53\" fill=\"#FFFDF8\" font-size=\"10\" text-anchor=\"middle\">$852B</text>\n        <text x=\"80\" y=\"80\" fill=\"#8B8375\" font-size=\"10\">private valuations, 2026</text>\n      </svg>",
+      "sources": "<a href=\"https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/\">Crunchbase</a>",
+      "provenance": {
+        "tone": "ok",
+        "text": "Matched your <b>Investment</b> interest. Single primary (Crunchbase). Every figure quoted here appears verbatim in the excerpt."
+      }
+    },
+    {
+      "id": "item-6",
+      "size": "half",
+      "category": "Market",
+      "tags": [
+        "KNOW"
+      ],
+      "unverified": false,
+      "headline": "Global VC hit record $510B in H1 2026; AI took ~80% of Q1 dollars",
+      "why": "<b>Why it matters:</b> Capital is concentrating hard into AI, and valuations are priced for perfection — every non-AI startup competes for the remaining ~20% of dollars.",
+      "ninety": "",
+      "example": "",
+      "connection": "",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 80\" role=\"img\"><title>AI share of VC</title>\n        <rect x=\"10\" y=\"24\" width=\"228\" height=\"22\" rx=\"4\" fill=\"#2F6B52\"/><text x=\"124\" y=\"40\" fill=\"#FFFDF8\" font-size=\"11\" text-anchor=\"middle\">AI ≈ 80%</text>\n        <rect x=\"242\" y=\"24\" width=\"48\" height=\"22\" rx=\"4\" fill=\"#D8D0BE\"/><text x=\"266\" y=\"40\" fill=\"#4C463D\" font-size=\"10\" text-anchor=\"middle\">20%</text>\n        <text x=\"10\" y=\"66\" fill=\"#8B8375\" font-size=\"10\">Q1 2026 global venture $</text>\n      </svg>",
+      "sources": "<a href=\"https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/\">Crunchbase H1 2026</a>",
+      "provenance": {
+        "tone": "ok",
+        "text": "Matched your <b>Market</b> interest. Single primary (Crunchbase H1 2026). The ~80% share is quoted directly from the source."
+      }
+    },
+    {
+      "id": "item-7",
+      "size": "half",
+      "category": "Geopolitical",
+      "tags": [
+        "RADAR"
+      ],
+      "unverified": false,
+      "headline": "House advances AI OVERWATCH Act; Blackwell export ban, H200 to case-by-case",
+      "why": "<b>Why it matters:</b> Chip access is now a policy variable, not just a supply one — vendor and region choices can shift based on where you and your customers operate.",
+      "ninety": "",
+      "example": "",
+      "connection": "<b>↔ Tension with Kimi K3:</b> policy restricts hardware, but open weights let capability route around it.",
+      "figure": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 300 96\" role=\"img\"><title>Export gate</title>\n        <rect x=\"8\" y=\"38\" width=\"60\" height=\"26\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#D8D0BE\"/><text x=\"38\" y=\"55\" fill=\"#201C17\" font-size=\"10\" text-anchor=\"middle\">US chips</text>\n        <line x1=\"68\" y1=\"51\" x2=\"104\" y2=\"51\" stroke=\"#B9AF9B\" stroke-width=\"1.5\" marker-end=\"url(#g)\"/>\n        <rect x=\"104\" y=\"34\" width=\"54\" height=\"34\" rx=\"6\" fill=\"#F2ECDD\" stroke=\"#2F5D7C\"/><text x=\"131\" y=\"55\" fill=\"#2F5D7C\" font-size=\"10\" text-anchor=\"middle\">policy gate</text>\n        <line x1=\"158\" y1=\"46\" x2=\"196\" y2=\"26\" stroke=\"#B5502A\" stroke-width=\"1.5\" marker-end=\"url(#gx)\"/><rect x=\"196\" y=\"14\" width=\"96\" height=\"22\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#B5502A\"/><text x=\"244\" y=\"29\" fill=\"#B5502A\" font-size=\"10\" text-anchor=\"middle\">Blackwell ✗ ban</text>\n        <line x1=\"158\" y1=\"54\" x2=\"196\" y2=\"54\" stroke=\"#A9762A\" stroke-width=\"1.5\" marker-end=\"url(#gy)\"/><rect x=\"196\" y=\"43\" width=\"96\" height=\"22\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#A9762A\"/><text x=\"244\" y=\"58\" fill=\"#A9762A\" font-size=\"10\" text-anchor=\"middle\">H200 ? case</text>\n        <line x1=\"158\" y1=\"62\" x2=\"196\" y2=\"82\" stroke=\"#2F6B52\" stroke-width=\"1.5\" marker-end=\"url(#gz)\"/><rect x=\"196\" y=\"72\" width=\"96\" height=\"20\" rx=\"6\" fill=\"#FBF9F3\" stroke=\"#2F6B52\"/><text x=\"244\" y=\"86\" fill=\"#2F6B52\" font-size=\"10\" text-anchor=\"middle\">others ✓</text>\n        <defs><marker id=\"g\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#B9AF9B\"/></marker><marker id=\"gx\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#B5502A\"/></marker><marker id=\"gy\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#A9762A\"/></marker><marker id=\"gz\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10z\" fill=\"#2F6B52\"/></marker></defs>\n      </svg>",
+      "sources": "<a href=\"https://www.mayerbrown.com/en/insights/publications/2026/01/administration-policies-on-advanced-ai-chips-codified\">Mayer Brown</a> · <a href=\"https://semiconductorsinsight.com/us-china-chip-export-controls-h200-2026/\">Semiconductors Insight</a>",
+      "provenance": {
+        "tone": "ok",
+        "text": "Matched your <b>Geopolitical</b> interest. Two independent sources agree on the export-control detail."
+      }
+    }
+  ],
+  "chat": {
+    "title": "Ask the brief",
+    "context": "Knows today's 7 items, the thread and every source.",
+    "suggestions": [
+      "Summarise in 3 lines",
+      "What should I do first?"
+    ],
+    "transcript": [
+      {
+        "role": "user",
+        "text": "Capability is decentralizing but capital is centralizing — which wins?"
+      },
+      {
+        "role": "assistant",
+        "text": "Open question. Open weights (Kimi K3) close capability, but closed labs' ~$1T war chests buy distribution and talent. Short-term distribution usually wins; open wins the long tail. Want the bull/bear on each?"
+      },
+      {
+        "role": "user",
+        "text": "Why does MCP going stateless matter for my server?"
+      },
+      {
+        "role": "assistant",
+        "text": "Drop sticky sessions, scale horizontally — any node answers. Catch: it breaks old clients. Want the migration checklist?"
+      }
+    ]
+  },
+  "states": {
+    "quiet": {
+      "chip": "Quiet day · 62 suppressed",
+      "title": "Quiet day. Go build.",
+      "body": "Scout pulled 62 candidates and the Gatekeeper killed all of them: no primary sources, nothing material to your work. That is a result, not a failure.",
+      "actions": [
+        "Open the backlog instead",
+        "See what was suppressed (62)"
+      ]
+    },
+    "loading": {
+      "chip": "Generating · started 06:03",
+      "kicker": "Generating today's brief",
+      "title": "Framing 7 verified items…",
+      "body": "Usually about 40 seconds. Yesterday's brief stays readable until this one lands."
+    },
+    "stale": {
+      "chip": "Stale · showing Monday",
+      "kicker": "Yesterday's brief",
+      "title": "Today's run hasn't finished",
+      "body": "The 06:00 run is still going. You're reading Monday's brief — nothing below is from today.",
+      "actions": [
+        "Keep reading Monday",
+        "Check again"
+      ]
+    },
+    "error": {
+      "chip": "Failed · budget breaker",
+      "kicker": "Pipeline failed",
+      "title": "No brief today — the Framer aborted",
+      "body": "The run stopped before writing anything, so nothing here is half-true. Cause: the monthly budget breaker tripped at <span style=\"font-family:var(--mono);font-size:13px\">$20.04 / $20.00</span> after the 06:00 attempt.",
+      "remedies": [
+        "Raise the cap in <span style=\"font-family:var(--mono);font-size:12.5px\">MONTHLY_BUDGET_USD</span> and rerun.",
+        "Or read yesterday's brief — it is untouched."
+      ],
+      "actions": [
+        "Rerun the pipeline",
+        "Open yesterday",
+        "See the run log"
+      ]
+    }
+  }
+}

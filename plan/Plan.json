@@ -1,0 +1,248 @@
+{
+  "version": 1,
+  "note": "Content source for the Build Plan page. Edit this; ask Claude to refresh the design from it. status is DONE | NOW | LATER and drives the tile colour, the pill and the sidebar dot. activities[] renders the phase table; notes[] renders the decision log inside the phase; a phase with neither stays a one-line outline row.",
+  "site": {
+    "kicker": "AI/ML Signal · build plan",
+    "title": "Build Plan",
+    "lede": "Rolling, session-sized. Each phase is timeboxed to about an hour, with an end state you can check.",
+    "headerTitle": "Build Plan",
+    "headerNote": "rolling · session-sized",
+    "headerLinks": [
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Prompts",
+        "href": "../prompts/"
+      }
+    ],
+    "footerNote": "Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href=\"../prompts/\">prompts/</a> · Design: <a href=\"../design/System-Design.html\">System-Design.html</a> · Backlog: <a href=\"../application/Control-Hub.html\">Control-Hub.html</a>."
+  },
+  "currentStatus": {
+    "date": "2026-08-19",
+    "body": "Phase 3 complete — the faithfulness grader is fixed and now has its own eval. <code>python data/evals/run_evals.py</code> gates on faithfulness + structural assertions and reports usefulness, for ~$0.02 a run; both seeded false-positive regressions pass. Next: <b>Phase 4 — Scout</b>, so the Framer runs on live items instead of the sample day."
+  },
+  "howItWorks": [
+    "<b>Rolling:</b> the next few phases are detailed; later ones are outlined and filled in as we reach them.",
+    "<b>1-hour phases:</b> each phase has an end state and fits one working session.",
+    "<b>Milestone activities:</b> each says what it accomplishes and why; the <b>how</b> lives in a canonical prompt under <a href=\"../prompts/\">prompts/</a> (final &amp; holistic — see the folder README).",
+    "<b>Notes = decision log:</b> Claude maintains the decisions, tradeoffs, and priorities per phase from our sessions, and updates them when a phase concludes.",
+    "<b>Content vs design:</b> every document is JSON content rendered by a design from Claude Design. Claude edits the JSON; the HTML is generated and never hand-edited.",
+    "<b>Rituals:</b> <em>end of session</em> — Claude updates the concepts reference JSON and reminds you to refresh it. <em>End of phase</em> — Claude reminds you to regenerate <b>all</b> static docs whose JSON changed (concepts, plan, design record), since a phase boundary always moves the plan and the decision log."
+  ],
+  "phases": [
+    {
+      "num": 1,
+      "id": "phase-1",
+      "title": "First commit &amp; the Claude Code loop",
+      "status": "DONE",
+      "time": "~60 min",
+      "endState": "all scaffolding committed &amp; pushed to GitHub via a Claude Code session you drove yourself.",
+      "why": "your work becomes versioned and accessible anywhere, and you learn the core approve-edits loop on a low-stakes task before building agents.",
+      "activities": [
+        {
+          "activity": "Review repo with Claude Code",
+          "outcome": "You see how it reads the codebase before editing",
+          "why": "Builds trust in what it will change",
+          "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
+        },
+        {
+          "activity": "Flesh out README",
+          "outcome": "README describes the project + real folder structure",
+          "why": "Entry point for you and, later, the public",
+          "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
+        },
+        {
+          "activity": "First commit + push",
+          "outcome": "Everything lands on GitHub",
+          "why": "Versioned source of truth",
+          "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
+        }
+      ],
+      "notes": [
+        "Repo stays private now; when exposed later, exclude <code>Control-Hub.html</code> + <code>data/</code> from the public build (personal telemetry).",
+        "Deliberately low-stakes (README + commit) to learn the CLI loop before touching agents.",
+        "<b>Done 2026-08-09:</b> committed as <code>e1661d7</code>, pushed to <code>origin/main</code>, generated with Opus 5.",
+        "Claude Code added <code>.DS_Store</code> to <code>.gitignore</code> (macOS junk) — one change beyond prompt scope, flagged transparently. Environment hygiene, not a code decision.",
+        "Confirmed the pages don't read <code>data/</code> yet (content inline) — wiring deferred to Phases 6 &amp; 9, as designed.",
+        "Practice: approved each step individually rather than blanket \"don't ask again\" — the right habit while learning."
+      ]
+    },
+    {
+      "num": 2,
+      "id": "phase-2",
+      "title": "Build &amp; prove the Framer",
+      "status": "DONE",
+      "time": "~60 min",
+      "endState": "a Framer agent that turns <code>data/evals/golden/reference_2026-08-04.json</code> into a brief matching the <a href=\"../application/Signal.html\">Bento reference</a> voice.",
+      "why": "Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.",
+      "activities": [
+        {
+          "activity": "Finalize the Framer build prompt (+ Evals)",
+          "outcome": "Canonical prompt with faithfulness/usefulness graders baked in",
+          "why": "Reproducible recipe; evals from day one",
+          "prompt": "<a href=\"../prompts/p2-build-framer.md\">p2-build-framer.md</a>"
+        },
+        {
+          "activity": "Generate the Framer agent via Claude Code",
+          "outcome": "<code>agents/framer.py</code> runs on the sample day",
+          "why": "Your first real agent",
+          "prompt": "<a href=\"../prompts/framer-prompt.md\">framer-prompt.md</a>"
+        },
+        {
+          "activity": "Eyeball output vs the reference",
+          "outcome": "You judge whether the voice sounds right",
+          "why": "The go / no-go on the whole system",
+          "prompt": "<span class=\"pending\">— your taste is the gate</span>"
+        }
+      ],
+      "notes": [
+        "Locked Framer rules: worked examples on <b>AI items only</b>; synthesis \"thread\" required; <b>DO THIS</b> reserved for AI; reading-time header; inline connections.",
+        "Faithfulness = hard zero-hallucination gate (objective); usefulness = soft, learned target (subjective).",
+        "Test against <code>application/Signal.html</code>, not vibes.",
+        "<b>Done 2026-08-09 (commit df8adfd, Opus 5):</b> Framer built &amp; run — 7 items, 2 DO THIS, ~5 min read, <b>$0.10</b>. Batched to 2 calls (Opus framing + Haiku check) with prompt caching + cost breaker, all working.",
+        "<b>Voice verdict = GO:</b> thread carries a real correlation + contradiction and reaches its own conclusion; connections genuine. Two weak spots to tune later: iStar example clause doesn't parse; Kimi K3 example vaguer than the reference's concrete \"~1/10th cost\".",
+        "<b>Key finding → Phase 3:</b> the faithfulness check produced a <b>false positive</b> (flagged $965B as unsupported though it was in the excerpt). Two grader bugs: it missed a clause, and it graded thread/headline text against a single item's excerpt. The grader needs its own eval; the thread must be checked against the <em>union</em> of excerpts.",
+        "Deviations, both fine: built the prompt file fresh (option 3, no invented Scout list); switched the framing call to streaming after the SDK blocked a 24k-token non-streaming request (no spend)."
+      ]
+    },
+    {
+      "num": 3,
+      "id": "phase-3",
+      "title": "Framer eval harness (golden set)",
+      "status": "DONE",
+      "time": "~60 min",
+      "endState": "a tiny offline eval that scores the Framer (faithfulness assertion + usefulness rubric) against 1–2 labeled days.",
+      "why": "turns \"is the voice right?\" from a vibe into a number, and makes every future prompt tweak safe via regression.",
+      "activities": [
+        {
+          "activity": "Build a golden set from labeled days",
+          "outcome": "1 day frozen in <code>data/evals/golden/2026-08-04/</code> (input + output + labels)",
+          "why": "The fixed yardstick for regression",
+          "prompt": "<a href=\"../prompts/p3-framer-evals.md\">p3-framer-evals.md</a>"
+        },
+        {
+          "activity": "Faithfulness grader (claim decomposition)",
+          "outcome": "Grader rewritten: claim ledger with quoted spans, correct scope, code-verified evidence",
+          "why": "Objective hard gate; catches hallucination",
+          "prompt": "<a href=\"../prompts/p3-framer-evals.md\">same</a>"
+        },
+        {
+          "activity": "Usefulness rubric + run script",
+          "outcome": "<code>data/evals/run_evals.py</code> — one command, exit code gates",
+          "why": "Safe iteration on the Framer prompt",
+          "prompt": "<a href=\"../prompts/p3-framer-evals.md\">same</a>"
+        }
+      ],
+      "notes": [
+        "Eval harness lives in the repo from early on; the Tuner-driven learning matures later (needs weeks of data).",
+        "Held-out slice kept separate from anything the Tuner adapts on (train/test hygiene).",
+        "<b>First golden-set case comes free:</b> the Phase 2 grader false positive. Fix the check to (a) not miss clauses and (b) grade the thread against the union of all item excerpts, not one item's.",
+        "<b>Done 2026-08-19 (Opus 5):</b> <code>run_evals.py</code> runs three checks — faithfulness (hard gate, 1 Haiku call), structural assertions (hard gate, free), usefulness rubric (soft, reported). Both seeded regressions pass; run costs <b>~$0.02</b>.",
+        "<b>The grader's real bug was scope, not carelessness.</b> It was shown the excerpt first and the writing second, so it enumerated the <em>excerpt's</em> claims and never checked the framing at all — which is why $965B \"failed\" and why fabricated facts sailed through. Writing now comes first in the payload, the excerpt is labelled ground truth, and each claim must carry a verbatim span.",
+        "<b>Second false positive found while labelling:</b> the 2026-08-13 re-run flagged \"~80% of Q1 dollars\", which the excerpt states word for word. Seeded as a second regression case.",
+        "<b>Two extras beyond the brief,</b> both earned by a failing test: a code check that every quoted span is literally in the excerpt (a grader can invent a citation; a substring match can't), and <code>temperature=0</code> on the grader — at default sampling it disagreed with itself on ~1 run in 3, which would have failed builds at random. 5/5 clean runs after.",
+        "<b>Known limit, carried to Phase 8:</b> the gate is deterministic per input, but on <em>unseen</em> days the grader still sometimes enumerates an inference as a claim. Fine for regression (the golden day is fixed); revisit before the grader guards live briefs — likely by moving it to a stronger model.",
+        "Usefulness stays ungated until calibrated against your own ratings. Judge runs on Haiku to keep spend low; upgrade it the day it starts gating."
+      ]
+    },
+    {
+      "num": 4,
+      "id": "phase-4",
+      "title": "Scout — seed sources + fetch",
+      "status": "NOW",
+      "time": "~60 min",
+      "endState": "Scout pulls candidate items from the fixed seed list into <code>data/</code>.",
+      "why": "turns on real intake so the Framer runs on live items, not a sample.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 5,
+      "id": "phase-5",
+      "title": "Gatekeeper basics + Suppressed drawer · <b>design lock</b>",
+      "status": "LATER",
+      "time": "~60 min",
+      "endState": "provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer. <b>Also:</b> a volume guard — the Gatekeeper caps how many items reach the Framer, and the Framer asserts loudly on item count rather than silently truncating. <b>And the design lock:</b> Signal.html and Control-Hub.html are <em>live surfaces</em> whose content changes daily, so their design must be finalised here — Claude Design delivers a <b>renderer with a data slot</b>, not a regenerated page, and after this point the visuals stop changing while the agents feed it.",
+      "why": "kills noise and gives you the false-negative audit trail that keeps FOMO dead. The volume guard protects the Framer's single-call design — a 60-item day means the Gatekeeper failed, and should fail loudly rather than drop items. The design lock has to land <em>before</em> Phase 6 wiring: you can't regenerate a page in a design tool every morning, so the live surfaces need a fixed template the pipeline writes into.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 6,
+      "id": "phase-6",
+      "title": "Daily loop end-to-end (News renders from data/)",
+      "status": "LATER",
+      "time": "~60 min",
+      "endState": "a real daily brief generated Scout→Gatekeeper→Framer→News.html, with quiet-day behavior. <b>Plus three closures found during the Phase 3 walkthrough:</b> (1) <b>retry loop</b> — the Framer regenerates a flagged item and re-checks before writing, instead of flagging and shipping anyway; (2) <b>daily smoke test</b> — run the free structural checks on each day's output so contract violations surface immediately, not at the next prompt edit; (3) <b>eval regenerate mode</b> — optionally re-run the Framer on the golden input so a <em>Framer</em> prompt change is regression-tested, not just the grader.",
+      "why": "the anti-FOMO daily value goes live — you start using it every morning. The three closures turn \"flagged\" into \"fixed\", catch drift the day it happens, and close the gap that today's harness only regression-tests the grader, never the writer.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 7,
+      "id": "phase-7",
+      "title": "Coach — standalone homework",
+      "status": "LATER",
+      "time": "~60 min",
+      "endState": "a weekly 60-min exercise generated from the week's items, written to the backlog.",
+      "why": "turns reading into doing (job b), before the harder repo-grounding step.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 8,
+      "id": "phase-8",
+      "title": "Coach — repo grounding",
+      "status": "LATER",
+      "time": "~60 min",
+      "endState": "homework that fits a real spot in your repos, verified by assertions against the code.",
+      "why": "the magic feature — and the highest hallucination risk, so it comes after trust is built.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 9,
+      "id": "phase-9",
+      "title": "Control Room live (metrics.json)",
+      "status": "LATER",
+      "time": "~60 min",
+      "endState": "the Control Room renders real eval metrics, pending actions, and elicitation questions — plus the front-door <b>Orchestrator</b> goes live (routes user actions: add-source → Scout, question → chat, feedback/intent → Tuner; the one live-API agent).",
+      "why": "closes the report→elicit→label loop so the system can improve deliberately.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 10,
+      "id": "phase-10",
+      "title": "Tuner — learned personalization",
+      "status": "LATER",
+      "time": "multi-session",
+      "endState": "source reputation + topic priors that adapt from your feedback, with the diversity guardrail.",
+      "why": "the system starts getting better at <em>you</em> — but only after weeks of data exist.",
+      "activities": [],
+      "notes": []
+    },
+    {
+      "num": 11,
+      "id": "phase-11",
+      "title": "Commercial prep (documented)",
+      "status": "LATER",
+      "time": "multi-session",
+      "endState": "shared-base / per-user split proven; auth + multi-tenant scoped when/if productizing.",
+      "why": "the path from personal system to product, kept open by the <code>user_id</code> seam.",
+      "activities": [],
+      "notes": []
+    }
+  ],
+  "crossCutting": {
+    "title": "Cross-cutting infrastructure",
+    "note": "A trajectory, not a single phase.",
+    "items": [
+      "<b>Data layer:</b> JSON files now → <b>SQLite</b> when history/queries get awkward (~Phase 6–9) → <b>Postgres + pgvector</b> incl. auth <code>sessions</code> at multi-tenant (Phase 11). The <code>user_id</code> seam keeps the migration mechanical.",
+      "<b>Observability:</b> extend <code>usage.json</code> into a structured per-run trace now → an LLM-observability tool at deploy (~Phase 6+).",
+      "<b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9."
+    ]
+  }
+}
