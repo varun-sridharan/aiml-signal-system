@@ -2,11 +2,11 @@
   "user_id": "varun",
   "schemaVersion": "0.1",
   "displayName": "Varun",
-  "role": "Director, Science (AI/ML in ERP)",
+  "role": "Practitioner who cannot read everything and does not want to. Wants the fewest items worth knowing and a reason to care about each one.",
   "goals": [
-    "Stay on the AI/ML productivity frontier",
-    "Implement new concepts and understand their tradeoffs",
-    "Build toward founding a company / CTO / CSPO"
+    "Hold an informed conversation about what shipped, on five minutes a day",
+    "Understand the tradeoff behind a technique, not just its name",
+    "Turn reading into working code rather than a longer reading list"
   ],
   "interests": {
     "core": ["multi-agent systems", "reinforcement learning", "MCP architecture", "agentic coding"],

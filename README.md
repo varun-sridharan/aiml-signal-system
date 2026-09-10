@@ -18,6 +18,18 @@ The slice that exists was chosen deliberately: the agent whose output a human ac
 
 ---
 
+## See it without running it
+
+No API key needed, nothing to install:
+
+| | |
+| --- | --- |
+| [The daily brief](https://varun-sridharan.github.io/aiml-signal-system/application/Signal.html) | real Framer output for 2026-08-04, rendered |
+| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 26 entries |
+| [Build plan](https://varun-sridharan.github.io/aiml-signal-system/plan/Plan.html) | 11 phases, each one working session, with per-phase notes |
+
+Prefer the raw data? [`data/briefs/framer_2026-08-04.json`](data/briefs/framer_2026-08-04.json) is the same brief as the agent produced it, and [`data/evals/golden/2026-08-04/labels.json`](data/evals/golden/2026-08-04/labels.json) is a hand-labelled eval case with the reasoning for each label written down.
+
 ## What runs today
 
 ### The Framer
@@ -120,8 +132,8 @@ python data/evals/run_evals.py               # full harness, ~$0.02
 
 Single-user today, but every record carries `user_id` and agents take `(profile, data) → output` with no personal facts hardcoded in prompts — so going multi-tenant is a data change, not a rewrite.
 
-`config/profile.json` is an example profile. Replace it with your own goals, interests and categories; nothing in the agent code depends on its contents.
+`config/profile.json` is a **problem statement, not a settings file** — it describes the reader the system is solving for, and every agent takes it as input rather than having any of it baked into a prompt. That is the seam personalization runs through: the pipeline up to the Framer is identical for every reader, and only the framing step is per-person. Replace it with your own and nothing in the agent code changes.
 
-`application/Control-Hub.html` and `data/` hold personal telemetry — cost, ratings, backlog. They stay out of anything made public.
+`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. `application/Control-Hub.html` is the private-telemetry surface — the numbers in it are placeholders until the system has run for a few weeks.
 
 Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/Plan.json` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.
