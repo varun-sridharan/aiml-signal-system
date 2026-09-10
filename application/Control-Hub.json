@@ -3,7 +3,7 @@
   "note": "Content contract for the private Control Hub. build-controlhub.js renders it. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes.",
   "site": {
     "brand": "Control Hub",
-    "privacy": "private · never publish",
+    "privacy": "private surface · sample data",
     "controlKicker": "Evaluator · Prescriber · Elicitation",
     "controlTitle": "Control Room",
     "backlogKicker": "Coach · weekly practice",
@@ -160,5 +160,6 @@
       "text": "Installed Claude Code CLI (v2.1.222), fixed PATH, logged in on Max plan, first session live."
     }
   ],
-  "footer": "Control Hub · Backlog renders <span style=\"font-family:var(--mono);font-size:11.5px\">data/state/backlog.json</span>. Private telemetry; never publish."
+  "footer": "Control Hub · Backlog renders <span style=\"font-family:var(--mono);font-size:11.5px\">data/state/backlog.json</span>. The private surface in the design — the numbers shown here are sample data.",
+  "lastUpdated": "2026-09-10"
 }

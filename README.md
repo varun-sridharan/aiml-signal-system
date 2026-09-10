@@ -95,7 +95,7 @@ Folders are organised by **role**; data files are named after the agent that pro
 
 ```
 agents/            Agent code — framer.py today
-application/       Surfaces — Signal (the daily brief) · Control-Hub (private telemetry)
+application/       Surfaces — Signal (the daily brief) · Control-Hub (private surface, sample data)
                    each is <name>.json (content contract) → <name>.html (generated)
 config/            Hand-authored — profile.json · scout-sources.md
 data/
@@ -134,6 +134,6 @@ Single-user today, but every record carries `user_id` and agents take `(profile,
 
 `config/profile.json` is a **problem statement, not a settings file** — it describes the reader the system is solving for, and every agent takes it as input rather than having any of it baked into a prompt. That is the seam personalization runs through: the pipeline up to the Framer is identical for every reader, and only the framing step is per-person. Replace it with your own and nothing in the agent code changes.
 
-`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. `application/Control-Hub.html` is the private-telemetry surface — the numbers in it are placeholders until the system has run for a few weeks.
+`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. `application/Control-Hub.html` is the surface that stays private in the design — it is where a real user's ratings, spend and backlog would live. This instance is publishable because its numbers are placeholders, not because the surface isn't private.
 
 Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/Plan.json` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.
