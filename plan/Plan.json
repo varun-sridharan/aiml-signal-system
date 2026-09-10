@@ -20,8 +20,8 @@
     "footerNote": "Build Plan · rolling. Detailed phases updated after each session from the decisions we make. Prompts: <a href=\"../prompts/\">prompts/</a> · Design: <a href=\"../design/System-Design.html\">System-Design.html</a> · Backlog: <a href=\"../application/Control-Hub.html\">Control-Hub.html</a>."
   },
   "currentStatus": {
-    "date": "2026-08-19",
-    "body": "Phase 3 complete — the faithfulness grader is fixed and now has its own eval. <code>python data/evals/run_evals.py</code> gates on faithfulness + structural assertions and reports usefulness, for ~$0.02 a run; both seeded false-positive regressions pass. Next: <b>Phase 4 — Scout</b>, so the Framer runs on live items instead of the sample day."
+    "date": "2026-09-10",
+    "body": "Phases 1–3 complete and the repo is <b>public</b> at <code>github.com/varun-sridharan/aiml-signal-system</code>, with the four HTML surfaces served through GitHub Pages. The Framer runs end to end and its eval harness gates changes to it. Next: <b>Phase 4 — Scout</b>, which replaces the hand-made fixture with real ingested news and is the point the system starts being used rather than designed."
   },
   "howItWorks": [
     "<b>Rolling:</b> the next few phases are detailed; later ones are outlined and filled in as we reach them.",
@@ -244,5 +244,6 @@
       "<b>Observability:</b> extend <code>usage.json</code> into a structured per-run trace now → an LLM-observability tool at deploy (~Phase 6+).",
       "<b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9."
     ]
-  }
+  },
+  "lastUpdated": "2026-09-10"
 }

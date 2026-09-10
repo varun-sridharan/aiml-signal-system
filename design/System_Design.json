@@ -743,6 +743,11 @@
   ],
   "decisionLog": [
     {
+      "date": "2026-09-10",
+      "lead": "Repo made public, with the private surface reframed rather than removed.",
+      "body": "Audited first: <code>.env</code> was never committed and no key literal appears in any of the 151 objects in history, so nothing irreversible was at stake. Two judgement calls followed. <b>profile.json</b> was rewritten as a <em>statement of the reader problem</em> rather than a personal bio — it always was the personalization seam, and framing it that way is both more honest about its role and removes a career-intent line that had no business being public. <b>Control-Hub</b> was kept rather than stripped: its badge and footer read \"never publish\", which a published page cannot carry, so both were reworded to \"private surface · sample data\". The surface is still the private one in the design — this instance is publishable only because its numbers are placeholders. Stripping the files would have needed a history rewrite, and the commit history is itself the artifact worth showing. Added an MIT licence, and GitHub Pages so the four HTML surfaces render instead of showing 800KB of bundle source; all seven cross-links between them verified to resolve."
+    },
+    {
       "date": "2026-08-23",
       "lead": "Content/design split adopted for every document — with two classes.",
       "body": "All pages become <b>JSON content + a design produced in Claude Design</b>; the JSON is the source of truth and the HTML is never hand-edited. But the two classes need different deliverables. <b>Static docs</b> (Concepts, Plan, System-Design) carry content I maintain, change weekly, and can be regenerated on demand — a finished page is fine. <b>Live surfaces</b> (<code>Signal.html</code>, <code>Control-Hub.html</code>) render <em>agent output</em> that changes daily, so regeneration is impossible: Claude Design must deliver a <b>renderer with a data slot</b>, and the design has to be <b>locked before Phase 6</b> so the backend can be wired into a fixed template. Locking means freezing the data contract the template reads, not just the visuals. First working example of the pattern: the Knowledge Hub (<code>Agentic_Concepts.json</code> → generated page)."
@@ -872,5 +877,6 @@
       "lead": "Reframed from \"news app\" to a synthesis + practice system.",
       "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
     }
-  ]
+  ],
+  "lastUpdated": "2026-09-10"
 }
