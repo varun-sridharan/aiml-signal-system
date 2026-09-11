@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content contract for the private Control Hub. build-controlhub.js renders it. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes.",
+  "note": "Content contract for the private Control Hub. build-controlhub.js renders it. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
   "site": {
     "brand": "Control Hub",
     "privacy": "private surface · sample data",

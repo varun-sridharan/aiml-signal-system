@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content source for the Build Plan page. Edit this; ask Claude to refresh the design from it. status is DONE | NOW | LATER and drives the tile colour, the pill and the sidebar dot. activities[] renders the phase table; notes[] renders the decision log inside the phase; a phase with neither stays a one-line outline row.",
+  "note": "Content source for the Build Plan page. Edit this; ask Claude to refresh the design from it. status is DONE | NOW | LATER and drives the tile colour, the pill and the sidebar dot. activities[] renders the phase table; notes[] renders the decision log inside the phase; a phase with neither stays a one-line outline row. `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
   "site": {
     "kicker": "AI/ML Signal · build plan",
     "title": "Build Plan",
@@ -164,7 +164,7 @@
       "title": "Gatekeeper basics + Suppressed drawer · <b>design lock</b>",
       "status": "LATER",
       "time": "~60 min",
-      "endState": "provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer. <b>Also:</b> a volume guard — the Gatekeeper caps how many items reach the Framer, and the Framer asserts loudly on item count rather than silently truncating. <b>And the design lock:</b> Signal.html and Control-Hub.html are <em>live surfaces</em> whose content changes daily, so their design must be finalised here — Claude Design delivers a <b>renderer with a data slot</b>, not a regenerated page, and after this point the visuals stop changing while the agents feed it.",
+      "endState": "provenance + corroboration + dedup filtering, with everything killed logged to the Suppressed drawer. <b>Also:</b> a volume guard — the Gatekeeper caps how many items reach the Framer, and the Framer asserts loudly on item count rather than silently truncating. <b>And the design lock:</b> Signal.html and Control-Hub.html are <em>live surfaces</em> whose content changes daily, so their design must be finalised here — Claude Design delivers a <b>renderer with a data slot</b>, not a regenerated page, and after this point the visuals stop changing while the agents feed it. Templates must also render <code>lastUpdated</code> from the content JSON, so a page that is behind its source says so on its face instead of relying on memory.",
       "why": "kills noise and gives you the false-negative audit trail that keeps FOMO dead. The volume guard protects the Framer's single-call design — a 60-item day means the Gatekeeper failed, and should fail loudly rather than drop items. The design lock has to land <em>before</em> Phase 6 wiring: you can't regenerate a page in a design tool every morning, so the live surfaces need a fixed template the pipeline writes into.",
       "activities": [],
       "notes": []

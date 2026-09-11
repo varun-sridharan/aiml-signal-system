@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption).",
+  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption). `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
   "site": {
     "kicker": "AI/ML Signal · design record",
     "title": "The Signal System",
@@ -745,7 +745,7 @@
     {
       "date": "2026-09-10",
       "lead": "Repo made public, with the private surface reframed rather than removed.",
-      "body": "Audited first: <code>.env</code> was never committed and no key literal appears in any of the 151 objects in history, so nothing irreversible was at stake. Two judgement calls followed. <b>profile.json</b> was rewritten as a <em>statement of the reader problem</em> rather than a personal bio — it always was the personalization seam, and framing it that way is both more honest about its role and removes a career-intent line that had no business being public. <b>Control-Hub</b> was kept rather than stripped: its badge and footer read \"never publish\", which a published page cannot carry, so both were reworded to \"private surface · sample data\". The surface is still the private one in the design — this instance is publishable only because its numbers are placeholders. Stripping the files would have needed a history rewrite, and the commit history is itself the artifact worth showing. Added an MIT licence, and GitHub Pages so the four HTML surfaces render instead of showing 800KB of bundle source; all seven cross-links between them verified to resolve."
+      "body": "Audited first: <code>.env</code> was never committed and no key literal appears anywhere in history — every blob scanned, not just the current tree, so nothing irreversible was at stake. Two judgement calls followed. <b>profile.json</b> was rewritten as a <em>statement of the reader problem</em> rather than a personal bio — it always was the personalization seam, and framing it that way is both more honest about its role and removes a career-intent line that had no business being public. <b>Control-Hub</b> was kept rather than stripped: its badge and footer read \"never publish\", which a published page cannot carry, so both were reworded to \"private surface · sample data\". The surface is still the private one in the design — this instance is publishable only because its numbers are placeholders. Stripping the files would have needed a history rewrite, and the commit history is itself the artifact worth showing. Added an MIT licence, and GitHub Pages so the four HTML surfaces render instead of showing 800KB of bundle source; all seven cross-links between them verified to resolve."
     },
     {
       "date": "2026-08-23",
