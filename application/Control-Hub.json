@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content contract for the private Control Hub. build-controlhub.js renders it. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
+  "note": "Content contract for the private Control Hub. Today the page is generated in Claude Design from this file — there is no build script in this repo. Phase 5's design lock replaces that with a renderer reading data/state/ at runtime. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
   "site": {
     "brand": "Control Hub",
     "privacy": "private surface · sample data",
