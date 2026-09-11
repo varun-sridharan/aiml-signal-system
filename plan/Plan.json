@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content source for the Build Plan page. Edit this; ask Claude to refresh the design from it. status is DONE | NOW | LATER and drives the tile colour, the pill and the sidebar dot. activities[] renders the phase table; notes[] renders the decision log inside the phase; a phase with neither stays a one-line outline row. `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
+  "note": "Content source for the Build Plan page. Edit this; ask Claude to refresh the design from it. status is DONE | NOW | LATER and drives the tile colour, the pill and the sidebar dot. activities[] renders the phase table; notes[] renders the decision log inside the phase; a phase with neither stays a one-line outline row. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
   "site": {
     "kicker": "AI/ML Signal · build plan",
     "title": "Build Plan",

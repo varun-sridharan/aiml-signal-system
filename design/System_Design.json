@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption). `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
+  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption). `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
   "site": {
     "kicker": "AI/ML Signal · design record",
     "title": "The Signal System",

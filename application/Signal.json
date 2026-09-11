@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Content contract for Signal, the reader-facing daily brief. The page is a renderer: the pipeline writes this file, build-signal.js regenerates the HTML. items[].provenance is what the 'Why this?' control shows — tone 'warn' also renders the UNVERIFIED chip and counts into brief.counts.unverified. items[].figure is an inline SVG authored in the light diagram style; an item may ship without one. `lastUpdated` is the date this content last changed; the generated page renders it so a stale page is visible without remembering when it was last built.",
+  "note": "Content contract for Signal, the reader-facing daily brief. The page is a renderer: the pipeline writes this file, build-signal.js regenerates the HTML. items[].provenance is what the 'Why this?' control shows — tone 'warn' also renders the UNVERIFIED chip and counts into brief.counts.unverified. items[].figure is an inline SVG authored in the light diagram style; an item may ship without one. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
   "site": {
     "brand": "Signal",
     "links": [
