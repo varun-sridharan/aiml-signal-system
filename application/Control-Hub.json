@@ -1,25 +1,20 @@
 {
   "version": 1,
-  "note": "Content contract for the private Control Hub. Today the page is generated in Claude Design from this file — there is no build script in this repo. Phase 5's design lock replaces that with a renderer reading data/state/ at runtime. metrics[].kind 'guardrail' tints the card blue; actions[].gate 'human' adds the Approve / Reject / Ask row; backlog[].status seeds TODO | DOING | DONE (the reader can cycle it, stored locally); questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
+  "note": "Content contract for the private Control Hub. Today the page is generated in Claude Design from this file — there is no build script in this repo. Phase 5's design lock replaces that with a renderer reading data/state/ at runtime. The weekly-exercise content that used to live here as a 'Backlog' tab now has its own page, Practice.json — the old name read as a to-do list of my own work rather than exercises derived from the brief. metrics[].kind 'guardrail' tints the card; actions[].gate 'human' adds the Approve / Reject / Ask row; questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock.",
   "site": {
     "brand": "Control Hub",
     "privacy": "private surface · sample data",
     "controlKicker": "Evaluator · Prescriber · Elicitation",
     "controlTitle": "Control Room",
-    "backlogKicker": "Coach · weekly practice",
-    "backlogTitle": "Backlog",
-    "signalLink": {
-      "label": "Signal →",
-      "href": "../application/Signal.html"
+    "movedNote": {
+      "text": "Weekly exercises moved to <b>Practice</b> — they are derived from the brief, not a list of my own work.",
+      "href": "Practice.html",
+      "label": "Go to Practice"
     }
   },
   "seed": {
     "title": "Seed state — no real numbers yet",
     "body": "Metrics are placeholders until the system runs and you rate it over several weeks. Trends need time before they mean anything; this page shows the <em>shape</em> of what you will see."
-  },
-  "backlogIntro": {
-    "title": "Your durable workbench",
-    "body": "The Coach appends 60-minute exercises on Fridays. Check items off and add notes during the week. Skippable by design — no weekly pressure, nothing expires."
   },
   "actionsTakenEmpty": "Nothing shipped yet. Approved actions land here with <span style=\"color:var(--soft)\">predicted vs actual</span> impact, so the prescriber earns trust instead of asserting it.",
   "metrics": [
@@ -106,60 +101,35 @@
       "feeds": "coach_topic_priority"
     }
   ],
-  "backlog": [
-    {
-      "id": "hw1",
-      "title": "Set up the project repo using the Claude Code CLI",
-      "status": "DOING",
-      "meta": [
-        "AI",
-        "~60 min (setup excl.)",
-        "repo: aiml-signal-system",
-        "Claude Code CLI basics"
-      ],
-      "goal": "<b>Goal:</b> end with a new GitHub repo, Claude Code running, and one commit it made for you.",
-      "steps": [
-        "Create empty GitHub repo aiml-signal-system ✓",
-        "Clone locally &amp; cd in ✓",
-        "Install Claude Code CLI + authenticate ✓",
-        "Run <code>claude</code> and ask it to scaffold README + folders",
-        "Ask Claude Code to make the first commit, then push"
-      ],
-      "note": "Repo, clone, CLI install + login all complete. Remaining: first scaffolding prompt + commit."
-    },
-    {
-      "id": "hw2",
-      "title": "Have Claude Code build a minimal stateless 'echo' MCP server",
-      "status": "TODO",
-      "meta": [
-        "AI",
-        "~60 min (setup excl.)",
-        "repo: aiml-signal-system",
-        "MCP 2026-07-28 stateless spec"
-      ],
-      "goal": "<b>Goal:</b> feel the stateless model firsthand — one 'echo' tool, no session state, any instance answers.",
-      "steps": [
-        "Ask Claude Code to create a minimal MCP server with one 'echo' tool on the 2026-07-28 stateless spec",
-        "Have it comment where state would have lived in the old model",
-        "Run it, call the tool twice, confirm no session needed"
-      ],
-      "note": "Queued after hw-01. Good second CLI session."
-    }
-  ],
-  "accomplishments": [
-    {
-      "date": "2026-08-04",
-      "text": "Created private GitHub repo aiml-signal-system (description, Python .gitignore, no license)."
-    },
-    {
-      "date": "2026-08-04",
-      "text": "Cloned repo locally; PAT auth saved in Keychain."
-    },
-    {
-      "date": "2026-08-04",
-      "text": "Installed Claude Code CLI (v2.1.222), fixed PATH, logged in on Max plan, first session live."
-    }
-  ],
-  "footer": "Control Hub · Backlog renders <span style=\"font-family:var(--mono);font-size:11.5px\">data/state/backlog.json</span>. The private surface in the design — the numbers shown here are sample data.",
-  "lastUpdated": "2026-09-10"
+  "footer": "Control Hub renders data/state/metrics.json. The private surface in the design — the numbers shown here are sample data.",
+  "lastUpdated": "2026-09-10",
+  "nav": {
+    "current": "Control Hub",
+    "items": [
+      {
+        "label": "Product",
+        "href": "Product.html"
+      },
+      {
+        "label": "Signal",
+        "href": "Signal.html"
+      },
+      {
+        "label": "Practice",
+        "href": "Practice.html"
+      },
+      {
+        "label": "Control Hub",
+        "href": "Control-Hub.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  }
 }

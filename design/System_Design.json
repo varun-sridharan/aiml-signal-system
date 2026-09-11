@@ -1,12 +1,10 @@
 {
   "version": 1,
-  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption). `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
+  "note": "Content source for the System Design page. Edit this; ask Claude to refresh the design from it. Block types: p (html), h3 (id/title/status BUILT|DESIGNED), h4 (label + optional id/status, which nests it in the ToC), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption). `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock, after which a page behind its source will say so on its face.",
   "site": {
     "kicker": "AI/ML Signal · design record",
     "title": "The Signal System",
     "lede": "A living design record. Updated whenever the system changes — see the Decision Log at the end.",
-    "sidebarTitle": "System Design",
-    "sidebarSub": "A living design record for the Signal system",
     "footerNote": "Signal · System page — living design record for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe. Personal telemetry lives in the private Control Hub.",
     "backLink": {
       "href": "../application/Signal.html",
@@ -598,6 +596,328 @@
       ]
     },
     {
+      "id": "agentic-concepts",
+      "title": "Agentic concepts",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "The techniques this system is built from, and where each one actually lands in the code. <b>Applied</b> means it is running and the named symbol exists; <b>designed</b> means it is specified and not yet written. Every claim below is checkable against the repository."
+        },
+        {
+          "t": "card",
+          "accent": false,
+          "blocks": [
+            {
+              "t": "p",
+              "html": "These concepts are deliberately <b>project-agnostic</b> — they accumulate across everything I build, so the long-form write-ups (one-liner, everyday analogy, diagram, worked code) live in a separate concepts reference rather than inside this repo. This section is the index of which ones this particular system uses, and where."
+            }
+          ]
+        },
+        {
+          "t": "h3",
+          "id": "concepts-applied",
+          "title": "Applied — running today",
+          "status": "BUILT"
+        },
+        {
+          "t": "p",
+          "html": "Eleven techniques. Each names the symbol that implements it, so the claim is checkable against the repository rather than taken on trust."
+        },
+        {
+          "t": "h4",
+          "id": "concept-harness",
+          "label": "Harness engineering",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Deterministic scaffolding built <em>around</em> a probabilistic model — feeding it, constraining its output, checking it, handling failure — so an unpredictable component produces dependable results."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The output shape is enforced at the API boundary, and a truncated or refused response exits without writing anything rather than leaving a half-built brief that renders fine. <code>FRAMING_SCHEMA</code>, <code>structured_text()</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-structured-output",
+          "label": "Structured output",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> A JSON schema declared at the call itself, so the model can only emit text that fits the shape you asked for."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> No prose is ever parsed and no field is silently renamed; <code>additionalProperties: false</code> stops helpful invention. A required field may be null but never absent, so a missing value is a signal rather than a KeyError. <code>output_config</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-batching",
+          "label": "Batching",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Sending N items in one request rather than N requests."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Cheaper, but mainly a <em>capability</em> requirement: the day's thread draws a line between items, and only something seeing every item at once can write it. Seven separate calls could not produce it. <code>frame_day()</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-caching",
+          "label": "Prompt caching",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Caching the fixed prefix of a prompt so repeat calls pay a fraction for it. Stable content must precede volatile content for the prefix to match."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The system prompt is cached; only the changing news is re-charged. Little benefit on a once-daily run, real benefit for the chat surface where calls cluster. <code>cache_control: ephemeral</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-routing",
+          "label": "Model routing",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Sending each step to the cheapest model that can do it, rather than the best model to everything."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> A large model writes, a small one audits. Beyond cost, a second pair of eyes beats a bigger model marking its own homework. <code>FRAMER_MODEL</code> Opus, <code>CHECK_MODEL</code> Haiku."
+        },
+        {
+          "t": "h4",
+          "id": "concept-breaker",
+          "label": "Cost circuit-breaker",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> A spend limit enforced before work starts rather than reconciled after it."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Month-to-date spend is read from an append-only ledger and checked against the budget pre-flight. A feedback loop across invocations, mediated by a file. <code>MONTHLY_BUDGET_USD</code>, <code>month_to_date_spend()</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-hardsoft",
+          "label": "Hard vs soft gates",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Splitting evaluation into what is objectively checkable — which may block a release — and what is subjective, which is reported only."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Factual grounding and structural rules can fail a run; the quality rubric is printed and ignored. Gating on a metric you do not yet trust teaches you to ignore gates. <code>hard_failures</code> → non-zero exit."
+        },
+        {
+          "t": "h4",
+          "id": "concept-verifier",
+          "label": "Verify the verifier",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> When a model checks another model, the checker is unreliable too — so its <em>evidence</em> must be validated by deterministic code."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The auditor must quote the words supporting each claim, and code confirms that quote is a literal substring of the source. A model can invent a citation; a substring match cannot be talked into agreeing. <code>normalise_verdict()</code>, <code>span_found</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-determinism",
+          "label": "Gate determinism",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> A check that returns different answers on identical input cannot gate anything."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The judge samples at zero. At default sampling it disagreed with itself roughly one run in three, which would have failed builds at random and trained me to ignore the gate. The writer keeps sampling; the judge does not. <code>temperature=0</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-golden",
+          "label": "Golden set &amp; regression",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> A small frozen set of inputs with hand-written correct answers, re-run on every change to catch what quietly breaks."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> One real day, frozen as copies rather than references so a re-run cannot move its own baseline. It grows by accretion — each bug found becomes a permanent case that can never silently return. <code>data/evals/golden/&lt;date&gt;/</code>."
+        },
+        {
+          "t": "h4",
+          "id": "concept-omission",
+          "label": "Omission vs fabrication",
+          "status": "APPLIED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Two different checker failures needing two different defences: inventing evidence, versus staying silent about a claim."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Invented evidence is caught by code on every run. A skipped claim offers nothing to inspect, so it is caught only by planting a known fabrication and asserting it gets flagged — the first version of this grader passed a brief seeded with a fake valuation. <code>check_regression()</code>."
+        },
+        {
+          "t": "h3",
+          "id": "concepts-designed",
+          "title": "Designed — not yet written",
+          "status": "DESIGNED"
+        },
+        {
+          "t": "p",
+          "html": "Eight more, specified in enough detail to build, each with the phase it arrives in. Kept separate so the gap between designed and running stays visible rather than blurring."
+        },
+        {
+          "t": "h4",
+          "id": "concept-loop",
+          "label": "Loop engineering",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Feedback cycles built into the system — act, observe, adjust, repeat — with a termination condition, so it self-corrects without a human in the loop."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Today's only loop is a <em>regulator</em>: the cost breaker holds a value in bounds but converges on nothing. The reflection loop that regenerates a flagged item and re-checks it is what turns \"flagged\" into \"fixed\". Bounded at one retry — a second failure is the prompt, not luck. <b>Phase 6.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-mcp",
+          "label": "MCP / tool decoupling",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Separating an agent from its tools across a defined protocol boundary, so either side can change independently."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Applied where a real boundary exists: the Scout fetching from the open web, the Coach reading repositories. Not used where a plain function call would do. <b>Phases 4 and 8.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-precision-recall",
+          "label": "Precision / recall, recall-biased",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Precision asks how much of what you flagged deserved it; recall asks how much of what deserved flagging you caught. Which you favour is a product decision, not a technical one."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The Gatekeeper deliberately errs toward letting things through: a false negative here <em>is</em> the FOMO this system exists to kill, and unlike a false positive it is invisible. Everything killed is logged so misses stay auditable. <b>Phase 5.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-prior-art",
+          "label": "Prior-art reconciliation",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Checking whether the work you are about to recommend has already been done."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Same repo access as code-grounding, opposite question: grounding asks whether the target exists, reconciliation asks whether the answer already does. Recall-biased — when unsure, offer the exercise with a note rather than suppress it. <b>Phase 8.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-revealed-preference",
+          "label": "Revealed preference",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Behaviour is stronger evidence of value than a rating, because people call things interesting that they never act on."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Finishing an exercise cost an hour; rating an article cost nothing. The skip <em>reason</em> makes it actionable — \"wrong topic\" corrects the Framer, \"too big\" corrects the Coach. Completion stays a diagnostic and never an optimisation target, or the Coach learns to write trivial exercises. <b>Phases 7 and 10.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-credit",
+          "label": "Credit assignment",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Attributing an outcome backwards across a delayed, multi-step pipeline to the step actually responsible."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> A poorly rated item could be the Scout's fault for fetching it, the Gatekeeper's for passing it, or the Framer's for framing it badly. Without attribution the Tuner adjusts the wrong agent. <b>Phase 10.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-diversity",
+          "label": "Anti-echo-chamber guardrail",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> A floor on exploration that stops a personalisation loop collapsing into what you already believe."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> The Tuner can raise my ratings by feeding me only what I agree with — scoring well while making the product worse. A standing diversity minimum prevents optimising into a filter bubble. <b>Phase 10.</b>"
+        },
+        {
+          "t": "h4",
+          "id": "concept-hooks",
+          "label": "Agent hooks",
+          "status": "PLANNED"
+        },
+        {
+          "t": "p",
+          "html": "<b>What it is.</b> Deterministic interception points around agent execution, for policy enforcement and observability."
+        },
+        {
+          "t": "p",
+          "html": "<b>How it lands here.</b> Listed because it is the obvious home for spend limits and audit logging once more than one agent runs. <b>Not scheduled.</b>"
+        },
+        {
+          "t": "h3",
+          "id": "concepts-through-line",
+          "title": "The through-line",
+          "status": null
+        },
+        {
+          "t": "card",
+          "accent": true,
+          "blocks": [
+            {
+              "t": "p",
+              "html": "<b>The through-line.</b> Almost every concept above is a variation on one idea: <em>the guarantee has to come from deterministic code outside the probabilistic system.</em> The schema constrains the shape, the guard catches the truncation, the substring check proves the citation, the frozen labels catch the drift, and zero temperature stops the judge changing its mind. The model supplies judgement; the code supplies certainty. Every place that boundary blurred is a place something broke."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "evals-how-we-know-it-works",
       "title": "Evals — how we know it works",
       "blocks": [
@@ -744,6 +1064,16 @@
   "decisionLog": [
     {
       "date": "2026-09-10",
+      "lead": "Practice is the system's revealed-preference loop, and completion rate must never be a target.",
+      "body": "The signals existed scattered across the spec but the <b>circuit was never described</b>. Naming it: brief item → exercise → I finish, skip or overrun → the Tuner reads the behaviour → tomorrow's brief changes. The asymmetry is the point. A rating on a brief item is <em>stated</em> preference and is weak evidence — people call things interesting they never act on. <b>Finishing an exercise is revealed preference</b>: it cost an hour, and it is the only place this system obtains that class of signal. The skip <em>reason</em> is what makes it actionable — \"wrong topic\" corrects the Framer's priors, \"too big\" corrects the Coach's scoping, and without distinguishing them a skip is uninterpretable. <b>New guardrail:</b> if the Tuner optimises completion rate, the Coach learns to generate trivial exercises — completion rises, the product degrades, and the metric reports success throughout. Completion is therefore a diagnostic read only alongside actual-vs-estimated time and code reuse, never an optimisation target. Recorded in metrics.json beside the diversity guardrail. Also: the prior-art verdict is itself gateable — it is answerable against the repo — so it joins code-grounding on the objective axis rather than being taken on trust."
+    },
+    {
+      "date": "2026-09-10",
+      "lead": "Coach must reconcile against my repos before offering an exercise, not only ground in them.",
+      "body": "Phase 8 already gives the Coach repo access to verify that the module an exercise targets exists — <em>grounding</em>. The same access answers the opposite question, which was never specified: <b>have I already built this?</b> Assigning an hour of work that is finished in a repo is the fastest way for a recommender to lose trust, and no amount of good writing survives it. Three states: <code>none</code> offers as written, <code>partial</code> narrows the exercise to start from what exists, <code>built</code> retires it and returns a pointer to the code. <b>Recall-biased on purpose</b>, matching the Gatekeeper: a wrong <em>already built</em> silently withholds an exercise I never learn existed — invisible, and precisely the failure mode this system exists to prevent — while a wrong <em>no prior art</em> costs a few minutes and corrects itself the moment I open the repo. When unsure, offer with a note; never suppress."
+    },
+    {
+      "date": "2026-09-10",
       "lead": "Repo made public, with the private surface reframed rather than removed.",
       "body": "Audited first: <code>.env</code> was never committed and no key literal appears anywhere in history — every blob scanned, not just the current tree, so nothing irreversible was at stake. Two judgement calls followed. <b>profile.json</b> was rewritten as a <em>statement of the reader problem</em> rather than a personal bio — it always was the personalization seam, and framing it that way is both more honest about its role and removes a career-intent line that had no business being public. <b>Control-Hub</b> was kept rather than stripped: its badge and footer read \"never publish\", which a published page cannot carry, so both were reworded to \"private surface · sample data\". The surface is still the private one in the design — this instance is publishable only because its numbers are placeholders. Stripping the files would have needed a history rewrite, and the commit history is itself the artifact worth showing. Added an MIT licence, and GitHub Pages so the four HTML surfaces render instead of showing 800KB of bundle source; all seven cross-links between them verified to resolve."
     },
@@ -878,5 +1208,34 @@
       "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
     }
   ],
-  "lastUpdated": "2026-09-10"
+  "lastUpdated": "2026-09-10",
+  "nav": {
+    "current": "System Design",
+    "items": [
+      {
+        "label": "Product",
+        "href": "../application/Product.html"
+      },
+      {
+        "label": "Signal",
+        "href": "../application/Signal.html"
+      },
+      {
+        "label": "Practice",
+        "href": "../application/Practice.html"
+      },
+      {
+        "label": "Control Hub",
+        "href": "../application/Control-Hub.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  }
 }

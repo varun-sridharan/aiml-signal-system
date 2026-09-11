@@ -16,7 +16,10 @@
     {
       "agent": "Gatekeeper",
       "primaryMetric": "Precision & Recall (classifier)",
-      "value": { "precision": null, "recall": null },
+      "value": {
+        "precision": null,
+        "recall": null
+      },
       "target": "recall >= 0.9 (biased over precision to avoid FOMO)",
       "trend": "n/a",
       "gradeType": "your signal/noise ratings + Suppressed-drawer audit",
@@ -25,7 +28,10 @@
     {
       "agent": "Framer",
       "primaryMetric": "Faithfulness (objective) + Usefulness (subjective)",
-      "value": { "faithfulness": null, "usefulness": null },
+      "value": {
+        "faithfulness": null,
+        "usefulness": null
+      },
       "target": "faithfulness = 1.0 (hard gate); usefulness >= 0.8",
       "trend": "n/a",
       "gradeType": "claim decomposition (auto) + rubric ratings (you -> calibrated LLM-judge)",
@@ -34,7 +40,11 @@
     {
       "agent": "Coach",
       "primaryMetric": "Code-grounding (objective) + doability/skill (behavioral)",
-      "value": { "grounding": null, "completionRate": null, "avgActualMinutes": null },
+      "value": {
+        "grounding": null,
+        "completionRate": null,
+        "avgActualMinutes": null
+      },
       "target": "grounding = 1.0; completion >= 0.7; time <= 60 (setup excluded)",
       "trend": "n/a",
       "gradeType": "assertions on repo (auto) + your completion behavior",
@@ -57,6 +67,12 @@
       "value": null,
       "target": ">= 0.2 of items outside your established priors",
       "protects": "Your goal of balancing your thinking with new thinking."
+    },
+    {
+      "name": "Completion-rate Goodhart guard",
+      "purpose": "Stops the Tuner raising completion rate by letting the Coach generate trivial exercises. Completion is read only alongside actual-vs-estimated time and code reuse; it is a diagnostic, never an optimisation target.",
+      "value": null,
+      "target": "completion never optimised in isolation"
     }
   ],
   "pendingActions": [

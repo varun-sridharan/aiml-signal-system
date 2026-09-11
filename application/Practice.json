@@ -1,0 +1,344 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-09-10",
+  "note": "Content source for the Practice page — exercises the Coach derives from the week's brief. Split out of Control-Hub.json, where it was a tab called 'Backlog'; that name read as a to-do list of my own work, which is the opposite of what it is. Every exercise carries `fromBrief` naming the news item it came from, because the derivation is the entire point and was invisible before. `nav` carries exact relative hrefs from application/ — do not infer paths. Today the page is generated in Claude Design from this file; there is no build script in this repo.",
+  "nav": {
+    "current": "Practice",
+    "items": [
+      {
+        "label": "Product",
+        "href": "Product.html"
+      },
+      {
+        "label": "Signal",
+        "href": "Signal.html"
+      },
+      {
+        "label": "Practice",
+        "href": "Practice.html"
+      },
+      {
+        "label": "Control Hub",
+        "href": "Control-Hub.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  },
+  "site": {
+    "brand": "Practice",
+    "chip": "sample data",
+    "kicker": "Coach · one exercise a week",
+    "title": "Reading, turned into building",
+    "lede": "Not a to-do list of my work. These are exercises the <b>Coach</b> generates from whatever showed up in the week's brief — each one traced back to the item that prompted it, sized to about an hour, and grounded in a repository I already own.",
+    "actNote": "Skippable by design. Nothing expires and there is no weekly streak to maintain — a backlog that generates guilt is the problem I was trying to solve, not a feature."
+  },
+  "how": {
+    "title": "How an exercise gets here",
+    "steps": [
+      {
+        "n": "1",
+        "label": "Something lands in the brief",
+        "body": "A spec change, a paper, a release — anything the Framer thought was worth my attention."
+      },
+      {
+        "n": "2",
+        "label": "The Coach asks what I'd have to build to understand it",
+        "body": "Not to summarise it again. The test is whether I could implement the idea, not restate it."
+      },
+      {
+        "n": "3",
+        "label": "It lands here, sized to an hour",
+        "body": "Scoped to one working session with setup excluded, and pointed at a repository I already have."
+      }
+    ],
+    "footnote": "Skippable by design. Nothing expires and there is no weekly streak to maintain — a backlog that generates guilt is the problem I was trying to solve, not a feature."
+  },
+  "statusLegend": [
+    {
+      "key": "TODO",
+      "label": "Not started"
+    },
+    {
+      "key": "DOING",
+      "label": "In progress"
+    },
+    {
+      "key": "DONE",
+      "label": "Finished"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "hw2",
+      "title": "Have Claude Code build a minimal stateless 'echo' MCP server",
+      "status": "TODO",
+      "fromBrief": {
+        "label": "From: MCP's 2026-07-28 spec moves the core from stateful to stateless",
+        "itemId": "item-1",
+        "href": "Signal.html#item-1"
+      },
+      "meta": [
+        "AI",
+        "~60 min, setup excluded",
+        "repo: aiml-signal-system",
+        "MCP 2026-07-28 stateless spec"
+      ],
+      "goal": "Feel the stateless model firsthand — one 'echo' tool, no session state, any instance able to answer.",
+      "steps": [
+        "Ask Claude Code for a minimal MCP server with a single 'echo' tool on the 2026-07-28 stateless spec",
+        "Have it comment the places where session state <em>would</em> have lived under the old model",
+        "Run it, call the tool twice, and confirm no session was needed between calls"
+      ],
+      "note": "Queued after the first one. This is the exercise that makes the lineage obvious — the brief item is the reason it exists.",
+      "priorArt": {
+        "state": "none",
+        "label": "No prior art",
+        "detail": "No MCP server implementation found in any connected repository."
+      }
+    }
+  ],
+  "shipped": {
+    "title": "Already shipped",
+    "body": "Completed work, kept so the page shows progress rather than only obligation.",
+    "items": [
+      {
+        "date": "2026-08-04",
+        "text": "Created the GitHub repo for the project — description, Python .gitignore, licence decided later."
+      },
+      {
+        "date": "2026-08-04",
+        "text": "Cloned locally and got credential auth working through the system keychain."
+      },
+      {
+        "date": "2026-08-04",
+        "text": "Installed the Claude Code CLI, fixed the PATH, and ran the first live session."
+      }
+    ]
+  },
+  "wip": {
+    "chip": "Coming soon",
+    "title": "The Coach that writes these isn't built yet",
+    "body": "The two exercises above are hand-written examples in the shape the Coach will produce. The agent that reads a week of briefs, picks the concept worth an hour, and grounds it in a repository you already own is <b>designed and specified, not written</b> — it arrives in a later phase. What it will be graded on is whether the module it names actually exists, plus whether the exercises get completed and how long they really take.",
+    "href": "../plan/Plan.html",
+    "linkLabel": "See where it sits in the plan"
+  },
+  "footer": {
+    "note": "Practice renders data/state/backlog.json. Sample data until the Coach is built.",
+    "repo": {
+      "label": "Source on GitHub",
+      "href": "https://github.com/varun-sridharan/aiml-signal-system"
+    }
+  },
+  "reconciliation": {
+    "chip": "Designed, not built",
+    "title": "Before an exercise is offered, check whether I already built it",
+    "body": "The Coach has read access to my repositories for one reason already: confirming the module an exercise targets actually exists. The same access answers a second, more useful question — <b>have I already done this?</b> An exercise for something sitting finished in a repo is worse than no exercise; it is the fastest way for a recommender to lose trust.",
+    "states": [
+      {
+        "key": "none",
+        "label": "No prior art",
+        "body": "Nothing related found. Offer the exercise as written."
+      },
+      {
+        "key": "partial",
+        "label": "Partly there",
+        "body": "Related code exists. Offer a narrowed version that starts from what is already built rather than from zero."
+      },
+      {
+        "key": "built",
+        "label": "Already built",
+        "body": "A working implementation exists. Retire the exercise and say where the code is, so the answer is a pointer rather than busywork."
+      }
+    ],
+    "biasNote": "Deliberately recall-biased, for the same reason the Gatekeeper is. A wrong <em>already built</em> silently withholds an exercise I never learn existed — invisible, and the exact failure this whole system was built to avoid. A wrong <em>no prior art</em> merely wastes a few minutes and is self-correcting the moment I open the repo. When the check is unsure it offers the exercise with a note, never suppresses it."
+  },
+  "flywheel": {
+    "chip": "Designed, not built",
+    "kicker": "The loop",
+    "title": "Why Practice is the most valuable signal in the system",
+    "lede": "Rating a brief item tells the system what I <em>said</em> was interesting. Finishing an exercise tells it what I actually spent an hour on. The second is worth far more, and it is the only place this system gets it.",
+    "steps": [
+      {
+        "n": "1",
+        "label": "An item lands in the brief",
+        "body": "The Framer decided it was worth my attention today."
+      },
+      {
+        "n": "2",
+        "label": "The Coach turns it into an hour of work",
+        "body": "Scoped to a repo I own, after checking I have not already built it."
+      },
+      {
+        "n": "3",
+        "label": "I finish it, skip it, or overrun",
+        "body": "Nobody is asked to rate anything. The behaviour is the rating."
+      },
+      {
+        "n": "4",
+        "label": "The Tuner reads the behaviour",
+        "body": "Completion adjusts what the Framer surfaces; overrun adjusts how the Coach sizes an hour; the skip reason decides which of the two is wrong."
+      },
+      {
+        "n": "5",
+        "label": "Tomorrow's brief is better",
+        "body": "Not because I graded it, but because I built something."
+      }
+    ],
+    "signals": {
+      "head": [
+        "Signal",
+        "What it means",
+        "Feeds"
+      ],
+      "rows": [
+        [
+          "<b>Completed</b>",
+          "The strongest evidence a brief item mattered — stronger than any rating, because it cost me an hour",
+          "Framer topic priors"
+        ],
+        [
+          "<b>Skipped, wrong topic</b>",
+          "The Framer surfaced something I do not care about",
+          "Framer topic priors"
+        ],
+        [
+          "<b>Skipped, too big</b>",
+          "The topic was right; the Coach mis-sized it",
+          "Coach scoping"
+        ],
+        [
+          "<b>Actual vs estimated time</b>",
+          "Calibration. An hour that takes three is a scoping failure, not a me failure",
+          "Coach scoping"
+        ],
+        [
+          "<b>Code survived / was reused</b>",
+          "The long-horizon signal — did the exercise leave anything behind",
+          "Both, weighted heaviest"
+        ],
+        [
+          "<b>Prior-art verdict was wrong</b>",
+          "The reconciliation check misjudged what I had already built",
+          "Gate on the check itself"
+        ]
+      ]
+    },
+    "twoAxes": {
+      "title": "The same split as everywhere else: what is checkable, and what is taste",
+      "rows": [
+        [
+          "<b>Faithfulness</b> — objective, gateable",
+          "Does the module the exercise names exist? Was the prior-art verdict correct? Both are answerable against the repository with no opinion involved, so both can block.",
+          ""
+        ],
+        [
+          "<b>Taste</b> — subjective, learned",
+          "Was this worth an hour? Only I can answer, only over many weeks, and never from a single data point. Reported, never a gate.",
+          ""
+        ]
+      ]
+    },
+    "guardrail": {
+      "label": "The obvious way to break this",
+      "body": "If the Tuner optimises for completion rate, the Coach learns to generate trivial exercises — completion goes up, the product gets worse, and the metric reports success the entire time. So completion rate is a <b>diagnostic, never a target</b>. It is only read alongside actual-versus-estimated time and whether the code was reused: an exercise finished in ten minutes and never touched again is a failure that a completion count would score as a win."
+    },
+    "diagram": {
+      "svg": "<svg style='width:100%;height:auto;display:block' viewBox='0 0 900 600' role='img' aria-label='A five-step flywheel: an item lands in the brief, the Coach turns it into an hour of work, I finish or skip it, the Tuner reads that behaviour, and tomorrow&apos;s brief improves'><defs><marker id='fwa' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='6' markerHeight='6' orient='auto'><path d='M0 1L9 5L0 9z' fill='#b5502a'/></marker></defs><circle cx='450' cy='300' r='168' fill='none' stroke='#201c17' stroke-opacity='.07' stroke-width='1'/><path d='M499.1 139.3 A168 168 0 0 1 587.6 203.6' fill='none' stroke='#b5502a' stroke-opacity='.45' stroke-width='1.4' marker-end='url(#fwa)'/><path d='M618.0 297.1 A168 168 0 0 1 584.2 401.1' fill='none' stroke='#b5502a' stroke-opacity='.45' stroke-width='1.4' marker-end='url(#fwa)'/><path d='M504.7 458.8 A168 168 0 0 1 395.3 458.8' fill='none' stroke='#b5502a' stroke-opacity='.45' stroke-width='1.4' marker-end='url(#fwa)'/><path d='M315.8 401.1 A168 168 0 0 1 282.0 297.1' fill='none' stroke='#b5502a' stroke-opacity='.45' stroke-width='1.4' marker-end='url(#fwa)'/><path d='M312.4 203.6 A168 168 0 0 1 400.9 139.3' fill='none' stroke='#b5502a' stroke-opacity='.45' stroke-width='1.4' marker-end='url(#fwa)'/><text x='450' y='286' font-family='ui-monospace,Menlo,monospace' font-size='9.5' letter-spacing='1.8' fill='#8a8071' text-anchor='middle'>WHAT COMPOUNDS</text><text x='450' y='310' font-family='Georgia,serif' font-size='14' fill='#201c17' text-anchor='middle'>Evidence of what I actually</text><text x='450' y='329' font-family='Georgia,serif' font-size='14' fill='#201c17' text-anchor='middle'>act on — not what I said</text><text x='450' y='348' font-family='Georgia,serif' font-size='14' fill='#201c17' text-anchor='middle'>was interesting</text><circle cx='450.0' cy='132.0' r='15' fill='#faf5ea' stroke='#b5502a' stroke-width='1.3'/><text x='450.0' y='136.5' font-family='ui-monospace,Menlo,monospace' font-size='11.5' fill='#b5502a' text-anchor='middle'>1</text><text x='450.0' y='98.0' font-family='Georgia,serif' font-size='14.5' fill='#201c17' text-anchor='middle' font-weight='600'>An item lands in the brief</text><text x='450.0' y='117.0' font-family='Georgia,serif' font-size='12.5' fill='#5f584c' text-anchor='middle'>The Framer thought it mattered today</text><circle cx='609.8' cy='248.1' r='15' fill='#faf5ea' stroke='#b5502a' stroke-width='1.3'/><text x='609.8' y='252.6' font-family='ui-monospace,Menlo,monospace' font-size='11.5' fill='#b5502a' text-anchor='middle'>2</text><text x='635.8' y='246.1' font-family='Georgia,serif' font-size='14.5' fill='#201c17' text-anchor='start' font-weight='600'>The Coach turns it into an hour</text><text x='635.8' y='265.1' font-family='Georgia,serif' font-size='12.5' fill='#5f584c' text-anchor='start'>Scoped to a repo I own</text><circle cx='548.7' cy='435.9' r='15' fill='#faf5ea' stroke='#b5502a' stroke-width='1.3'/><text x='548.7' y='440.4' font-family='ui-monospace,Menlo,monospace' font-size='11.5' fill='#b5502a' text-anchor='middle'>3</text><text x='574.7' y='433.9' font-family='Georgia,serif' font-size='14.5' fill='#201c17' text-anchor='start' font-weight='600'>I finish it, skip it, or overrun</text><text x='574.7' y='452.9' font-family='Georgia,serif' font-size='12.5' fill='#5f584c' text-anchor='start'>Nobody is asked to rate anything</text><circle cx='351.3' cy='435.9' r='15' fill='#faf5ea' stroke='#b5502a' stroke-width='1.3'/><text x='351.3' y='440.4' font-family='ui-monospace,Menlo,monospace' font-size='11.5' fill='#b5502a' text-anchor='middle'>4</text><text x='325.3' y='433.9' font-family='Georgia,serif' font-size='14.5' fill='#201c17' text-anchor='end' font-weight='600'>The Tuner reads the behaviour</text><text x='325.3' y='452.9' font-family='Georgia,serif' font-size='12.5' fill='#5f584c' text-anchor='end'>Not the rating — the behaviour</text><circle cx='290.2' cy='248.1' r='15' fill='#faf5ea' stroke='#b5502a' stroke-width='1.3'/><text x='290.2' y='252.6' font-family='ui-monospace,Menlo,monospace' font-size='11.5' fill='#b5502a' text-anchor='middle'>5</text><text x='264.2' y='246.1' font-family='Georgia,serif' font-size='14.5' fill='#201c17' text-anchor='end' font-weight='600'>Tomorrow's brief is better</text><text x='264.2' y='265.1' font-family='Georgia,serif' font-size='12.5' fill='#5f584c' text-anchor='end'>Because I built something</text></svg>",
+      "caption": "Each turn leaves the next one better informed. The loop is the product — a single exercise is just an exercise."
+    },
+    "_render": "Render `diagram.svg` as the flywheel. Do NOT lay the five steps out as tiles or a row of cards with a 'back to step 1' link — that is a list with a footnote, not a loop. The steps[] array is retained only as the accessible text alternative and for narrow screens where the circle cannot be read."
+  },
+  "zones": {
+    "_why": "This page serves two different visits and was treating them identically. Returning to DO work (find the exercise, mark it done) is a different task from arriving to UNDERSTAND the system. Undifferentiated, the actionable 20% was buried in the explanatory 80%. Three zones, three visual registers, act first.",
+    "order": [
+      "act",
+      "understand",
+      "record"
+    ],
+    "act": {
+      "key": "act",
+      "eyebrow": "Do this",
+      "title": "Open exercises",
+      "subtitle": "One on the bench. Skippable — nothing expires.",
+      "contains": [
+        "exercises"
+      ],
+      "design": "The work surface. Raised panels with visible elevation, the warm panel tone against the page background, terracotta accents, strong serif titles. Everything interactive lives here and should look interactive: status chips with hover and press states, a clear cursor change. Highest contrast on the page. This zone comes FIRST, immediately after the hero — a returning reader should never scroll past explanation to reach their work."
+    },
+    "understand": {
+      "key": "understand",
+      "eyebrow": "How this works",
+      "title": "The mechanism behind the list",
+      "subtitle": "Nothing to do here — this is the reasoning, for anyone who wants it.",
+      "contains": [
+        "how",
+        "flywheel",
+        "reconciliation"
+      ],
+      "design": "Reading matter, not a work surface. Flat — no elevation, no card borders, sitting directly on a cooler recessed background tone so the zone change is felt before it is read. Narrower measure for reading. Muted labels, no interactive affordances whatsoever, so nothing here invites a click that does nothing. Where a block carries a 'Designed, not built' chip, that chip belongs in this register too."
+    },
+    "record": {
+      "key": "record",
+      "eyebrow": "Already done",
+      "title": "Shipped",
+      "subtitle": "Finished, or retired before it reached the bench.",
+      "contains": [
+        "retired",
+        "shipped"
+      ],
+      "design": "Quietest of the three. A dense dated list, small type, low contrast — an archive rather than a feature. It should be the last thing that draws the eye."
+    },
+    "divider": "Between zones, a full-width rule with the next zone's eyebrow set in small letterspaced monospace. The transition from act to understand is the important one: after it, nothing asks anything of the reader."
+  },
+  "retired": {
+    "title": "Retired before I saw them",
+    "body": "Exercises the prior-art check found I had already built. They are kept visible rather than deleted — a retired exercise is the check <em>working</em>, and silently dropping it would hide the one piece of evidence that it runs at all.",
+    "items": [
+      {
+        "id": "hw1",
+        "title": "Set up the project repo using the Claude Code CLI",
+        "fromBrief": {
+          "label": "Prompted by the CLI tooling thread in the brief",
+          "itemId": null,
+          "href": "Signal.html"
+        },
+        "meta": [
+          "AI",
+          "~60 min, setup excluded",
+          "repo: aiml-signal-system",
+          "Claude Code CLI basics"
+        ],
+        "goal": "End with a new GitHub repo, Claude Code running against it, and one commit the agent made for you.",
+        "steps": [
+          "Create an empty GitHub repo and clone it locally",
+          "Install and authenticate the Claude Code CLI",
+          "Have it scaffold the project structure and make the first commit",
+          "Read the diff before approving it — the point is reviewing agent output, not accepting it"
+        ],
+        "note": "First CLI session. Deliberately unambitious: the goal is the workflow, not the code.",
+        "priorArt": {
+          "state": "built",
+          "label": "Already built",
+          "detail": "This repo exists and the CLI is in daily use — the check would retire this one and point at the commit history instead."
+        },
+        "retired": {
+          "by": "prior-art check",
+          "label": "Retired — already built",
+          "reason": "This repo exists and the Claude Code CLI is in daily use. The exercise was already done before it was offered.",
+          "pointer": {
+            "label": "See the commit history",
+            "href": "https://github.com/varun-sridharan/aiml-signal-system/commits/main"
+          }
+        }
+      }
+    ]
+  },
+  "statusRule": "A status and a prior-art verdict are never shown together. <code>none</code> and <code>partial</code> leave the exercise active and it carries a status; <code>built</code> is terminal — it retires the exercise, removes the status entirely, and returns a pointer to the code instead. An exercise showing both <em>In progress</em> and <em>Already built</em> is a contradiction, not two facts."
+}

@@ -186,7 +186,7 @@
       "title": "Coach — standalone homework",
       "status": "LATER",
       "time": "~60 min",
-      "endState": "a weekly 60-min exercise generated from the week's items, written to the backlog.",
+      "endState": "a weekly 60-min exercise generated from the week's items, written to the backlog. <b>Also: capture the skip reason</b>, not just the skip. \"Wrong topic\" and \"too big\" correct different agents — the Framer's priors versus the Coach's scoping — and an undifferentiated skip is uninterpretable by either.",
       "why": "turns reading into doing (job b), before the harder repo-grounding step.",
       "activities": [],
       "notes": []
@@ -197,7 +197,7 @@
       "title": "Coach — repo grounding",
       "status": "LATER",
       "time": "~60 min",
-      "endState": "homework that fits a real spot in your repos, verified by assertions against the code.",
+      "endState": "homework that fits a real spot in your repos, verified by assertions against the code. <b>Also: prior-art reconciliation.</b> The same repo access that grounds an exercise answers whether I have already built the thing — states are <em>none / partial / already built</em>, and an exercise found to be already built is retired with a pointer to the code instead of being offered. Recall-biased: when unsure, offer it with a note rather than suppress it, because a wrong suppression is invisible and a wrong offer costs minutes.",
       "why": "the magic feature — and the highest hallucination risk, so it comes after trust is built.",
       "activities": [],
       "notes": []
@@ -219,7 +219,7 @@
       "title": "Tuner — learned personalization",
       "status": "LATER",
       "time": "multi-session",
-      "endState": "source reputation + topic priors that adapt from your feedback, with the diversity guardrail.",
+      "endState": "source reputation + topic priors that adapt from your feedback, with the diversity guardrail. <b>Guardrail:</b> completion rate is a diagnostic, never an optimisation target. Optimising it teaches the Coach to generate trivial exercises, which raises the metric while degrading the product. Read it only alongside actual-vs-estimated time and whether the code was reused.",
       "why": "the system starts getting better at <em>you</em> — but only after weeks of data exist.",
       "activities": [],
       "notes": []
@@ -245,5 +245,34 @@
       "<b>Cost tracker:</b> ledger + circuit-breaker exist now → Control Room charts it live in Phase 9."
     ]
   },
-  "lastUpdated": "2026-09-10"
+  "lastUpdated": "2026-09-10",
+  "nav": {
+    "current": "Plan &amp; Progress",
+    "items": [
+      {
+        "label": "Product",
+        "href": "../application/Product.html"
+      },
+      {
+        "label": "Signal",
+        "href": "../application/Signal.html"
+      },
+      {
+        "label": "Practice",
+        "href": "../application/Practice.html"
+      },
+      {
+        "label": "Control Hub",
+        "href": "../application/Control-Hub.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  }
 }

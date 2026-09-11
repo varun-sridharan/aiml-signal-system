@@ -1,0 +1,129 @@
+{
+  "version": 2,
+  "lastUpdated": "2026-09-10",
+  "note": "Content source for the Product page — the landing page and front door. It carries the story and the argument only: the problem, why the obvious fixes fail, the reframe, the trust problem, and where to go next. Deliberately NOT here: the agent-by-agent breakdown (that lives in System Design) and build status (that lives in Plan & Progress). Each section has a `layout` hint telling the design how wide to run: hero | prose | grid | band | split | cards. `nav` carries exact relative hrefs from application/ — do not infer paths, three were wrong when inferred. Today the page is generated in Claude Design from this file; there is no build script in this repo. Block types: p (html), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption), item (title/body for grids and cards).",
+
+  "nav": {
+    "current": "Product",
+    "items": [
+      { "label": "Product", "href": "Product.html" },
+      { "label": "Signal", "href": "Signal.html" },
+      { "label": "Practice", "href": "Practice.html", "wip": true },
+      { "label": "Control Hub", "href": "Control-Hub.html" },
+      { "label": "System Design", "href": "../design/System-Design.html" },
+      { "label": "Plan &amp; Progress", "href": "../plan/Plan.html" }
+    ]
+  },
+
+  "hero": {
+    "layout": "hero",
+    "kicker": "A daily AI/ML brief that can prove it isn't making things up",
+    "title": "I stopped trying to keep up.",
+    "titleAccent": "So I built something that decides what's worth knowing.",
+    "lede": "Five minutes a morning. The fewest items I'd regret missing — not the most items covered. Every factual claim traced back to its source by code, not by a model's promise.",
+    "actions": [
+      { "label": "See a real brief", "href": "Signal.html", "primary": true },
+      { "label": "Read the engineering", "href": "../design/System-Design.html", "primary": false }
+    ],
+    "stats": [
+      { "value": "~5 min", "label": "daily read" },
+      { "value": "2", "label": "model calls per brief" },
+      { "value": "$0.10", "label": "cost per brief" },
+      { "value": "1 of 6", "label": "agents built so far" }
+    ]
+  },
+
+  "sections": [
+    {
+      "id": "the-problem",
+      "layout": "prose",
+      "kicker": "The problem",
+      "title": "Twenty minutes a day, and I still felt behind",
+      "blocks": [
+        { "t": "p", "html": "Every morning I opened five to ten tabs of AI/ML news and closed them twenty minutes later knowing roughly what I knew before. Not because the writing was bad — because <b>almost none of it told me whether I should care</b>." },
+        { "t": "p", "html": "A model shipped. A benchmark moved two points. Somebody raised a round. Every item arrived with the same breathless weight as every other item, and the work of deciding which ones mattered to <em>my</em> work fell entirely on me, at 7am, before coffee." },
+        { "t": "p", "html": "The real cost was never the twenty minutes. It was walking into a conversation three weeks later and finding that something I'd scrolled past had quietly become the thing everyone was building on." },
+        { "t": "p", "html": "So the problem wasn't <em>\"I don't have enough information.\"</em> It was <em>\"I have far too much, and no reliable way to separate signal from noise in the time I actually have.\"</em>" }
+      ]
+    },
+
+    {
+      "id": "why-the-obvious-fixes-failed",
+      "layout": "grid",
+      "kicker": "What didn't work",
+      "title": "The obvious fixes each fail in their own way",
+      "blocks": [
+        { "t": "item", "title": "Curated newsletters", "body": "Written for a general audience, so relevance is a coincidence — and they need something exciting <em>every single day</em>, which is exactly the pressure that manufactures noise." },
+        { "t": "item", "title": "Aggregators and feeds", "body": "Solved distribution, not judgement. I still had to read everything to find the two things that mattered." },
+        { "t": "item", "title": "Asking a chatbot", "body": "Fast, fluent, and no way to know when it was wrong. <b>A summary you can't verify is worse than none</b> — it feels like knowledge." },
+        { "t": "item", "title": "Save it for later", "body": "Later never came. The reading list became its own source of guilt rather than a solution to any." }
+      ]
+    },
+
+    {
+      "id": "the-reframe",
+      "layout": "band",
+      "kicker": "The reframe",
+      "title": "Give up on coverage",
+      "blocks": [
+        { "t": "p", "html": "Success is <b>the fewest items I'd regret missing</b> — not the most items covered. The system is explicitly allowed to say <em>\"quiet day, go build something\"</em>, and that is a correct answer rather than a failure." },
+        { "t": "p", "html": "That one decision changed everything downstream. A system optimising for coverage wants to show you more. A system optimising for regret wants to show you less, and has to be far more confident about whatever survives." }
+      ]
+    },
+
+    {
+      "id": "what-it-does",
+      "layout": "split",
+      "kicker": "What it does",
+      "title": "A funnel, ending in something you'll actually read",
+      "blocks": [
+        { "t": "p", "html": "Everything reachable gets narrowed to a handful of items, each with the one thing that makes it matter to me and the tradeoff it implies — plus the thread connecting the day, which is usually the part worth knowing." },
+        { "t": "p", "html": "Once a week it goes further and turns something from the brief into a <b>60-minute exercise grounded in my own repositories</b>. Reading becomes doing, or it doesn't count." },
+        { "t": "figure", "caption": "Only the final count is measured — the stages above it are design targets, from agents not yet built.", "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 208\" role=\"img\" aria-label=\"A funnel narrowing everything reachable down to a handful of items\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"208\" fill=\"none\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">EACH MORNING</text><rect x=\"8\" y=\"44\" width=\"512\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.12\"/><text x=\"8\" y=\"82\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">everything reachable</text><rect x=\"8\" y=\"100\" width=\"98\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.28\"/><text x=\"8\" y=\"138\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">corroborated, not duplicated, material to me</text><rect x=\"8\" y=\"156\" width=\"19\" height=\"18\" rx=\"2\" fill=\"#b5502a\"/><text x=\"37\" y=\"170\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"11\" fill=\"#b5502a\">7 items</text><text x=\"8\" y=\"196\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#201c17\">framed into the brief, with the thread connecting them</text></svg>" }
+      ]
+    },
+
+    {
+      "id": "the-hard-part",
+      "layout": "split",
+      "kicker": "The hard part",
+      "title": "How do I know it didn't make that up?",
+      "blocks": [
+        { "t": "p", "html": "Writing a readable brief is the easy half. The half that took the work has nothing to do with news: a summariser that occasionally invents a figure isn't mildly flawed — it makes you <b>confidently wrong in public</b>." },
+        { "t": "p", "html": "So the model is never trusted to verify itself. Three layers, each checking something the one before it can't." },
+        { "t": "figure", "caption": "A model can invent a quote. A substring check cannot be talked into agreeing.", "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 172\" role=\"img\" aria-label=\"Three layers: a model writes, a second model checks, code proves the evidence is real\"><line x1=\"8\" y1=\"44\" x2=\"632\" y2=\"44\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">WRITES</text><text x=\"8\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A model drafts the brief</text><text x=\"8\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Given only each item's source</text><text x=\"8\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">excerpt to draw facts from.</text><line x1=\"222\" y1=\"34\" x2=\"222\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"244\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">CHECKS</text><text x=\"244\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A second model audits it</text><text x=\"244\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Lists every factual claim and</text><text x=\"244\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">must quote what supports it.</text><line x1=\"432\" y1=\"34\" x2=\"432\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"454\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#b5502a\">PROVES</text><text x=\"454\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#b5502a\">Code verifies the quote</text><text x=\"454\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Not literally in the source?</text><text x=\"454\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">The claim is rejected — whatever</text><text x=\"454\" y=\"130\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">the auditor concluded.</text></svg>" },
+        { "t": "p", "html": "That third layer exists because of something the second one did. Asked to justify a fabricated figure, the auditing model produced a quote supporting it — a quote that appeared nowhere in the source. It had <b>invented a citation</b>." },
+        { "t": "p", "html": "And because the auditor is a model too, it gets its own test suite: one day of real output frozen with hand-written labels, re-run on every change. Its first version passed a brief I had deliberately seeded with a fake valuation, a fake date and a fake investor — a scoping bug meant it had never read the writing it was auditing. <b>A test that has never failed is not evidence of anything.</b>" }
+      ]
+    },
+
+    {
+      "id": "where-to-go-next",
+      "layout": "cards",
+      "kicker": "Where to go next",
+      "title": "Four ways in",
+      "blocks": [
+        { "t": "item", "title": "Signal", "href": "Signal.html", "body": "A real generated brief — sample data from a fixed date, clearly labelled. <b>Start here to see what it produces.</b>" },
+        { "t": "item", "title": "System Design", "href": "../design/System-Design.html", "body": "The architecture, the data contracts between agents, and an append-only decision log. Includes an Agentic Concepts sub-tab. <b>Start here for the engineering.</b>" },
+        { "t": "item", "title": "Plan &amp; Progress", "href": "../plan/Plan.html", "body": "Eleven phases, each one working session, with what was decided and why — including what's built and what's still only designed." },
+        { "t": "item", "title": "Control Hub", "href": "Control-Hub.html", "body": "The private surface: per-agent metrics, and recommended changes waiting on my approval before anything is applied." }
+      ]
+    },
+
+    {
+      "id": "closing",
+      "layout": "band",
+      "kicker": "Worth knowing before you look",
+      "title": "One agent of six actually runs",
+      "blocks": [
+        { "t": "p", "html": "The brief you'll see is <b>real output</b> — genuinely what the agent produced — but from a hand-built input pool on a fixed date. Live ingestion starts with the next phase. The full built-versus-designed breakdown is in <a href=\"../plan/Plan.html\">Plan &amp; Progress</a>." },
+        { "t": "p", "html": "The slice that exists was chosen deliberately rather than by convenience: <b>the agent whose output a human actually reads, and the harness that can stop it from shipping.</b> Everything else is easier once those two exist, and far harder to retrofit afterwards." }
+      ]
+    }
+  ],
+
+  "footer": {
+    "note": "Built in timeboxed sessions, planned and committed one phase at a time.",
+    "repo": { "label": "Source on GitHub", "href": "https://github.com/varun-sridharan/aiml-signal-system" }
+  }
+}
