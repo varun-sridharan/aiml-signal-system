@@ -25,7 +25,7 @@ No API key needed, nothing to install:
 | | |
 | --- | --- |
 | [The daily brief](https://varun-sridharan.github.io/aiml-signal-system/application/Signal.html) | real Framer output for 2026-08-04, rendered |
-| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 26 entries |
+| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 36 entries |
 | [Build plan](https://varun-sridharan.github.io/aiml-signal-system/plan/Plan.html) | 11 phases, each one working session, with per-phase notes |
 
 Prefer the raw data? [`data/briefs/framer_2026-08-04.json`](data/briefs/framer_2026-08-04.json) is the same brief as the agent produced it, and [`data/evals/golden/2026-08-04/labels.json`](data/evals/golden/2026-08-04/labels.json) is a hand-labelled eval case with the reasoning for each label written down.
