@@ -72,10 +72,33 @@ DEFAULT_RAW_PATH = REPO / "data" / "verified" / "gatekeeper_2026-08-04.json"
 # schema dialect requires every property to be listed in `required`.
 _NULLABLE_STRING = {"anyOf": [{"type": "string"}, {"type": "null"}]}
 
+# WHAT: the writer's own division of each field into checkable claims and its reading
+# of them. Concatenating every run's text in order must reproduce the field exactly.
+# CONCEPT: eval — grading scope, enforced by what we put in the payload rather than by
+# asking for it. Only `fact` runs reach the grader, so interpretation cannot be flagged
+# as unsupported: there is no evidence for "your input costs are being repriced", and
+# there never could be. Measured first: two independent labelers agreed on this
+# boundary for 94.6% of characters, which is why it is safe to ask one model for it.
+# The split says what KIND a clause is, never whether it is true — a false claim is
+# still a fact run, and failing its check is the point.
+SPLIT_SCHEMA = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "text": {"type": "string"},
+            "class": {"type": "string", "enum": ["fact", "interpretation"]},
+        },
+        "required": ["text", "class"],
+        "additionalProperties": False,
+    },
+}
+
 FRAMING_SCHEMA = {
     "type": "object",
     "properties": {
         "thread": {"type": "string"},
+        "threadSplit": SPLIT_SCHEMA,
         "items": {
             "type": "array",
             "items": {
@@ -100,13 +123,25 @@ FRAMING_SCHEMA = {
                             {"type": "null"},
                         ]
                     },
+                    "split": {
+                        "type": "object",
+                        "properties": {
+                            "why": SPLIT_SCHEMA,
+                            "example": SPLIT_SCHEMA,
+                            "connection": SPLIT_SCHEMA,
+                            "ninety.method": SPLIT_SCHEMA,
+                            "ninety.result": SPLIT_SCHEMA,
+                            "ninety.caveat": SPLIT_SCHEMA,
+                        },
+                        "additionalProperties": False,
+                    },
                 },
-                "required": ["id", "why", "example", "connection", "ninety"],
+                "required": ["id", "why", "example", "connection", "ninety", "split"],
                 "additionalProperties": False,
             },
         },
     },
-    "required": ["thread", "items"],
+    "required": ["thread", "threadSplit", "items"],
     "additionalProperties": False,
 }
 
@@ -369,17 +404,17 @@ def build_check_payload(raw_day: dict, framing: dict) -> dict:
                 "id": item["id"],
                 # Headlines come from the Gatekeeper upstream; the Framer didn't write
                 # them, so they are not its faithfulness burden and never go in here.
-                "writing_under_test": {
-                    k: v
-                    for k, v in framing_by_id.get(item["id"], {}).items()
-                    if k != "id" and v is not None
-                },
+                # Interpretation is excluded the same way, and for the same reason: it
+                # is not the Framer's faithfulness burden either. No excerpt can settle
+                # "your input costs are being repriced", so sending it to a grader can
+                # only produce a flag nobody can act on.
+                "writing_under_test": facts_only(framing_by_id.get(item["id"], {})),
                 "ground_truth_excerpt": item["source_excerpt"],
             }
             for item in raw_day["items"]
         ],
         "thread": {
-            "writing_under_test": framing["thread"],
+            "writing_under_test": join_runs(framing.get("threadSplit"), framing["thread"]),
             "_note": "Graded against the union below — it synthesizes across all items.",
             "ground_truth_excerpt_union": [
                 {"id": item["id"], "source_excerpt": item["source_excerpt"]}
@@ -387,6 +422,87 @@ def build_check_payload(raw_day: dict, framing: dict) -> dict:
             ],
         },
     }
+
+
+def join_runs(runs, fallback: str) -> str:
+    """The `fact` half of one field, in order. Falls back to the whole field if unsplit."""
+    # WHAT: turn a split into the text the grader is allowed to see.
+    # CONCEPT: eval — scope enforced by the payload. The fallback is deliberate: a
+    # frozen brief written before the split existed is graded whole, as it was.
+    if not runs:
+        return fallback
+    return "".join(r["text"] for r in runs if r["class"] == "fact").strip()
+
+
+def facts_only(framing_item: dict) -> dict:
+    """One item's writing, reduced to its factual clauses, field by field."""
+    # WHAT: apply the item's own split to every field, dropping fields left empty.
+    # CONCEPT: eval — an item whose `why` is pure interpretation contributes nothing to
+    # grade, and an empty field is better than a field of unanswerable claims.
+    split = framing_item.get("split") or {}
+    out = {}
+    for key, value in framing_item.items():
+        if key in ("id", "split") or value is None:
+            continue
+        if key == "ninety" and isinstance(value, dict):
+            kept = {
+                sub: join_runs(split.get(f"ninety.{sub}"), text)
+                for sub, text in value.items()
+            }
+            kept = {k: v for k, v in kept.items() if v}
+            if kept:
+                out[key] = kept
+            continue
+        text = join_runs(split.get(key), value)
+        if text:
+            out[key] = text
+    return out
+
+
+def coverage_failures(framing: dict) -> list[str]:
+    """Every split must reproduce its field exactly — nothing dropped, nothing invented."""
+    # WHAT: concatenate each split in order and compare to the field it describes.
+    # CONCEPT: harness — the deterministic half of the fact/interpretation design. The
+    # model decides which clauses are checkable; code decides that it accounted for all
+    # of them. Without this, a claim can be hidden from the grader by omitting it from
+    # the split entirely, and the omission is invisible.
+    failures = []
+
+    def check(label: str, runs, original: str) -> None:
+        if runs is None:
+            failures.append(f"{label}: no split")
+        elif "".join(r["text"] for r in runs) != original:
+            failures.append(f"{label}: split does not reconstruct the field")
+
+    for item in framing["items"]:
+        split = item.get("split") or {}
+        for key in ("why", "example", "connection"):
+            if item.get(key):
+                check(f"{item['id']}/{key}", split.get(key), item[key])
+        if isinstance(item.get("ninety"), dict):
+            for sub, text in item["ninety"].items():
+                check(f"{item['id']}/ninety.{sub}", split.get(f"ninety.{sub}"), text)
+    check("thread", framing.get("threadSplit"), framing["thread"])
+    return failures
+
+
+def lifted_claims(claims: list, writing: str, ground_truth: str) -> list[str]:
+    """Claims copied verbatim out of the source that do not appear in the writing at all."""
+    # WHAT: the mirror of the span check. `span_found` proves the evidence is real;
+    # this asks whether the CLAIM came from the right document.
+    # CONCEPT: eval — verify the verifier. A grader that enumerates the excerpt's
+    # sentences and checks them against the excerpt passes everything at confidence 1.0,
+    # and no label can catch it that was not written to. Narrow on purpose: it fires
+    # only on a verbatim lift, so a legitimate paraphrase of the writing never trips it,
+    # and neither does writing that quotes its source exactly — that text is in both.
+    # Warns; does not gate, until the false-alarm rate is measured.
+    truth, written = _normalise_text(ground_truth), _normalise_text(writing)
+    lifted = []
+    for claim in claims:
+        text = _normalise_text(claim.get("claim", ""))
+        if text and text in truth and text not in written:
+            lifted.append(claim["claim"])
+    return lifted
 
 
 def ground_truth_for(raw_day: dict) -> tuple[dict, str]:
@@ -423,7 +539,7 @@ def suspicious_unsupported(claim: str, ground_truth: str) -> list[str]:
     return hits
 
 
-def normalise_verdict(raw: dict, ground_truth: str) -> dict:
+def normalise_verdict(raw: dict, ground_truth: str, writing: str = "") -> dict:
     """Verify the grader's evidence, then derive the flag list from the claim ledger."""
     # WHAT: check that every span the grader quoted is literally in the excerpt, and
     # flag exactly those claims left without a real span.
@@ -456,6 +572,9 @@ def normalise_verdict(raw: dict, ground_truth: str) -> dict:
         "unsupported_claims": unsupported,
         "grader_errors": grader_errors,
         "possible_false_alarms": possible_false_alarms,
+        # Claims the grader copied verbatim out of the SOURCE that appear nowhere in the
+        # writing. Warns; does not gate, until the false-alarm rate is measured.
+        "lifted_claims": lifted_claims(raw.get("claims", []), writing, ground_truth),
     }
 
 
@@ -485,10 +604,15 @@ def check_faithfulness(client, raw_day: dict, framing: dict):
     )
     graded = json.loads(structured_text(message))
     per_item_truth, union_truth = ground_truth_for(raw_day)
+    # The grader saw only the fact clauses, so that is what "the writing" means when we
+    # ask whether a claim came from the right document.
+    seen = {u["id"]: json.dumps(u["writing_under_test"], ensure_ascii=False) for u in payload["items"]}
     verdicts = {
-        v["id"]: normalise_verdict(v, per_item_truth.get(v["id"], "")) for v in graded["items"]
+        v["id"]: normalise_verdict(v, per_item_truth.get(v["id"], ""), seen.get(v["id"], ""))
+        for v in graded["items"]
     }
-    return verdicts, normalise_verdict(graded["thread"], union_truth), message.usage
+    thread_seen = payload["thread"]["writing_under_test"]
+    return verdicts, normalise_verdict(graded["thread"], union_truth, thread_seen), message.usage
 
 
 # ---------------------------------------------------------------- local compute
@@ -571,6 +695,11 @@ def assemble_day(
             "confidence": verdict.get("confidence"),
             "unsupported_claims": verdict.get("unsupported_claims", []),
             "possible_false_alarms": verdict.get("possible_false_alarms", []),
+            "lifted_claims": verdict.get("lifted_claims", []),
+            # The full ledger, not just the failures. Without it a later run cannot ask
+            # what the grader enumerated — only what it rejected — and cross-run analysis
+            # of a drifting grader becomes impossible after the fact.
+            "claims": verdict.get("claims", []),
         }
         items.append(item)
 
@@ -588,6 +717,11 @@ def assemble_day(
             "confidence": thread_verdict.get("confidence"),
             "unsupported_claims": thread_verdict.get("unsupported_claims", []),
             "possible_false_alarms": thread_verdict.get("possible_false_alarms", []),
+            "lifted_claims": thread_verdict.get("lifted_claims", []),
+            # The full ledger, not just the failures. Without it a later run cannot ask
+            # what the grader enumerated — only what it rejected — and cross-run analysis
+            # of a drifting grader becomes impossible after the fact.
+            "claims": thread_verdict.get("claims", []),
         },
         "items": items,
         "_enforcements": enforcements,

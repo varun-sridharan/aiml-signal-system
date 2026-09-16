@@ -1,0 +1,474 @@
+{
+  "labeler": "opus",
+  "case": "2026-08-04",
+  "units": {
+    "2026-08-04-mcp": {
+      "why": [
+        {
+          "text": "Your MCP servers become ordinary stateless web services",
+          "class": "interpretation",
+          "why": "Second person: recasts the transport change as a property of the reader's own servers; no span settles what the reader runs."
+        },
+        {
+          "text": " — horizontal scale behind a plain load balancer, no sticky sessions, no shared session store.",
+          "class": "fact",
+          "why": "Excerpt span: 'Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store.'"
+        },
+        {
+          "text": " The cost is a hard migration:",
+          "class": "interpretation",
+          "why": "Evaluation of how costly the change is; no span grades the migration."
+        },
+        {
+          "text": " cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock,",
+          "class": "fact",
+          "why": "Excerpt span: 'The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.'"
+        },
+        {
+          "text": " so anything you built on those needs a replacement designed now.",
+          "class": "interpretation",
+          "why": "Advice addressed to the reader about what they must do; no span settles it."
+        }
+      ],
+      "example": [
+        {
+          "text": "If your agent's tool server relied on Sampling to call back into the model mid-tool,",
+          "class": "interpretation",
+          "why": "Invented scenario about the reader's own server; no span settles what the reader built."
+        },
+        {
+          "text": " that path is deprecated",
+          "class": "fact",
+          "why": "Excerpt span lists Sampling among the deprecated features."
+        },
+        {
+          "text": " — you have 12 months to restructure it as a request the client initiates.",
+          "class": "interpretation",
+          "why": "Second person and prescriptive: the runway is in the excerpt but the reader's restructuring task is not."
+        },
+        {
+          "text": " And because compatibility breaks across versions,",
+          "class": "fact",
+          "why": "Excerpt span: 'The change breaks cross-version compatibility.'"
+        },
+        {
+          "text": " a client pinned to the old spec cannot talk to a new server,",
+          "class": "fact",
+          "why": "Same span restated concretely — broken cross-version compatibility is exactly this; checkable against it."
+        },
+        {
+          "text": " so you run both fleets during the cutover rather than upgrading in place.",
+          "class": "interpretation",
+          "why": "Operational advice for the reader; no span prescribes a cutover strategy."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Directly reinforces Terminal-Bench 2.1:",
+          "class": "interpretation",
+          "why": "A comparison drawn between two items; no span of this item's excerpt can settle a relation to another item."
+        },
+        {
+          "text": " with a 0.4-point gap at the frontier,",
+          "class": "interpretation",
+          "why": "Checkable in kind but not from this unit's source — the MCP excerpt says nothing about benchmark scores."
+        },
+        {
+          "text": " the harness — transport, scaling, tool surface — is where your differentiation actually lives,",
+          "class": "interpretation",
+          "why": "Second person plus evaluation of where value sits; no span settles it."
+        },
+        {
+          "text": " and it just got rewritten.",
+          "class": "fact",
+          "why": "Excerpt span: the 2026-07-28 spec 'changes the core transport from stateful sessions to stateless request/response.'"
+        }
+      ]
+    },
+    "2026-08-04-kimi-k3": {
+      "why": [
+        {
+          "text": "2.8T open weights at 1M context shifts build-vs-buy for agents,",
+          "class": "fact",
+          "why": "Excerpt spans give 2.8T/1M and state 'Open weights at this scale change the build-vs-buy calculation for agents.'"
+        },
+        {
+          "text": " because per-call cost compounds across many calls per task",
+          "class": "fact",
+          "why": "Excerpt span: 'where per-call cost compounds across many calls per task.'"
+        },
+        {
+          "text": " and self-hosting caps that cost.",
+          "class": "interpretation",
+          "why": "An added consequence about self-hosting economics; the excerpt never says self-hosting caps cost."
+        },
+        {
+          "text": " The tradeoff is blunt:",
+          "class": "interpretation",
+          "why": "Evaluation of the tradeoff's character; no span grades it."
+        },
+        {
+          "text": " you take on serving cost and latency to escape API pricing.",
+          "class": "interpretation",
+          "why": "Second person: the excerpt's impersonal tradeoff is restated as the reader's own bargain."
+        }
+      ],
+      "example": [
+        {
+          "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value",
+          "class": "interpretation",
+          "why": "Invented scenario with invented numbers; no span mentions 20 calls."
+        },
+        {
+          "text": " — the case for owning the weights.",
+          "class": "interpretation",
+          "why": "Conclusion drawn from the invented scenario."
+        },
+        {
+          "text": " But at 2.8T parameters",
+          "class": "fact",
+          "why": "Excerpt span: 'at 2.8T parameters'."
+        },
+        {
+          "text": " you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+          "class": "interpretation",
+          "why": "Second person plus the invented 20×; no span settles the reader's infrastructure bill."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Cuts against the OpenAI/Anthropic mega-rounds:",
+          "class": "interpretation",
+          "why": "A relation asserted between two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " those ~$1T valuations set the pricing umbrella for API and talent,",
+          "class": "interpretation",
+          "why": "Not in this unit's source — the Kimi excerpt contains no valuations."
+        },
+        {
+          "text": " and open weights at this scale are the main lever a downstream builder has against it.",
+          "class": "interpretation",
+          "why": "Evaluative superlative ('the main lever'); no span ranks levers."
+        }
+      ]
+    },
+    "2026-08-04-istar": {
+      "ninety.method": [
+        {
+          "text": "Assign per-step implicit rewards so the agent gets credit on intermediate actions instead of only on the final outcome in multi-turn agentic RL.",
+          "class": "fact",
+          "why": "Excerpt span: 'iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions rather than only on the final outcome.'"
+        }
+      ],
+      "ninety.result": [
+        {
+          "text": "+6.3% success improvement on WebShop and VisualSokoban.",
+          "class": "fact",
+          "why": "Excerpt span: 'It reports a +6.3% success improvement on WebShop and VisualSokoban.'"
+        }
+      ],
+      "ninety.caveat": [
+        {
+          "text": "Benchmark-only results, and the authors concede the difficulty concentrates in step-reward design",
+          "class": "fact",
+          "why": "Excerpt span: 'Results are benchmark-only, and the paper notes that step-reward design is where the difficulty concentrates.'"
+        },
+        {
+          "text": " — the part you'd have to build for your own task.",
+          "class": "interpretation",
+          "why": "Second person: recasts the paper's caveat as work the reader must do."
+        }
+      ],
+      "example": [
+        {
+          "text": "On a multi-turn task, outcome-only reward gives one signal for a whole trajectory;",
+          "class": "fact",
+          "why": "Excerpt's contrast clause 'rather than only on the final outcome' settles what outcome-only reward does."
+        },
+        {
+          "text": " iStar scores each intermediate action instead,",
+          "class": "fact",
+          "why": "Excerpt span: 'receives credit on intermediate actions'."
+        },
+        {
+          "text": " so a run that took the right first three steps and failed on the fourth still teaches something.",
+          "class": "interpretation",
+          "why": "Invented scenario and the lesson drawn from it; no span settles it."
+        },
+        {
+          "text": " That per-step scoring function is the part you have to design yourself.",
+          "class": "interpretation",
+          "why": "Second person: the excerpt locates the difficulty in step-reward design, not in the reader's obligations."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Pairs with the MCP spec change:",
+          "class": "interpretation",
+          "why": "A relation asserted between two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " step-level credit assignment assumes you can cleanly attribute each tool call,",
+          "class": "interpretation",
+          "why": "Second person plus an inferred prerequisite; no span states this assumption."
+        },
+        {
+          "text": " which is easier when transport is stateless request/response than when state hides in a session.",
+          "class": "interpretation",
+          "why": "Comparative judgment about transports, absent from this unit's source."
+        }
+      ]
+    },
+    "2026-08-04-terminal-bench": {
+      "why": [
+        {
+          "text": "A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5 at 89.1%",
+          "class": "fact",
+          "why": "Excerpt span gives both scores and the 0.4-point gap."
+        },
+        {
+          "text": " means model choice is no longer the variable that decides whether your coding agent works.",
+          "class": "interpretation",
+          "why": "Second person plus a consequence drawn from the gap; no span settles what decides the reader's agent."
+        },
+        {
+          "text": " Differentiation moves to the harness and the eval design around it",
+          "class": "fact",
+          "why": "Excerpt span: the near-tie 'reduces how much the model itself differentiates a coding agent relative to the harness and eval design around it.'"
+        },
+        {
+          "text": " — which is a harder, slower kind of engineering than swapping a model string.",
+          "class": "interpretation",
+          "why": "Comparative evaluation of engineering difficulty; no span grades it."
+        }
+      ],
+      "example": [
+        {
+          "text": "Swapping between the top two models buys you 0.4 points;",
+          "class": "interpretation",
+          "why": "Second person: restates the benchmark gap as what the reader gains from a swap. The impersonal version sits in `why` and is a fact."
+        },
+        {
+          "text": " a better retry policy or tool schema in your harness plausibly moves more.",
+          "class": "interpretation",
+          "why": "Hedged ('plausibly') and about the reader's harness; no span settles it."
+        },
+        {
+          "text": " Budget your quarter accordingly",
+          "class": "interpretation",
+          "why": "Direct advice; no span settles how the reader should budget."
+        },
+        {
+          "text": " — spend it on the scaffold and your own evals, not on frontier benchmarking.",
+          "class": "interpretation",
+          "why": "Direct advice; no span settles it."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Sets up the MCP item:",
+          "class": "interpretation",
+          "why": "A relation asserted between two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+          "class": "interpretation",
+          "why": "Superlative ranking across the day's items; no span ranks consequence."
+        }
+      ]
+    },
+    "2026-08-04-mega-rounds": {
+      "why": [
+        {
+          "text": "OpenAI's $122B round at $852B post and Anthropic at $965B",
+          "class": "fact",
+          "why": "Excerpt span: 'OpenAI closed a record $122B round at an $852B post-money valuation; Anthropic is valued at $965B.'"
+        },
+        {
+          "text": " set the pricing umbrella you build under",
+          "class": "interpretation",
+          "why": "Second person: the excerpt's 'downstream builders' becomes the reader's own umbrella."
+        },
+        {
+          "text": " — it moves both API pricing",
+          "class": "fact",
+          "why": "Excerpt span: 'moving both API pricing and talent costs.'"
+        },
+        {
+          "text": " and what you pay for talent.",
+          "class": "interpretation",
+          "why": "Second person: talent costs restated as the reader's payroll."
+        },
+        {
+          "text": " If you're planning a company, both of your main input costs are being repriced by people who are not your competitors.",
+          "class": "interpretation",
+          "why": "Second person throughout; no span settles the reader's input costs or who their competitors are."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Read with Kimi K3:",
+          "class": "interpretation",
+          "why": "An instruction to relate two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+          "class": "interpretation",
+          "why": "Evaluative superlative ('the only real hedge'), and 2.8T open weights are not in this unit's source."
+        }
+      ]
+    },
+    "2026-08-04-vc-record": {
+      "why": [
+        {
+          "text": "$510B in H1 with AI taking ~80% of Q1 dollars",
+          "class": "fact",
+          "why": "Excerpt span: 'Global venture funding reached a record $510B in H1 2026, with AI companies taking roughly 80% of Q1 dollars.'"
+        },
+        {
+          "text": " means an AI-labeled company raises into valuations priced for perfection",
+          "class": "interpretation",
+          "why": "A consequence drawn for a class of company; the excerpt describes capital concentration, not what any company raises into."
+        },
+        {
+          "text": " — funding is available, but so is the expectation that you grow into it.",
+          "class": "interpretation",
+          "why": "Second person plus an expectation attributed to investors; no span settles it."
+        },
+        {
+          "text": " Anything not AI-labeled is fighting over the remaining ~20%.",
+          "class": "fact",
+          "why": "Excerpt span: 'leaving non-AI startups competing for the remaining ~20% of dollars.'"
+        }
+      ],
+      "connection": [
+        {
+          "text": "Same direction as the OpenAI/Anthropic rounds",
+          "class": "interpretation",
+          "why": "A relation asserted between two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " — capital concentration and frontier valuations are one phenomenon,",
+          "class": "interpretation",
+          "why": "A synthesis claim about two trends being one thing; no span settles it."
+        },
+        {
+          "text": " and it prices your inputs before you write a line of code.",
+          "class": "interpretation",
+          "why": "Second person: restates concentration as a fact about the reader's costs."
+        }
+      ]
+    },
+    "2026-08-04-export-controls": {
+      "why": [
+        {
+          "text": "Chip access turns into a policy variable:",
+          "class": "fact",
+          "why": "Excerpt span: 'Chip access becomes a policy variable rather than only a supply constraint.'"
+        },
+        {
+          "text": " Blackwell-class exports banned, H200 moved to case-by-case licensing.",
+          "class": "fact",
+          "why": "Excerpt span: the Act 'bans export of Blackwell-class chips and moves H200 exports to case-by-case licensing.'"
+        },
+        {
+          "text": " That makes vendor and region choices contingent on where you and your customers operate, not just on price and availability.",
+          "class": "interpretation",
+          "why": "Second person: the excerpt's impersonal 'a company and its customers' becomes the reader's own situation."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Tightens the Kimi K3 tradeoff",
+          "class": "interpretation",
+          "why": "A relation asserted between two items; this unit's excerpt cannot settle it."
+        },
+        {
+          "text": " — self-hosting a 2.8T open-weight model assumes you can get and keep the accelerators,",
+          "class": "interpretation",
+          "why": "Second person plus an inferred prerequisite; 2.8T open weights are not in this unit's source."
+        },
+        {
+          "text": " and case-by-case H200 licensing makes that assumption jurisdiction-dependent.",
+          "class": "interpretation",
+          "why": "The licensing change is in the excerpt, but the predicate is a consequence drawn about the reader's assumption."
+        }
+      ]
+    },
+    "thread": {
+      "thread": [
+        {
+          "text": "The frontier stopped being the differentiator on the same day it got the most expensive:",
+          "class": "interpretation",
+          "why": "A synthesis across items with an evaluative framing; no single span settles it."
+        },
+        {
+          "text": " GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1",
+          "class": "fact",
+          "why": "Terminal-Bench excerpt span gives both scores and the 0.4-point gap."
+        },
+        {
+          "text": " while OpenAI and Anthropic price at $852B and $965B,",
+          "class": "fact",
+          "why": "Mega-rounds excerpt span gives the $852B post and the $965B valuation."
+        },
+        {
+          "text": " and AI absorbs ~80% of Q1 venture dollars.",
+          "class": "fact",
+          "why": "VC-record excerpt span: 'AI companies taking roughly 80% of Q1 dollars.'"
+        },
+        {
+          "text": " If the top two coding agents are a near-tie,",
+          "class": "fact",
+          "why": "Terminal-Bench excerpt span: 'The frontier is effectively a near-tie.'"
+        },
+        {
+          "text": " your leverage moves to harness and eval design",
+          "class": "interpretation",
+          "why": "Second person: restates the differentiation shift as the reader's own leverage."
+        },
+        {
+          "text": " — which is exactly what the 2026-07-28 MCP spec forces you to rebuild,",
+          "class": "interpretation",
+          "why": "Second person plus a causal 'forces you' claim; no span settles what the reader must rebuild."
+        },
+        {
+          "text": " trading stateful sessions for stateless horizontal scale and a broken-compatibility migration.",
+          "class": "fact",
+          "why": "MCP excerpt spans: stateful sessions to stateless request/response, horizontal scaling, broken cross-version compatibility."
+        },
+        {
+          "text": " The tension:",
+          "class": "interpretation",
+          "why": "Framing device announcing the writer's reading of the day; nothing to check."
+        },
+        {
+          "text": " Kimi K3's 2.8T open weights and iStar's step-reward credit assignment",
+          "class": "fact",
+          "why": "Kimi excerpt gives 2.8T open weights; iStar excerpt gives per-step implicit rewards for credit assignment."
+        },
+        {
+          "text": " both argue you can own more of the stack,",
+          "class": "interpretation",
+          "why": "Second person: what the two items 'argue' for the reader's ownership is not settleable by any span."
+        },
+        {
+          "text": " while trillion-dollar rounds and the AI OVERWATCH Act's Blackwell ban",
+          "class": "fact",
+          "why": "Mega-rounds excerpt gives ~$1T valuations; export-controls excerpt gives the Act's Blackwell export ban."
+        },
+        {
+          "text": " argue the inputs — capital, talent, chips — are consolidating out of reach.",
+          "class": "interpretation",
+          "why": "An evaluative conclusion ('out of reach') synthesized across items; no span settles it."
+        },
+        {
+          "text": " Read that as a mandate to spend the next quarter on plumbing and evals, not on model selection.",
+          "class": "interpretation",
+          "why": "Direct advice to the reader; no span settles what they should spend a quarter on."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "labeler": "opus",
+  "case": "negative-01",
+  "units": {
+    "negative-01-mcp": {
+      "why": [
+        {
+          "text": "Your MCP servers become ordinary stateless web services — ",
+          "class": "interpretation",
+          "why": "No span speaks to what the reader's own servers 'become'; it recasts a transport change as a property of the reader's deployment."
+        },
+        {
+          "text": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store. ",
+          "class": "fact",
+          "why": "Settled by the span 'Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store.'"
+        },
+        {
+          "text": "The cost is a hard migration: ",
+          "class": "interpretation",
+          "why": "An evaluation of how costly the change is; the excerpt grades nothing as 'hard'."
+        },
+        {
+          "text": "cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, ",
+          "class": "fact",
+          "why": "Settled by the span naming the broken cross-version compatibility, the four deprecated features, and the 12-month runway."
+        },
+        {
+          "text": "so anything you built on those needs a replacement designed now.",
+          "class": "interpretation",
+          "why": "Advice about what the reader must do; no span can settle an obligation."
+        }
+      ],
+      "example": [
+        {
+          "text": "Because compatibility breaks across versions, ",
+          "class": "fact",
+          "why": "Settled by the span 'The change breaks cross-version compatibility.'"
+        },
+        {
+          "text": "a client pinned to the old spec cannot talk to a new server — ",
+          "class": "interpretation",
+          "why": "An invented scenario; the excerpt never mentions pinned clients or what they can still reach."
+        },
+        {
+          "text": "so you run both fleets during the cutover rather than upgrading in place.",
+          "class": "interpretation",
+          "why": "A recommended migration strategy drawn from the scenario; no span addresses it."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Read with the mega-rounds item: you don't set the price of your inputs, but the cost of running your own servers is one you still control.",
+          "class": "interpretation",
+          "why": "A comparison against a different item plus a claim about what the reader controls; this item's excerpt says nothing about input pricing or control."
+        }
+      ]
+    },
+    "negative-01-mega-rounds": {
+      "why": [
+        {
+          "text": "Anthropic raised $965B, ",
+          "class": "fact",
+          "why": "Checkable against the span 'Anthropic is valued at $965B' — which reports a valuation, not a raise, so the check fails; the kind is still fact."
+        },
+        {
+          "text": "and OpenAI closed a record $122B round at an $852B post-money valuation. ",
+          "class": "fact",
+          "why": "Settled by the span 'OpenAI closed a record $122B round at an $852B post-money valuation.'"
+        },
+        {
+          "text": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under — ",
+          "class": "fact",
+          "why": "Settled by the span 'Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under.'"
+        },
+        {
+          "text": "they move both API pricing and what you pay for talent.",
+          "class": "fact",
+          "why": "Settled by the span 'moving both API pricing and talent costs.'"
+        }
+      ],
+      "connection": [
+        {
+          "text": "Read with the MCP spec change: the pricing umbrella is set above you, so the engineering cost you can still cut is in your own servers.",
+          "class": "interpretation",
+          "why": "A comparison to another item and advice on where to cut cost; this item's excerpt mentions no servers or engineering cost."
+        }
+      ]
+    },
+    "thread": {
+      "thread": [
+        {
+          "text": "The price of your inputs and the shape of your plumbing moved in opposite directions. ",
+          "class": "interpretation",
+          "why": "A directional comparison drawn across the two items; no span asserts that the two moved oppositely."
+        },
+        {
+          "text": "OpenAI's record $122B round at $852B post and Anthropic's $965B valuation set the pricing umbrella over API pricing and talent costs — ",
+          "class": "fact",
+          "why": "Settled by the mega-rounds excerpt, which gives both figures and the pricing-umbrella claim over API pricing and talent costs."
+        },
+        {
+          "text": "inputs you do not control. ",
+          "class": "interpretation",
+          "why": "A claim about the reader's control; no span speaks to it."
+        },
+        {
+          "text": "The 2026-07-28 MCP spec hands back one you do: ",
+          "class": "interpretation",
+          "why": "Frames the spec as restoring reader control, a judgment set against the other item rather than any span."
+        },
+        {
+          "text": "stateless request/response scales horizontally behind an ordinary load balancer, ",
+          "class": "fact",
+          "why": "Settled by the MCP span on stateless servers scaling horizontally behind an ordinary load balancer."
+        },
+        {
+          "text": "at the price of broken cross-version compatibility and four deprecations on a 12-month runway. ",
+          "class": "fact",
+          "why": "Settled by the MCP span: compatibility breaks and four named features are deprecated with a 12-month runway."
+        },
+        {
+          "text": "Spend the effort where the lever is — your servers, not your vendor's price list.",
+          "class": "interpretation",
+          "why": "An instruction on where to spend effort; no span can settle a recommendation."
+        }
+      ]
+    }
+  }
+}

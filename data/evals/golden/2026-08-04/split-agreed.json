@@ -1,0 +1,274 @@
+{
+ "case": "2026-08-04",
+ "note": "Agreed fact/interpretation split. Where the two independent labelers (Sonnet, Opus) agreed, their label stands. Every disagreement was ruled by Varun on 2026-09-15 against the source excerpt. This file is an answer key: it says what KIND each clause is, never whether it is true.",
+ "labelers": [
+  "sonnet",
+  "opus"
+ ],
+ "ruledBy": "varun",
+ "ruledOn": "2026-09-15",
+ "units": {
+  "2026-08-04-mcp": {
+   "why": [
+    {
+     "text": "Your MCP servers become ordinary stateless web services — ",
+     "class": "interpretation"
+    },
+    {
+     "text": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store.",
+     "class": "fact"
+    },
+    {
+     "text": " The cost is a hard migration: ",
+     "class": "interpretation"
+    },
+    {
+     "text": "cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock,",
+     "class": "fact"
+    },
+    {
+     "text": " so anything you built on those needs a replacement designed now.",
+     "class": "interpretation"
+    }
+   ],
+   "example": [
+    {
+     "text": "If your agent's tool server relied on Sampling to call back into the model mid-tool, ",
+     "class": "interpretation"
+    },
+    {
+     "text": "that path is deprecated",
+     "class": "fact"
+    },
+    {
+     "text": " — you have 12 months to restructure it as a request the client initiates.",
+     "class": "interpretation"
+    },
+    {
+     "text": " And because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server,",
+     "class": "fact"
+    },
+    {
+     "text": " so you run both fleets during the cutover rather than upgrading in place.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Directly reinforces Terminal-Bench 2.1: with a 0.4-point gap at the frontier, the harness — transport, scaling, tool surface — is where your differentiation actually lives, and it just got rewritten.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-kimi-k3": {
+   "why": [
+    {
+     "text": "2.8T open weights at 1M context shifts build-vs-buy for agents, because per-call cost compounds across many calls per task",
+     "class": "fact"
+    },
+    {
+     "text": " and self-hosting caps that cost. The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "class": "interpretation"
+    }
+   ],
+   "example": [
+    {
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "class": "interpretation"
+    },
+    {
+     "text": " But at 2.8T parameters",
+     "class": "fact"
+    },
+    {
+     "text": " you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Cuts against the OpenAI/Anthropic mega-rounds: those ~$1T valuations set the pricing umbrella for API and talent, and open weights at this scale are the main lever a downstream builder has against it.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-istar": {
+   "example": [
+    {
+     "text": "On a multi-turn task, outcome-only reward gives one signal for a whole trajectory; iStar scores each intermediate action instead,",
+     "class": "fact"
+    },
+    {
+     "text": " so a run that took the right first three steps and failed on the fourth still teaches something. That per-step scoring function is the part you have to design yourself.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Pairs with the MCP spec change: step-level credit assignment assumes you can cleanly attribute each tool call, which is easier when transport is stateless request/response than when state hides in a session.",
+     "class": "interpretation"
+    }
+   ],
+   "ninety.method": [
+    {
+     "text": "Assign per-step implicit rewards so the agent gets credit on intermediate actions instead of only on the final outcome in multi-turn agentic RL.",
+     "class": "fact"
+    }
+   ],
+   "ninety.result": [
+    {
+     "text": "+6.3% success improvement on WebShop and VisualSokoban.",
+     "class": "fact"
+    }
+   ],
+   "ninety.caveat": [
+    {
+     "text": "Benchmark-only results, and the authors concede the difficulty concentrates in step-reward design",
+     "class": "fact"
+    },
+    {
+     "text": " — the part you'd have to build for your own task.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-terminal-bench": {
+   "why": [
+    {
+     "text": "A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5 at 89.1%",
+     "class": "fact"
+    },
+    {
+     "text": " means model choice is no longer the variable that decides whether your coding agent works.",
+     "class": "interpretation"
+    },
+    {
+     "text": " Differentiation moves to the harness and the eval design around it",
+     "class": "fact"
+    },
+    {
+     "text": " — which is a harder, slower kind of engineering than swapping a model string.",
+     "class": "interpretation"
+    }
+   ],
+   "example": [
+    {
+     "text": "Swapping between the top two models buys you 0.4 points; a better retry policy or tool schema in your harness plausibly moves more. Budget your quarter accordingly — spend it on the scaffold and your own evals, not on frontier benchmarking.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Sets up the MCP item: if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-mega-rounds": {
+   "why": [
+    {
+     "text": "OpenAI's $122B round at $852B post and Anthropic at $965B set the pricing umbrella",
+     "class": "fact"
+    },
+    {
+     "text": " you build under",
+     "class": "interpretation"
+    },
+    {
+     "text": " — it moves both API pricing",
+     "class": "fact"
+    },
+    {
+     "text": " and what you pay for talent. If you're planning a company, both of your main input costs are being repriced by people who are not your competitors.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Read with Kimi K3: open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-vc-record": {
+   "why": [
+    {
+     "text": "$510B in H1 with AI taking ~80% of Q1 dollars",
+     "class": "fact"
+    },
+    {
+     "text": " means an AI-labeled company raises into valuations priced for perfection — funding is available, but so is the expectation that you grow into it.",
+     "class": "interpretation"
+    },
+    {
+     "text": " Anything not AI-labeled is fighting over the remaining ~20%.",
+     "class": "fact"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Same direction as the OpenAI/Anthropic rounds — capital concentration and frontier valuations are one phenomenon, and it prices your inputs before you write a line of code.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "2026-08-04-export-controls": {
+   "why": [
+    {
+     "text": "Chip access turns into a policy variable: Blackwell-class exports banned, H200 moved to case-by-case licensing.",
+     "class": "fact"
+    },
+    {
+     "text": " That makes vendor and region choices contingent on where you and your customers operate, not just on price and availability.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Tightens the Kimi K3 tradeoff — self-hosting a 2.8T open-weight model assumes you can get and keep the accelerators, and case-by-case H200 licensing makes that assumption jurisdiction-dependent.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "thread": {
+   "thread": [
+    {
+     "text": "The frontier stopped being the differentiator on the same day it got the most expensive: ",
+     "class": "interpretation"
+    },
+    {
+     "text": "GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1 while OpenAI and Anthropic price at $852B and $965B, and AI absorbs ~80% of Q1 venture dollars. If the top two coding agents are a near-tie,",
+     "class": "fact"
+    },
+    {
+     "text": " your leverage moves to harness and eval design — which is exactly what the 2026-07-28 MCP spec forces you to rebuild,",
+     "class": "interpretation"
+    },
+    {
+     "text": " trading stateful sessions for stateless horizontal scale and a broken-compatibility migration.",
+     "class": "fact"
+    },
+    {
+     "text": " The tension:",
+     "class": "interpretation"
+    },
+    {
+     "text": " Kimi K3's 2.8T open weights and iStar's step-reward credit assignment",
+     "class": "fact"
+    },
+    {
+     "text": " both argue you can own more of the stack,",
+     "class": "interpretation"
+    },
+    {
+     "text": " while trillion-dollar rounds and the AI OVERWATCH Act's Blackwell ban",
+     "class": "fact"
+    },
+    {
+     "text": " argue the inputs — capital, talent, chips — are consolidating out of reach. Read that as a mandate to spend the next quarter on plumbing and evals, not on model selection.",
+     "class": "interpretation"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,134 @@
+{
+  "labeler": "sonnet",
+  "case": "negative-01",
+  "units": {
+    "negative-01-mcp": {
+      "why": [
+        {
+          "text": "Your MCP servers become ordinary stateless web services — ",
+          "class": "fact",
+          "why": "Source states the spec 'changes the core transport from stateful sessions to stateless request/response'; that span settles whether servers become stateless."
+        },
+        {
+          "text": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store. ",
+          "class": "fact",
+          "why": "Near-verbatim match to source span 'can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store'."
+        },
+        {
+          "text": "The cost is a hard migration: ",
+          "class": "interpretation",
+          "why": "'Cost' and 'hard' are the writer's evaluative label for the change; no span states a migration is hard or costly."
+        },
+        {
+          "text": "cross-version compatibility breaks, ",
+          "class": "fact",
+          "why": "Matches source span 'The change breaks cross-version compatibility' directly."
+        },
+        {
+          "text": "and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, ",
+          "class": "fact",
+          "why": "Matches source span naming the same four features deprecated 'with a 12-month runway'."
+        },
+        {
+          "text": "so anything you built on those needs a replacement designed now.",
+          "class": "interpretation",
+          "why": "A prescriptive consequence/recommendation for the reader; no span in the source can confirm what the reader 'needs' to do."
+        }
+      ],
+      "example": [
+        {
+          "text": "Because compatibility breaks across versions, ",
+          "class": "fact",
+          "why": "Restates the source span 'The change breaks cross-version compatibility', checkable directly."
+        },
+        {
+          "text": "a client pinned to the old spec cannot talk to a new server — ",
+          "class": "interpretation",
+          "why": "Invented illustrative scenario not stated in the source; no span describes client/server interop behavior."
+        },
+        {
+          "text": "so you run both fleets during the cutover rather than upgrading in place.",
+          "class": "interpretation",
+          "why": "Invented conclusion of the hypothetical scenario; not a claim any source span could confirm or deny."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Read with the mega-rounds item: you don't set the price of your inputs, but the cost of running your own servers is one you still control.",
+          "class": "interpretation",
+          "why": "A comparison across items plus an evaluative claim about control/leverage; no single span settles it."
+        }
+      ]
+    },
+    "negative-01-mega-rounds": {
+      "why": [
+        {
+          "text": "Anthropic raised $965B, ",
+          "class": "fact",
+          "why": "Checkable against the source span 'Anthropic is valued at $965B' — a span can settle it (and here contradicts it, but it is still a factual-type claim)."
+        },
+        {
+          "text": "and OpenAI closed a record $122B round at an $852B post-money valuation. ",
+          "class": "fact",
+          "why": "Verbatim match to source span 'OpenAI closed a record $122B round at an $852B post-money valuation'."
+        },
+        {
+          "text": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under — ",
+          "class": "fact",
+          "why": "Near-verbatim paraphrase of source span 'Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under'."
+        },
+        {
+          "text": "they move both API pricing and what you pay for talent.",
+          "class": "fact",
+          "why": "Paraphrase of source span 'moving both API pricing and talent costs', checkable against it."
+        }
+      ],
+      "connection": [
+        {
+          "text": "Read with the MCP spec change: the pricing umbrella is set above you, so the engineering cost you can still cut is in your own servers.",
+          "class": "interpretation",
+          "why": "Cross-item comparison plus an evaluative claim about what the reader 'can still cut'; no span settles it."
+        }
+      ]
+    },
+    "thread": {
+      "thread": [
+        {
+          "text": "The price of your inputs and the shape of your plumbing moved in opposite directions. ",
+          "class": "interpretation",
+          "why": "Metaphorical framing ('plumbing', 'opposite directions') with no corresponding factual span in either source_excerpt."
+        },
+        {
+          "text": "OpenAI's record $122B round at $852B post and Anthropic's $965B valuation set the pricing umbrella over API pricing and talent costs ",
+          "class": "fact",
+          "why": "Matches the union of source spans: OpenAI's $122B round/$852B post, Anthropic's $965B valuation, and the pricing-umbrella/API-pricing/talent-costs language."
+        },
+        {
+          "text": "— inputs you do not control. ",
+          "class": "interpretation",
+          "why": "Evaluative gloss about controllability; not stated by any source span."
+        },
+        {
+          "text": "The 2026-07-28 MCP spec hands back one you do: ",
+          "class": "interpretation",
+          "why": "Continues the 'control' metaphor ('hands back one you do'), an interpretive framing rather than a checkable claim."
+        },
+        {
+          "text": "stateless request/response scales horizontally behind an ordinary load balancer, ",
+          "class": "fact",
+          "why": "Matches MCP source spans on the transport becoming stateless request/response and scaling horizontally behind an ordinary load balancer."
+        },
+        {
+          "text": "at the price of broken cross-version compatibility and four deprecations on a 12-month runway. ",
+          "class": "fact",
+          "why": "Matches MCP source spans on broken cross-version compatibility and the four named deprecations with a 12-month runway."
+        },
+        {
+          "text": "Spend the effort where the lever is — your servers, not your vendor's price list.",
+          "class": "interpretation",
+          "why": "Advice/recommendation for the reader; no span in either source_excerpt can settle it."
+        }
+      ]
+    }
+  }
+}

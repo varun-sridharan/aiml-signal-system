@@ -105,8 +105,15 @@ def framing_from_framed_day(day: dict) -> dict:
     # to the grader. Headline, rank, sources and counts are deliberately dropped.
     return {
         "thread": day["thread"],
+        # The split travels with the writing: without it the grader would be handed the
+        # interpretation back, and the coverage gate would have nothing to check.
+        "threadSplit": day.get("threadSplit"),
         "items": [
-            {"id": item["id"], **{k: item.get(k) for k in ("why", "example", "connection", "ninety")}}
+            {
+                "id": item["id"],
+                **{k: item.get(k) for k in ("why", "example", "connection", "ninety")},
+                "split": item.get("split"),
+            }
             for item in day["items"]
         ],
     }
@@ -264,6 +271,14 @@ def run_structural(profile: dict, case: dict) -> dict:
     if not day.get("thread", "").strip():
         failures.append("thread is missing or empty")
 
+    # WHAT: every fact/interpretation split must reproduce the field it describes.
+    # CONCEPT: harness — the deterministic half of the split. A model decides which
+    # clauses are checkable; code decides that it accounted for all of them. Without
+    # this, a claim can be hidden from the grader by leaving it out of the split, and
+    # the omission is invisible — a silent failure in the dangerous direction.
+    framing = framing_from_framed_day(day)
+    failures += [f"coverage — {f}" for f in framer.coverage_failures(framing)]
+
     # Recomputed with the Framer's own functions: this catches a brief whose header
     # disagrees with its own body — a hand-edit, or a formula change without a rerun.
     expected_reading_time = framer.compute_reading_time(day["thread"], day["items"])
@@ -280,6 +295,7 @@ def run_structural(profile: dict, case: dict) -> dict:
         f"worked examples only on {example_categories}",
         "every item has sources",
         "thread present and non-empty",
+        "every fact/interpretation split reconstructs its field",
         "reading time and counts match the items",
     ]
     if failures:

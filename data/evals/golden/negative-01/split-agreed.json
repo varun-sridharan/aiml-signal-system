@@ -1,0 +1,90 @@
+{
+ "case": "negative-01",
+ "note": "Agreed fact/interpretation split. Where the two independent labelers (Sonnet, Opus) agreed, their label stands. Every disagreement was ruled by Varun on 2026-09-15 against the source excerpt. This file is an answer key: it says what KIND each clause is, never whether it is true.",
+ "labelers": [
+  "sonnet",
+  "opus"
+ ],
+ "ruledBy": "varun",
+ "ruledOn": "2026-09-15",
+ "units": {
+  "negative-01-mcp": {
+   "why": [
+    {
+     "text": "Your MCP servers become ordinary stateless web services — ",
+     "class": "interpretation"
+    },
+    {
+     "text": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store. ",
+     "class": "fact"
+    },
+    {
+     "text": "The cost is a hard migration: ",
+     "class": "interpretation"
+    },
+    {
+     "text": "cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, ",
+     "class": "fact"
+    },
+    {
+     "text": "so anything you built on those needs a replacement designed now.",
+     "class": "interpretation"
+    }
+   ],
+   "example": [
+    {
+     "text": "Because compatibility breaks across versions, ",
+     "class": "fact"
+    },
+    {
+     "text": "a client pinned to the old spec cannot talk to a new server — so you run both fleets during the cutover rather than upgrading in place.",
+     "class": "interpretation"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Read with the mega-rounds item: you don't set the price of your inputs, but the cost of running your own servers is one you still control.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "negative-01-mega-rounds": {
+   "why": [
+    {
+     "text": "Anthropic raised $965B, and OpenAI closed a record $122B round at an $852B post-money valuation. Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under — they move both API pricing and what you pay for talent.",
+     "class": "fact"
+    }
+   ],
+   "connection": [
+    {
+     "text": "Read with the MCP spec change: the pricing umbrella is set above you, so the engineering cost you can still cut is in your own servers.",
+     "class": "interpretation"
+    }
+   ]
+  },
+  "thread": {
+   "thread": [
+    {
+     "text": "The price of your inputs and the shape of your plumbing moved in opposite directions. ",
+     "class": "interpretation"
+    },
+    {
+     "text": "OpenAI's record $122B round at $852B post and Anthropic's $965B valuation set the pricing umbrella over API pricing and talent costs ",
+     "class": "fact"
+    },
+    {
+     "text": "— inputs you do not control. The 2026-07-28 MCP spec hands back one you do: ",
+     "class": "interpretation"
+    },
+    {
+     "text": "stateless request/response scales horizontally behind an ordinary load balancer, at the price of broken cross-version compatibility and four deprecations on a 12-month runway. ",
+     "class": "fact"
+    },
+    {
+     "text": "Spend the effort where the lever is — your servers, not your vendor's price list.",
+     "class": "interpretation"
+    }
+   ]
+  }
+ }
+}

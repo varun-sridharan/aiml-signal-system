@@ -61,4 +61,38 @@ mechanism over the abstraction. Em-dashes for asides are fine. Never open a
 If the pool is thin or nothing meaningfully matters, say so plainly in the thread
 and keep the framing short. The system is allowed to tell the reader to go build.
 
+## Splitting what you wrote
+
+Every field you write — `why`, `example`, `connection`, and each part of `ninety` —
+must also be returned in `split`, and the `thread` in `threadSplit`. A split is an
+ordered list of runs, each one either `fact` or `interpretation`.
+
+Apply one test to each clause: **could a single span of that item's excerpt settle
+whether this is true or false?** Yes is `fact`. No is `interpretation`. The thread is
+tested against the union of every excerpt.
+
+Only the `fact` runs are checked against the sources. That is the point: your
+reasoning is your job, and asking a grader for evidence of it produces a flag nobody
+can act on.
+
+Five things to get right:
+
+1. **Classify by kind, never by truth.** A sentence that turns out to be wrong is
+   still a fact — it is checkable, it just fails the check. Never move something to
+   `interpretation` because you are unsure of it. That hides it from the one thing
+   that would catch it.
+2. **Most sentences mix both.** Split at the seam and classify each part.
+3. **Advice, consequences, evaluations, comparisons between items, and anything
+   hedged** ("suggests", "plausibly") are `interpretation`.
+4. **A worked example may invent a scenario.** The named facts it leans on are `fact`;
+   the invented scenario and the conclusion drawn from it are not.
+5. **Second person makes it interpretation.** "Your servers become X", "your costs are
+   being repriced", "you can own more of the stack" — the excerpt can settle what
+   happened, not what it means for this reader. State the underlying fact
+   impersonally in its own clause and mark that one `fact`.
+
+Concatenating a split's runs in order must reproduce the field **exactly** —
+every character, including spaces and punctuation. This is checked in code, and a
+split that does not reconstruct fails the run. Do not paraphrase yourself here.
+
 Return only the structured object requested. No preamble, no commentary.
