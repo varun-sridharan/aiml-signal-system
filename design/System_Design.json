@@ -942,7 +942,7 @@
     },
     {
      "t": "p",
-     "html": "Nine more, specified in enough detail to build, each with the phase it arrives in. Kept separate so the gap between designed and running stays visible rather than blurring."
+     "html": "Ten more, specified in enough detail to build, each with the phase it arrives in. Kept separate so the gap between designed and running stays visible rather than blurring."
     },
     {
      "t": "h4",
@@ -1054,7 +1054,7 @@
     },
     {
      "t": "p",
-     "html": "<b>How it lands here.</b> Listed because it is the obvious home for spend limits and audit logging once more than one agent runs. <b>Not scheduled.</b>"
+     "html": "<b>How it lands here.</b> Scheduled for Phase 8, where the Coach runs on the Claude Agent SDK and the hooks come with it: the spend reserve re-checked before every tool call, and a path allowlist enforced as a permission rule rather than asked for in a prompt. Hooks matter there and nowhere earlier for a specific reason — every agent before the Coach is a fixed pipeline with nothing to intercept. <b>Phase 8.</b>"
     },
     {
      "t": "h4",
@@ -1069,6 +1069,20 @@
     {
      "t": "p",
      "html": "<b>How it lands here.</b> Every golden unit currently carries <code>expected_unsupported: []</code>, so a grader that approved everything, or had stopped running, would pass the whole suite. <code>golden/negative-01/</code> closes that. The design rule that falls out of it is easy to get wrong: <b>the planted fault must survive the cheap check.</b> Plant an invented quote and the substring test catches it before judgment matters, so the case goes green while testing nothing. The plant is a valid quote with a wrong inference — source says <em>valued at</em>, brief says <em>raised</em> — which only reading comprehension separates. Arrives with the Phase 6 eval closures."
+    },
+    {
+     "t": "h4",
+     "id": "concept-pipeline-vs-agent",
+     "label": "Pipeline vs agent loop",
+     "status": "PLANNED"
+    },
+    {
+     "t": "p",
+     "html": "<b>What it is.</b> Telling apart work whose steps are known in advance from work whose steps can only be discovered at run time — and refusing to give the second one's machinery to the first."
+    },
+    {
+     "t": "p",
+     "html": "<b>How it lands here.</b> Five of the six agents are pipelines: fixed steps, no tools, a closed world where everything arrives in the prompt. The Framer is two API calls in a known order; a planning loop would hand the model the control flow, which is the opposite of what every other concept on this page argues for. It would also destroy the cost bound — the breaker gates on a <em>certain</em> worst case, and a loop's turn count is decided at run time. The <span class=\"gloss\" data-term=\"coach\">Coach</span> is the exception, because searching a repository it has not seen has no writable step list, and it is built on the Claude Agent SDK for exactly that reason. <b>Phase 8.</b>"
     },
     {
      "t": "h3",
@@ -1145,6 +1159,11 @@
   }
  ],
  "decisionLog": [
+  {
+   "date": "2026-09-15",
+   "lead": "The Coach is built on the Claude Agent SDK; every other agent deliberately is not.",
+   "body": "The SDK runs the agent loop, tool dispatch and context management that power Claude Code, and the question was whether to adopt it across the system. <b>No — for five of the six agents.</b> Scout, Gatekeeper, Framer, Tuner and the eval harness are <em>pipelines</em>: their steps are known before the run starts, they call no tools, and they work in a closed world where every input arrives in the prompt. The SDK's core offer is that the model plans its own steps; this system's core claim, stated in every concept on the Agentic Concepts page, is that the guarantee comes from deterministic code <em>outside</em> the model. Handing the control flow to the model to save writing a five-step function would trade the argument for the convenience. There is a hard cost consequence too: the breaker gates on a <b>certain</b> bound — input tokens plus <code>max_tokens</code>, which the API enforces — and an agent loop has no bound, because its turn count is decided at run time. <b>Yes — for the Coach.</b> It is the first agent whose steps genuinely cannot be written in advance: grounding an exercise means searching a repository it has never seen, and prior-art reconciliation means searching it again for a different answer. Real tool use, a subagent for the second question, and hooks for the spend reserve — all of which the SDK provides and all of which would otherwise be re-implemented worse. The loop gets a second ceiling the other agents do not need: a hard cap on tool-call turns, with the reserve re-checked before each one. <b>Managed Agents was considered and refused</b> — it is for long-running asynchronous work you would rather not host, this is a once-a-day batch job, and it would move the spend ledger and the breaker outside the repo. The general rule, now recorded as its own concept: <em>an agent loop is for work whose steps can only be discovered at run time. Everything else is a pipeline, and should look like one.</em>"
+  },
   {
    "date": "2026-09-15",
    "lead": "The new negative case failed on its first run, and measuring the grader five times per case found it broken in both directions at once.",

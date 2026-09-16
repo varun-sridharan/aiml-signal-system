@@ -200,10 +200,35 @@
    "title": "Coach — repo grounding",
    "status": "LATER",
    "time": "~60 min",
-   "endState": "homework that fits a real spot in your repos, verified by assertions against the code. <b>Also: prior-art reconciliation.</b> The same repo access that grounds an exercise answers whether I have already built the thing — states are <em>none / partial / already built</em>, and an exercise found to be already built is retired with a pointer to the code instead of being offered. Recall-biased: when unsure, offer it with a note rather than suppress it, because a wrong suppression is invisible and a wrong offer costs minutes.",
+   "endState": "homework that fits a real spot in your repos, verified by assertions against the code. <b>Also: prior-art reconciliation.</b> The same repo access that grounds an exercise answers whether I have already built the thing — states are <em>none / partial / already built</em>, and an exercise found to be already built is retired with a pointer to the code instead of being offered. Recall-biased: when unsure, offer it with a note rather than suppress it, because a wrong suppression is invisible and a wrong offer costs minutes. Built on the <b>Claude Agent SDK</b> — the first and, by design, the only agent here that needs a real agent loop.",
    "why": "the magic feature — and the highest hallucination risk, so it comes after trust is built.",
-   "activities": [],
-   "notes": []
+   "activities": [
+    {
+     "activity": "Build the Coach on the Claude Agent SDK",
+     "outcome": "<code>agents/coach.py</code> runs on the SDK's agent loop with Read, Grep and Glob scoped to the declared repo paths",
+     "why": "First agent here that genuinely needs tool use — it must search a codebase it has not seen",
+     "prompt": "—"
+    },
+    {
+     "activity": "Prior-art reconciliation as a subagent",
+     "outcome": "A focused subagent answers <em>none / partial / already built</em> per exercise, with file and line as evidence",
+     "why": "Recall-biased search is a different question from grounding, and keeping it separate keeps its context clean",
+     "prompt": "—"
+    },
+    {
+     "activity": "Spend + scope enforcement via SDK hooks",
+     "outcome": "<code>agents/budget.py</code> wired as a pre-tool hook; path allowlist enforced as a permission rule",
+     "why": "Retires <code>concept-hooks</code> from PLANNED, and keeps the reserve check in force where the loop has no natural bound",
+     "prompt": "—"
+    }
+   ],
+   "notes": [
+    "<b>Why the SDK here and nowhere else (decided 2026-09-15).</b> Every agent before this one is a <em>pipeline</em>: fixed steps, no tools, a closed world where everything arrives in the prompt. The Framer is two API calls in a known order — giving it a planning loop would hand the model the control flow, which is the opposite of what this system argues for. The Coach is the first agent whose steps genuinely cannot be written in advance, because it has to search a repository it has not seen. That is what the SDK is for, and building the loop, the tool dispatch and the context management by hand would be re-implementing it worse.",
+    "<b>The bound problem, and how it is handled.</b> The cost breaker gates on a <em>certain</em> worst case — input tokens plus <code>max_tokens</code> at the output price. An agent loop has no such bound: the number of turns is decided at run time. So the Coach gets a second limit the other agents do not need — a hard cap on tool-call turns, plus the reserve check re-run as a pre-tool hook before each turn rather than once before the run. A run that hits either ceiling stops and reports, and never writes a partial exercise.",
+    "<b>What stays outside the loop.</b> Grounding assertions are ordinary Python, not SDK tools. Whether a claimed file path exists, whether a quoted symbol appears in it, whether the exercise names a real function — all of that is checkable without a model, so it is checked without one. The same split as the Framer: the model finds candidates, code confirms them.",
+    "<b>Prior-art reconciliation is the same access, the opposite question.</b> Grounding asks <em>where would this fit</em>; reconciliation asks <em>have I already built it</em>. Recall-biased on purpose: a wrong suppression is invisible and a wrong offer costs minutes. States are none / partial / already built, and <b>built is terminal</b> — the exercise retires with a pointer to the code rather than carrying a status.",
+    "<b>Not Managed Agents.</b> Considered and refused. That product is for long-running asynchronous work you do not want to host; this is a batch job that runs once a day. It would also move the spend ledger and the budget breaker outside this repo, and those are two of the things the repo is about."
+   ]
   },
   {
    "num": 9,
