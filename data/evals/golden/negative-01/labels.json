@@ -1,0 +1,46 @@
+{
+  "case": "negative-01",
+  "input": "input.json",
+  "output": "output.json",
+  "_note": "CONSTRUCTED NEGATIVE CASE — not a frozen real day. input.json and output.json were hand-written on 2026-09-15; no Gatekeeper or Framer run produced them, and a failure here is never evidence that a real brief regressed. It exists because every unit in 2026-08-04/ expects no flags, so that case only proves the grader does not cry wolf: a grader that returned nothing, or had stopped running, passes it. This case holds one planted fabrication and is the only one that fails a rubber-stamp grader. There are no `faithfulness` blocks in output.json because no historical run lies behind it. WHY THIS FABRICATION AND NOT AN EASIER ONE: the plant is 'Anthropic raised $965B' in negative-01-mega-rounds.why, where the excerpt says 'Anthropic is valued at $965B.' An invented number ('valued at $1.4T') was rejected on purpose. For that one, any span the grader quoted would not be a substring of the excerpt, so framer.normalise_verdict marks it unsupported through the `span_found` substring check before the model's judgement counts for anything — the case would go green while testing Python, not the grader. Here the grader can quote a real span ('Anthropic is valued at $965B') that passes the substring check, so only reading comprehension separates 'valued at' from 'raised'. That narrow band is the only place the model carries the load, and the only place a negative case is worth having. DO NOT swap in a fault whose number, name or date is absent from the excerpt: the test would still pass and would quietly stop testing anything. To confirm it still bites, stub framer.check_faithfulness to return no unsupported claims: 2026-08-04 must still pass and this case must fail with a false negative.",
+  "_labelledBy": "varun",
+  "_labelledOn": "2026-09-15",
+  "_heldOut": "Measurement only. The Tuner never adapts on this file; if it ever needs labelled data, it gets its own set.",
+
+  "_schema": {
+    "units": "One entry per graded unit: every item id in the framed day, plus the reserved key `thread`.",
+    "expected_unsupported": "Claim substrings the grader MUST flag. A miss is a false negative.",
+    "tolerated": "Claim substrings the grader MAY flag. Genuinely borderline under the Framer's own contract — neither a false positive nor a false negative either way. Keep this list short; it is a hole in the gate.",
+    "regression_cases": "Named hard gates checked against the grader's claim ledger, not just its flag list. `claim_pattern` (lowercased substring) must appear in a claim the grader enumerated, and that claim's `supported` must equal `expected_supported`. Anything else FAILS the run.",
+    "adding_a_day": "Drop a new <date>/ directory with input.json, output.json and this same labels.json shape next to this one. run_evals.py globs the directories; it needs no change."
+  },
+
+  "units": {
+    "negative-01-mcp": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Clean control. The why is copied word for word from 2026-08-04-mcp, which the grader already passes. The example relies only on broken cross-version compatibility; the Sampling call-back mechanism that 2026-08-04 has to tolerate was left out on purpose. The connection is reasoning with no checkable fact in it."
+    },
+    "negative-01-mega-rounds": {
+      "expected_unsupported": [
+        "raised $965B"
+      ],
+      "tolerated": [],
+      "regression_cases": [
+        {
+          "id": "raised-965b-is-unsupported",
+          "claim_pattern": "raised $965b",
+          "expected_supported": false,
+          "why": "THE plant. The excerpt says 'Anthropic is valued at $965B'; the why says 'Anthropic raised $965B'. The figure and the company both appear in the excerpt, so a span-quoting grader can find something that passes the substring check. It has to read the verb to reject it. A grader that marks this supported, or never enumerates it, is rubber-stamping and must fail the run.",
+          "seeded_from": "Constructed 2026-09-15; not seeded from any real run. It uses the same excerpt sentence as the 2026-08-04 965b-is-supported regression, turned around: there the grader must accept $965B, and here it must reject a changed verb on that same figure."
+        }
+      ],
+      "_why": "Everything except the plant traces to the excerpt: OpenAI's record $122B round, $852B post-money, rounds at approximately $1T valuations, the pricing umbrella, and its effect on API pricing and talent costs. The thread states Anthropic's figure correctly as a valuation, so the distortion lives in exactly one unit."
+    },
+    "thread": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Graded against the union of both excerpts. $122B / $852B post, Anthropic's $965B VALUATION (worded correctly here, never 'raised'), the pricing umbrella over API pricing and talent costs, the 2026-07-28 MCP spec, stateless horizontal scale behind an ordinary load balancer, broken cross-version compatibility, and four deprecations on a 12-month runway all trace. The opening and closing sentences are argument, not claims."
+    }
+  }
+}

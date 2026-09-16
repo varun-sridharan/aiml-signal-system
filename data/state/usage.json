@@ -352,6 +352,50 @@
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0,
       "estimated_cost_usd": 0.005894
+    },
+    {
+      "user_id": "varun",
+      "timestamp": "2026-09-15T20:30:45+00:00",
+      "phase": "eval-faithfulness",
+      "model": "claude-haiku-4-5",
+      "input_tokens": 4715,
+      "output_tokens": 2253,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.01598
+    },
+    {
+      "user_id": "varun",
+      "timestamp": "2026-09-15T20:30:45+00:00",
+      "phase": "eval-usefulness",
+      "model": "claude-haiku-4-5",
+      "input_tokens": 2526,
+      "output_tokens": 756,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.006306
+    },
+    {
+      "user_id": "varun",
+      "timestamp": "2026-09-15T20:30:45+00:00",
+      "phase": "eval-faithfulness",
+      "model": "claude-haiku-4-5",
+      "input_tokens": 2507,
+      "output_tokens": 786,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.006437
+    },
+    {
+      "user_id": "varun",
+      "timestamp": "2026-09-15T20:30:45+00:00",
+      "phase": "eval-usefulness",
+      "model": "claude-haiku-4-5",
+      "input_tokens": 1287,
+      "output_tokens": 254,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "estimated_cost_usd": 0.002557
     }
   ]
 }

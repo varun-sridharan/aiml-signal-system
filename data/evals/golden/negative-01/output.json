@@ -1,0 +1,61 @@
+{
+  "user_id": "varun",
+  "date": "2026-09-15",
+  "generatedBy": {
+    "agent": "hand-constructed (not a Framer run)",
+    "model": "none",
+    "checkModel": "claude-haiku-4-5"
+  },
+  "tunerStateVersion": "v0-seed",
+  "readingTimeMin": 1,
+  "counts": {
+    "items": 2,
+    "doThis": 1,
+    "byCategory": {
+      "AI": 1,
+      "Investment": 1
+    }
+  },
+  "thread": "The price of your inputs and the shape of your plumbing moved in opposite directions. OpenAI's record $122B round at $852B post and Anthropic's $965B valuation set the pricing umbrella over API pricing and talent costs — inputs you do not control. The 2026-07-28 MCP spec hands back one you do: stateless request/response scales horizontally behind an ordinary load balancer, at the price of broken cross-version compatibility and four deprecations on a 12-month runway. Spend the effort where the lever is — your servers, not your vendor's price list.",
+  "items": [
+    {
+      "id": "negative-01-mcp",
+      "rank": 1,
+      "category": "AI",
+      "tags": [
+        "DO THIS",
+        "KNOW"
+      ],
+      "headline": "MCP's 2026-07-28 spec moves the core from stateful to stateless request/response",
+      "why": "Your MCP servers become ordinary stateless web services — horizontal scale behind a plain load balancer, no sticky sessions, no shared session store. The cost is a hard migration: cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, so anything you built on those needs a replacement designed now.",
+      "example": "Because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server — so you run both fleets during the cutover rather than upgrading in place.",
+      "connection": "Read with the mega-rounds item: you don't set the price of your inputs, but the cost of running your own servers is one you still control.",
+      "sources": [
+        {
+          "label": "modelcontextprotocol.io",
+          "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28/",
+          "tier": "primary"
+        }
+      ]
+    },
+    {
+      "id": "negative-01-mega-rounds",
+      "rank": 2,
+      "category": "Investment",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "OpenAI closes record $122B round ($852B post); Anthropic at $965B",
+      "why": "Anthropic raised $965B, and OpenAI closed a record $122B round at an $852B post-money valuation. Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under — they move both API pricing and what you pay for talent.",
+      "connection": "Read with the MCP spec change: the pricing umbrella is set above you, so the engineering cost you can still cut is in your own servers.",
+      "sources": [
+        {
+          "label": "Crunchbase",
+          "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/",
+          "tier": "corroboration"
+        }
+      ]
+    }
+  ],
+  "_enforcements": []
+}

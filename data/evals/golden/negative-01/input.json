@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-15",
+  "_note": "CONSTRUCTED, not a Gatekeeper run. Hand-written in the shape of Gatekeeper output to back the negative-01 eval case; no data/verified/ file corresponds to it. The mega-rounds excerpt deliberately says Anthropic is 'valued at' $965B and never that it 'raised' anything — see labels.json `_note`.",
+  "items": [
+    {
+      "id": "negative-01-mcp",
+      "category": "AI",
+      "headline": "MCP's 2026-07-28 spec moves the core from stateful to stateless request/response",
+      "tags": ["DO THIS", "KNOW"],
+      "source_excerpt": "The 2026-07-28 MCP specification changes the core transport from stateful sessions to stateless request/response. Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store. The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.",
+      "sources": [
+        { "label": "modelcontextprotocol.io", "url": "https://blog.modelcontextprotocol.io/posts/2026-07-28/", "tier": "primary" }
+      ]
+    },
+    {
+      "id": "negative-01-mega-rounds",
+      "category": "Investment",
+      "headline": "OpenAI closes record $122B round ($852B post); Anthropic at $965B",
+      "tags": ["KNOW"],
+      "source_excerpt": "OpenAI closed a record $122B round at an $852B post-money valuation; Anthropic is valued at $965B. Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under, moving both API pricing and talent costs.",
+      "sources": [
+        { "label": "Crunchbase", "url": "https://news.crunchbase.com/venture/global-startup-exits-ipo-ma-soar-ai-q2-h1-2026/", "tier": "corroboration" }
+      ]
+    }
+  ]
+}
