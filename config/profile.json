@@ -1,33 +1,53 @@
 {
-  "user_id": "varun",
-  "schemaVersion": "0.1",
-  "displayName": "Varun",
-  "role": "Practitioner who cannot read everything and does not want to. Wants the fewest items worth knowing and a reason to care about each one.",
-  "goals": [
-    "Hold an informed conversation about what shipped, on five minutes a day",
-    "Understand the tradeoff behind a technique, not just its name",
-    "Turn reading into working code rather than a longer reading list"
+ "user_id": "varun",
+ "schemaVersion": "0.1",
+ "displayName": "Varun",
+ "role": "Practitioner who cannot read everything and does not want to. Wants the fewest items worth knowing and a reason to care about each one.",
+ "goals": [
+  "Hold an informed conversation about what shipped, on five minutes a day",
+  "Understand the tradeoff behind a technique, not just its name",
+  "Turn reading into working code rather than a longer reading list"
+ ],
+ "interests": {
+  "core": [
+   "multi-agent systems",
+   "reinforcement learning",
+   "MCP architecture",
+   "agentic coding"
   ],
-  "interests": {
-    "core": ["multi-agent systems", "reinforcement learning", "MCP architecture", "agentic coding"],
-    "adjacent": ["model releases", "serving & inference", "evals", "harness engineering"],
-    "explore": []
-  },
-  "categories": ["AI", "Market", "Investment", "Geopolitical", "Policy"],
-  "preferences": {
-    "doThisCategory": "AI",
-    "dailyReadMinutesTarget": 5,
-    "homeworkMinutes": 60,
-    "homeworkSetupExcluded": true,
-    "quietDayAllowed": true,
-    "examplesOnlyForCategories": ["AI"],
-    "weaveConnections": true
-  },
-  "tuner": {
-    "gatekeeperBias": "recall-over-precision",
-    "sourceReputation": {},
-    "topicPriors": {},
-    "lastRecalibrated": null
-  },
-  "_seamNote": "Single user today. Every data record carries user_id so going multi-tenant is a data change, not a rewrite. Agents take (profile, data) -> output; no personal facts are hardcoded in prompts."
+  "adjacent": [
+   "model releases",
+   "serving & inference",
+   "evals",
+   "harness engineering"
+  ],
+  "explore": []
+ },
+ "categories": [
+  "AI",
+  "Market",
+  "Investment",
+  "Geopolitical",
+  "Policy"
+ ],
+ "preferences": {
+  "doThisCategory": "AI",
+  "homeworkMinutes": 60,
+  "homeworkSetupExcluded": true,
+  "examplesOnlyForCategories": [
+   "AI"
+  ],
+  "weaveConnections": true,
+  "editionCadence": "weekly",
+  "weeklyReadMinutesTarget": 8,
+  "quietWeekAllowed": true
+ },
+ "tuner": {
+  "gatekeeperBias": "recall-over-precision",
+  "sourceReputation": {},
+  "topicPriors": {},
+  "lastRecalibrated": null
+ },
+ "_seamNote": "Single user today. Every data record carries user_id so going multi-tenant is a data change, not a rewrite. Agents take (profile, data) -> output; no personal facts are hardcoded in prompts.",
+ "_cadenceNote": "Weekly by decision, not by default. A nightly predecessor ran for weeks and worked as designed; it was retired because a daily brief produces a queue, and a queue asks for a reaction each time it grows. Ingestion runs continuously — it is deterministic and nearly free. Judgement runs weekly, because judgement is what costs money."
 }

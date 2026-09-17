@@ -1,6 +1,6 @@
-"""Framer — turns a raw (verified but unframed) day into the daily brief.
+"""Framer — turns a raw (verified but unframed) pool into the edition.
 
-Reads (profile, raw_day) and writes a framed day next to it. Two API calls per run:
+Reads (profile, raw_day) and writes a framed edition next to it. Two API calls per run:
 one Opus call that frames every item at once, one Haiku call that checks the framing
 against the sources. Everything that is arithmetic rather than judgment (reading
 time, counts, rank) is computed here in Python.
@@ -63,6 +63,24 @@ DEFAULT_RAW_PATH = REPO / "data" / "verified" / "gatekeeper_2026-08-04.json"
 # Batches API (client.messages.batches.create) — ~50% cheaper and async, which suits
 # a brief that only has to be ready by morning. Interactive runs stay synchronous.
 
+
+# PIVOT NOTE (2026-09-16): the edition became weekly, and Scout + Gatekeeper became Reader.
+# NO LOGIC IN THIS FILE CHANGED, on purpose. Moving a component and altering it in the
+# same step means a red run afterwards cannot be attributed to either. The golden cases
+# stay frozen for the same reason — re-cutting them would discard the baseline measured
+# on 2026-09-15, which is the only thing the next change can be compared against.
+#
+# TWO PROFILE KEYS DID CHANGE, and this file reads them:
+#   dailyReadMinutesTarget -> weeklyReadMinutesTarget
+#   quietDayAllowed        -> quietWeekAllowed
+# The payload keys sent to the model were renamed with them, because
+# `daily_read_minutes_target` would instruct a weekly writer to target a daily read.
+#
+# WORTH RECORDING, because it is the exact failure this file's comments keep warning about:
+# the config was renamed first and these call sites were missed, so the Framer raised
+# KeyError on its first real run while `run_evals.py --no-api` stayed green. Both call
+# sites sit on API paths the offline gate never reaches. "Nothing changed behaviourally"
+# was true of the code and false of the system, because the config it reads is part of it.
 
 # ---------------------------------------------------------------- schemas
 
@@ -344,13 +362,13 @@ def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
             "goals": profile["goals"],
             "interests": profile["interests"],
             "categories": profile["categories"],
-            "daily_read_minutes_target": preferences["dailyReadMinutesTarget"],
+            "weekly_read_minutes_target": preferences["weeklyReadMinutesTarget"],
             "gatekeeper_bias": profile["tuner"]["gatekeeperBias"],
         },
         "rules_for_this_request": {
             "worked_examples_only_for_categories": preferences["examplesOnlyForCategories"],
             "weave_connections": preferences["weaveConnections"],
-            "quiet_day_allowed": preferences["quietDayAllowed"],
+            "quiet_week_allowed": preferences["quietWeekAllowed"],
         },
         "date": raw_day["date"],
         "items": [

@@ -44,15 +44,15 @@ Every document is **JSON content + a design generated in Claude Design**. The JS
 | Concepts reference | `~/Desktop/Personal/Knowledge Hub/Agentic_Concepts.json` | `Agentic-Concepts.html` |
 | Build plan | `plan/Plan.json` | `plan/Plan.html` |
 | Design record | `design/System_Design.json` | `design/System-Design.html` |
-| News | `application/Signal.json` (contract) + agent output under `data/briefs/` | `application/Signal.html` |
-| Control Hub | `application/Control-Hub.json` (contract) + `data/state/` | `application/Control-Hub.html` |
+| Weekly Digest | `application/Weekly-Digest.json` (contract) + agent output under `data/briefs/` | `application/Weekly-Digest.html` |
+| Control Hub | `application/Control-Hub.json` (contract) + `data/state/` | *not built; not linked* |
 
 Set `lastUpdated` in the JSON whenever it changes, so a stale page is visible at a glance.
 
 **Two classes of document, and they behave differently:**
 
 - **Static docs** (Concepts, Plan, System-Design) — content changes weekly-ish, by Claude. Regenerated on demand in Claude Design.
-- **Live surfaces** (`Signal.html`, `Control-Hub.html`) — render *agent output* that changes daily, so regeneration is impossible. Claude Design delivers a **renderer with a data slot**, and the design is **locked at Phase 5** before the backend is wired. Locking freezes the data contract the template reads, not just the visuals.
+- **Live surfaces** (`Weekly-Digest.html`, and the Control Hub when it exists) — render *agent output* that changes every edition, so regeneration by hand is impossible. Claude Design delivers a **renderer with a data slot**, and the design is **locked at M1** before the backend is wired. Locking freezes the data contract the template reads, not just the visuals.
 
 ## 5. Record decisions in TWO places
 

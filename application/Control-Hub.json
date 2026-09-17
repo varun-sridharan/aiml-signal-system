@@ -1,135 +1,131 @@
 {
-  "version": 1,
-  "note": "Content contract for the private Control Hub. Today the page is generated in Claude Design from this file — there is no build script in this repo. Phase 5's design lock replaces that with a renderer reading data/state/ at runtime. The weekly-exercise content that used to live here as a 'Backlog' tab now has its own page, Practice.json — the old name read as a to-do list of my own work rather than exercises derived from the brief. metrics[].kind 'guardrail' tints the card; actions[].gate 'human' adds the Approve / Reject / Ask row; questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock.",
-  "site": {
-    "brand": "Control Hub",
-    "privacy": "private surface · sample data",
-    "controlKicker": "Evaluator · Prescriber · Elicitation",
-    "controlTitle": "Control Room",
-    "movedNote": {
-      "text": "Weekly exercises moved to <b>Practice</b> — they are derived from the brief, not a list of my own work.",
-      "href": "Practice.html",
-      "label": "Go to Practice"
-    }
+ "version": 1,
+ "note": "Content contract for the private Control Hub. Today the page is generated in Claude Design from this file — there is no build script in this repo. Phase 5's design lock replaces that with a renderer reading data/state/ at runtime. The weekly-exercise content that used to live here as a 'Backlog' tab now has its own page, Practice.json — the old name read as a to-do list of my own work rather than exercises derived from the brief. metrics[].kind 'guardrail' tints the card; actions[].gate 'human' adds the Approve / Reject / Ask row; questions[].feeds names the label the answer becomes. `lastUpdated` is the date this content last changed. It is provenance for whoever reads this file; the generated pages do NOT render it yet — that lands with the Phase 5 design lock.",
+ "site": {
+  "brand": "Control Hub",
+  "privacy": "private surface · sample data",
+  "controlKicker": "Evaluator · Prescriber · Elicitation",
+  "controlTitle": "Control Room"
+ },
+ "seed": {
+  "title": "Seed state — no real numbers yet",
+  "body": "Metrics are placeholders until the system runs and you rate it over several weeks. Trends need time before they mean anything; this page shows the <em>shape</em> of what you will see."
+ },
+ "actionsTakenEmpty": "Nothing shipped yet. Approved actions land here with <span style=\"color:var(--soft)\">predicted vs actual</span> impact, so the prescriber earns trust instead of asserting it.",
+ "metrics": [
+  {
+   "name": "Scout",
+   "kind": "agent",
+   "measures": "Recall — of items that mattered, how many were fetched",
+   "status": "awaiting first-week data",
+   "target": "target: ≥ 0.95",
+   "gradedBy": "graded by: retrospective oracle + your \"you missed X\" feedback"
   },
-  "seed": {
-    "title": "Seed state — no real numbers yet",
-    "body": "Metrics are placeholders until the system runs and you rate it over several weeks. Trends need time before they mean anything; this page shows the <em>shape</em> of what you will see."
+  {
+   "name": "Gatekeeper",
+   "kind": "agent",
+   "measures": "Precision &amp; Recall (classifier)",
+   "status": "awaiting data",
+   "target": "target: recall ≥ 0.9 (biased over precision — FOMO)",
+   "gradedBy": "graded by: your signal/noise ratings + Suppressed-drawer audit"
   },
-  "actionsTakenEmpty": "Nothing shipped yet. Approved actions land here with <span style=\"color:var(--soft)\">predicted vs actual</span> impact, so the prescriber earns trust instead of asserting it.",
-  "metrics": [
-    {
-      "name": "Scout",
-      "kind": "agent",
-      "measures": "Recall — of items that mattered, how many were fetched",
-      "status": "awaiting first-week data",
-      "target": "target: ≥ 0.95",
-      "gradedBy": "graded by: retrospective oracle + your \"you missed X\" feedback"
-    },
-    {
-      "name": "Gatekeeper",
-      "kind": "agent",
-      "measures": "Precision &amp; Recall (classifier)",
-      "status": "awaiting data",
-      "target": "target: recall ≥ 0.9 (biased over precision — FOMO)",
-      "gradedBy": "graded by: your signal/noise ratings + Suppressed-drawer audit"
-    },
-    {
-      "name": "Framer",
-      "kind": "agent",
-      "measures": "Faithfulness (objective) + Usefulness (subjective)",
-      "status": "awaiting data",
-      "target": "target: faithfulness = 1.0 (hard gate); usefulness ≥ 0.8",
-      "gradedBy": "graded by: claim decomposition (auto) + rubric ratings (you → LLM-judge)"
-    },
-    {
-      "name": "Coach",
-      "kind": "agent",
-      "measures": "Code-grounding (objective) + doability/skill (behavioral)",
-      "status": "awaiting data",
-      "target": "target: grounding = 1.0; completion ≥ 0.7; time ≤ 60 min",
-      "gradedBy": "graded by: repo assertions (auto) + your completion behavior"
-    },
-    {
-      "name": "Tuner",
-      "kind": "agent",
-      "measures": "Slope of every other metric over time (meta-eval)",
-      "status": "needs weeks of data",
-      "target": "target: curves bending the right way",
-      "gradedBy": "graded by: longitudinal trend, not level"
-    },
-    {
-      "name": "Guardrail · Diversity",
-      "kind": "guardrail",
-      "measures": "Anti-echo-chamber. Stops the Tuner boosting ratings by only feeding what you already believe.",
-      "status": "awaiting data",
-      "target": "target: ≥ 20% of items outside your priors",
-      "gradedBy": "protects: balancing your thinking with new thinking"
-    }
-  ],
-  "actions": [
-    {
-      "id": "a1",
-      "gate": "auto",
-      "badge": "AUTO · safe",
-      "target": "target: Scout",
-      "diagnosis": "<b>Diagnosis:</b> Scout seed list has no dedicated MCP-ecosystem source beyond the spec blog.",
-      "recommendation": "<b>Recommend:</b> add <b>LangGraph + CrewAI release notes</b> to Scout Tier B.",
-      "impact": "predicted impact: +8% recall on agent-framework items · confidence 0.55 · status: awaiting first-week data",
-      "confidence": 0.55
-    },
-    {
-      "id": "a2",
-      "gate": "human",
-      "badge": "HUMAN-GATED · needs you",
-      "target": "target: Gatekeeper",
-      "diagnosis": "<b>Diagnosis:</b> corroboration threshold may be too strict for fast-moving releases (Kimi K3 was held for a primary source).",
-      "recommendation": "<b>Recommend:</b> allow a single high-reputation primary (lab blog) to surface without a 2nd source.",
-      "impact": "predicted impact: −1 day latency on major releases; small precision risk · confidence 0.40",
-      "confidence": 0.4
-    }
-  ],
-  "questions": [
-    {
-      "prompt": "For a new agent-framework release, do you want it surfaced immediately from one primary source, or held until corroborated?",
-      "placeholder": "Type your answer…",
-      "feeds": "gatekeeper_corroboration_preference"
-    },
-    {
-      "prompt": "When these collide on one weekend, rank them for DO THIS priority: MCP infra · RL technique · agentic-coding harness.",
-      "placeholder": "e.g. RL &gt; harness &gt; MCP…",
-      "feeds": "coach_topic_priority"
-    }
-  ],
-  "footer": "Control Hub renders data/state/metrics.json. The private surface in the design — the numbers shown here are sample data.",
-  "lastUpdated": "2026-09-10",
-  "nav": {
-    "current": "Control Hub",
-    "items": [
-      {
-        "label": "Product",
-        "href": "Product.html"
-      },
-      {
-        "label": "Signal",
-        "href": "Signal.html"
-      },
-      {
-        "label": "Practice",
-        "href": "Practice.html"
-      },
-      {
-        "label": "Control Hub",
-        "href": "Control-Hub.html"
-      },
-      {
-        "label": "System Design",
-        "href": "../design/System-Design.html"
-      },
-      {
-        "label": "Plan &amp; Progress",
-        "href": "../plan/Plan.html"
-      }
-    ]
+  {
+   "name": "Framer",
+   "kind": "agent",
+   "measures": "Faithfulness (objective) + Usefulness (subjective)",
+   "status": "awaiting data",
+   "target": "target: faithfulness = 1.0 (hard gate); usefulness ≥ 0.8",
+   "gradedBy": "graded by: claim decomposition (auto) + rubric ratings (you → LLM-judge)"
+  },
+  {
+   "name": "Coach",
+   "kind": "agent",
+   "measures": "Code-grounding (objective) + doability/skill (behavioral)",
+   "status": "awaiting data",
+   "target": "target: grounding = 1.0; completion ≥ 0.7; time ≤ 60 min",
+   "gradedBy": "graded by: repo assertions (auto) + your completion behavior"
+  },
+  {
+   "name": "Tuner",
+   "kind": "agent",
+   "measures": "Slope of every other metric over time (meta-eval)",
+   "status": "needs weeks of data",
+   "target": "target: curves bending the right way",
+   "gradedBy": "graded by: longitudinal trend, not level"
+  },
+  {
+   "name": "Guardrail · Diversity",
+   "kind": "guardrail",
+   "measures": "Anti-echo-chamber. Stops the Tuner boosting ratings by only feeding what you already believe.",
+   "status": "awaiting data",
+   "target": "target: ≥ 20% of items outside your priors",
+   "gradedBy": "protects: balancing your thinking with new thinking"
   }
+ ],
+ "actions": [
+  {
+   "id": "a1",
+   "gate": "auto",
+   "badge": "AUTO · safe",
+   "target": "target: Scout",
+   "diagnosis": "<b>Diagnosis:</b> Scout seed list has no dedicated MCP-ecosystem source beyond the spec blog.",
+   "recommendation": "<b>Recommend:</b> add <b>LangGraph + CrewAI release notes</b> to Scout Tier B.",
+   "impact": "predicted impact: +8% recall on agent-framework items · confidence 0.55 · status: awaiting first-week data",
+   "confidence": 0.55
+  },
+  {
+   "id": "a2",
+   "gate": "human",
+   "badge": "HUMAN-GATED · needs you",
+   "target": "target: Gatekeeper",
+   "diagnosis": "<b>Diagnosis:</b> corroboration threshold may be too strict for fast-moving releases (Kimi K3 was held for a primary source).",
+   "recommendation": "<b>Recommend:</b> allow a single high-reputation primary (lab blog) to surface without a 2nd source.",
+   "impact": "predicted impact: −1 day latency on major releases; small precision risk · confidence 0.40",
+   "confidence": 0.4
+  }
+ ],
+ "questions": [
+  {
+   "prompt": "For a new agent-framework release, do you want it surfaced immediately from one primary source, or held until corroborated?",
+   "placeholder": "Type your answer…",
+   "feeds": "gatekeeper_corroboration_preference"
+  },
+  {
+   "prompt": "When these collide on one weekend, rank them for DO THIS priority: MCP infra · RL technique · agentic-coding harness.",
+   "placeholder": "e.g. RL &gt; harness &gt; MCP…",
+   "feeds": "coach_topic_priority"
+  }
+ ],
+ "footer": "Control Hub renders data/state/metrics.json. The private surface in the design — the numbers shown here are sample data.",
+ "lastUpdated": "2026-09-10",
+ "nav": {
+  "current": null,
+  "items": [
+   {
+    "label": "Product",
+    "href": "Product.html"
+   },
+   {
+    "label": "Weekly Digest",
+    "href": "Weekly-Digest.html"
+   },
+   {
+    "label": "System Design",
+    "href": "../design/System-Design.html"
+   },
+   {
+    "label": "Roadmap &amp; Backlog",
+    "href": "../plan/Roadmap.html"
+   },
+   {
+    "label": "Plan &amp; Progress",
+    "href": "../plan/Plan.html"
+   }
+  ]
+ },
+ "_status": {
+  "built": false,
+  "milestone": "after M3",
+  "note": "<b>Not built, and deliberately not linked.</b> Arrives <b>after M3</b>. It is blocked rather than deprioritised — a dashboard over two days of data shows nothing, and the metrics it charts do not exist until the system has run for weeks. The page was removed from the navigation and its HTML deleted rather than left behind a <em>soon</em> badge: a surface that reads <em>coming soon</em> on one page and shows real content on another is worse than absence, and that inconsistency was live on the site. This file keeps the design work so the milestone starts from something rather than nothing."
+ }
 }

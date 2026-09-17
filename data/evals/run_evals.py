@@ -323,7 +323,7 @@ def run_usefulness(client, usage_log, timestamp, profile, case) -> dict:
             "role": profile["role"],
             "goals": profile["goals"],
             "interests": profile["interests"],
-            "daily_read_minutes_target": profile["preferences"]["dailyReadMinutesTarget"],
+            "weekly_read_minutes_target": profile["preferences"]["weeklyReadMinutesTarget"],
         },
         "units": [{"id": "thread", "text": day["thread"]}]
         + [

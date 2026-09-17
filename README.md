@@ -1,16 +1,18 @@
 # aiml-signal-system
 
-A multi-agent system that turns the AI/ML firehose into a daily signal brief and weekly hands-on exercises. The goal is to kill FOMO rather than feed it: success is the fewest items you'd regret missing, not the most items covered — the system is explicitly allowed to declare a quiet day and tell you to go build.
+A multi-agent system that turns the AI/ML firehose into a **weekly** signal brief and hands-on exercises grounded in your own repository. The goal is to kill FOMO rather than feed it: success is the fewest things you'd regret not understanding, not the most items covered — the system is explicitly allowed to declare a quiet week and tell you to go build.
+
+**Weekly is a decision, not a default.** A nightly predecessor ran for weeks and worked exactly as designed. It was retired anyway, in its reader's words: *“I am not finding this AI news useful as I have to react every time I see a news.”* A daily brief optimises for missing nothing, and what it produces is a queue. Reading still runs continuously — it is deterministic and nearly free. Judgement runs weekly, because judgement is what costs money.
 
 ---
 
-## Status: one agent built, five designed
+## Status: one agent built, four designed — and mid-pivot
 
-This repo is a **design with one vertical slice built end to end**, not a finished six-agent system. Being precise about that up front, because the architecture section below describes more than the code does.
+This repo is a **design with one vertical slice built end to end**, not a finished five-agent system. It is also mid-pivot: a separate weekly digest that has run for weeks is being merged onto this engine and retired. See [Roadmap & Backlog](https://varun-sridharan.github.io/aiml-signal-system/plan/Roadmap.html). Being precise about that up front, because the architecture section below describes more than the code does.
 
 | | Built and running | Designed, not built |
 | --- | --- | --- |
-| **Agents** | Framer (`agents/framer.py`, 674 LOC) | Scout, Gatekeeper, Coach, Tuner, Orchestrator |
+| **Agents** | Framer (`agents/framer.py`) | Reader (Scout + Gatekeeper, merged), Thought Leadership, Coach, Tuner |
 | **Evals** | Framer's offline harness (`data/evals/run_evals.py`, 473 LOC) — faithfulness gate, structural gate, usefulness rubric | Evaluator / Prescriber / Control Room as separate services |
 | **Infrastructure** | Append-only cost ledger + circuit breaker, frozen golden cases, non-zero exit gating | Multi-agent orchestration, feedback-driven recalibration |
 
@@ -24,9 +26,10 @@ No API key needed, nothing to install:
 
 | | |
 | --- | --- |
-| [The daily brief](https://varun-sridharan.github.io/aiml-signal-system/application/Signal.html) | real Framer output for 2026-08-04, rendered |
-| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 36 entries |
-| [Build plan](https://varun-sridharan.github.io/aiml-signal-system/plan/Plan.html) | 11 phases, each one working session, with per-phase notes |
+| [The Weekly Digest](https://varun-sridharan.github.io/aiml-signal-system/application/Weekly-Digest.html) | real Framer output for a fixed date, rendered |
+| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 38 entries |
+| [Roadmap & Backlog](https://varun-sridharan.github.io/aiml-signal-system/plan/Roadmap.html) | what is next, with binary exit criteria — and every item deliberately deferred, with the reason |
+| [Plan & Progress](https://varun-sridharan.github.io/aiml-signal-system/plan/Plan.html) | the one live milestone in detail, plus the archive of finished work |
 
 Prefer the raw data? [`data/briefs/framer_2026-08-04.json`](data/briefs/framer_2026-08-04.json) is the same brief as the agent produced it, and [`data/evals/golden/2026-08-04/labels.json`](data/evals/golden/2026-08-04/labels.json) is a hand-labelled eval case with the reasoning for each label written down.
 
@@ -34,7 +37,7 @@ Prefer the raw data? [`data/briefs/framer_2026-08-04.json`](data/briefs/framer_2
 
 ### The Framer
 
-Takes a verified pool of items and a user profile, and writes the daily brief — why each item matters, 90-second paper summaries, the thread connecting them, and the quiet-day path when nothing clears the bar. `(profile, data) → output`; no personal facts are hardcoded in prompts.
+Takes a verified pool of items and a user profile, and writes the edition — why each item matters, 90-second paper summaries, the thread connecting them, and the quiet-day path when nothing clears the bar. `(profile, data) → output`; no personal facts are hardcoded in prompts.
 
 It ships with its own guardrails rather than relying on the eval to catch things later:
 
@@ -134,6 +137,6 @@ Single-user today, but every record carries `user_id` and agents take `(profile,
 
 `config/profile.json` is a **problem statement, not a settings file** — it describes the reader the system is solving for, and every agent takes it as input rather than having any of it baked into a prompt. That is the seam personalization runs through: the pipeline up to the Framer is identical for every reader, and only the framing step is per-person. Replace it with your own and nothing in the agent code changes.
 
-`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. `application/Control-Hub.html` is the surface that stays private in the design — it is where a real user's ratings, spend and backlog would live. This instance is publishable because its numbers are placeholders, not because the surface isn't private.
+`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. The Control Hub is the surface that stays private in the design — where a real user's ratings, spend and pending actions would live. It is not built and not linked; its content contract is kept in `application/Control-Hub.json` for the milestone that builds it.
 
 Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/Plan.json` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.
