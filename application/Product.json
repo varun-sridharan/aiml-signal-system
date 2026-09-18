@@ -229,5 +229,13 @@
       "label": "Source on GitHub",
       "href": "https://github.com/varun-sridharan/aiml-signal-system"
     }
+  },
+  "site": {
+    "header": {
+      "wordmark": "AI/ML Signal",
+      "wordmarkAccent": ".",
+      "href": "Product.html",
+      "_contract": "THE HEADER IS IDENTICAL ON ALL FIVE PAGES. wordmark + wordmarkAccent render as one lockup in the serif face, the accent character in --accent. It is the site name and never changes per page. The page you are on is shown ONLY by nav.current. There is no descriptor pill, no page title, and no second active state in the header."
+    }
   }
 }

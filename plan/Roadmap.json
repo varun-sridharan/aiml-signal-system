@@ -1,246 +1,249 @@
 {
- "version": 1,
- "lastUpdated": "2026-09-17",
- "note": "Content source for the Roadmap & Backlog page. Edit this; ask Claude Design to refresh the design from it. THIS FILE IS THE ONLY BACKLOG. Anything deferred, discussed and dropped, or promised for later belongs here and nowhere else — a second backlog drifts, and then neither is true. Structure: `now` is the milestone being built (its detailed plan lives in Plan & Progress); `milestones` are what comes after, each with binary exit criteria; `backlog` is everything not yet scheduled, grouped by kind. A milestone's `livePlan` links to its detailed plan once that milestone becomes current — until then it states when it will exist, because M2 and M3 are shaped by what M1 teaches and writing them now would be fiction. Every backlog item carries `origin`: where the item came from, so a future reader can tell a considered deferral from a stray idea.",
- "nav": {
-  "current": "Roadmap &amp; Backlog",
-  "items": [
-   {
-    "label": "Product",
-    "href": "../application/Product.html"
-   },
-   {
-    "label": "Weekly Digest",
-    "href": "../application/Weekly-Digest.html"
-   },
-   {
-    "label": "System Design",
-    "href": "../design/System-Design.html"
-   },
-   {
-    "label": "Roadmap &amp; Backlog",
-    "href": "../plan/Roadmap.html"
-   },
-   {
-    "label": "Plan &amp; Progress",
-    "href": "../plan/Plan.html"
-   }
-  ]
- },
- "site": {
-  "kicker": "AI/ML Signal · roadmap",
-  "title": "Roadmap & Backlog",
-  "lede": "What is being built now, what comes next, and every item deliberately left for later. One backlog, so there is nothing to reconcile.",
-  "headerTitle": "Roadmap & Backlog",
-  "headerNote": "milestones · single backlog",
-  "footerNote": "Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe.",
-  "_headerLinksRemoved": "Removed 2026-09-17. It listed links the five-item nav already carries, so rendering both put the same destinations twice in one header. The nav is the only place a cross-page link belongs."
- },
- "intent": {
-  "title": "Where this is going",
-  "body": "Two systems are converging into one. The <b>AI Weekly News Digest</b> runs today as a scheduled cloud task — it knows what to say, has 91 tiered sources and a reader. The <b>AI/ML Signal System</b> knows how to prove what it says is true, and has no reader at all. The pivot is to move the Digest's job onto the Signal System's engine, hosted, and retire the Digest.<br><br><b>Cadence is weekly, and that is a decision rather than a default.</b> A daily brief optimises for missing nothing, and what it produces is a queue — the reason the previous daily digest was retired despite working as designed. Monthly is too slow to be useful in a field that moves weekly. <b>Ingestion runs continuously; publication is weekly.</b> Those are separate clocks: reading costs almost nothing because it is deterministic, while judgement is what costs money, and judgement happens once a week.",
-  "sunset": "<b>The old Digest retires on a criterion, not a date:</b> when M3 has run clean for two to three consecutive weeks. Not feature parity — M2 alone replaces the debrief but not the predictions and drafts, so switching off earlier costs a Friday read."
- },
- "now": {
-  "code": "M1",
-  "theme": "Reading and writing, hosted",
-  "status": "NOW",
-  "oneLine": "Reader and Framer live on Railway, both gated, producing the weekly debrief at a URL.",
-  "why": "The first milestone that is a system rather than a store. Reader alone fills a database nobody can see; a milestone whose exit criterion is invisible is a weak one. Two agents, two gates, one page.",
-  "planHref": "Plan.html",
-  "planLabel": "Detailed plan → Plan & Progress",
-  "alsoIncludes": "The shared-plumbing extraction (<code>agents/budget.py</code>, <code>agents/llm.py</code>) sits inside M1 rather than in the backlog — Reader is the cost breaker's second caller, which is exactly when it should be extracted."
- },
- "milestones": [
-  {
-   "code": "M2",
-   "id": "m2-two-voices",
-   "theme": "Two voices, one ledger",
-   "status": "NEXT",
-   "oneLine": "Thought Leadership agent: predictions, and what named people actually said.",
-   "why": "This is the half of the old Digest that has no equivalent in the Signal System, and it carries the sharpest reuse in the whole pivot — the quote check is the span check already built, pointed at a different document.",
-   "scope": [
-    "<b>Thought Leadership agent.</b> Reads the week's verified pool from Reader; writes ranked predictions and a leaders section.",
-    "<b>Quote fidelity as a hard gate.</b> Every quote attributed to a named person must be a literal substring of the excerpt fetched from that source. This is <code>span_found</code> unchanged. It turns the house rule “quote, never paraphrase” from an instruction into a check — and instructions have already been shown not to hold.",
-    "<b>Truncation honesty.</b> A quote discovered through a search index rather than fetched is marked truncated and linked out. Deterministic.",
-    "<b>Falsifiability as a hard gate.</b> Every prediction carries a stated falsification condition and a resolution date. Both checkable in code with no model.",
-    "<b>The resolution ledger.</b> Three states — <b>Hit</b>, <b>Miss</b>, <b>Expired-unresolved</b>. Kept deliberately simple for this milestone: the weekly run looks for predictions that have come true and marks them Hit, resurrecting from Archive if needed. The rest is handled at the resolution date.",
-    "<b>Archive surface.</b> Published and rejected content, expired and pushed-out predictions."
-   ],
-   "exit": [
-    "Predictions and the leaders section render on the hosted page",
-    "Every leader quote passes the substring gate against its stored excerpt",
-    "Every prediction carries a falsification condition and a resolution date, verified in code",
-    "The ledger exists, holds its first entry, and all three states are reachable"
-   ],
-   "notIn": [
-    "Distinguishing <em>not yet</em> from <em>never</em> for an unresolved prediction — in the backlog, revisited after the ledger has real entries",
-    "Prediction originality scoring, which is subjective and stays reported"
-   ],
-   "dependsOn": "M1 — needs Reader's verified pool and the hosted store",
-   "livePlan": {
-    "state": "arrives when M1 completes",
-    "href": null,
-    "why": "M2's plan is shaped by what M1 teaches. Writing it now would be fiction, and slipped or newly-discovered M1 items land here first."
-   }
+  "version": 1,
+  "lastUpdated": "2026-09-17",
+  "note": "Content source for the Roadmap & Backlog page. Edit this; ask Claude Design to refresh the design from it. THIS FILE IS THE ONLY BACKLOG. Anything deferred, discussed and dropped, or promised for later belongs here and nowhere else — a second backlog drifts, and then neither is true. Structure: `now` is the milestone being built (its detailed plan lives in Plan & Progress); `milestones` are what comes after, each with binary exit criteria; `backlog` is everything not yet scheduled, grouped by kind. A milestone's `livePlan` links to its detailed plan once that milestone becomes current — until then it states when it will exist, because M2 and M3 are shaped by what M1 teaches and writing them now would be fiction. Every backlog item carries `origin`: where the item came from, so a future reader can tell a considered deferral from a stray idea.",
+  "nav": {
+    "current": "Roadmap &amp; Backlog",
+    "items": [
+      {
+        "label": "Product",
+        "href": "../application/Product.html"
+      },
+      {
+        "label": "Weekly Digest",
+        "href": "../application/Weekly-Digest.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Roadmap &amp; Backlog",
+        "href": "../plan/Roadmap.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
   },
-  {
-   "code": "M3",
-   "id": "m3-practice",
-   "theme": "Practice",
-   "status": "LATER",
-   "oneLine": "Coach reads the configured GitHub repository and writes homework that fits a real spot in it.",
-   "why": "The highest hallucination risk in the system, which is why it comes after trust is built — and the first agent whose steps genuinely cannot be written in advance, so it is the one place an agent loop earns its keep.",
-   "scope": [
-    "<b>Coach on the Claude Agent SDK.</b> Real tool use over a repository it has not seen, with Read, Grep and Glob scoped to declared paths. The only agent here that gets a loop; every other one is a pipeline.",
-    "<b>Repo grounding as a hard gate, with no model involved.</b> Every named file path exists, every named symbol appears in it, every command parses. Deterministic.",
-    "<b>Practice surface.</b> A <em>How it Works</em> sub-tab, and <em>Open Exercises</em> with a gear for the repository setting.",
-    "<b>Per-exercise tile:</b> status dropdown (To Start / In Progress / Complete), learning goal, estimated duration — <b>60 minutes or less</b> — and steps detailed enough that pasting one into a fresh chat is sufficient context to continue.",
-    "<b>Time logging.</b> A timestamp when status moves to In Progress; actual minutes recorded at close, optional.",
-    "<b>Spend and scope enforced by SDK hooks</b> — the reserve re-checked before every tool call, path allowlist as a permission rule. A loop has no natural cost bound, so it gets a turn cap the pipelines do not need."
-   ],
-   "exit": [
-    "Homework lands in Practice, generated from the configured repository",
-    "Every named path and symbol is verified in code before the exercise ships",
-    "Status dropdown and time logging work, and estimated-versus-actual is recorded"
-   ],
-   "notIn": [
-    "Prior-art reconciliation — same repo access, opposite question; backlog",
-    "Completion rate as a target. It is a diagnostic only: a completion rate you optimise for is a generator that writes easy homework."
-   ],
-   "dependsOn": "M2 — and on several weeks of real editions existing",
-   "livePlan": {
-    "state": "arrives when M2 completes",
-    "href": null,
-    "why": "Same reason as M2. A plan written three milestones ahead is a guess wearing a schedule."
-   }
+  "site": {
+    "kicker": "AI/ML Signal · roadmap",
+    "title": "Roadmap & Backlog",
+    "lede": "What is being built now, what comes next, and every item deliberately left for later. One backlog, so there is nothing to reconcile.",
+    "footerNote": "Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe.",
+    "header": {
+      "wordmark": "AI/ML Signal",
+      "wordmarkAccent": ".",
+      "href": "../application/Product.html",
+      "_contract": "THE HEADER IS IDENTICAL ON ALL FIVE PAGES. wordmark + wordmarkAccent render as one lockup in the serif face, the accent character in --accent. It is the site name and never changes per page. The page you are on is shown ONLY by nav.current. There is no descriptor pill, no page title, and no second active state in the header."
+    }
+  },
+  "intent": {
+    "title": "Where this is going",
+    "body": "Two systems are converging into one. The <b>AI Weekly News Digest</b> runs today as a scheduled cloud task — it knows what to say, has 91 tiered sources and a reader. The <b>AI/ML Signal System</b> knows how to prove what it says is true, and has no reader at all. The pivot is to move the Digest's job onto the Signal System's engine, hosted, and retire the Digest.<br><br><b>Cadence is weekly, and that is a decision rather than a default.</b> A daily brief optimises for missing nothing, and what it produces is a queue — the reason the previous daily digest was retired despite working as designed. Monthly is too slow to be useful in a field that moves weekly. <b>Ingestion runs continuously; publication is weekly.</b> Those are separate clocks: reading costs almost nothing because it is deterministic, while judgement is what costs money, and judgement happens once a week.",
+    "sunset": "<b>The old Digest retires on a criterion, not a date:</b> when M3 has run clean for two to three consecutive weeks. Not feature parity — M2 alone replaces the debrief but not the predictions and drafts, so switching off earlier costs a Friday read."
+  },
+  "now": {
+    "code": "M1",
+    "theme": "Reading and writing, hosted",
+    "status": "NOW",
+    "oneLine": "Reader and Framer live on Railway, both gated, producing the weekly debrief at a URL.",
+    "why": "The first milestone that is a system rather than a store. Reader alone fills a database nobody can see; a milestone whose exit criterion is invisible is a weak one. Two agents, two gates, one page.",
+    "planHref": "Plan.html",
+    "planLabel": "Detailed plan → Plan & Progress",
+    "alsoIncludes": "The shared-plumbing extraction (<code>agents/budget.py</code>, <code>agents/llm.py</code>) sits inside M1 rather than in the backlog — Reader is the cost breaker's second caller, which is exactly when it should be extracted."
+  },
+  "milestones": [
+    {
+      "code": "M2",
+      "id": "m2-two-voices",
+      "theme": "Two voices, one ledger",
+      "status": "NEXT",
+      "oneLine": "Thought Leadership agent: predictions, and what named people actually said.",
+      "why": "This is the half of the old Digest that has no equivalent in the Signal System, and it carries the sharpest reuse in the whole pivot — the quote check is the span check already built, pointed at a different document.",
+      "scope": [
+        "<b>Thought Leadership agent.</b> Reads the week's verified pool from Reader; writes ranked predictions and a leaders section.",
+        "<b>Quote fidelity as a hard gate.</b> Every quote attributed to a named person must be a literal substring of the excerpt fetched from that source. This is <code>span_found</code> unchanged. It turns the house rule “quote, never paraphrase” from an instruction into a check — and instructions have already been shown not to hold.",
+        "<b>Truncation honesty.</b> A quote discovered through a search index rather than fetched is marked truncated and linked out. Deterministic.",
+        "<b>Falsifiability as a hard gate.</b> Every prediction carries a stated falsification condition and a resolution date. Both checkable in code with no model.",
+        "<b>The resolution ledger.</b> Three states — <b>Hit</b>, <b>Miss</b>, <b>Expired-unresolved</b>. Kept deliberately simple for this milestone: the weekly run looks for predictions that have come true and marks them Hit, resurrecting from Archive if needed. The rest is handled at the resolution date.",
+        "<b>Archive surface.</b> Published and rejected content, expired and pushed-out predictions."
+      ],
+      "exit": [
+        "Predictions and the leaders section render on the hosted page",
+        "Every leader quote passes the substring gate against its stored excerpt",
+        "Every prediction carries a falsification condition and a resolution date, verified in code",
+        "The ledger exists, holds its first entry, and all three states are reachable"
+      ],
+      "notIn": [
+        "Distinguishing <em>not yet</em> from <em>never</em> for an unresolved prediction — in the backlog, revisited after the ledger has real entries",
+        "Prediction originality scoring, which is subjective and stays reported"
+      ],
+      "dependsOn": "M1 — needs Reader's verified pool and the hosted store",
+      "livePlan": {
+        "state": "arrives when M1 completes",
+        "href": null,
+        "why": "M2's plan is shaped by what M1 teaches. Writing it now would be fiction, and slipped or newly-discovered M1 items land here first."
+      }
+    },
+    {
+      "code": "M3",
+      "id": "m3-practice",
+      "theme": "Practice",
+      "status": "LATER",
+      "oneLine": "Coach reads the configured GitHub repository and writes homework that fits a real spot in it.",
+      "why": "The highest hallucination risk in the system, which is why it comes after trust is built — and the first agent whose steps genuinely cannot be written in advance, so it is the one place an agent loop earns its keep.",
+      "scope": [
+        "<b>Coach on the Claude Agent SDK.</b> Real tool use over a repository it has not seen, with Read, Grep and Glob scoped to declared paths. The only agent here that gets a loop; every other one is a pipeline.",
+        "<b>Repo grounding as a hard gate, with no model involved.</b> Every named file path exists, every named symbol appears in it, every command parses. Deterministic.",
+        "<b>Practice surface.</b> A <em>How it Works</em> sub-tab, and <em>Open Exercises</em> with a gear for the repository setting.",
+        "<b>Per-exercise tile:</b> status dropdown (To Start / In Progress / Complete), learning goal, estimated duration — <b>60 minutes or less</b> — and steps detailed enough that pasting one into a fresh chat is sufficient context to continue.",
+        "<b>Time logging.</b> A timestamp when status moves to In Progress; actual minutes recorded at close, optional.",
+        "<b>Spend and scope enforced by SDK hooks</b> — the reserve re-checked before every tool call, path allowlist as a permission rule. A loop has no natural cost bound, so it gets a turn cap the pipelines do not need."
+      ],
+      "exit": [
+        "Homework lands in Practice, generated from the configured repository",
+        "Every named path and symbol is verified in code before the exercise ships",
+        "Status dropdown and time logging work, and estimated-versus-actual is recorded"
+      ],
+      "notIn": [
+        "Prior-art reconciliation — same repo access, opposite question; backlog",
+        "Completion rate as a target. It is a diagnostic only: a completion rate you optimise for is a generator that writes easy homework."
+      ],
+      "dependsOn": "M2 — and on several weeks of real editions existing",
+      "livePlan": {
+        "state": "arrives when M2 completes",
+        "href": null,
+        "why": "Same reason as M2. A plan written three milestones ahead is a guess wearing a schedule."
+      }
+    }
+  ],
+  "afterM3": {
+    "title": "After M3",
+    "body": "<b>Control Hub</b> and <b>Tuner</b> both need weeks of real editions before they have anything to work with — a dashboard over two days of data shows nothing, and a model that learns your taste needs your taste expressed more than twice. They are not deprioritised; they are blocked, and the thing that unblocks them is the system running."
+  },
+  "backlog": {
+    "note": "Every item here was deliberately deferred, with a reason. <code>origin</code> says where it came from so a later reader can tell a considered decision from a passing idea.",
+    "groups": [
+      {
+        "name": "Eval &amp; correctness",
+        "items": [
+          {
+            "id": "bk-config-contract",
+            "title": "Assert the config/code contract in the structural gate",
+            "size": "S",
+            "origin": "Sep-17-2026 — found by a pre-commit check, after the break had already been committed to disk",
+            "body": "Renaming two keys in <code>config/profile.json</code> for the weekly pivot broke the Framer: three call sites still indexed the old names and raised <code>KeyError</code> on the first real run. <b>The offline gate stayed green the whole time</b>, because both call sites sit on API paths that <code>--no-api</code> never reaches. <b>The check is trivial and free:</b> every <code>profile[...]</code> and <code>preferences[...]</code> key the code indexes must exist in <code>profile.json</code> — a regex over the source against the loaded config, no model, no API. It belongs in <code>run_structural</code> beside the coverage check. <b>The lesson is the more useful part:</b> “nothing changed behaviourally” was true of the code and false of the system, because the config the code reads is part of the system. A gate that only exercises the free paths will certify a broken run as green."
+          },
+          {
+            "id": "bk-corroboration-labels",
+            "title": "Hand labels for Reader's provenance and corroboration",
+            "size": "M",
+            "origin": "Sep-17-2026 — cut from M1 deliberately, not forgotten",
+            "body": "Reader judges whether an item has a primary source and independent corroboration. That judgement is model-made and could be graded against hand labels, the way the Framer's is. <b>It was cut from M1 because Reader's failures are visible:</b> a weak item that clears the bar shows up in the edition and gets caught by the reader in seconds. A machine eval earns its cost where failure is <em>silent</em>, which is why the Framer has one and why dedup keeps its golden set. <b>Revisit when either is true:</b> weak items start reaching editions faster than they are noticed, or Reader's judgement starts gating something automatic. Until then the existing digest is the precedent — no machine eval, and it performs well, because its reader is its eval."
+          },
+          {
+            "id": "bk-two-call",
+            "title": "Two-call grading: enumerate blind, then judge",
+            "size": "M",
+            "origin": "Sep-15-2026 — measured defect, fix designed and parked",
+            "body": "The faithfulness grader misses a planted fabrication roughly one run in three, because it enumerates the <em>source's</em> sentences instead of the writing's. Fix is structural, not instructional: call 1 lists claims with the excerpt withheld entirely, so there is nothing to copy from; call 2 judges that list against the excerpt. Roughly cost-neutral — one more call against a payload that shrank by two thirds when interpretation stopped being sent. <b>Guarantees the right sentences get judged, not that they get judged correctly.</b>"
+          },
+          {
+            "id": "bk-negative-02",
+            "title": "negative-02 — an omission case",
+            "size": "S",
+            "origin": "Sep-15-2026 — named as the residual the code cannot reach",
+            "body": "A non-numeric fact parked in <code>interpretation</code>, where the numeric detector cannot see it. The one hole the split leaves open."
+          },
+          {
+            "id": "bk-retry",
+            "title": "Bounded retry on a lifted claim",
+            "size": "S",
+            "origin": "Sep-15-2026 — trigger identified, deliberately not threshold-fitted",
+            "body": "<code>lifted_claims</code> fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. <b>Rule: any lift on a unit retries that unit, once.</b> Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them."
+          },
+          {
+            "id": "bk-usefulness",
+            "title": "Calibrate the usefulness rubric against real thumbs",
+            "size": "M",
+            "origin": "Sep-16-2026 — unlocked by the pivot",
+            "body": "The usefulness score has been reported and never gated because there was nothing to calibrate it against. Thumbs-up and thumbs-down on the Weekly Digest tab is the first real label. Until the rubric agrees with the thumbs, it stays soft."
+          },
+          {
+            "id": "bk-miss-vs-notyet",
+            "title": "Distinguish <em>not yet</em> from <em>never</em> for predictions",
+            "size": "M",
+            "origin": "Sep-16-2026 — explicitly deferred out of M2",
+            "body": "The hard case in prediction scoring. Handled for now by the resolution date and a third state, <b>Expired-unresolved</b>, which is honest about a claim that was not falsifiable enough to score. Revisit once the ledger holds real entries. <b>The trap this avoids:</b> marking only Hits guarantees the track record looks good, and a hidden miss makes it worthless."
+          }
+        ]
+      },
+      {
+        "name": "Agents &amp; capability",
+        "items": [
+          {
+            "id": "bk-prior-art",
+            "title": "Prior-art reconciliation",
+            "size": "M",
+            "origin": "carried from the pre-pivot plan (Phase 8)",
+            "body": "Same repo access as grounding, opposite question: grounding asks <em>where would this fit</em>, reconciliation asks <em>have I already built it</em>. Recall-biased on purpose — a wrong suppression is invisible and a wrong offer costs minutes. States are none / partial / already built, and <b>built is terminal</b>: the exercise retires with a pointer to the code rather than carrying a status."
+          },
+          {
+            "id": "bk-tuner",
+            "title": "Tuner — learning from feedback",
+            "size": "L",
+            "origin": "Sep-16-2026 — scope deliberately kept high level and minimal",
+            "body": "Takes the thumbs and the free-form Noise feedback and recalibrates the other agents. Carries two concepts nothing else in the plan covers: <b>credit assignment</b> (which agent caused a bad edition) and the <b>anti-echo-chamber guardrail</b> (a minimum share of items outside established priors, gating the Tuner's recommendations rather than the content). <b>Worth knowing:</b> this is also the only place in the pivot where reinforcement learning lives, so deferring it defers a stated focus area."
+          },
+          {
+            "id": "bk-control-hub",
+            "title": "Control Hub",
+            "size": "L",
+            "origin": "in the pivot document; blocked on data",
+            "body": "GitHub status counts, per-agent metrics, pending actions and actions taken, a feedback form that routes to the agent or workflow it concerns, and a new-feature form that writes to this backlog. Needs weeks of editions before the metrics mean anything."
+          },
+          {
+            "id": "bk-feeds",
+            "title": "RSS/Atom polling for the tiered domains",
+            "size": "S",
+            "origin": "Sep-16-2026 — M1 if trivial, here if not",
+            "body": "Most of the 91 domains publish feeds. Polling one is cheap and deterministic, and it is the closest thing to an event trigger a newsroom offers — webhooks effectively do not exist in this space. <code>/add-news</code> is the genuinely event-driven path and fetches immediately."
+          }
+        ]
+      },
+      {
+        "name": "Platform &amp; cost",
+        "items": [
+          {
+            "id": "bk-tokens-css",
+            "title": "tokens.css and a local build step",
+            "size": "M",
+            "origin": "Sep-15-2026 — friction hit repeatedly in one session",
+            "body": "Today every JSON edit needs a round-trip through Claude Design to regenerate the page, because only Design knows the styling. Extracting <code>tokens.css</code> and a local renderer makes a one-character change one command. The round-trip has already caused one stale-number regeneration."
+          },
+          {
+            "id": "bk-mcp",
+            "title": "MCP as Reader's fetch layer",
+            "size": "M",
+            "origin": "Sep-16-2026 — the one concept the pivot leaves uncovered",
+            "body": "Nothing in the current plan uses MCP, which makes it the only entry in the concepts reference that stays purely theoretical. Reader fetching sources through an MCP server rather than bespoke HTTP is a small, real use with a natural boundary."
+          }
+        ]
+      },
+      {
+        "name": "Product feature backlog",
+        "items": [
+          {
+            "id": "bk-pfb",
+            "title": "This is the only product feature backlog",
+            "size": "—",
+            "origin": "Sep-16-2026 — resolved to a single source of truth",
+            "body": "Feature requests raised in the Control Hub land here. They do not live in the Archive tab, and the Archive tab holds content and predictions only. Two backlogs drift, and then neither is true."
+          }
+        ]
+      }
+    ]
   }
- ],
- "afterM3": {
-  "title": "After M3",
-  "body": "<b>Control Hub</b> and <b>Tuner</b> both need weeks of real editions before they have anything to work with — a dashboard over two days of data shows nothing, and a model that learns your taste needs your taste expressed more than twice. They are not deprioritised; they are blocked, and the thing that unblocks them is the system running."
- },
- "backlog": {
-  "note": "Every item here was deliberately deferred, with a reason. <code>origin</code> says where it came from so a later reader can tell a considered decision from a passing idea.",
-  "groups": [
-   {
-    "name": "Eval &amp; correctness",
-    "items": [
-     {
-      "id": "bk-config-contract",
-      "title": "Assert the config/code contract in the structural gate",
-      "size": "S",
-      "origin": "Sep-17-2026 — found by a pre-commit check, after the break had already been committed to disk",
-      "body": "Renaming two keys in <code>config/profile.json</code> for the weekly pivot broke the Framer: three call sites still indexed the old names and raised <code>KeyError</code> on the first real run. <b>The offline gate stayed green the whole time</b>, because both call sites sit on API paths that <code>--no-api</code> never reaches. <b>The check is trivial and free:</b> every <code>profile[...]</code> and <code>preferences[...]</code> key the code indexes must exist in <code>profile.json</code> — a regex over the source against the loaded config, no model, no API. It belongs in <code>run_structural</code> beside the coverage check. <b>The lesson is the more useful part:</b> “nothing changed behaviourally” was true of the code and false of the system, because the config the code reads is part of the system. A gate that only exercises the free paths will certify a broken run as green."
-     },
-     {
-      "id": "bk-corroboration-labels",
-      "title": "Hand labels for Reader's provenance and corroboration",
-      "size": "M",
-      "origin": "Sep-17-2026 — cut from M1 deliberately, not forgotten",
-      "body": "Reader judges whether an item has a primary source and independent corroboration. That judgement is model-made and could be graded against hand labels, the way the Framer's is. <b>It was cut from M1 because Reader's failures are visible:</b> a weak item that clears the bar shows up in the edition and gets caught by the reader in seconds. A machine eval earns its cost where failure is <em>silent</em>, which is why the Framer has one and why dedup keeps its golden set. <b>Revisit when either is true:</b> weak items start reaching editions faster than they are noticed, or Reader's judgement starts gating something automatic. Until then the existing digest is the precedent — no machine eval, and it performs well, because its reader is its eval."
-     },
-     {
-      "id": "bk-two-call",
-      "title": "Two-call grading: enumerate blind, then judge",
-      "size": "M",
-      "origin": "Sep-15-2026 — measured defect, fix designed and parked",
-      "body": "The faithfulness grader misses a planted fabrication roughly one run in three, because it enumerates the <em>source's</em> sentences instead of the writing's. Fix is structural, not instructional: call 1 lists claims with the excerpt withheld entirely, so there is nothing to copy from; call 2 judges that list against the excerpt. Roughly cost-neutral — one more call against a payload that shrank by two thirds when interpretation stopped being sent. <b>Guarantees the right sentences get judged, not that they get judged correctly.</b>"
-     },
-     {
-      "id": "bk-negative-02",
-      "title": "negative-02 — an omission case",
-      "size": "S",
-      "origin": "Sep-15-2026 — named as the residual the code cannot reach",
-      "body": "A non-numeric fact parked in <code>interpretation</code>, where the numeric detector cannot see it. The one hole the split leaves open."
-     },
-     {
-      "id": "bk-retry",
-      "title": "Bounded retry on a lifted claim",
-      "size": "S",
-      "origin": "Sep-15-2026 — trigger identified, deliberately not threshold-fitted",
-      "body": "<code>lifted_claims</code> fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. <b>Rule: any lift on a unit retries that unit, once.</b> Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them."
-     },
-     {
-      "id": "bk-usefulness",
-      "title": "Calibrate the usefulness rubric against real thumbs",
-      "size": "M",
-      "origin": "Sep-16-2026 — unlocked by the pivot",
-      "body": "The usefulness score has been reported and never gated because there was nothing to calibrate it against. Thumbs-up and thumbs-down on the Weekly Digest tab is the first real label. Until the rubric agrees with the thumbs, it stays soft."
-     },
-     {
-      "id": "bk-miss-vs-notyet",
-      "title": "Distinguish <em>not yet</em> from <em>never</em> for predictions",
-      "size": "M",
-      "origin": "Sep-16-2026 — explicitly deferred out of M2",
-      "body": "The hard case in prediction scoring. Handled for now by the resolution date and a third state, <b>Expired-unresolved</b>, which is honest about a claim that was not falsifiable enough to score. Revisit once the ledger holds real entries. <b>The trap this avoids:</b> marking only Hits guarantees the track record looks good, and a hidden miss makes it worthless."
-     }
-    ]
-   },
-   {
-    "name": "Agents &amp; capability",
-    "items": [
-     {
-      "id": "bk-prior-art",
-      "title": "Prior-art reconciliation",
-      "size": "M",
-      "origin": "carried from the pre-pivot plan (Phase 8)",
-      "body": "Same repo access as grounding, opposite question: grounding asks <em>where would this fit</em>, reconciliation asks <em>have I already built it</em>. Recall-biased on purpose — a wrong suppression is invisible and a wrong offer costs minutes. States are none / partial / already built, and <b>built is terminal</b>: the exercise retires with a pointer to the code rather than carrying a status."
-     },
-     {
-      "id": "bk-tuner",
-      "title": "Tuner — learning from feedback",
-      "size": "L",
-      "origin": "Sep-16-2026 — scope deliberately kept high level and minimal",
-      "body": "Takes the thumbs and the free-form Noise feedback and recalibrates the other agents. Carries two concepts nothing else in the plan covers: <b>credit assignment</b> (which agent caused a bad edition) and the <b>anti-echo-chamber guardrail</b> (a minimum share of items outside established priors, gating the Tuner's recommendations rather than the content). <b>Worth knowing:</b> this is also the only place in the pivot where reinforcement learning lives, so deferring it defers a stated focus area."
-     },
-     {
-      "id": "bk-control-hub",
-      "title": "Control Hub",
-      "size": "L",
-      "origin": "in the pivot document; blocked on data",
-      "body": "GitHub status counts, per-agent metrics, pending actions and actions taken, a feedback form that routes to the agent or workflow it concerns, and a new-feature form that writes to this backlog. Needs weeks of editions before the metrics mean anything."
-     },
-     {
-      "id": "bk-feeds",
-      "title": "RSS/Atom polling for the tiered domains",
-      "size": "S",
-      "origin": "Sep-16-2026 — M1 if trivial, here if not",
-      "body": "Most of the 91 domains publish feeds. Polling one is cheap and deterministic, and it is the closest thing to an event trigger a newsroom offers — webhooks effectively do not exist in this space. <code>/add-news</code> is the genuinely event-driven path and fetches immediately."
-     }
-    ]
-   },
-   {
-    "name": "Platform &amp; cost",
-    "items": [
-     {
-      "id": "bk-tokens-css",
-      "title": "tokens.css and a local build step",
-      "size": "M",
-      "origin": "Sep-15-2026 — friction hit repeatedly in one session",
-      "body": "Today every JSON edit needs a round-trip through Claude Design to regenerate the page, because only Design knows the styling. Extracting <code>tokens.css</code> and a local renderer makes a one-character change one command. The round-trip has already caused one stale-number regeneration."
-     },
-     {
-      "id": "bk-mcp",
-      "title": "MCP as Reader's fetch layer",
-      "size": "M",
-      "origin": "Sep-16-2026 — the one concept the pivot leaves uncovered",
-      "body": "Nothing in the current plan uses MCP, which makes it the only entry in the concepts reference that stays purely theoretical. Reader fetching sources through an MCP server rather than bespoke HTTP is a small, real use with a natural boundary."
-     }
-    ]
-   },
-   {
-    "name": "Product feature backlog",
-    "items": [
-     {
-      "id": "bk-pfb",
-      "title": "This is the only product feature backlog",
-      "size": "—",
-      "origin": "Sep-16-2026 — resolved to a single source of truth",
-      "body": "Feature requests raised in the Control Hub land here. They do not live in the Archive tab, and the Archive tab holds content and predictions only. Two backlogs drift, and then neither is true."
-     }
-    ]
-   }
-  ]
- }
 }

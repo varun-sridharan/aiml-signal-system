@@ -1,230 +1,233 @@
 {
- "version": 1,
- "note": "Content source for the Plan & Progress page. <b>Two sections only, and that is the whole structure:</b> M1 — collapsible, holding a Plan table and a Status paragraph — and Decision Log. The Plan table carries completed and outstanding work in one list; prerequisites are rows marked done, never a separate section. Status is five sentences: what is finished, what is being built, what follows, the estimate, the contingency. Decision Log entries are datestamped, newest first, and none runs past five sentences. Cross-cutting infrastructure belongs in System Design; future milestones belong in Roadmap & Backlog. Neither is duplicated here.",
- "site": {
-  "kicker": "AI/ML Signal · build plan",
-  "title": "Plan & Progress",
-  "lede": "One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.",
-  "headerTitle": "Plan & Progress",
-  "headerNote": "one live milestone",
-  "footerNote": "Plan · the live milestone and the archive of completed work for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe.",
-  "_headerLinksRemoved": "Removed 2026-09-17. It listed links the five-item nav already carries, so rendering both put the same destinations twice in one header. The nav is the only place a cross-page link belongs."
- },
- "phases": [
-  {
-   "id": "m1",
-   "code": "M1",
-   "title": "Reading, Writing & Hosting",
-   "status": "45%",
-   "collapsible": true,
-   "endState": "Reader and Framer running on Railway with no local dependency, both gated, producing the weekly debrief at a URL. <b>Exit is binary:</b> the canonicalisation gate green including a planted duplicate; faithfulness and structural gates green on a golden week including a planted fabrication; the Weekly Digest tab rendering the debrief; thumbs captured.",
-   "plan": {
-    "title": "Plan",
-    "note": "Everything this milestone rests on, complete and outstanding in one table. The four rows marked done were finished before the pivot, and all four carried whole — nothing was partially reused. One row carries an ordering constraint rather than just a status: the storage layer must land before the hosted system makes a paid call.",
-    "head": [
-     "Activity",
-     "Outcome",
-     "Why it matters",
-     "Status"
-    ],
-    "rows": [
-     [
-      "The Claude Code loop and the repo",
-      "Scaffolding, README, first commit, and the JSON-content → Claude Design → HTML pipeline every page still uses",
-      "This is the method the milestone is built with, not an artifact it produced. The pivot did not touch it.",
-      "<b>DONE</b>"
-     ],
-     [
-      "The Framer agent",
-      "<code>agents/framer.py</code>, <code>framer-prompt.md</code>, <code>framer-contract.md</code>, structured output, prompt caching, model routing, the cost breaker",
-      "M1 ports this unchanged. The pivot edited two profile key names and a docstring, and nothing else.",
-      "<b>DONE</b>"
-     ],
-     [
-      "The eval harness and golden set",
-      "<code>run_evals.py</code>, two frozen cases with hand labels, faithfulness and structural hard gates, a measured baseline",
-      "M1's exit criteria are written in terms of these gates, and the baseline is the only thing the next change can be compared against.",
-      "<b>DONE</b>"
-     ],
-     [
-      "The facts / interpretation split",
-      "Framer emits <code>split</code> and <code>threadSplit</code>; only factual clauses reach the grader; coverage is a hard gate",
-      "Took false positives on the clean day from 18 to 0, structurally — flagged clauses are no longer sent, so they cannot be flagged.",
-      "<b>DONE</b>"
-     ],
-     [
-      "Deploy the skeleton on Railway",
-      "App, Postgres and scheduler live at <code>aiml-signal-system-production.up.railway.app</code>; all five pages serve from it with no local dependency; <code>/health</code> reports the deployed commit",
-      "Everything else assumes a host. It also dissolves the constraint the old digest was built around — that a scheduled run cannot write to its own page.",
-      "<b>DONE</b>"
-     ],
-     [
-      "Extract the shared plumbing",
-      "<code>agents/budget.py</code> and <code>agents/llm.py</code>, with the breaker upgraded to stop-<em>before</em>",
-      "Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies.",
-      "IN PROGRESS"
-     ],
-     [
-      "Storage layer, with the excerpt rule",
-      "Postgres for items, sources, graph, runs and feedback; blob storage for excerpts, <b>written once at fetch time and never re-fetched</b>",
-      "The faithfulness gate compares a span against the stored excerpt — re-fetch later and a publisher's edit turns the gate red for no reason. <b>And it must land before the first hosted run that spends money.</b> The cost breaker reads <code>usage.json</code>, a file rebuilt from the repository on every deploy, so on Railway its memory of the month's spend silently reverts to whatever was last committed. It would not crash or warn — it would simply keep authorising runs.",
-      "TO DO · <b>blocks paid runs</b>"
-     ],
-     [
-      "Reader — Scout and Gatekeeper merged",
-      "Canonicalisation, dedup, provenance and corroboration; seeded with 91 tiered domains; <code>/add-news</code> fetches on arrival. <b>Fetching is delegated, not reimplemented.</b>",
-      "Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing <code>fetch()</code> would mean re-earning a result that already exists.",
-      "TO DO"
-     ],
-     [
-      "Reader's canonicalisation gate",
-      "A golden set of URL pairs that must and must not collapse, including a planted near-duplicate. Free, deterministic, no model",
-      "Dedup silently merging two <em>different</em> articles is Reader's only invisible failure. Everything else it gets wrong, you see in the edition.",
-      "TO DO"
-     ],
-     [
-      "Port the Framer and its gate",
-      "The Framer writes Learning for the Week and This Week's Stories on the hosted system; the existing golden cases run against it",
-      "<b>Port it, do not extend it.</b> Moving a component and changing it at once means a red run cannot be attributed to either.",
-      "TO DO"
-     ],
-     [
-      "The Weekly Digest surface",
-      "Two subsections with a sticky sub-nav, thumbs up and down, and a free-form box on thumbs-down",
-      "The first real label this system has had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against.",
-      "TO DO"
-     ]
-    ]
-   },
-   "statusSection": {
-    "title": "Status",
-    "body": "<b>Four of eleven activities are done, all carried in from before the pivot:</b> the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0. <b>Railway is part-built</b> — the project exists and Postgres is online, while the app service fails on a missing start command because the repository has no web server yet, which is the next commit. <b>After it come</b> the shared plumbing extraction, the storage layer with its write-once excerpt rule, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The estimate is 5–7 sessions, two to three weeks part-time</b>, revised down from 7–9 by that delegation and by cutting Reader's eval to the one check whose failure is silent. <b>If it runs long</b>, Reader launches against the ten to fifteen domains publishing clean feeds and the rest moves to the backlog — worth about a session and a half, and taken only if M1 passes four sessions without Reader fetching reliably."
-   }
-  }
- ],
- "lastUpdated": "2026-09-17",
- "nav": {
-  "current": "Plan &amp; Progress",
-  "items": [
-   {
-    "label": "Product",
-    "href": "../application/Product.html"
-   },
-   {
-    "label": "Weekly Digest",
-    "href": "../application/Weekly-Digest.html"
-   },
-   {
-    "label": "System Design",
-    "href": "../design/System-Design.html"
-   },
-   {
-    "label": "Roadmap &amp; Backlog",
-    "href": "../plan/Roadmap.html"
-   },
-   {
-    "label": "Plan &amp; Progress",
-    "href": "../plan/Plan.html"
-   }
-  ]
- },
- "decisionLog": [
-  {
-   "date": "2026-09-17",
-   "title": "The site serves from a URL, and the root mount had to be guarded",
-   "body": "FastAPI, a Procfile and two dependencies — no database, no agents, nothing else, so that a later failure could be attributed to one change. The static root is the repository root, because the pages link across <code>application/</code>, <code>design/</code> and <code>plan/</code> and folder-level mounts would break every cross-page link. That mount also served <code>.env</code> over HTTP on a local run, a live API key to anyone who asked, so any path segment beginning with a dot now returns 404. <code>/health</code> reports the deployed commit, which proved on its first use that the running build was the pushed one rather than a cache."
+  "version": 1,
+  "note": "Content source for the Plan & Progress page. <b>Two sections only, and that is the whole structure:</b> M1 — collapsible, holding a Plan table and a Status paragraph — and Decision Log. The Plan table carries completed and outstanding work in one list; prerequisites are rows marked done, never a separate section. Status is five sentences: what is finished, what is being built, what follows, the estimate, the contingency. Decision Log entries are datestamped, newest first, and none runs past five sentences. Cross-cutting infrastructure belongs in System Design; future milestones belong in Roadmap & Backlog. Neither is duplicated here.",
+  "site": {
+    "kicker": "AI/ML Signal · build plan",
+    "title": "Plan & Progress",
+    "lede": "One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.",
+    "footerNote": "Plan · the live milestone and the archive of completed work for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe.",
+    "header": {
+      "wordmark": "AI/ML Signal",
+      "wordmarkAccent": ".",
+      "href": "../application/Product.html",
+      "_contract": "THE HEADER IS IDENTICAL ON ALL FIVE PAGES. wordmark + wordmarkAccent render as one lockup in the serif face, the accent character in --accent. It is the site name and never changes per page. The page you are on is shown ONLY by nav.current. There is no descriptor pill, no page title, and no second active state in the header."
+    }
   },
-  {
-   "date": "2026-09-17",
-   "title": "The storage layer gates paid runs, not just persistence",
-   "body": "Deploying to Railway exposed something the local system never had: a container's filesystem is rebuilt from the repository on every deploy, and the cost breaker reads its spend ledger from a committed file. Hosted, that ledger reverts on each deploy and the breaker keeps authorising runs against a month it thinks is emptier than it is. No crash, no warning. The storage layer was already planned; what changed is that it now blocks the first paid run rather than merely preceding it."
-  },
-  {
-   "date": "2026-09-17",
-   "title": "The plan carries one milestone and one log",
-   "body": "Prerequisites, cross-cutting infrastructure and the appendix came out. Completed work now sits in the same table as outstanding work, marked done, because a reader wants one list of what the milestone rests on rather than three sections to reconcile. Cross-cutting infrastructure moved to System Design, where the architecture lives."
-  },
-  {
-   "date": "2026-09-17",
-   "title": "Reader delegates fetching rather than reimplementing it",
-   "body": "The 91 source domains were tested rather than assumed, but tested through a hosted fetcher with its own addresses, user-agent and rendering. A Python process on Railway has none of that, and datacenter addresses are blocked harder. Reader calls the same fetcher instead, which took the milestone from 7–9 sessions to 5–7."
-  },
-  {
-   "date": "2026-09-17",
-   "title": "Reader's eval is deliberately thin",
-   "body": "Only canonicalisation gets a golden set, because Reader's other failures are visible — a weak item shows up in the edition and is caught in seconds. A machine eval earns its cost where failure is <em>silent</em>, and dedup merging two different articles is the one silent case. The existing digest is the precedent: no machine eval, and it performs well, because its reader is its eval. Corroboration labelling moved to the backlog with a trigger for revisiting it."
-  },
-  {
-   "date": "2026-09-16",
-   "title": "Weekly, and the two clocks are separate",
-   "body": "A daily brief optimises for missing nothing, and what it produces is a queue — which is why the nightly predecessor was retired despite working as designed. Monthly is too slow for a field that moves weekly. Ingestion runs continuously because it is deterministic and nearly free; judgement runs weekly because judgement is what costs money."
-  },
-  {
-   "date": "2026-09-16",
-   "title": "Half-built surfaces leave the site rather than wearing a badge",
-   "body": "Practice and Control Hub are off the navigation until their milestones, and their pages were deleted rather than badged. A surface reading <em>soon</em> on one page while showing real content on another was live, and that inconsistency is the reason for the rule. Their content contracts stay in the repository."
-  },
-  {
-   "date": "2026-09-15",
-   "title": "The grader was failing in both directions, and a new case found it",
-   "body": "Every golden unit expected nothing to be flagged, so a grader that flagged nothing passed everything. A case with a fabrication planted on purpose failed on its first run, and measuring five runs per case found 18 false positives on the clean day and the plant missed three times in five. Splitting the Framer's output into checkable claims and its own reading, then sending only the claims, took false positives to zero. The missed-fabrication half is still open and its fix is designed."
-  },
-  {
-   "date": "2026-08-19",
-   "title": "The eval harness lands, and the grader goes under test itself",
-   "body": "<code>run_evals.py</code> runs faithfulness as a hard gate, structural assertions free, and a usefulness rubric that reports and never blocks. The grader's original bug was scope rather than carelessness: shown the excerpt first, it enumerated the <em>excerpt's</em> claims and checked them against themselves. Usefulness stays ungated until there are real ratings to calibrate against."
-  },
-  {
-   "date": "2026-08-09",
-   "title": "The Framer is built and its voice passes",
-   "body": "Seven items, two marked DO THIS, about five minutes to read, $0.10 a run, batched into two API calls. The thread carries a real correlation and reaches its own conclusion rather than summarising. Faithfulness was set as a hard zero-hallucination gate and usefulness as a soft learned target, which is the split everything since has been built on. The run also produced the first false positive, which became the first golden case."
-  },
-  {
-   "date": "2026-08-09",
-   "title": "First commit, and the habit that came with it",
-   "body": "Deliberately low-stakes — a README and a commit — to learn the Claude Code loop before touching agents. Each step was approved individually rather than waved through, which is the right habit while learning what the tool does unprompted."
-  }
- ],
- "_removedCurrentStatus": "Removed 2026-09-17. It was a banner restating what the Status section now says, and two statuses drift the moment one is updated and the other is not. Status lives in exactly one place: inside the milestone it describes.",
- "_statusVocabulary": {
-  "note": "Four status values, and each should read as its own state rather than as a shade of alarm.",
-  "values": [
-   {
-    "value": "DONE",
-    "meaning": "Finished. Settled, not celebratory.",
-    "colour": "--ok, outlined or lightly tinted"
-   },
-   {
-    "value": "IN PROGRESS",
-    "meaning": "Being worked on right now. Exactly one row carries this, and the milestone itself shows a percentage instead. Active is a neutral state, and the colour should say <em>here</em>, not <em>problem</em>.",
-    "colour": "<b>Mustard, not red.</b> Fill <code>--active-soft</code> #F5EAD0 with <code>--active</code> #7A5F14 text and a 1px <code>--active</code> border — the same lightly-tinted treatment DONE gets in green, so the two read as members of one scale rather than as success and failure. <b>Do not use --accent or --warn here</b>; both are terracotta and both read as danger."
-   },
-   {
-    "value": "TO DO",
-    "meaning": "Planned, not started. Quiet.",
-    "colour": "--faint, outlined"
-   },
-   {
-    "value": "TO DO · blocks paid runs",
-    "meaning": "Planned, not started, and it gates something. The only row with an ordering constraint.",
-    "colour": "<code>--faint</code> outline for the TO DO half, and the blocker half in <code>--warn</code> terracotta with a warning mark. <b>This is the only place terracotta is correct on this page</b> — it is the one row where something really is at risk."
-   }
-  ]
- },
- "_paletteAddition": {
-  "why": "The palette had no colour for <em>active</em>. <code>--ok</code> is green for done, <code>--faint</code> grey for idle, and <code>--accent</code> and <code>--warn</code> are <b>the same terracotta</b> (#B5502A). So anything in progress was rendered in the danger colour by default — not a rendering mistake, a gap in the vocabulary.",
-  "tokens": [
-   {
-    "name": "--active",
-    "hex": "#7A5F14",
-    "use": "text and border for the in-progress state — a deep mustard, warm enough to belong beside the cream paper and clearly not the terracotta"
-   },
-   {
-    "name": "--active-soft",
-    "hex": "#F5EAD0",
-    "use": "the pill's fill — a light mustard tint, the amber counterpart to the green DONE tint"
-   }
+  "phases": [
+    {
+      "id": "m1",
+      "code": "M1",
+      "title": "Reading, Writing & Hosting",
+      "status": "45%",
+      "collapsible": true,
+      "endState": "Reader and Framer running on Railway with no local dependency, both gated, producing the weekly debrief at a URL. <b>Exit is binary:</b> the canonicalisation gate green including a planted duplicate; faithfulness and structural gates green on a golden week including a planted fabrication; the Weekly Digest tab rendering the debrief; thumbs captured.",
+      "plan": {
+        "title": "Plan",
+        "note": "Everything this milestone rests on, complete and outstanding in one table. The four rows marked done were finished before the pivot, and all four carried whole — nothing was partially reused. One row carries an ordering constraint rather than just a status: the storage layer must land before the hosted system makes a paid call.",
+        "head": [
+          "Activity",
+          "Outcome",
+          "Why it matters",
+          "Status"
+        ],
+        "rows": [
+          [
+            "The Claude Code loop and the repo",
+            "Scaffolding, README, first commit, and the JSON-content → Claude Design → HTML pipeline every page still uses",
+            "This is the method the milestone is built with, not an artifact it produced. The pivot did not touch it.",
+            "<b>DONE</b>"
+          ],
+          [
+            "The Framer agent",
+            "<code>agents/framer.py</code>, <code>framer-prompt.md</code>, <code>framer-contract.md</code>, structured output, prompt caching, model routing, the cost breaker",
+            "M1 ports this unchanged. The pivot edited two profile key names and a docstring, and nothing else.",
+            "<b>DONE</b>"
+          ],
+          [
+            "The eval harness and golden set",
+            "<code>run_evals.py</code>, two frozen cases with hand labels, faithfulness and structural hard gates, a measured baseline",
+            "M1's exit criteria are written in terms of these gates, and the baseline is the only thing the next change can be compared against.",
+            "<b>DONE</b>"
+          ],
+          [
+            "The facts / interpretation split",
+            "Framer emits <code>split</code> and <code>threadSplit</code>; only factual clauses reach the grader; coverage is a hard gate",
+            "Took false positives on the clean day from 18 to 0, structurally — flagged clauses are no longer sent, so they cannot be flagged.",
+            "<b>DONE</b>"
+          ],
+          [
+            "Deploy the skeleton on Railway",
+            "App, Postgres and scheduler live at <code>aiml-signal-system-production.up.railway.app</code>; all five pages serve from it with no local dependency; <code>/health</code> reports the deployed commit",
+            "Everything else assumes a host. It also dissolves the constraint the old digest was built around — that a scheduled run cannot write to its own page.",
+            "<b>DONE</b>"
+          ],
+          [
+            "Extract the shared plumbing",
+            "<code>agents/budget.py</code> and <code>agents/llm.py</code>, with the breaker upgraded to stop-<em>before</em>",
+            "Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies.",
+            "IN PROGRESS"
+          ],
+          [
+            "Storage layer, with the excerpt rule",
+            "Postgres for items, sources, graph, runs and feedback; blob storage for excerpts, <b>written once at fetch time and never re-fetched</b>",
+            "The faithfulness gate compares a span against the stored excerpt — re-fetch later and a publisher's edit turns the gate red for no reason. <b>And it must land before the first hosted run that spends money.</b> The cost breaker reads <code>usage.json</code>, a file rebuilt from the repository on every deploy, so on Railway its memory of the month's spend silently reverts to whatever was last committed. It would not crash or warn — it would simply keep authorising runs.",
+            "TO DO · <b>blocks paid runs</b>"
+          ],
+          [
+            "Reader — Scout and Gatekeeper merged",
+            "Canonicalisation, dedup, provenance and corroboration; seeded with 91 tiered domains; <code>/add-news</code> fetches on arrival. <b>Fetching is delegated, not reimplemented.</b>",
+            "Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing <code>fetch()</code> would mean re-earning a result that already exists.",
+            "TO DO"
+          ],
+          [
+            "Reader's canonicalisation gate",
+            "A golden set of URL pairs that must and must not collapse, including a planted near-duplicate. Free, deterministic, no model",
+            "Dedup silently merging two <em>different</em> articles is Reader's only invisible failure. Everything else it gets wrong, you see in the edition.",
+            "TO DO"
+          ],
+          [
+            "Port the Framer and its gate",
+            "The Framer writes Learning for the Week and This Week's Stories on the hosted system; the existing golden cases run against it",
+            "<b>Port it, do not extend it.</b> Moving a component and changing it at once means a red run cannot be attributed to either.",
+            "TO DO"
+          ],
+          [
+            "The Weekly Digest surface",
+            "Two subsections with a sticky sub-nav, thumbs up and down, and a free-form box on thumbs-down",
+            "The first real label this system has had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against.",
+            "TO DO"
+          ]
+        ]
+      },
+      "statusSection": {
+        "title": "Status",
+        "body": "<b>Four of eleven activities are done, all carried in from before the pivot:</b> the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0. <b>Railway is part-built</b> — the project exists and Postgres is online, while the app service fails on a missing start command because the repository has no web server yet, which is the next commit. <b>After it come</b> the shared plumbing extraction, the storage layer with its write-once excerpt rule, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The estimate is 5–7 sessions, two to three weeks part-time</b>, revised down from 7–9 by that delegation and by cutting Reader's eval to the one check whose failure is silent. <b>If it runs long</b>, Reader launches against the ten to fifteen domains publishing clean feeds and the rest moves to the backlog — worth about a session and a half, and taken only if M1 passes four sessions without Reader fetching reliably."
+      }
+    }
   ],
-  "note": "Belongs in tokens.css when that lands; carried here meanwhile so the page and the record agree."
- }
+  "lastUpdated": "2026-09-17",
+  "nav": {
+    "current": "Plan &amp; Progress",
+    "items": [
+      {
+        "label": "Product",
+        "href": "../application/Product.html"
+      },
+      {
+        "label": "Weekly Digest",
+        "href": "../application/Weekly-Digest.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Roadmap &amp; Backlog",
+        "href": "../plan/Roadmap.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  },
+  "decisionLog": [
+    {
+      "date": "2026-09-17",
+      "title": "The site serves from a URL, and the root mount had to be guarded",
+      "body": "FastAPI, a Procfile and two dependencies — no database, no agents, nothing else, so that a later failure could be attributed to one change. The static root is the repository root, because the pages link across <code>application/</code>, <code>design/</code> and <code>plan/</code> and folder-level mounts would break every cross-page link. That mount also served <code>.env</code> over HTTP on a local run, a live API key to anyone who asked, so any path segment beginning with a dot now returns 404. <code>/health</code> reports the deployed commit, which proved on its first use that the running build was the pushed one rather than a cache."
+    },
+    {
+      "date": "2026-09-17",
+      "title": "The storage layer gates paid runs, not just persistence",
+      "body": "Deploying to Railway exposed something the local system never had: a container's filesystem is rebuilt from the repository on every deploy, and the cost breaker reads its spend ledger from a committed file. Hosted, that ledger reverts on each deploy and the breaker keeps authorising runs against a month it thinks is emptier than it is. No crash, no warning. The storage layer was already planned; what changed is that it now blocks the first paid run rather than merely preceding it."
+    },
+    {
+      "date": "2026-09-17",
+      "title": "The plan carries one milestone and one log",
+      "body": "Prerequisites, cross-cutting infrastructure and the appendix came out. Completed work now sits in the same table as outstanding work, marked done, because a reader wants one list of what the milestone rests on rather than three sections to reconcile. Cross-cutting infrastructure moved to System Design, where the architecture lives."
+    },
+    {
+      "date": "2026-09-17",
+      "title": "Reader delegates fetching rather than reimplementing it",
+      "body": "The 91 source domains were tested rather than assumed, but tested through a hosted fetcher with its own addresses, user-agent and rendering. A Python process on Railway has none of that, and datacenter addresses are blocked harder. Reader calls the same fetcher instead, which took the milestone from 7–9 sessions to 5–7."
+    },
+    {
+      "date": "2026-09-17",
+      "title": "Reader's eval is deliberately thin",
+      "body": "Only canonicalisation gets a golden set, because Reader's other failures are visible — a weak item shows up in the edition and is caught in seconds. A machine eval earns its cost where failure is <em>silent</em>, and dedup merging two different articles is the one silent case. The existing digest is the precedent: no machine eval, and it performs well, because its reader is its eval. Corroboration labelling moved to the backlog with a trigger for revisiting it."
+    },
+    {
+      "date": "2026-09-16",
+      "title": "Weekly, and the two clocks are separate",
+      "body": "A daily brief optimises for missing nothing, and what it produces is a queue — which is why the nightly predecessor was retired despite working as designed. Monthly is too slow for a field that moves weekly. Ingestion runs continuously because it is deterministic and nearly free; judgement runs weekly because judgement is what costs money."
+    },
+    {
+      "date": "2026-09-16",
+      "title": "Half-built surfaces leave the site rather than wearing a badge",
+      "body": "Practice and Control Hub are off the navigation until their milestones, and their pages were deleted rather than badged. A surface reading <em>soon</em> on one page while showing real content on another was live, and that inconsistency is the reason for the rule. Their content contracts stay in the repository."
+    },
+    {
+      "date": "2026-09-15",
+      "title": "The grader was failing in both directions, and a new case found it",
+      "body": "Every golden unit expected nothing to be flagged, so a grader that flagged nothing passed everything. A case with a fabrication planted on purpose failed on its first run, and measuring five runs per case found 18 false positives on the clean day and the plant missed three times in five. Splitting the Framer's output into checkable claims and its own reading, then sending only the claims, took false positives to zero. The missed-fabrication half is still open and its fix is designed."
+    },
+    {
+      "date": "2026-08-19",
+      "title": "The eval harness lands, and the grader goes under test itself",
+      "body": "<code>run_evals.py</code> runs faithfulness as a hard gate, structural assertions free, and a usefulness rubric that reports and never blocks. The grader's original bug was scope rather than carelessness: shown the excerpt first, it enumerated the <em>excerpt's</em> claims and checked them against themselves. Usefulness stays ungated until there are real ratings to calibrate against."
+    },
+    {
+      "date": "2026-08-09",
+      "title": "The Framer is built and its voice passes",
+      "body": "Seven items, two marked DO THIS, about five minutes to read, $0.10 a run, batched into two API calls. The thread carries a real correlation and reaches its own conclusion rather than summarising. Faithfulness was set as a hard zero-hallucination gate and usefulness as a soft learned target, which is the split everything since has been built on. The run also produced the first false positive, which became the first golden case."
+    },
+    {
+      "date": "2026-08-09",
+      "title": "First commit, and the habit that came with it",
+      "body": "Deliberately low-stakes — a README and a commit — to learn the Claude Code loop before touching agents. Each step was approved individually rather than waved through, which is the right habit while learning what the tool does unprompted."
+    }
+  ],
+  "_removedCurrentStatus": "Removed 2026-09-17. It was a banner restating what the Status section now says, and two statuses drift the moment one is updated and the other is not. Status lives in exactly one place: inside the milestone it describes.",
+  "_statusVocabulary": {
+    "note": "Four status values, and each should read as its own state rather than as a shade of alarm.",
+    "values": [
+      {
+        "value": "DONE",
+        "meaning": "Finished. Settled, not celebratory.",
+        "colour": "--ok, outlined or lightly tinted"
+      },
+      {
+        "value": "IN PROGRESS",
+        "meaning": "Being worked on right now. Exactly one row carries this, and the milestone itself shows a percentage instead. Active is a neutral state, and the colour should say <em>here</em>, not <em>problem</em>.",
+        "colour": "<b>Mustard, not red.</b> Fill <code>--active-soft</code> #F5EAD0 with <code>--active</code> #7A5F14 text and a 1px <code>--active</code> border — the same lightly-tinted treatment DONE gets in green, so the two read as members of one scale rather than as success and failure. <b>Do not use --accent or --warn here</b>; both are terracotta and both read as danger."
+      },
+      {
+        "value": "TO DO",
+        "meaning": "Planned, not started. Quiet.",
+        "colour": "--faint, outlined"
+      },
+      {
+        "value": "TO DO · blocks paid runs",
+        "meaning": "Planned, not started, and it gates something. The only row with an ordering constraint.",
+        "colour": "<code>--faint</code> outline for the TO DO half, and the blocker half in <code>--warn</code> terracotta with a warning mark. <b>This is the only place terracotta is correct on this page</b> — it is the one row where something really is at risk."
+      }
+    ]
+  },
+  "_paletteAddition": {
+    "why": "The palette had no colour for <em>active</em>. <code>--ok</code> is green for done, <code>--faint</code> grey for idle, and <code>--accent</code> and <code>--warn</code> are <b>the same terracotta</b> (#B5502A). So anything in progress was rendered in the danger colour by default — not a rendering mistake, a gap in the vocabulary.",
+    "tokens": [
+      {
+        "name": "--active",
+        "hex": "#7A5F14",
+        "use": "text and border for the in-progress state — a deep mustard, warm enough to belong beside the cream paper and clearly not the terracotta"
+      },
+      {
+        "name": "--active-soft",
+        "hex": "#F5EAD0",
+        "use": "the pill's fill — a light mustard tint, the amber counterpart to the green DONE tint"
+      }
+    ],
+    "note": "Belongs in tokens.css when that lands; carried here meanwhile so the page and the record agree."
+  }
 }
