@@ -177,16 +177,34 @@
     .filter(Boolean);
 
   if (targets.length && "IntersectionObserver" in window) {
+    /* Stash what mark() overwrites, per the rule at the top of this file. Note it is
+     * `style.background`, the shorthand, not `style.backgroundColor`: the bundle sets
+     * `background: var(--accent-soft)`, and a var() inside a shorthand cannot be
+     * decomposed into longhands by the CSSOM, so backgroundColor reads empty while the
+     * value is plainly there and computes to rgb(244, 231, 223). Reading the wrong one
+     * is how this treatment looked like it had no background at all. */
     targets.forEach(function (t) {
       t.link.dataset.c0 = t.link.style.color || "";
-      t.link.dataset.w0 = t.link.style.fontWeight || "";
+      t.link.dataset.b0 = t.link.style.background || "";
     });
 
+    /* These values are measured from the rendered bundle, not read off its source.
+     * Active is --accent text on an --accent-soft tint; inactive is --soft text on
+     * transparent. Two things that look like omissions are deliberate:
+     *
+     *  - Weight is never touched. The bundle leaves each entry at its authored weight,
+     *    so an active sub-entry stays 400 and an active top-level entry stays 500.
+     *    Forcing 600 here made the highlight heavier than the reference.
+     *  - Inactive is --soft, not the stashed original. The bundle normalises every
+     *    inactive entry to --soft, including sub-entries the markup authored as
+     *    --faint, so restoring the stash would leave the sub-entries too pale. The
+     *    stash is still recorded: once mark() has run it is the only copy of what the
+     *    markup actually said. */
     var mark = function (active) {
       targets.forEach(function (t) {
         var on = t.link === active;
-        t.link.style.color = on ? "var(--accent)" : t.link.dataset.c0;
-        t.link.style.fontWeight = on ? "600" : t.link.dataset.w0;
+        t.link.style.color = on ? "var(--accent)" : "var(--soft)";
+        t.link.style.background = on ? "var(--accent-soft)" : "transparent";
         if (on) t.link.setAttribute("aria-current", "true");
         else t.link.removeAttribute("aria-current");
       });
