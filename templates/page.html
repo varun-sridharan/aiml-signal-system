@@ -652,5 +652,14 @@ class Component extends DCLogic {
   renderVals(){ return {}; }
 }
 </script>
+{#
+  The block above is inert: its type is text/x-dc, so no browser executes it, and its
+  body subclasses DCLogic, which only exists inside Claude Design's viewer. It stays
+  because it is the record of what the design intended each hook to do -- and site.js
+  reads accentColor back out of its data-props attribute.
+
+  This is the script that actually runs. It drives the same hooks in plain JS.
+#}
+<script src="/static/site.js" defer></script>
 </body>
 </html>
