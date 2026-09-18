@@ -137,12 +137,23 @@
   var entries = $$("[data-toc]");
 
   if (search && entries.length) {
+    /* Stash each row's original display before the first filter. These entries carry
+     * an inline display:flex from the exported markup and nothing in the stylesheet
+     * repeats it, so restoring with "" would delete the only rule setting it: the row
+     * reappears as a default inline anchor, its bullet and label lose the flex gap,
+     * and the list reflows onto one line. Same stash-and-restore rule the scrollspy
+     * uses, applied to the one property this section overwrites. */
+    entries.forEach(function (a) {
+      var row = a.closest("li") || a;
+      if (row.dataset.d0 === undefined) row.dataset.d0 = row.style.display || "";
+    });
+
     search.addEventListener("input", function () {
       var q = search.value.trim().toLowerCase();
       entries.forEach(function (a) {
         var hit = !q || (a.textContent || "").toLowerCase().indexOf(q) > -1;
         var row = a.closest("li") || a;
-        row.style.display = hit ? "" : "none";
+        row.style.display = hit ? row.dataset.d0 : "none";
       });
     });
     search.addEventListener("keydown", function (e) {
