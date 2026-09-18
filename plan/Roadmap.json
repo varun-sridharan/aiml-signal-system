@@ -33,17 +33,8 @@
   "lede": "What is being built now, what comes next, and every item deliberately left for later. One backlog, so there is nothing to reconcile.",
   "headerTitle": "Roadmap & Backlog",
   "headerNote": "milestones · single backlog",
-  "headerLinks": [
-   {
-    "label": "System Design",
-    "href": "../design/System-Design.html"
-   },
-   {
-    "label": "Plan & Progress",
-    "href": "../plan/Plan.html"
-   }
-  ],
-  "footerNote": "Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe."
+  "footerNote": "Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe.",
+  "_headerLinksRemoved": "Removed 2026-09-17. It listed links the five-item nav already carries, so rendering both put the same destinations twice in one header. The nav is the only place a cross-page link belongs."
  },
  "intent": {
   "title": "Where this is going",
@@ -141,6 +132,13 @@
       "size": "S",
       "origin": "Sep-17-2026 — found by a pre-commit check, after the break had already been committed to disk",
       "body": "Renaming two keys in <code>config/profile.json</code> for the weekly pivot broke the Framer: three call sites still indexed the old names and raised <code>KeyError</code> on the first real run. <b>The offline gate stayed green the whole time</b>, because both call sites sit on API paths that <code>--no-api</code> never reaches. <b>The check is trivial and free:</b> every <code>profile[...]</code> and <code>preferences[...]</code> key the code indexes must exist in <code>profile.json</code> — a regex over the source against the loaded config, no model, no API. It belongs in <code>run_structural</code> beside the coverage check. <b>The lesson is the more useful part:</b> “nothing changed behaviourally” was true of the code and false of the system, because the config the code reads is part of the system. A gate that only exercises the free paths will certify a broken run as green."
+     },
+     {
+      "id": "bk-corroboration-labels",
+      "title": "Hand labels for Reader's provenance and corroboration",
+      "size": "M",
+      "origin": "Sep-17-2026 — cut from M1 deliberately, not forgotten",
+      "body": "Reader judges whether an item has a primary source and independent corroboration. That judgement is model-made and could be graded against hand labels, the way the Framer's is. <b>It was cut from M1 because Reader's failures are visible:</b> a weak item that clears the bar shows up in the edition and gets caught by the reader in seconds. A machine eval earns its cost where failure is <em>silent</em>, which is why the Framer has one and why dedup keeps its golden set. <b>Revisit when either is true:</b> weak items start reaching editions faster than they are noticed, or Reader's judgement starts gating something automatic. Until then the existing digest is the precedent — no machine eval, and it performs well, because its reader is its eval."
      },
      {
       "id": "bk-two-call",

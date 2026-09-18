@@ -912,6 +912,46 @@
        "They belong to the reader, not to a run. The run reads them and states which values it used — silent fallback destroys trust in a number on screen."
       ]
      ]
+    },
+    {
+     "t": "h3",
+     "id": "cross-cutting",
+     "title": "Cross-cutting, over time",
+     "status": null
+    },
+    {
+     "t": "p",
+     "html": "Four things move on their own trajectory rather than landing in one milestone. They lived in the build plan until 2026-09-17; they belong here, because they are architecture rather than schedule."
+    },
+    {
+     "t": "table",
+     "head": [
+      "Concern",
+      "Today",
+      "Next"
+     ],
+     "rows": [
+      [
+       "<b>Data layer</b>",
+       "JSON files on disk",
+       "<b>Postgres at M1</b> — containers restart, and a JSON file on a container filesystem is memory with extra steps. pgvector and multi-tenant sessions only if this is ever productised; the <code>user_id</code> seam has been carried since the first commit for exactly that."
+      ],
+      [
+       "<b>Excerpt store</b>",
+       "—",
+       "<b>Write-once at M1.</b> Immutable by rule, because it is what makes the faithfulness gate reproducible."
+      ],
+      [
+       "<b>Observability</b>",
+       "<code>usage.json</code>, an append-only spend ledger",
+       "A structured per-run trace at M1; a real observability tool only if run volume ever justifies one."
+      ],
+      [
+       "<b>Cost</b>",
+       "Ledger and circuit-breaker, stop-<em>after</em>",
+       "<b>Stop-before at M1</b>, when a second agent starts spending — reserve the worst case and refuse to start unless it fits."
+      ]
+     ]
     }
    ]
   },
@@ -1853,7 +1893,7 @@
    "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
   }
  ],
- "lastUpdated": "2026-09-16",
+ "lastUpdated": "2026-09-17",
  "nav": {
   "current": "System Design",
   "items": [

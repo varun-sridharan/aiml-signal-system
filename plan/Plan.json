@@ -1,108 +1,116 @@
 {
  "version": 1,
- "note": "Content source for the Plan & Progress page. Edit this; ask Claude Design to refresh the design from it. SCOPE RULE: this page carries exactly one live milestone in detail, plus an archive of completed ones. Future milestones live in Roadmap & Backlog and are not duplicated here — a plan written three milestones ahead is a guess wearing a schedule. When a milestone completes it moves into `archive` with its decisions intact, and the next milestone's plan is written then, informed by what the last one taught. `status` is DONE | NOW | LATER and drives tile colour, pill and sidebar dot. `activities[]` renders the work table; `notes[]` renders the decision log inside the milestone. A milestone or phase may carry `statusNote` — HTML shown as a hover card on its status pill, using the same gloss-card mechanism as the System Design page. Use it when a status is true but incomplete.",
+ "note": "Content source for the Plan & Progress page. <b>Two sections only, and that is the whole structure:</b> M1 — collapsible, holding a Plan table and a Status paragraph — and Decision Log. The Plan table carries completed and outstanding work in one list; prerequisites are rows marked done, never a separate section. Status is five sentences: what is finished, what is being built, what follows, the estimate, the contingency. Decision Log entries are datestamped, newest first, and none runs past five sentences. Cross-cutting infrastructure belongs in System Design; future milestones belong in Roadmap & Backlog. Neither is duplicated here.",
  "site": {
   "kicker": "AI/ML Signal · build plan",
   "title": "Plan & Progress",
-  "lede": "One milestone at a time, in detail. Everything after it lives in the Roadmap; everything before it is archived here, decisions intact.",
+  "lede": "One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.",
   "headerTitle": "Plan & Progress",
   "headerNote": "one live milestone",
-  "headerLinks": [
-   {
-    "label": "Roadmap & Backlog",
-    "href": "Roadmap.html"
-   },
-   {
-    "label": "System Design",
-    "href": "../design/System-Design.html"
-   }
-  ],
-  "footerNote": "Plan · the live milestone and the archive of completed work for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe."
+  "footerNote": "Plan · the live milestone and the archive of completed work for <span style=\"font-family:var(--mono);font-size:11.5px\">aiml-signal-system</span>. Public-safe.",
+  "_headerLinksRemoved": "Removed 2026-09-17. It listed links the five-item nav already carries, so rendering both put the same destinations twice in one header. The nav is the only place a cross-page link belongs."
  },
- "currentStatus": {
-  "date": "2026-09-16",
-  "body": "The repo is <b>public</b> at <code>github.com/varun-sridharan/aiml-signal-system</code> and the Framer runs end to end with a gated eval harness. <b>The system is pivoting.</b> The AI Weekly News Digest — a scheduled cloud task that has run for weeks — knows what to say, has 91 tiered sources and a reader. This system knows how to prove what it says is true, and has no reader at all. The two are converging into one hosted product, and the Digest is retired once the new one has run clean for two to three weeks. <b>Now building M1:</b> Reader and Framer on Railway, both gated, producing the weekly debrief at a URL."
- },
- "howItWorks": [
-  "<b>One live milestone:</b> this page details the milestone being built now. Later milestones are in <a href=\"Roadmap.html\">Roadmap &amp; Backlog</a> with exit criteria but no task breakdown.",
-  "<b>Binary exit criteria:</b> a milestone is done when every criterion is observably true, not when the activities are ticked off.",
-  "<b>Plans are written late on purpose:</b> M2's detailed plan is written when M1 completes. Slipped items and newly discovered work land in the Roadmap first, then in the next plan.",
-  "<b>Activities say what and why;</b> the <b>how</b> lives in a canonical prompt under <a href=\"../prompts/\">prompts/</a>.",
-  "<b>Notes = decision log:</b> decisions, tradeoffs and what was rejected, recorded per milestone as it is built.",
-  "<b>Content vs design:</b> every document is JSON content rendered by a design from Claude Design. Claude edits the JSON; the HTML is generated and never hand-edited."
- ],
  "phases": [
   {
-   "num": 1,
    "id": "m1",
    "code": "M1",
-   "title": "Reading and writing, hosted",
-   "status": "NOW",
-   "time": "4–5 sessions",
-   "endState": "Reader and Framer running on Railway with no local dependency, both gated, producing the weekly debrief at a URL. <b>Exit is binary:</b> the canonicalisation gate is green including a planted duplicate; the faithfulness and structural gates are green on a golden week including a planted fabrication; the Weekly Digest tab renders the debrief; thumbs are captured.",
-   "why": "The first milestone that is a system rather than a store. Reader alone fills a database nobody can see, and a milestone whose exit criterion is invisible is a weak one. Two agents, two gates, one page.",
-   "activities": [
-    {
-     "activity": "Deploy the skeleton on Railway",
-     "outcome": "App, Postgres and scheduler live at a URL; the existing pages serve from it with zero local dependency",
-     "why": "Everything else in this milestone assumes a host. It also dissolves the constraint the old Digest was designed around — that a scheduled run cannot write to its own page",
-     "prompt": "—"
-    },
-    {
-     "activity": "Extract the shared plumbing",
-     "outcome": "<code>agents/budget.py</code> and <code>agents/llm.py</code>, with the breaker upgraded to stop-<em>before</em>",
-     "why": "Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies to keep in sync",
-     "prompt": "—"
-    },
-    {
-     "activity": "Storage layer, with the excerpt rule",
-     "outcome": "Postgres for items, sources, the interest graph, runs and feedback; blob storage for fetched excerpts, <b>written once at fetch time and never re-fetched</b>",
-     "why": "The faithfulness gate compares a quoted span against the stored excerpt. Re-fetch at grade time and a publisher's edit turns the gate red for no reason — the same class of problem as a model alias moving under a pinned test",
-     "prompt": "—"
-    },
-    {
-     "activity": "Reader — Scout and Gatekeeper merged",
-     "outcome": "Canonicalisation, dedup, provenance and corroboration; seeded with the Digest's 91 tiered domains; <code>/add-news</code> fetches immediately",
-     "why": "Two agents whose steps are fixed and whose work is mostly deterministic. Merging them removes a handoff that bought nothing",
-     "prompt": "—"
-    },
-    {
-     "activity": "Reader's evals",
-     "outcome": "A golden URL set with a planted near-duplicate (hard gate, free) and hand labels for corroboration; the miss ledger opens",
-     "why": "Canonicalisation is code answering a code question, so it gates at zero cost. The miss ledger tracks time-to-close, not count — unknown unknowns stay unknown, but a domain handed over twice is a visible failure",
-     "prompt": "—"
-    },
-    {
-     "activity": "Port the Framer and its gate, unchanged",
-     "outcome": "The Framer writes Learning for the Week and This Week's Stories on the hosted system; the existing golden cases run against it",
-     "why": "<b>Port it, do not extend it.</b> Moving a component and changing it at the same time means a red run cannot be attributed to either. The two-call fix and usefulness calibration are separate, later work",
-     "prompt": "<a href=\"../prompts/framer-prompt.md\">framer-prompt.md</a>"
-    },
-    {
-     "activity": "The Weekly Digest surface",
-     "outcome": "Two subsections — Learning for the Week, This Week's Stories — with thumbs up and down, and a free-form box on thumbs-down",
-     "why": "The first real label this system has ever had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against",
-     "prompt": "—"
-    }
-   ],
-   "notes": [
-    "<b>Cadence is a decision, not a default.</b> A daily brief optimises for missing nothing, and what it produces is a queue — which is why the previous daily digest was retired despite working as designed. Monthly is too slow for a field that moves weekly. <b>The two clocks are separate:</b> ingestion runs continuously because it is deterministic and costs almost nothing, while judgement runs weekly because judgement is what costs money.",
-    "<b>Event triggers, honestly.</b> Webhooks effectively do not exist in this space. <code>/add-news</code> is the one genuinely event-driven path and fetches on arrival. Feeds are the closest thing to an event source for the tiered domains, and a weekly crawl covers the rest.",
-    "<b>Practice and Control Hub are off the navigation until their milestones.</b> Half-built surfaces with a <em>soon</em> badge on one page and real content on another is worse than absence — that inconsistency was live on the site and is the reason for the rule. Their files stay in the repository; they are simply not linked."
-   ]
+   "title": "Reading, Writing & Hosting",
+   "status": "45%",
+   "collapsible": true,
+   "endState": "Reader and Framer running on Railway with no local dependency, both gated, producing the weekly debrief at a URL. <b>Exit is binary:</b> the canonicalisation gate green including a planted duplicate; faithfulness and structural gates green on a golden week including a planted fabrication; the Weekly Digest tab rendering the debrief; thumbs captured.",
+   "plan": {
+    "title": "Plan",
+    "note": "Everything this milestone rests on, complete and outstanding in one table. The four rows marked done were finished before the pivot, and all four carried whole — nothing was partially reused. One row carries an ordering constraint rather than just a status: the storage layer must land before the hosted system makes a paid call.",
+    "head": [
+     "Activity",
+     "Outcome",
+     "Why it matters",
+     "Status"
+    ],
+    "rows": [
+     [
+      "The Claude Code loop and the repo",
+      "Scaffolding, README, first commit, and the JSON-content → Claude Design → HTML pipeline every page still uses",
+      "This is the method the milestone is built with, not an artifact it produced. The pivot did not touch it.",
+      "<b>DONE</b>"
+     ],
+     [
+      "The Framer agent",
+      "<code>agents/framer.py</code>, <code>framer-prompt.md</code>, <code>framer-contract.md</code>, structured output, prompt caching, model routing, the cost breaker",
+      "M1 ports this unchanged. The pivot edited two profile key names and a docstring, and nothing else.",
+      "<b>DONE</b>"
+     ],
+     [
+      "The eval harness and golden set",
+      "<code>run_evals.py</code>, two frozen cases with hand labels, faithfulness and structural hard gates, a measured baseline",
+      "M1's exit criteria are written in terms of these gates, and the baseline is the only thing the next change can be compared against.",
+      "<b>DONE</b>"
+     ],
+     [
+      "The facts / interpretation split",
+      "Framer emits <code>split</code> and <code>threadSplit</code>; only factual clauses reach the grader; coverage is a hard gate",
+      "Took false positives on the clean day from 18 to 0, structurally — flagged clauses are no longer sent, so they cannot be flagged.",
+      "<b>DONE</b>"
+     ],
+     [
+      "Deploy the skeleton on Railway",
+      "App, Postgres and scheduler live at <code>aiml-signal-system-production.up.railway.app</code>; all five pages serve from it with no local dependency; <code>/health</code> reports the deployed commit",
+      "Everything else assumes a host. It also dissolves the constraint the old digest was built around — that a scheduled run cannot write to its own page.",
+      "<b>DONE</b>"
+     ],
+     [
+      "Extract the shared plumbing",
+      "<code>agents/budget.py</code> and <code>agents/llm.py</code>, with the breaker upgraded to stop-<em>before</em>",
+      "Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies.",
+      "IN PROGRESS"
+     ],
+     [
+      "Storage layer, with the excerpt rule",
+      "Postgres for items, sources, graph, runs and feedback; blob storage for excerpts, <b>written once at fetch time and never re-fetched</b>",
+      "The faithfulness gate compares a span against the stored excerpt — re-fetch later and a publisher's edit turns the gate red for no reason. <b>And it must land before the first hosted run that spends money.</b> The cost breaker reads <code>usage.json</code>, a file rebuilt from the repository on every deploy, so on Railway its memory of the month's spend silently reverts to whatever was last committed. It would not crash or warn — it would simply keep authorising runs.",
+      "TO DO · <b>blocks paid runs</b>"
+     ],
+     [
+      "Reader — Scout and Gatekeeper merged",
+      "Canonicalisation, dedup, provenance and corroboration; seeded with 91 tiered domains; <code>/add-news</code> fetches on arrival. <b>Fetching is delegated, not reimplemented.</b>",
+      "Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing <code>fetch()</code> would mean re-earning a result that already exists.",
+      "TO DO"
+     ],
+     [
+      "Reader's canonicalisation gate",
+      "A golden set of URL pairs that must and must not collapse, including a planted near-duplicate. Free, deterministic, no model",
+      "Dedup silently merging two <em>different</em> articles is Reader's only invisible failure. Everything else it gets wrong, you see in the edition.",
+      "TO DO"
+     ],
+     [
+      "Port the Framer and its gate",
+      "The Framer writes Learning for the Week and This Week's Stories on the hosted system; the existing golden cases run against it",
+      "<b>Port it, do not extend it.</b> Moving a component and changing it at once means a red run cannot be attributed to either.",
+      "TO DO"
+     ],
+     [
+      "The Weekly Digest surface",
+      "Two subsections with a sticky sub-nav, thumbs up and down, and a free-form box on thumbs-down",
+      "The first real label this system has had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against.",
+      "TO DO"
+     ]
+    ]
+   },
+   "statusSection": {
+    "title": "Status",
+    "body": "<b>Four of eleven activities are done, all carried in from before the pivot:</b> the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0. <b>Railway is part-built</b> — the project exists and Postgres is online, while the app service fails on a missing start command because the repository has no web server yet, which is the next commit. <b>After it come</b> the shared plumbing extraction, the storage layer with its write-once excerpt rule, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The estimate is 5–7 sessions, two to three weeks part-time</b>, revised down from 7–9 by that delegation and by cutting Reader's eval to the one check whose failure is silent. <b>If it runs long</b>, Reader launches against the ten to fifteen domains publishing clean feeds and the rest moves to the backlog — worth about a session and a half, and taken only if M1 passes four sessions without Reader fetching reliably."
+   },
+   "progress": {
+    "complete": 5,
+    "total": 11,
+    "percent": 45,
+    "label": "45% · 5 of 11",
+    "_rule": "Derived from the Plan table: rows whose status contains DONE, over total rows. <b>Recompute it whenever a row flips</b> — a hardcoded percentage is a number that goes stale silently, which is the failure this project keeps finding in other forms.",
+    "_render": "Show the percentage as the milestone's status pill, with the fraction beside it. The percentage says how far; the fraction says how big. 36% alone hides that eleven activities is the scale."
+   }
   }
  ],
- "crossCutting": {
-  "title": "Cross-cutting infrastructure",
-  "note": "A trajectory, not a single milestone.",
-  "items": [
-   "<b>Data layer:</b> JSON files today → <b>Postgres</b> at M1, because Railway containers restart and memory loses everything. pgvector and multi-tenant <code>sessions</code> only if this is ever productised. The <code>user_id</code> field has been carried from the first commit for exactly that reason.",
-   "<b>Excerpt store:</b> immutable, written once at fetch time. This is what makes the faithfulness gate reproducible — it is infrastructure, not a detail.",
-   "<b>Observability:</b> <code>usage.json</code> becomes a structured per-run trace at M1, and a real observability tool if run volume justifies one.",
-   "<b>Cost:</b> ledger and breaker exist; the breaker becomes stop-before at M1, when a second agent starts spending."
-  ]
- },
- "lastUpdated": "2026-09-16",
+ "lastUpdated": "2026-09-17",
  "nav": {
   "current": "Plan &amp; Progress",
   "items": [
@@ -128,131 +136,103 @@
    }
   ]
  },
- "archive": {
-  "title": "Completed",
-  "note": "Finished work, with its decision log intact. These were phases under the pre-pivot plan; the numbering is kept as it was so the decision log and the commit history still line up.",
-  "items": [
+ "decisionLog": [
+  {
+   "date": "2026-09-17",
+   "title": "The site serves from a URL, and the root mount had to be guarded",
+   "body": "FastAPI, a Procfile and two dependencies — no database, no agents, nothing else, so that a later failure could be attributed to one change. The static root is the repository root, because the pages link across <code>application/</code>, <code>design/</code> and <code>plan/</code> and folder-level mounts would break every cross-page link. That mount also served <code>.env</code> over HTTP on a local run, a live API key to anyone who asked, so any path segment beginning with a dot now returns 404. <code>/health</code> reports the deployed commit, which proved on its first use that the running build was the pushed one rather than a cache."
+  },
+  {
+   "date": "2026-09-17",
+   "title": "The storage layer gates paid runs, not just persistence",
+   "body": "Deploying to Railway exposed something the local system never had: a container's filesystem is rebuilt from the repository on every deploy, and the cost breaker reads its spend ledger from a committed file. Hosted, that ledger reverts on each deploy and the breaker keeps authorising runs against a month it thinks is emptier than it is. No crash, no warning. The storage layer was already planned; what changed is that it now blocks the first paid run rather than merely preceding it."
+  },
+  {
+   "date": "2026-09-17",
+   "title": "The plan carries one milestone and one log",
+   "body": "Prerequisites, cross-cutting infrastructure and the appendix came out. Completed work now sits in the same table as outstanding work, marked done, because a reader wants one list of what the milestone rests on rather than three sections to reconcile. Cross-cutting infrastructure moved to System Design, where the architecture lives."
+  },
+  {
+   "date": "2026-09-17",
+   "title": "Reader delegates fetching rather than reimplementing it",
+   "body": "The 91 source domains were tested rather than assumed, but tested through a hosted fetcher with its own addresses, user-agent and rendering. A Python process on Railway has none of that, and datacenter addresses are blocked harder. Reader calls the same fetcher instead, which took the milestone from 7–9 sessions to 5–7."
+  },
+  {
+   "date": "2026-09-17",
+   "title": "Reader's eval is deliberately thin",
+   "body": "Only canonicalisation gets a golden set, because Reader's other failures are visible — a weak item shows up in the edition and is caught in seconds. A machine eval earns its cost where failure is <em>silent</em>, and dedup merging two different articles is the one silent case. The existing digest is the precedent: no machine eval, and it performs well, because its reader is its eval. Corroboration labelling moved to the backlog with a trigger for revisiting it."
+  },
+  {
+   "date": "2026-09-16",
+   "title": "Weekly, and the two clocks are separate",
+   "body": "A daily brief optimises for missing nothing, and what it produces is a queue — which is why the nightly predecessor was retired despite working as designed. Monthly is too slow for a field that moves weekly. Ingestion runs continuously because it is deterministic and nearly free; judgement runs weekly because judgement is what costs money."
+  },
+  {
+   "date": "2026-09-16",
+   "title": "Half-built surfaces leave the site rather than wearing a badge",
+   "body": "Practice and Control Hub are off the navigation until their milestones, and their pages were deleted rather than badged. A surface reading <em>soon</em> on one page while showing real content on another was live, and that inconsistency is the reason for the rule. Their content contracts stay in the repository."
+  },
+  {
+   "date": "2026-09-15",
+   "title": "The grader was failing in both directions, and a new case found it",
+   "body": "Every golden unit expected nothing to be flagged, so a grader that flagged nothing passed everything. A case with a fabrication planted on purpose failed on its first run, and measuring five runs per case found 18 false positives on the clean day and the plant missed three times in five. Splitting the Framer's output into checkable claims and its own reading, then sending only the claims, took false positives to zero. The missed-fabrication half is still open and its fix is designed."
+  },
+  {
+   "date": "2026-08-19",
+   "title": "The eval harness lands, and the grader goes under test itself",
+   "body": "<code>run_evals.py</code> runs faithfulness as a hard gate, structural assertions free, and a usefulness rubric that reports and never blocks. The grader's original bug was scope rather than carelessness: shown the excerpt first, it enumerated the <em>excerpt's</em> claims and checked them against themselves. Usefulness stays ungated until there are real ratings to calibrate against."
+  },
+  {
+   "date": "2026-08-09",
+   "title": "The Framer is built and its voice passes",
+   "body": "Seven items, two marked DO THIS, about five minutes to read, $0.10 a run, batched into two API calls. The thread carries a real correlation and reaches its own conclusion rather than summarising. Faithfulness was set as a hard zero-hallucination gate and usefulness as a soft learned target, which is the split everything since has been built on. The run also produced the first false positive, which became the first golden case."
+  },
+  {
+   "date": "2026-08-09",
+   "title": "First commit, and the habit that came with it",
+   "body": "Deliberately low-stakes — a README and a commit — to learn the Claude Code loop before touching agents. Each step was approved individually rather than waved through, which is the right habit while learning what the tool does unprompted."
+  }
+ ],
+ "_removedCurrentStatus": "Removed 2026-09-17. It was a banner restating what the Status section now says, and two statuses drift the moment one is updated and the other is not. Status lives in exactly one place: inside the milestone it describes.",
+ "_statusVocabulary": {
+  "note": "Four status values, and each should read as its own state rather than as a shade of alarm.",
+  "values": [
    {
-    "num": 1,
-    "id": "phase-1",
-    "title": "First commit &amp; the Claude Code loop",
-    "status": "DONE",
-    "time": "~60 min",
-    "endState": "all scaffolding committed &amp; pushed to GitHub via a Claude Code session you drove yourself.",
-    "why": "your work becomes versioned and accessible anywhere, and you learn the core approve-edits loop on a low-stakes task before building agents.",
-    "activities": [
-     {
-      "activity": "Review repo with Claude Code",
-      "outcome": "You see how it reads the codebase before editing",
-      "why": "Builds trust in what it will change",
-      "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
-     },
-     {
-      "activity": "Flesh out README",
-      "outcome": "README describes the project + real folder structure",
-      "why": "Entry point for you and, later, the public",
-      "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
-     },
-     {
-      "activity": "First commit + push",
-      "outcome": "Everything lands on GitHub",
-      "why": "Versioned source of truth",
-      "prompt": "<a href=\"../prompts/p1-scaffold-commit.md\">p1-scaffold-commit.md</a>"
-     }
-    ],
-    "notes": [
-     "Repo stays private now; when exposed later, exclude <code>Control-Hub.html</code> + <code>data/</code> from the public build (personal telemetry).",
-     "Deliberately low-stakes (README + commit) to learn the CLI loop before touching agents.",
-     "<b>Done 2026-08-09:</b> committed as <code>e1661d7</code>, pushed to <code>origin/main</code>, generated with Opus 5.",
-     "Claude Code added <code>.DS_Store</code> to <code>.gitignore</code> (macOS junk) — one change beyond prompt scope, flagged transparently. Environment hygiene, not a code decision.",
-     "Confirmed the pages don't read <code>data/</code> yet (content inline) — wiring deferred to Phases 6 &amp; 9, as designed.",
-     "Practice: approved each step individually rather than blanket \"don't ask again\" — the right habit while learning."
-    ],
-    "code": "P1"
+    "value": "DONE",
+    "meaning": "Finished. Settled, not celebratory.",
+    "colour": "--ok, outlined or lightly tinted"
    },
    {
-    "num": 2,
-    "id": "phase-2",
-    "title": "Build &amp; prove the Framer",
-    "status": "DONE",
-    "time": "~60 min",
-    "endState": "a Framer agent that turns <code>data/evals/golden/reference_2026-08-04.json</code> into a brief matching the <b>Bento reference</b> voice.",
-    "why": "Framer quality is the riskiest assumption in the system — if the voice lands, the whole thing is worth building; it's the cheapest bet to de-risk first.",
-    "activities": [
-     {
-      "activity": "Finalize the Framer build prompt (+ Evals)",
-      "outcome": "Canonical prompt with faithfulness/usefulness graders baked in",
-      "why": "Reproducible recipe; evals from day one",
-      "prompt": "<a href=\"../prompts/p2-build-framer.md\">p2-build-framer.md</a>"
-     },
-     {
-      "activity": "Generate the Framer agent via Claude Code",
-      "outcome": "<code>agents/framer.py</code> runs on the sample day",
-      "why": "Your first real agent",
-      "prompt": "<a href=\"../prompts/framer-prompt.md\">framer-prompt.md</a>"
-     },
-     {
-      "activity": "Eyeball output vs the reference",
-      "outcome": "You judge whether the voice sounds right",
-      "why": "The go / no-go on the whole system",
-      "prompt": "<span class=\"pending\">— your taste is the gate</span>"
-     }
-    ],
-    "notes": [
-     "Locked Framer rules: worked examples on <b>AI items only</b>; synthesis \"thread\" required; <b>DO THIS</b> reserved for AI; reading-time header; inline connections.",
-     "Faithfulness = hard zero-hallucination gate (objective); usefulness = soft, learned target (subjective).",
-     "Test against <code>application/Signal.html</code>, not vibes.",
-     "<b>Done 2026-08-09 (commit df8adfd, Opus 5):</b> Framer built &amp; run — 7 items, 2 DO THIS, ~5 min read, <b>$0.10</b>. Batched to 2 calls (Opus framing + Haiku check) with prompt caching + cost breaker, all working.",
-     "<b>Voice verdict = GO:</b> thread carries a real correlation + contradiction and reaches its own conclusion; connections genuine. Two weak spots to tune later: iStar example clause doesn't parse; Kimi K3 example vaguer than the reference's concrete \"~1/10th cost\".",
-     "<b>Key finding → Phase 3:</b> the faithfulness check produced a <b>false positive</b> (flagged $965B as unsupported though it was in the excerpt). Two grader bugs: it missed a clause, and it graded thread/headline text against a single item's excerpt. The grader needs its own eval; the thread must be checked against the <em>union</em> of excerpts.",
-     "Deviations, both fine: built the prompt file fresh (option 3, no invented Scout list); switched the framing call to streaming after the SDK blocked a 24k-token non-streaming request (no spend)."
-    ],
-    "code": "P2"
+    "value": "IN PROGRESS",
+    "meaning": "Being worked on right now. Exactly one row carries this, and the milestone itself shows a percentage instead. Active is a neutral state, and the colour should say <em>here</em>, not <em>problem</em>.",
+    "colour": "<b>Mustard, not red.</b> Fill <code>--active-soft</code> #F5EAD0 with <code>--active</code> #7A5F14 text and a 1px <code>--active</code> border — the same lightly-tinted treatment DONE gets in green, so the two read as members of one scale rather than as success and failure. <b>Do not use --accent or --warn here</b>; both are terracotta and both read as danger."
    },
    {
-    "num": 3,
-    "id": "phase-3",
-    "title": "Framer eval harness (golden set)",
-    "status": "DONE",
-    "time": "~60 min",
-    "endState": "a tiny offline eval that scores the Framer (faithfulness assertion + usefulness rubric) against 1–2 labeled days.",
-    "why": "turns \"is the voice right?\" from a vibe into a number, and makes every future prompt tweak safe via regression.",
-    "activities": [
-     {
-      "activity": "Build a golden set from labeled days",
-      "outcome": "1 day frozen in <code>data/evals/golden/2026-08-04/</code> (input + output + labels)",
-      "why": "The fixed yardstick for regression",
-      "prompt": "<a href=\"../prompts/p3-framer-evals.md\">p3-framer-evals.md</a>"
-     },
-     {
-      "activity": "Faithfulness grader (claim decomposition)",
-      "outcome": "Grader rewritten: claim ledger with quoted spans, correct scope, code-verified evidence",
-      "why": "Objective hard gate; catches hallucination",
-      "prompt": "<a href=\"../prompts/p3-framer-evals.md\">same</a>"
-     },
-     {
-      "activity": "Usefulness rubric + run script",
-      "outcome": "<code>data/evals/run_evals.py</code> — one command, exit code gates",
-      "why": "Safe iteration on the Framer prompt",
-      "prompt": "<a href=\"../prompts/p3-framer-evals.md\">same</a>"
-     }
-    ],
-    "notes": [
-     "Eval harness lives in the repo from early on; the Tuner-driven learning matures later (needs weeks of data).",
-     "Held-out slice kept separate from anything the Tuner adapts on (train/test hygiene).",
-     "<b>First golden-set case comes free:</b> the Phase 2 grader false positive. Fix the check to (a) not miss clauses and (b) grade the thread against the union of all item excerpts, not one item's.",
-     "<b>Done 2026-08-19 (Opus 5):</b> <code>run_evals.py</code> runs three checks — faithfulness (hard gate, 1 Haiku call), structural assertions (hard gate, free), usefulness rubric (soft, reported). Both seeded regressions pass; run costs <b>~$0.02</b>.",
-     "<b>The grader's real bug was scope, not carelessness.</b> It was shown the excerpt first and the writing second, so it enumerated the <em>excerpt's</em> claims and never checked the framing at all — which is why $965B \"failed\" and why fabricated facts sailed through. Writing now comes first in the payload, the excerpt is labelled ground truth, and each claim must carry a verbatim span.",
-     "<b>Second false positive found while labelling:</b> the 2026-08-13 re-run flagged \"~80% of Q1 dollars\", which the excerpt states word for word. Seeded as a second regression case.",
-     "<b>Two extras beyond the brief,</b> both earned by a failing test: a code check that every quoted span is literally in the excerpt (a grader can invent a citation; a substring match can't), and <code>temperature=0</code> on the grader — at default sampling it disagreed with itself on ~1 run in 3, which would have failed builds at random. 5/5 clean runs after.",
-     "<b>Known limit, carried to Phase 8:</b> the gate is deterministic per input, but on <em>unseen</em> days the grader still sometimes enumerates an inference as a claim. Fine for regression (the golden day is fixed); revisit before the grader guards live briefs — likely by moving it to a stronger model.",
-     "Usefulness stays ungated until calibrated against your own ratings. Judge runs on Haiku to keep spend low; upgrade it the day it starts gating.",
-     "<b>Reopened 2026-09-15.</b> A second golden case, <code>golden/negative-01/</code>, was added to test the direction the suite could not test: every unit until now expected <code>expected_unsupported: []</code>, so a grader that flagged nothing passed everything. On its first run the new case failed, and re-running both cases five times each measured the grader rather than guessing at it. <b>2026-08-04:</b> 18 false positives, identical in all five runs — every one an implication, recommendation or worked-example scenario, which the grader's own prompt names as never-enumerate. <b>negative-01:</b> the planted distortion (“raised $965B” where the source says “valued at $965B”) was caught in 2 of 5 runs; in the other 3 the grader enumerated the <em>source's</em> sentences instead of the writing's — the same scope bug this phase closed, returning on the first case it had not been tested against. Ruled out: model drift (one snapshot, the alias never moved), sampling noise (byte-identical 5/5 on the clean case), mis-wired inputs (verified: <code>framing_from_framed_day(case[“output”])</code>), and wrong labels (they match the prompt's own rules). The harness itself is sound and did its job — the grader it grades is not. Numbers in <code>data/evals/baseline-2026-09-15.md</code>. Status left at DONE because the deliverable of this phase is the harness, and the harness is what found this.",
-     "<b>Half closed 2026-09-15.</b> The Framer now splits every field into <code>fact</code> and <code>interpretation</code> runs and only the fact runs reach the grader. <b>False positives on the clean day went 18 → 0</b>, identical across three runs, with grader errors 1 → 0 and output 2253 → 1309 tokens. That half is fixed <em>structurally</em> — the flagged clauses are no longer sent, so they cannot be flagged however the grader behaves. The other half is not: <code>negative-01</code> caught the plant 2 of 3, against 2 of 5 before, which establishes nothing at that n — and the split was never aimed at it. The miss is the grader reading the <em>source's</em> sentences instead of the writing's, which a facts-only payload does not address. Numbers in <code>data/evals/result-2026-09-15-split.md</code>."
-    ],
-    "statusNote": "<b>Done, with one issue open and scheduled.</b> The faithfulness gate passes on the clean day — false positives went <b>18 → 0</b>, identical across three runs, once the Framer began splitting its output into checkable claims and its own reading, and only the claims were sent to the grader. <b>What is still open:</b> on a case with a fabrication planted on purpose, the grader misses it roughly one run in three. The source says <em>“Anthropic is valued at $965B”</em>; the brief says <em>“Anthropic raised $965B”</em>. In the miss, the grader enumerates the <em>source's</em> sentence instead of the brief's, quotes it as its own evidence, and returns supported at confidence 1.0 — so the distortion is never examined. That is the dangerous direction: a false positive is loud and costs a good sentence, this is silent and reaches the reader. <b>The fix, scheduled for Phase 6:</b> split grading into two calls. The first enumerates claims with the excerpt withheld entirely, so there is nothing to copy from; the second judges that list against the excerpt. Structural rather than instructional — the prompt already forbids this in plain language and it happens anyway. <code>lifted_claims</code> already detects the behaviour deterministically (zero firings in 75 claims on the clean day) and becomes a regression detector once the fix lands.",
-    "code": "P3"
+    "value": "TO DO",
+    "meaning": "Planned, not started. Quiet.",
+    "colour": "--faint, outlined"
+   },
+   {
+    "value": "TO DO · blocks paid runs",
+    "meaning": "Planned, not started, and it gates something. The only row with an ordering constraint.",
+    "colour": "<code>--faint</code> outline for the TO DO half, and the blocker half in <code>--warn</code> terracotta with a warning mark. <b>This is the only place terracotta is correct on this page</b> — it is the one row where something really is at risk."
    }
   ]
+ },
+ "_paletteAddition": {
+  "why": "The palette had no colour for <em>active</em>. <code>--ok</code> is green for done, <code>--faint</code> grey for idle, and <code>--accent</code> and <code>--warn</code> are <b>the same terracotta</b> (#B5502A). So anything in progress was rendered in the danger colour by default — not a rendering mistake, a gap in the vocabulary.",
+  "tokens": [
+   {
+    "name": "--active",
+    "hex": "#7A5F14",
+    "use": "text and border for the in-progress state — a deep mustard, warm enough to belong beside the cream paper and clearly not the terracotta"
+   },
+   {
+    "name": "--active-soft",
+    "hex": "#F5EAD0",
+    "use": "the pill's fill — a light mustard tint, the amber counterpart to the green DONE tint"
+   }
+  ],
+  "note": "Belongs in tokens.css when that lands; carried here meanwhile so the page and the record agree."
  }
 }
