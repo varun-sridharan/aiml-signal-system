@@ -99,14 +99,6 @@
    "statusSection": {
     "title": "Status",
     "body": "<b>Four of eleven activities are done, all carried in from before the pivot:</b> the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0. <b>Railway is part-built</b> — the project exists and Postgres is online, while the app service fails on a missing start command because the repository has no web server yet, which is the next commit. <b>After it come</b> the shared plumbing extraction, the storage layer with its write-once excerpt rule, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The estimate is 5–7 sessions, two to three weeks part-time</b>, revised down from 7–9 by that delegation and by cutting Reader's eval to the one check whose failure is silent. <b>If it runs long</b>, Reader launches against the ten to fifteen domains publishing clean feeds and the rest moves to the backlog — worth about a session and a half, and taken only if M1 passes four sessions without Reader fetching reliably."
-   },
-   "progress": {
-    "complete": 5,
-    "total": 11,
-    "percent": 45,
-    "label": "45% · 5 of 11",
-    "_rule": "Derived from the Plan table: rows whose status contains DONE, over total rows. <b>Recompute it whenever a row flips</b> — a hardcoded percentage is a number that goes stale silently, which is the failure this project keeps finding in other forms.",
-    "_render": "Show the percentage as the milestone's status pill, with the fraction beside it. The percentage says how far; the fraction says how big. 36% alone hides that eleven activities is the scale."
    }
   }
  ],

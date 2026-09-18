@@ -1,0 +1,22 @@
+{#
+  Real webfonts for every rendered page.
+
+  WHY THIS EXISTS: the Claude Design bundles declare 34 @font-face rules whose `src`
+  values are internal bundler UUIDs. Inside the bundle its runtime resolves them; served
+  as a plain template they are 34 dead URLs, so /plan fell back to Georgia, the system
+  sans and Menlo while /plan/Plan.html rendered in the real faces. The bundles already
+  carry preconnect hints to fonts.googleapis.com with no stylesheet behind them — this
+  is the stylesheet those hints were waiting for.
+
+  This is an ADDITION. The bundle's verbatim <style> block is untouched; its dead
+  @font-face rules simply lose the race to these, which resolve.
+
+  The weight list is not the full families. It mirrors exactly what the bundle declares,
+  which is what Claude Design subset for this page: Newsreader 400/500/600 plus 400
+  italic, Public Sans 400/500/600/700, IBM Plex Mono 400/500. Same 34 faces, same
+  subsets. Mono at 600 (the status pills) is synthesised from 500 here exactly as it is
+  in the bundle, so the two render the same rather than one looking heavier.
+#}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
