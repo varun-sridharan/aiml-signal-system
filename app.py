@@ -11,12 +11,14 @@ this locally, where that file holds a real API key. Everything else under the ro
 is already in the public repo, so the guard is the whole of what needs hiding.
 """
 
+import json
 import os
 from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # WHAT: the repository root is the static root, and that is load-bearing.
 # CONCEPT: the pages live in application/, design/ and plan/, and link across each
@@ -26,6 +28,8 @@ from fastapi.staticfiles import StaticFiles
 ROOT = Path(__file__).resolve().parent
 
 HOME = "/application/Product.html"
+
+templates = Jinja2Templates(directory=ROOT / "templates")
 
 app = FastAPI(title="aiml-signal-system", docs_url=None, redoc_url=None)
 
@@ -61,6 +65,34 @@ def health() -> JSONResponse:
     if sha:
         body["sha"] = sha[:7]
     return JSONResponse(body)
+
+
+# WHAT: render plan/Plan.json through templates/page.html at request time.
+# CONCEPT: the first page that stops being a hand-regenerated ~800KB artefact. The
+# frozen plan/Plan.html stays exactly where it is and keeps serving from the static
+# mount — the two URLs sit side by side on purpose, so the rendered page can be
+# compared against the reference rather than trusted.
+#
+# Keys beginning with an underscore are authoring notes and are never rendered. The
+# template reads named keys only, so no underscore key can reach the page.
+@app.get("/plan")
+def plan(request: Request):
+    content = json.loads((ROOT / "plan" / "Plan.json").read_text(encoding="utf-8"))
+    # WHAT: pass the JSON through, minus its own progress block.
+    # CONCEPT: phases[0].progress is hardcoded and has already gone stale once. The
+    # template derives progress from the table instead, so the stale copy is left in
+    # the file for a later cleanup but never given to the renderer.
+    return templates.TemplateResponse(
+        request=request,
+        name="page.html",
+        context={
+            "site": content["site"],
+            "nav": content["nav"],
+            "phases": content["phases"],
+            "decisionLog": content["decisionLog"],
+            "lastUpdated": content["lastUpdated"],
+        },
+    )
 
 
 app.mount("/", StaticFiles(directory=ROOT, html=True), name="site")
