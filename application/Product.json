@@ -1,279 +1,233 @@
 {
- "version": 2,
- "lastUpdated": "2026-09-16",
- "note": "Content source for the Product page — the landing page and front door. It carries the story and the argument only: the problem, why the obvious fixes fail, the reframe, the trust problem, and where to go next. Deliberately NOT here: the agent-by-agent breakdown (that lives in System Design) and build status (that lives in Plan & Progress). Each section has a `layout` hint telling the design how wide to run: hero | prose | grid | band | split | cards. `nav` carries exact relative hrefs from application/ — do not infer paths, three were wrong when inferred. Today the page is generated in Claude Design from this file; there is no build script in this repo. Block types: p (html), h4 (label), list (items), table (head/rows), card (accent + nested blocks), figure (svg + caption), item (title/body for grids and cards).",
- "nav": {
-  "current": "Product",
-  "items": [
-   {
-    "label": "Product",
-    "href": "Product.html"
-   },
-   {
-    "label": "Weekly Digest",
-    "href": "Weekly-Digest.html"
-   },
-   {
-    "label": "System Design",
-    "href": "../design/System-Design.html"
-   },
-   {
-    "label": "Roadmap &amp; Backlog",
-    "href": "../plan/Roadmap.html"
-   },
-   {
-    "label": "Plan &amp; Progress",
-    "href": "../plan/Plan.html"
-   }
-  ]
- },
- "hero": {
-  "layout": "hero",
-  "kicker": "A weekly AI/ML brief that can prove it isn't making things up",
-  "title": "I stopped trying to keep up.",
-  "titleAccent": "So I built something that decides what's worth knowing.",
-  "lede": "One read a week. The fewest things I'd regret not understanding — not the most things covered. Every factual claim traced back to its source by code, not by a model's promise.",
-  "actions": [
-   {
-    "label": "See a real brief",
-    "href": "Weekly-Digest.html",
-    "primary": true
-   },
-   {
-    "label": "Read the engineering",
-    "href": "../design/System-Design.html",
-    "primary": false
-   }
+  "version": 2,
+  "lastUpdated": "2026-09-17",
+  "note": "Content source for the Product page, the landing page and front door. Audience is a product or executive reader, not a specialist. Keys beginning with an underscore are authoring notes and are never rendered.",
+  "nav": {
+    "current": "Product",
+    "items": [
+      {
+        "label": "Product",
+        "href": "Product.html"
+      },
+      {
+        "label": "Weekly Digest",
+        "href": "Weekly-Digest.html"
+      },
+      {
+        "label": "System Design",
+        "href": "../design/System-Design.html"
+      },
+      {
+        "label": "Roadmap &amp; Backlog",
+        "href": "../plan/Roadmap.html"
+      },
+      {
+        "label": "Plan &amp; Progress",
+        "href": "../plan/Plan.html"
+      }
+    ]
+  },
+  "hero": {
+    "layout": "hero",
+    "kicker": "A weekly AI/ML brief that can prove it isn't making things up",
+    "title": "I stopped trying to keep up.",
+    "titleAccent": "So I built something that decides what's worth knowing.",
+    "lede": "One read a week, built around a single question: what would I regret not knowing? Seven items, each with the reason it matters and the evidence checked by code.",
+    "actions": [
+      {
+        "label": "See a real brief",
+        "href": "Weekly-Digest.html",
+        "primary": true
+      },
+      {
+        "label": "Read the engineering",
+        "href": "../design/System-Design.html",
+        "primary": false
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "the-problem",
+      "layout": "prose-figure",
+      "kicker": "The problem",
+      "title": "Twenty minutes a day, and I was still behind",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Every morning I opened five to ten tabs of AI/ML news and closed them twenty minutes later knowing roughly what I knew before. A model shipped. A benchmark moved two points. Somebody raised a round. Every item arrived with the same weight as every other item, and the work of deciding which ones mattered to <em>my</em> work fell entirely on me, at 7am, before coffee."
+        },
+        {
+          "t": "p",
+          "html": "The twenty minutes were never the real cost. The real cost arrived weeks later, when something I had scrolled past turned out to be the thing that would have taken a project from idea to production in half the time. <b>A missed capability is a missed quarter.</b> The penalty for reading badly is not an awkward moment in a meeting, it is a slower time to value than the team next door."
+        },
+        {
+          "t": "p",
+          "html": "Then the useful realization. I was trying to keep up, which meant trying to cover everything, and coverage was never available. Every approach I had was already a filter. The only open question was whether the filter was mine, deliberate and inspectable, or someone else's, implicit and tuned for engagement. <b>So I gave up on coverage.</b>"
+        },
+        {
+          "t": "p",
+          "html": "The target became the fewest items I would regret missing, and the system is allowed to say <em>“quiet week, go build something”</em>. Weekly rather than daily, because a daily brief optimises for missing nothing, and what that produces is a queue. Meaning needs a week of material before it exists at all."
+        }
+      ],
+      "_layout": "Prose in the left column at about 58% width, the figure in the right at about 42%, top-aligned with the first paragraph rather than the heading. The heading and kicker span the full width above both. The figure is sticky while the prose scrolls past it, and under about 900px it drops beneath the prose at full width with sticky off. It carries the argument visually, so it must not be shrunk to a thumbnail.",
+      "figure": {
+        "caption": "Nine different things, each drawn with its own icon and given exactly the same weight. Reading stops at the dashed line. The one that mattered was below it.",
+        "alt": "A morning feed of nine different AI news items, each with its own icon and identical visual weight. A dashed line marks where reading stops after twenty minutes. Below it, faded, sits the one item that mattered.",
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 520 652\" role=\"img\" aria-label=\"A morning feed of nine different AI news items, each drawn with its own icon and given exactly the same visual weight. A dashed line marks where reading stops after twenty minutes. Below that line, faded, sits the one item that mattered.\" style=\"width:100%;height:auto;display:block\"><defs><symbol id=\"i-launch\" viewBox=\"0 0 24 24\"><path d=\"M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-chart\" viewBox=\"0 0 24 24\"><path d=\"M4 20V12 M9.3 20V6.5 M14.6 20v-9 M20 20V9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-coin\" viewBox=\"0 0 24 24\"><path d=\"M3 7h18v10H3z M12 12h.01 M12 9.6a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8z M6 10v4 M18 10v4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-paper\" viewBox=\"0 0 24 24\"><path d=\"M6 3h8l4 4v14H6z M14 3v4h4 M9 12h6 M9 16h6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-gavel\" viewBox=\"0 0 24 24\"><path d=\"M3 9l9-5 9 5 M4.5 9v8 M9.5 9v8 M14.5 9v8 M19.5 9v8 M3 20h18 M3 17h18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-code\" viewBox=\"0 0 24 24\"><path d=\"M9 7l-5 5 5 5 M15 7l5 5-5 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-trophy\" viewBox=\"0 0 24 24\"><path d=\"M7 4h10v5a5 5 0 0 1-10 0z M7 5H4v2a3 3 0 0 0 3 3 M17 5h3v2a3 3 0 0 1-3 3 M12 14v4 M8.5 21h7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-key\" viewBox=\"0 0 24 24\"><path d=\"M15.5 4a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z M15.5 8.5h.01 M12.3 11.7L4 20 M7 17l2.2 2.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"i-merge\" viewBox=\"0 0 24 24\"><path d=\"M4 5h4a4 4 0 0 1 4 4v6a4 4 0 0 0 4 4h4 M4 19h4a4 4 0 0 0 4-4 M17 16l3 3-3 3 M17 2l3 3-3 3 M16 5h4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol></defs><text x=\"8\" y=\"13\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"10\" letter-spacing=\"1.5\" fill=\"#8B8375\" font-weight=\"500\" text-anchor=\"start\">EVERY MORNING</text><g opacity=\"1\" color=\"#4C463D\"><rect x=\"8\" y=\"32\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"56\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-launch\" x=\"25.5\" y=\"45.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"60.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">A model ships</text></g><line x1=\"8\" y1=\"80\" x2=\"376\" y2=\"80\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"1\"/><g opacity=\"1\" color=\"#4C463D\"><rect x=\"8\" y=\"86\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"110\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-chart\" x=\"25.5\" y=\"99.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"114.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">A benchmark moves two points</text></g><line x1=\"8\" y1=\"134\" x2=\"376\" y2=\"134\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"1\"/><g opacity=\"1\" color=\"#4C463D\"><rect x=\"8\" y=\"140\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"164\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-coin\" x=\"25.5\" y=\"153.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"168.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">Somebody raises a round</text></g><line x1=\"8\" y1=\"188\" x2=\"376\" y2=\"188\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"1\"/><g opacity=\"1\" color=\"#4C463D\"><rect x=\"8\" y=\"194\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"218\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-paper\" x=\"25.5\" y=\"207.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"222.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">Another paper is posted</text></g><line x1=\"8\" y1=\"242\" x2=\"376\" y2=\"242\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"1\"/><line x1=\"0\" y1=\"255\" x2=\"392\" y2=\"255\" stroke=\"#B5502A\" stroke-width=\"1.5\" stroke-dasharray=\"5 5\"/><rect x=\"0\" y=\"247.5\" width=\"3.5\" height=\"15\" fill=\"#B5502A\"/><text x=\"400\" y=\"258.5\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"9.5\" letter-spacing=\"1.3\" fill=\"#B5502A\" font-weight=\"500\" text-anchor=\"start\">20 MIN</text><text x=\"400\" y=\"271\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"8.5\" letter-spacing=\"0.4\" fill=\"#8B8375\" font-weight=\"400\" text-anchor=\"start\">you stop reading</text><g opacity=\"0.6\" color=\"#4C463D\"><rect x=\"8\" y=\"270\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"294\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-gavel\" x=\"25.5\" y=\"283.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"298.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">A policy draft lands</text></g><line x1=\"8\" y1=\"318\" x2=\"376\" y2=\"318\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"0.6\"/><g opacity=\"0.44\" color=\"#4C463D\"><rect x=\"8\" y=\"324\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"348\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-code\" x=\"25.5\" y=\"337.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"352.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">An SDK is released</text></g><line x1=\"8\" y1=\"372\" x2=\"376\" y2=\"372\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"0.44\"/><g opacity=\"1\" color=\"#B5502A\"><rect x=\"8\" y=\"378\" width=\"368\" height=\"48\" rx=\"4\" fill=\"#F4E7DF\" stroke=\"#B5502A\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"402\" r=\"17\" fill=\"#B5502A\" fill-opacity=\"0.12\" stroke=\"#B5502A\" stroke-opacity=\"0\" stroke-width=\"1\"/><use href=\"#i-key\" x=\"25.5\" y=\"391.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"406.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#B5502A\" font-weight=\"600\" text-anchor=\"start\">The technique you could have shipped</text></g><line x1=\"8\" y1=\"426\" x2=\"376\" y2=\"426\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"1\"/><path d=\"M 378 402 L 388 402\" stroke=\"#B5502A\" stroke-width=\"1.5\" fill=\"none\"/><circle cx=\"390\" cy=\"402\" r=\"2.8\" fill=\"#B5502A\"/><text x=\"400\" y=\"400\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"9.5\" letter-spacing=\"1.3\" fill=\"#B5502A\" font-weight=\"500\" text-anchor=\"start\">THE ONE</text><text x=\"400\" y=\"413\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"8.5\" letter-spacing=\"0.4\" fill=\"#8B8375\" font-weight=\"400\" text-anchor=\"start\">that mattered</text><g opacity=\"0.28\" color=\"#4C463D\"><rect x=\"8\" y=\"432\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"456\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-trophy\" x=\"25.5\" y=\"445.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"460.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">A new leaderboard appears</text></g><line x1=\"8\" y1=\"480\" x2=\"376\" y2=\"480\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"0.28\"/><g opacity=\"0.18\" color=\"#4C463D\"><rect x=\"8\" y=\"486\" width=\"368\" height=\"48\" rx=\"4\" fill=\"none\" stroke=\"none\" stroke-width=\"1.5\"/><circle cx=\"36\" cy=\"510\" r=\"17\" fill=\"#4C463D\" fill-opacity=\"0.12\" stroke=\"#DED7C6\" stroke-opacity=\"0.55\" stroke-width=\"1\"/><use href=\"#i-merge\" x=\"25.5\" y=\"499.5\" width=\"21\" height=\"21\"/><text x=\"66\" y=\"514.5\" font-family=\"'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif\" font-size=\"13.5\" letter-spacing=\"0\" fill=\"#201C17\" font-weight=\"400\" text-anchor=\"start\">An acquisition rumour</text></g><line x1=\"8\" y1=\"534\" x2=\"376\" y2=\"534\" stroke=\"#EAE4D6\" stroke-width=\"1\" opacity=\"0.18\"/><circle cx=\"183\" cy=\"548\" r=\"1.6\" fill=\"#8B8375\" opacity=\"0.3\"/><circle cx=\"192\" cy=\"548\" r=\"1.6\" fill=\"#8B8375\" opacity=\"0.3\"/><circle cx=\"201\" cy=\"548\" r=\"1.6\" fill=\"#8B8375\" opacity=\"0.3\"/><line x1=\"8\" y1=\"606\" x2=\"376\" y2=\"606\" stroke=\"#EAE4D6\" stroke-width=\"1\"/><text x=\"8\" y=\"626\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"9.5\" letter-spacing=\"1.5\" fill=\"#8B8375\" font-weight=\"500\" text-anchor=\"start\">NINE DIFFERENT THINGS. THE SAME WEIGHT EACH.</text><text x=\"8\" y=\"642\" font-family=\"'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace\" font-size=\"9.5\" letter-spacing=\"1.5\" fill=\"#4C463D\" font-weight=\"500\" text-anchor=\"start\">THE ONE THAT MATTERED WAS BELOW THE LINE.</text></svg>",
+        "_technique": "Icons follow the slide-pitch-deck method: an inline <symbol> sprite referenced with <use>, one unique icon per row, each in a disc tinted to about 12% of its own colour. No icon fonts, no external assets. Palette is the page's, not the deck skill's."
+      }
+    },
+    {
+      "id": "the-scale",
+      "layout": "stats-split",
+      "_layout": "One composed block, not two. The glass stat tile occupies the left column at roughly 45% width; the heading and prose fill the right, which is dead space today. No kicker: the heading carries the section on its own. Under about 900px the tile stacks above the prose and both go full width. The tile owns the numbers and the prose owns the meaning, so the prose deliberately does not restate 23% or 2x.",
+      "title": "The haystack compounds. The needle does not.",
+      "stats": [
+        {
+          "value": "+23%",
+          "label": "more research published each year",
+          "source": {
+            "label": "arXiv submissions, 12 months to Jul 2026 vs the year before",
+            "href": "https://arxiv.org/stats/monthly_submissions"
+          }
+        },
+        {
+          "value": "0%",
+          "label": "more hours in your week to read it"
+        },
+        {
+          "value": "2×",
+          "label": "the volume by 2032, if the pace holds",
+          "source": {
+            "label": "doubling every 6.0 years, computed from the same data",
+            "href": "https://arxiv.org/stats/monthly_submissions"
+          }
+        },
+        {
+          "value": "7",
+          "label": "items in one edition of this brief"
+        }
+      ],
+      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of a real edition. <b>Nothing on this page is an illustrative figure.</b> A system whose entire claim is that it does not invent numbers cannot open with invented ones.",
+      "blocks": [
+        {
+          "t": "p",
+          "html": "Those first three figures are measured, not sampled. They compare the twelve months to July 2026 against the twelve before, from <a href=\"https://arxiv.org/stats/monthly_submissions\">arXiv's own submission record</a>. Ten years ago the same source carried a third of today's output, and AI is the fastest-growing part of it."
+        },
+        {
+          "t": "p",
+          "html": "Your reading week has not grown, and it will not. So the ratio of what exists to what you can personally examine gets worse every year, automatically, whether or not you get better at reading. <b>Finding the one thing that matters is a search problem whose odds decline on a schedule.</b>"
+        },
+        {
+          "t": "p",
+          "html": "All of that is before a single product launch, benchmark result, funding round or policy move. Research is only the part with a public counter on it. <b>An edition of this brief carries seven items</b>: a decision about the week rather than a summary of it, with the reasoning attached and the sources checked by code."
+        }
+      ]
+    },
+    {
+      "id": "why-the-obvious-fixes-failed",
+      "layout": "grid",
+      "kicker": "What didn't work",
+      "title": "The obvious fixes each fail in their own way",
+      "blocks": [
+        {
+          "t": "item",
+          "title": "Curated newsletters",
+          "body": "Written for a general audience, so relevance is a coincidence. They also need something exciting <em>every single day</em>, which is the pressure that manufactures noise."
+        },
+        {
+          "t": "item",
+          "title": "Aggregators and feeds",
+          "body": "Solved distribution, not judgement. I still had to read everything to find the two things that mattered."
+        },
+        {
+          "t": "item",
+          "title": "Asking a chatbot",
+          "body": "Fast, fluent, and no way to know when it was wrong. <b>A summary you cannot verify is worse than none</b>, because it feels like knowledge."
+        },
+        {
+          "t": "item",
+          "title": "Save it for later",
+          "body": "Later never came. The reading list became its own source of guilt rather than a solution to any."
+        }
+      ],
+      "close": "<b>What they all miss is the same thing.</b> None of them shortened the distance between a new idea and something running in production. They managed my awareness. The reason to read at all is to put a capability to work before it is common, and every one of these left that step entirely to me.",
+      "_close": "Rendered as a single full-width line beneath the card grid, set apart by a hairline rule above it. It is the theme the four cards share, so it must not look like a fifth card."
+    },
+    {
+      "id": "the-solution",
+      "layout": "steps-visual",
+      "_layout": "Mirrors the numbered-steps pattern at trajectory.ai: kicker, one H2, then three numbered steps stacked down the left, each a short bold label plus two or three sentences. A single visual panel sits to the right and changes with the active step. On narrow screens the visual drops under its own step. Numerals are large, set in the display face, and use --faint so they read as structure rather than content.",
+      "kicker": "The solution",
+      "title": "Three moves, in order, each one holding the next up",
+      "lede": "Everything reachable is narrowed to seven items, every line in them is traceable to a real source, and the thing doing the checking is graded too.",
+      "steps": [
+        {
+          "n": "1",
+          "title": "Narrow hard, then explain the choice",
+          "body": "Everything reachable gets cut down to a handful of items. Each one carries the single reason it matters and the tradeoff it implies, plus the thread connecting the week, which is usually the part worth knowing. Once a week it goes further and turns one item into a 60-minute exercise grounded in my own repositories, so reading becomes doing.",
+          "figureSpec": "A funnel in three bands, widest at the top. Top band labelled EVERYTHING REACHABLE, middle band noticeably narrower labelled WORTH A LOOK, bottom band a small block labelled SEVEN ITEMS. Under the bottom band, one further tag reading ONE EXERCISE. Only the final count is measured; label the upper bands as design targets so the figure does not overclaim.",
+          "_refSvg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 208\" role=\"img\" aria-label=\"A funnel narrowing everything reachable down to a handful of items\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"208\" fill=\"none\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">EACH MORNING</text><rect x=\"8\" y=\"44\" width=\"512\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.12\"/><text x=\"8\" y=\"82\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">everything reachable</text><rect x=\"8\" y=\"100\" width=\"98\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.28\"/><text x=\"8\" y=\"138\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">corroborated, not duplicated, material to me</text><rect x=\"8\" y=\"156\" width=\"19\" height=\"18\" rx=\"2\" fill=\"#b5502a\"/><text x=\"37\" y=\"170\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"11\" fill=\"#b5502a\">7 items</text><text x=\"8\" y=\"196\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#201c17\">framed into the brief, with the thread connecting them</text></svg>"
+        },
+        {
+          "n": "2",
+          "title": "Never let the writer mark its own work",
+          "body": "A summariser that occasionally invents a figure is not mildly flawed, it makes you confidently wrong in public. So three layers check the output, each catching something the one before it cannot. A model writes. A second model audits. Code proves the quoted evidence exists in the source, character for character.",
+          "figureSpec": "Three horizontal lanes labelled WRITES, AUDITS, PROVES. The first two lanes are drawn as model steps in the accent colour, the third in a plainer weight to signal that it is code rather than judgement. A short caption underneath: a model can invent a quote, a substring check cannot be talked into agreeing.",
+          "_refSvg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 172\" role=\"img\" aria-label=\"Three layers: a model writes, a second model checks, code proves the evidence is real\"><line x1=\"8\" y1=\"44\" x2=\"632\" y2=\"44\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">WRITES</text><text x=\"8\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A model drafts the brief</text><text x=\"8\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Given only each item's source</text><text x=\"8\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">excerpt to draw facts from.</text><line x1=\"222\" y1=\"34\" x2=\"222\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"244\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">CHECKS</text><text x=\"244\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A second model audits it</text><text x=\"244\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Lists every factual claim and</text><text x=\"244\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">must quote what supports it.</text><line x1=\"432\" y1=\"34\" x2=\"432\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"454\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#b5502a\">PROVES</text><text x=\"454\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#b5502a\">Code verifies the quote</text><text x=\"454\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Not literally in the source?</text><text x=\"454\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">The claim is rejected — whatever</text><text x=\"454\" y=\"130\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">the auditor concluded.</text></svg>"
+        },
+        {
+          "n": "3",
+          "title": "Grade the grader",
+          "body": "The auditor is a model, so it gets its own graded test set: real output frozen with hand-written labels, re-run on every change. Its first version passed a brief that had been deliberately seeded with a fake valuation, a fake date and a fake investor, because a scoping bug meant it had never read the writing it was auditing. A test that has never failed is not evidence of anything.",
+          "figureSpec": "Two cases side by side feeding one gate. Left case labelled CLEAN DAY with a tick. Right case labelled PLANTED FAULT with a warning mark. Both arrows meet at a single box labelled GATE, with a short note that the suite only means something when one case is built to fail."
+        }
+      ],
+      "proof": {
+        "value": "18 → 0",
+        "label": "false flags on a real edition, after one fix",
+        "note": "Measured across five runs before and after, not estimated. The other half of that result is still open and is named on the Roadmap rather than hidden here."
+      }
+    },
+    {
+      "id": "where-to-go-next",
+      "layout": "cards",
+      "kicker": "Where to go next",
+      "title": "Four ways in",
+      "blocks": [
+        {
+          "t": "item",
+          "title": "Weekly Digest",
+          "href": "Weekly-Digest.html",
+          "body": "A real generated brief, using sample data from a fixed date and clearly labelled as such. Start here to see what it produces."
+        },
+        {
+          "t": "item",
+          "title": "System Design",
+          "href": "../design/System-Design.html",
+          "body": "The five agents, the contracts between them, how the evals work, and an append-only decision log. Start here if you want the engineering."
+        },
+        {
+          "t": "item",
+          "title": "Roadmap &amp; Backlog",
+          "href": "../plan/Roadmap.html",
+          "body": "What is being built next, with binary exit criteria, plus every item deliberately left for later and the reason it was deferred."
+        },
+        {
+          "t": "item",
+          "title": "Plan &amp; Progress",
+          "href": "../plan/Plan.html",
+          "body": "The one live milestone in detail, and the archive of what is already finished, decisions intact."
+        }
+      ]
+    }
   ],
-  "stats": [
-   {
-    "value": "5,386",
-    "label": "AI papers on arXiv in August alone",
-    "source": {
-     "text": "arXiv cs.AI, August 2026",
-     "href": "https://arxiv.org/list/cs.AI/2026-08"
+  "footer": {
+    "note": "Built in timeboxed sessions, planned and committed one phase at a time.",
+    "repo": {
+      "label": "Source on GitHub",
+      "href": "https://github.com/varun-sridharan/aiml-signal-system"
     }
-   },
-   {
-    "value": "~1,200",
-    "label": "a week — papers only, before any news",
-    "source": {
-     "text": "derived from the same listing",
-     "href": "https://arxiv.org/list/cs.AI/2026-08"
-    }
-   },
-   {
-    "value": "7",
-    "label": "items in an edition"
-   },
-   {
-    "value": "18 → 0",
-    "label": "false flags, after one fix"
-   }
-  ],
-  "statsNote": "The first two are counted, not estimated — arXiv's own listing for a complete month, linked. The last two are this system's: the size of one real edition, and what a measured fix did to its false-flag rate. <b>Nothing on this page is an illustrative figure.</b> A system whose entire claim is that it does not invent numbers cannot open with invented numbers."
- },
- "sections": [
-  {
-   "id": "the-problem",
-   "layout": "prose",
-   "kicker": "The problem",
-   "title": "Twenty minutes a day, and I still felt behind",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "Every morning I opened five to ten tabs of AI/ML news and closed them twenty minutes later knowing roughly what I knew before. Not because the writing was bad — because <b>almost none of it told me whether I should care</b>."
-    },
-    {
-     "t": "p",
-     "html": "A model shipped. A benchmark moved two points. Somebody raised a round. Every item arrived with the same breathless weight as every other item, and the work of deciding which ones mattered to <em>my</em> work fell entirely on me, at 7am, before coffee."
-    },
-    {
-     "t": "p",
-     "html": "The real cost was never the twenty minutes. It was walking into a conversation three weeks later and finding that something I'd scrolled past had quietly become the thing everyone was building on."
-    },
-    {
-     "t": "p",
-     "html": "So the problem wasn't <em>\"I don't have enough information.\"</em> It was <em>\"I have far too much, and no reliable way to separate signal from noise in the time I actually have.\"</em>"
-    }
-   ]
-  },
-  {
-   "id": "the-noise",
-   "layout": "band",
-   "kicker": "The size of it",
-   "title": "About 1,200 new AI papers a week. Before a single news story.",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "arXiv's <code>cs.AI</code> listing carried <b>5,386 papers in August 2026</b> — roughly 174 a day, about 1,200 a week, in one category. That is <em>before</em> model launches, benchmark results, funding rounds, policy moves, or anything a company chose to announce. <a href=\"https://arxiv.org/list/cs.AI/2026-08\">Count it yourself</a>; the number is arXiv's own."
-    },
-    {
-     "t": "p",
-     "html": "<b>An edition of this brief carries seven items.</b> That is the ratio the whole system exists to produce: roughly one in two hundred, chosen rather than sampled. Not a summary of the week — a decision about it, with the reasoning attached and the sources checked by code."
-    },
-    {
-     "t": "p",
-     "html": "<b>Coverage was never available.</b> No amount of reading gets you through 1,200 papers a week, so every approach is a filter whether it admits it or not. The only question is whether the filter is yours, deliberate, and inspectable — or someone else's, implicit, and optimised for engagement."
-    }
-   ]
-  },
-  {
-   "id": "why-the-obvious-fixes-failed",
-   "layout": "grid",
-   "kicker": "What didn't work",
-   "title": "The obvious fixes each fail in their own way",
-   "blocks": [
-    {
-     "t": "item",
-     "title": "Curated newsletters",
-     "body": "Written for a general audience, so relevance is a coincidence — and they need something exciting <em>every single day</em>, which is exactly the pressure that manufactures noise."
-    },
-    {
-     "t": "item",
-     "title": "Aggregators and feeds",
-     "body": "Solved distribution, not judgement. I still had to read everything to find the two things that mattered."
-    },
-    {
-     "t": "item",
-     "title": "Asking a chatbot",
-     "body": "Fast, fluent, and no way to know when it was wrong. <b>A summary you can't verify is worse than none</b> — it feels like knowledge."
-    },
-    {
-     "t": "item",
-     "title": "Save it for later",
-     "body": "Later never came. The reading list became its own source of guilt rather than a solution to any."
-    }
-   ]
-  },
-  {
-   "id": "the-reframe",
-   "layout": "band",
-   "kicker": "The reframe",
-   "title": "Give up on coverage",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "Success is <b>the fewest items I'd regret missing</b> — not the most items covered. The system is explicitly allowed to say <em>\"quiet day, go build something\"</em>, and that is a correct answer rather than a failure."
-    },
-    {
-     "t": "p",
-     "html": "That one decision changed everything downstream. A system optimising for coverage wants to show you more. A system optimising for regret wants to show you less, and has to be far more confident about whatever survives."
-    },
-    {
-     "t": "p",
-     "html": "<b>And then a second reframe, which cost more to learn.</b> The first version of this ran every weeknight. It worked exactly as designed, and it was retired anyway — because a daily brief optimises for <em>missing nothing</em>, and what that produces is a queue. A queue asks for a reaction every time it grows. Meaning needs a week of material before it can exist at all. So the brief is weekly. Reading still happens continuously, because reading is cheap and deterministic; it is <em>judgement</em> that costs money, and judgement happens once."
-    }
-   ]
-  },
-  {
-   "id": "what-it-does",
-   "layout": "split",
-   "kicker": "What it does",
-   "title": "A funnel, ending in something you'll actually read",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "Everything reachable gets narrowed to a handful of items, each with the one thing that makes it matter to me and the tradeoff it implies — plus the thread connecting the day, which is usually the part worth knowing."
-    },
-    {
-     "t": "p",
-     "html": "Once a week it goes further and turns something from the brief into a <b>60-minute exercise grounded in my own repositories</b>. Reading becomes doing, or it doesn't count."
-    },
-    {
-     "t": "figure",
-     "caption": "Only the final count is measured — the stages above it are design targets, from agents not yet built.",
-     "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 208\" role=\"img\" aria-label=\"A funnel narrowing everything reachable down to a handful of items\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"208\" fill=\"none\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">EACH MORNING</text><rect x=\"8\" y=\"44\" width=\"512\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.12\"/><text x=\"8\" y=\"82\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">everything reachable</text><rect x=\"8\" y=\"100\" width=\"98\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.28\"/><text x=\"8\" y=\"138\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">corroborated, not duplicated, material to me</text><rect x=\"8\" y=\"156\" width=\"19\" height=\"18\" rx=\"2\" fill=\"#b5502a\"/><text x=\"37\" y=\"170\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"11\" fill=\"#b5502a\">7 items</text><text x=\"8\" y=\"196\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#201c17\">framed into the brief, with the thread connecting them</text></svg>"
-    }
-   ]
-  },
-  {
-   "id": "the-hard-part",
-   "layout": "split",
-   "kicker": "The hard part",
-   "title": "How do I know it didn't make that up?",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "Writing a readable brief is the easy half. The half that took the work has nothing to do with news: a summariser that occasionally invents a figure isn't mildly flawed — it makes you <b>confidently wrong in public</b>."
-    },
-    {
-     "t": "p",
-     "html": "So the model is never trusted to verify itself. Three layers, each checking something the one before it can't."
-    },
-    {
-     "t": "figure",
-     "caption": "A model can invent a quote. A substring check cannot be talked into agreeing.",
-     "svg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 172\" role=\"img\" aria-label=\"Three layers: a model writes, a second model checks, code proves the evidence is real\"><line x1=\"8\" y1=\"44\" x2=\"632\" y2=\"44\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">WRITES</text><text x=\"8\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A model drafts the brief</text><text x=\"8\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Given only each item's source</text><text x=\"8\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">excerpt to draw facts from.</text><line x1=\"222\" y1=\"34\" x2=\"222\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"244\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">CHECKS</text><text x=\"244\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A second model audits it</text><text x=\"244\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Lists every factual claim and</text><text x=\"244\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">must quote what supports it.</text><line x1=\"432\" y1=\"34\" x2=\"432\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"454\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#b5502a\">PROVES</text><text x=\"454\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#b5502a\">Code verifies the quote</text><text x=\"454\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Not literally in the source?</text><text x=\"454\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">The claim is rejected — whatever</text><text x=\"454\" y=\"130\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">the auditor concluded.</text></svg>"
-    },
-    {
-     "t": "p",
-     "html": "That third layer exists because of something the second one did. Asked to justify a fabricated figure, the auditing model produced a quote supporting it — a quote that appeared nowhere in the source. It had <b>invented a citation</b>."
-    },
-    {
-     "t": "p",
-     "html": "And because the auditor is a model too, it gets its own test suite: one day of real output frozen with hand-written labels, re-run on every change. Its first version passed a brief I had deliberately seeded with a fake valuation, a fake date and a fake investor — a scoping bug meant it had never read the writing it was auditing. <b>A test that has never failed is not evidence of anything.</b>"
-    }
-   ]
-  },
-  {
-   "id": "where-to-go-next",
-   "layout": "cards",
-   "kicker": "Where to go next",
-   "title": "Four ways in",
-   "blocks": [
-    {
-     "t": "item",
-     "title": "Weekly Digest",
-     "href": "Weekly-Digest.html",
-     "body": "A real generated brief — sample data from a fixed date, clearly labelled. <b>Start here to see what it produces.</b>"
-    },
-    {
-     "t": "item",
-     "title": "System Design",
-     "href": "../design/System-Design.html",
-     "body": "The five agents, the contracts between them, how the evals actually work, and an append-only decision log. <b>Start here for the engineering.</b>"
-    },
-    {
-     "t": "item",
-     "title": "Roadmap &amp; Backlog",
-     "href": "../plan/Roadmap.html",
-     "body": "What is being built next, with binary exit criteria — and every item deliberately left for later, with the reason it was deferred."
-    },
-    {
-     "t": "item",
-     "title": "Plan &amp; Progress",
-     "href": "../plan/Plan.html",
-     "body": "The one live milestone in detail, and the archive of what is already finished, decisions intact."
-    }
-   ]
-  },
-  {
-   "id": "closing",
-   "layout": "band",
-   "kicker": "Worth knowing before you look",
-   "title": "One agent of five runs, and the gate on it is half proven",
-   "blocks": [
-    {
-     "t": "p",
-     "html": "The brief you'll see is <b>real output</b> — genuinely what the agent produced — but from a hand-built input pool on a fixed date. Live ingestion arrives with the next milestone. What is built, what is next and what is deliberately deferred are each in their own place: <a href=\"../plan/Plan.html\">Plan &amp; Progress</a> and <a href=\"../plan/Roadmap.html\">Roadmap &amp; Backlog</a>."
-    },
-    {
-     "t": "p",
-     "html": "The slice that exists was chosen deliberately rather than by convenience: <b>the agent whose output a human actually reads, and the harness that can stop it from shipping.</b> Everything else is easier once those two exist, and far harder to retrofit afterwards."
-    },
-    {
-     "t": "p",
-     "html": "<b>And the harness has already earned its place, by failing.</b> A test case built to catch a checker that had stopped checking found one on its first run — a grader flagging eighteen claims it should not have, and missing a fabrication planted on purpose. The first half is fixed. The second is not, and this site says so on its face rather than waiting until it is."
-    }
-   ]
   }
- ],
- "footer": {
-  "note": "Built in timeboxed sessions, planned and committed one phase at a time.",
-  "repo": {
-   "label": "Source on GitHub",
-   "href": "https://github.com/varun-sridharan/aiml-signal-system"
-  }
- }
 }
