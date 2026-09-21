@@ -16,47 +16,53 @@ prompts/CONVENTIONS.md for why each block carries a WHAT/CONCEPT comment.
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import anthropic
-from dotenv import load_dotenv
+# WHAT: the shared plumbing now lives in two sibling modules.
+# CONCEPT: harness — extracted at M1, when Reader became the second caller of both.
+# budget.py owns the ledger and the spend breaker; llm.py owns the client, the pinned
+# models and the one guarded call path. This file keeps the Framer's own judgement.
+#
+# The try/except is not decoration: data/evals/run_evals.py puts agents/ on sys.path
+# and does `import framer`, so these modules load as top-level names there and as
+# `agents.framer` everywhere else.
+try:
+    from . import budget, llm
+except ImportError:  # pragma: no cover - top-level import from the eval harness
+    import budget
+    import llm
 
-# WHAT: pin every model and cost knob in one place at the top of the file.
-# CONCEPT: harness — model routing. The expensive model frames; a cheap one checks.
-# Pinning (not "latest") is what makes a prompt file a reproducible recipe.
-FRAMER_MODEL = "claude-opus-5"
-CHECK_MODEL = "claude-haiku-4-5"
-FRAMER_MAX_TOKENS = 24_000
-# The grader now enumerates every claim with a quoted span before it judges, so its
-# response is several times longer than the old bare verdict list. Truncation here
-# aborts the run (see structured_text), so the cap has room to spare.
-CHECK_MAX_TOKENS = 16_000
-FRAMER_EFFORT = "high"
+# WHAT: re-export every name that moved, because run_evals.py reaches all of them
+# through `framer.X`.
+# CONCEPT: harness — the façade is the compatibility contract. Twelve attributes are
+# read off this module by the eval harness and EVERY ONE of its call sites sits on an
+# API path, so `--no-api` would stay green while a rename broke the paid run. These
+# aliases are what keep that from being possible.
+FRAMER_MODEL = llm.FRAMER_MODEL
+CHECK_MODEL = llm.CHECK_MODEL
+FRAMER_MAX_TOKENS = llm.FRAMER_MAX_TOKENS
+CHECK_MAX_TOKENS = llm.CHECK_MAX_TOKENS
+FRAMER_EFFORT = llm.FRAMER_EFFORT
+structured_text = llm.structured_text
 
-# WHAT: hard monthly ceiling; the run aborts before spending past it.
-# CONCEPT: loop — cost circuit-breaker guardrail.
-MONTHLY_BUDGET_USD = 20.00
-
-# WHAT: USD per million tokens, per model. Cache reads bill at ~0.1x input, cache
-# writes at ~1.25x, so they are priced separately rather than folded into input.
-# CONCEPT: eval — cost telemetry the Control Room can chart later.
-PRICING_PER_MTOK = {
-    FRAMER_MODEL: {"input": 5.00, "output": 25.00},
-    CHECK_MODEL: {"input": 1.00, "output": 5.00},
-}
-CACHE_READ_MULTIPLIER = 0.1
-CACHE_WRITE_MULTIPLIER = 1.25
+MONTHLY_BUDGET_USD = budget.MONTHLY_BUDGET_USD
+PRICING_PER_MTOK = budget.PRICING_PER_MTOK
+CACHE_READ_MULTIPLIER = budget.CACHE_READ_MULTIPLIER
+CACHE_WRITE_MULTIPLIER = budget.CACHE_WRITE_MULTIPLIER
+USAGE_PATH = budget.USAGE_PATH
+estimate_cost_usd = budget.estimate_cost_usd
+load_usage_log = budget.load_usage_log
+month_to_date_spend = budget.month_to_date_spend
+record_call = budget.record_call
 
 WORDS_PER_MINUTE = 200
 
 REPO = Path(__file__).resolve().parent.parent
 PROFILE_PATH = REPO / "config" / "profile.json"
 PROMPT_PATH = REPO / "prompts" / "framer-prompt.md"
-USAGE_PATH = REPO / "data" / "state" / "usage.json"
 DEFAULT_RAW_PATH = REPO / "data" / "verified" / "gatekeeper_2026-08-04.json"
 
 # TODO: production scheduled runs should submit these through the Anthropic Message
@@ -288,69 +294,10 @@ def load_framer_system_prompt() -> str:
 
 
 
-def estimate_cost_usd(model: str, usage) -> float:
-    price = PRICING_PER_MTOK[model]
-    cache_read = getattr(usage, "cache_read_input_tokens", 0) or 0
-    cache_write = getattr(usage, "cache_creation_input_tokens", 0) or 0
-    return (
-        usage.input_tokens * price["input"]
-        + cache_read * price["input"] * CACHE_READ_MULTIPLIER
-        + cache_write * price["input"] * CACHE_WRITE_MULTIPLIER
-        + usage.output_tokens * price["output"]
-    ) / 1_000_000
-
-
-def load_usage_log() -> dict:
-    if USAGE_PATH.exists():
-        return load_json(USAGE_PATH)
-    return {
-        "note": "Append-only API spend log. Every call records tokens + estimated cost so "
-        "the Control Room can chart cost per brief against MONTHLY_BUDGET_USD.",
-        "calls": [],
-    }
-
-
-def month_to_date_spend(log: dict, month: str) -> float:
-    return sum(c["estimated_cost_usd"] for c in log["calls"] if c["timestamp"].startswith(month))
-
-
-def record_call(log: dict, user_id: str, phase: str, model: str, usage, timestamp: str) -> float:
-    """Append one call's tokens and estimated cost to the usage log."""
-    # WHAT: log every call's tokens and cost, keyed by user.
-    # CONCEPT: eval — the sensor the cost circuit-breaker reads on the next run.
-    cost = estimate_cost_usd(model, usage)
-    log["calls"].append(
-        {
-            "user_id": user_id,
-            "timestamp": timestamp,
-            "phase": phase,
-            "model": model,
-            "input_tokens": usage.input_tokens,
-            "output_tokens": usage.output_tokens,
-            "cache_creation_input_tokens": getattr(usage, "cache_creation_input_tokens", 0) or 0,
-            "cache_read_input_tokens": getattr(usage, "cache_read_input_tokens", 0) or 0,
-            "estimated_cost_usd": round(cost, 6),
-        }
-    )
-    return cost
-
-
-def structured_text(message) -> str:
-    """Return the response text, refusing to guess when the model didn't finish cleanly."""
-    # WHAT: check stop_reason before touching content.
-    # CONCEPT: harness — fail loudly. A refusal has empty content and a truncated
-    # response has invalid JSON; both must abort rather than emit a partial brief.
-    if message.stop_reason == "refusal":
-        sys.exit(f"Model declined the request ({message.stop_details}). Nothing written.")
-    if message.stop_reason == "max_tokens":
-        sys.exit("Response hit max_tokens and the JSON is truncated. Raise the cap and rerun.")
-    return next(block.text for block in message.content if block.type == "text")
-
-
 # ---------------------------------------------------------------- api calls
 
 
-def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
+def frame_day(client, system_prompt: str, profile: dict, raw_day: dict, timestamp: str, ledger: dict):
     """Frame every item plus the day-level thread in a single structured call."""
     # WHAT: send the profile and all raw items in ONE request, not one per item.
     # CONCEPT: harness — batching. N items cost one round trip instead of N, and the
@@ -381,9 +328,15 @@ def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
     # could outlast the HTTP timeout, and thinking is on by default on Opus 5, so
     # the budget has to cover reasoning as well as the JSON. We don't render the
     # tokens; get_final_message() just gives us timeout safety for free.
-    with client.messages.stream(
-        model=FRAMER_MODEL,
-        max_tokens=FRAMER_MAX_TOKENS,
+    text, usage, cost = llm.call(
+        client,
+        model=llm.FRAMER_MODEL,
+        max_tokens=llm.FRAMER_MAX_TOKENS,
+        stream=True,
+        timestamp=timestamp,
+        ledger=ledger,
+        user_id=profile["user_id"],
+        phase="framing",
         # WHAT: the static prompt goes in `system` with a cache breakpoint; the
         # per-day profile and items go in the user turn, after it.
         # CONCEPT: harness — prompt caching. Caching is a prefix match, so stable
@@ -398,11 +351,10 @@ def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
         messages=[{"role": "user", "content": json.dumps(payload, indent=2)}],
         output_config={
             "format": {"type": "json_schema", "schema": FRAMING_SCHEMA},
-            "effort": FRAMER_EFFORT,
+            "effort": llm.FRAMER_EFFORT,
         },
-    ) as stream:
-        message = stream.get_final_message()
-    return json.loads(structured_text(message)), message.usage
+    )
+    return json.loads(text), usage, cost
 
 
 def build_check_payload(raw_day: dict, framing: dict) -> dict:
@@ -596,8 +548,15 @@ def normalise_verdict(raw: dict, ground_truth: str, writing: str = "") -> dict:
     }
 
 
-def check_faithfulness(client, raw_day: dict, framing: dict):
-    """Grade each item against its own excerpt and the thread against all of them, in one cheap call."""
+def check_faithfulness(client, raw_day: dict, framing: dict, timestamp: str | None = None,
+                       ledger: dict | None = None, user_id: str | None = None):
+    """Grade each item against its own excerpt and the thread against all of them, in one cheap call.
+
+    `timestamp` and `ledger` are optional because data/evals/run_evals.py calls this
+    with three arguments and books the call itself, under its own phase label and
+    against its own log. Left unset, the call is still budget-checked; it is only the
+    recording that the caller takes responsibility for.
+    """
     # WHAT: re-read our own output against the sources before emitting it, on a
     # cheaper model than the one that wrote it. Items and thread in a single request.
     # CONCEPT: loop — reflection / self-verification before emit; eval — grounding.
@@ -607,9 +566,15 @@ def check_faithfulness(client, raw_day: dict, framing: dict):
 
     # No cache_control here: Haiku 4.5 needs a ~4096-token prefix before anything
     # caches, and this system prompt is far shorter than that.
-    message = client.messages.create(
-        model=CHECK_MODEL,
-        max_tokens=CHECK_MAX_TOKENS,
+    stamp = timestamp or datetime.now(timezone.utc).isoformat(timespec="seconds")
+    text, usage, _cost = llm.call(
+        client,
+        model=llm.CHECK_MODEL,
+        max_tokens=llm.CHECK_MAX_TOKENS,
+        timestamp=stamp,
+        ledger=ledger,
+        user_id=user_id,
+        phase="faithfulness",
         system=CHECK_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": json.dumps(payload, indent=2)}],
         # WHAT: sample at zero so the same brief grades the same way twice.
@@ -620,7 +585,7 @@ def check_faithfulness(client, raw_day: dict, framing: dict):
         temperature=0,
         output_config={"format": {"type": "json_schema", "schema": FAITHFULNESS_SCHEMA}},
     )
-    graded = json.loads(structured_text(message))
+    graded = json.loads(text)
     per_item_truth, union_truth = ground_truth_for(raw_day)
     # The grader saw only the fact clauses, so that is what "the writing" means when we
     # ask whether a claim came from the right document.
@@ -630,7 +595,7 @@ def check_faithfulness(client, raw_day: dict, framing: dict):
         for v in graded["items"]
     }
     thread_seen = payload["thread"]["writing_under_test"]
-    return verdicts, normalise_verdict(graded["thread"], union_truth, thread_seen), message.usage
+    return verdicts, normalise_verdict(graded["thread"], union_truth, thread_seen), usage
 
 
 # ---------------------------------------------------------------- local compute
@@ -754,42 +719,48 @@ def main() -> None:
     if not raw_path.exists():
         sys.exit(f"No such raw day: {raw_path}")
 
-    load_dotenv(REPO / ".env")
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY is not set. Add it to .env (see prompts/p2-build-framer.md).")
+    client = llm.build_client()
 
     profile = load_json(PROFILE_PATH)
     raw_day = load_json(raw_path)
     system_prompt = load_framer_system_prompt()
 
-    # WHAT: refuse to start if this month's spend is already over budget.
-    # CONCEPT: loop — circuit breaker. Checked before the call, not after.
+    # WHAT: read the ledger; llm.call() runs the breaker before each request.
+    # CONCEPT: loop — circuit breaker, now stop-BEFORE rather than stop-after. The old
+    # check here refused only once spend had already passed the ceiling, which let the
+    # call that crossed the line through every time. budget.assert_within_budget adds
+    # this call's worst case to month-to-date first, so the crossing never happens.
     now = datetime.now(timezone.utc)
     timestamp, month = now.isoformat(timespec="seconds"), now.strftime("%Y-%m")
-    usage_log = load_usage_log()
-    spent = month_to_date_spend(usage_log, month)
-    if spent >= MONTHLY_BUDGET_USD:
-        sys.exit(
-            f"Month-to-date spend ${spent:.2f} has reached MONTHLY_BUDGET_USD "
-            f"(${MONTHLY_BUDGET_USD:.2f}). Raise the budget in agents/framer.py or wait "
-            "for the month to roll over. No API call made."
-        )
+    usage_log = budget.load_usage_log()
+    spent = budget.month_to_date_spend(usage_log, month)
 
     print(f"Framing {raw_day['date']} — {len(raw_day['items'])} items "
-          f"({FRAMER_MODEL}, ${spent:.2f} spent this month)")
+          f"({llm.FRAMER_MODEL}, ${spent:.2f} spent this month)")
 
-    client = anthropic.Anthropic()
-    framing, framing_usage = frame_day(client, system_prompt, profile, raw_day)
-    cost = record_call(usage_log, profile["user_id"], "framing", FRAMER_MODEL, framing_usage, timestamp)
+    try:
+        framing, _framing_usage, _cost = frame_day(
+            client, system_prompt, profile, raw_day, timestamp, usage_log
+        )
+        verdicts, thread_verdict, _check_usage = check_faithfulness(
+            client, raw_day, framing, timestamp, usage_log, profile["user_id"]
+        )
+    except RuntimeError as breaker:
+        # The ledger is written back on the way out so a partial run still books what
+        # it spent; a call refused before it was made has nothing to book.
+        budget.save_usage_log(usage_log)
+        sys.exit(str(breaker))
 
-    verdicts, thread_verdict, check_usage = check_faithfulness(client, raw_day, framing)
-    cost += record_call(usage_log, profile["user_id"], "faithfulness", CHECK_MODEL, check_usage, timestamp)
+    # WHAT: this run's cost is the ledger's movement, not a running total kept by hand.
+    # CONCEPT: one source of truth. llm.call() books each call as it happens, so
+    # re-reading the log is the only figure that cannot drift from what was recorded.
+    cost = budget.month_to_date_spend(usage_log, month) - spent
 
     day = assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
 
     out_path = REPO / "data" / "briefs" / f"framer_{raw_day['date']}.json"
     out_path.write_text(json.dumps(day, indent=2, ensure_ascii=False) + "\n")
-    USAGE_PATH.write_text(json.dumps(usage_log, indent=2) + "\n")
+    budget.save_usage_log(usage_log)
 
     flagged = [i for i in day["items"] if i["faithfulness"]["unsupported_claims"]]
     confidences = [i["faithfulness"]["confidence"] for i in day["items"]
