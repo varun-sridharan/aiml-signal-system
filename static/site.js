@@ -256,6 +256,19 @@
 
     targets.forEach(function (t) { io.observe(t.el); });
 
+    /* Landing state. The observer's band runs from 12% to 30% of the viewport, and at
+     * scroll 0 the first section starts below it, so nothing intersects and nothing is
+     * marked. The bundle marks the first entry on load, and scroll 0 is not an edge
+     * case: it is the view every visitor gets before touching the wheel, so an unmarked
+     * ToC there is the most-seen state of the page rather than the least.
+     *
+     * Deferred a frame so the observer's own first callback wins if it has one. The
+     * guard is `visible.size`, not a timer: if any section did intersect, the observer
+     * has already chosen and this must not overrule it. */
+    requestAnimationFrame(function () {
+      if (!visible.size && targets.length) mark(targets[0].link);
+    });
+
     targets.forEach(function (t) {
       t.link.addEventListener("click", function () { mark(t.link); });
     });

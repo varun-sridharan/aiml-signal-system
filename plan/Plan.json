@@ -18,7 +18,7 @@
       "id": "m1",
       "code": "M1",
       "title": "Reading, Writing & Hosting",
-      "status": "45%",
+      "status": "55%",
       "collapsible": true,
       "endState": "Reader and Framer running on Railway with no local dependency, both gated, producing the weekly debrief at a URL. <b>Exit is binary:</b> the canonicalisation gate green including a planted duplicate; faithfulness and structural gates green on a golden week including a planted fabrication; the Weekly Digest tab rendering the debrief; thumbs captured.",
       "plan": {
@@ -65,7 +65,7 @@
             "Extract the shared plumbing",
             "<code>agents/budget.py</code> and <code>agents/llm.py</code>, with the breaker upgraded to stop-<em>before</em>",
             "Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies.",
-            "IN PROGRESS"
+            "<b>DONE</b>"
           ],
           [
             "Storage layer, with the excerpt rule",
@@ -101,11 +101,11 @@
       },
       "statusSection": {
         "title": "Status",
-        "body": "<b>Four of eleven activities are done, all carried in from before the pivot:</b> the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0. <b>Railway is part-built</b> — the project exists and Postgres is online, while the app service fails on a missing start command because the repository has no web server yet, which is the next commit. <b>After it come</b> the shared plumbing extraction, the storage layer with its write-once excerpt rule, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The estimate is 5–7 sessions, two to three weeks part-time</b>, revised down from 7–9 by that delegation and by cutting Reader's eval to the one check whose failure is silent. <b>If it runs long</b>, Reader launches against the ten to fifteen domains publishing clean feeds and the rest moves to the backlog — worth about a session and a half, and taken only if M1 passes four sessions without Reader fetching reliably."
+        "body": "<b>Six of eleven activities are done.</b> The first five carried in from before the pivot: the build method, the Framer, the eval harness, and the facts/interpretation split that took false positives on the clean day from 18 to 0, plus Railway, which is now live and serving all five pages from a URL with the docs rendering from JSON at request time. <b>The sixth is the shared plumbing</b>, extracted this session into <code>agents/budget.py</code> and <code>agents/llm.py</code> at the moment Reader became the second caller, with the spend breaker upgraded from stop-after to stop-before so the call that crosses the ceiling is refused rather than merely noticed. <b>Next come</b> the storage layer with its write-once excerpt rule, which blocks paid runs until it exists, and then Reader, with fetching delegated to the same hosted fetcher the existing digest already uses rather than reimplemented against 91 sites. <b>The remaining estimate is 4 to 6 sessions</b>, and the risk concentrates in Reader's canonicalisation gate, whose failure mode is the only one in this milestone that is invisible in the finished edition."
       }
     }
   ],
-  "lastUpdated": "2026-09-17",
+  "lastUpdated": "2026-09-20",
   "nav": {
     "current": "Plan &amp; Progress",
     "items": [
@@ -132,6 +132,11 @@
     ]
   },
   "decisionLog": [
+    {
+      "date": "2026-09-20",
+      "title": "The spend breaker now refuses the call that would cross the ceiling",
+      "body": "Extracting <code>budget.py</code> and <code>llm.py</code> was scheduled for the moment Reader became the second caller, and the extraction surfaced that the breaker had been asking the wrong question. It tested whether month-to-date spend had <em>already</em> passed $20, which can only be true after the crossing, so the call that went over was always allowed through. It now adds the pending call's worst case to month-to-date first and refuses if the sum would exceed the ceiling, naming spent, estimate and ceiling in the error. <b>One half of the guarantee is still soft:</b> the pre-flight check is unconditional inside <code>llm.call()</code>, but recording is skipped when no ledger is passed, and an unrecorded call silently raises the ceiling for every call after it. That is logged as <code>bk-ledger-required</code> rather than patched here, because closing it means changing how the eval harness books its own calls."
+    },
     {
       "date": "2026-09-17",
       "title": "The site serves from a URL, and the root mount had to be guarded",

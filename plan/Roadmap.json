@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-17",
+  "lastUpdated": "2026-09-20",
   "note": "Content source for the Roadmap & Backlog page. Edit this; ask Claude Design to refresh the design from it. THIS FILE IS THE ONLY BACKLOG. Anything deferred, discussed and dropped, or promised for later belongs here and nowhere else — a second backlog drifts, and then neither is true. Structure: `now` is the milestone being built (its detailed plan lives in Plan & Progress); `milestones` are what comes after, each with binary exit criteria; `backlog` is everything not yet scheduled, grouped by kind. A milestone's `livePlan` links to its detailed plan once that milestone becomes current — until then it states when it will exist, because M2 and M3 are shaped by what M1 teaches and writing them now would be fiction. Every backlog item carries `origin`: where the item came from, so a future reader can tell a considered deferral from a stray idea.",
   "nav": {
     "current": "Roadmap &amp; Backlog",
@@ -229,6 +229,20 @@
             "size": "M",
             "origin": "Sep-16-2026 — the one concept the pivot leaves uncovered",
             "body": "Nothing in the current plan uses MCP, which makes it the only entry in the concepts reference that stays purely theoretical. Reader fetching sources through an MCP server rather than bespoke HTTP is a small, real use with a natural boundary."
+          },
+          {
+            "id": "bk-ledger-required",
+            "title": "Make spend recording structural, not optional",
+            "size": "S",
+            "origin": "Sep-20-2026 — found while reviewing the row 6 extraction, before it caused anything",
+            "body": "<code>llm.call()</code> runs the budget pre-flight unconditionally, so no caller can spend without being checked. Recording is not symmetric: it sits behind <code>if ledger</code>, so a call made with no ledger spends real money that the ledger never sees. <b>An unrecorded call does more than go unlogged.</b> The breaker reads month-to-date from that same file, so every unrecorded call quietly raises the ceiling for every call after it, which is the same shape as a hardcoded percentage going stale. It is optional today because <code>data/evals/run_evals.py</code> books its own calls under its own phase label and forcing a second write would double-book. The fix is for the harness to pass its ledger and phase down through <code>llm.call()</code>, which already accepts both, and then to drop the guard."
+          },
+          {
+            "id": "bk-facade-removal",
+            "title": "Point the eval harness at budget and llm directly, and delete the façade",
+            "size": "S",
+            "origin": "Sep-20-2026 — created deliberately during the row 6 extraction, as the cost of not breaking the harness",
+            "body": "<code>agents/framer.py</code> re-exports twelve names purely so <code>run_evals.py</code> can keep reaching them through <code>framer.X</code>. That is why the file only went 826 to 797 lines while losing an entire concern. The shim was the right call at the time: every one of those twelve call sites is on an API path, so removing them without it would have broken the paid run while <code>--no-api</code> stayed green, which is exactly how the last config break hid. <b>It is still debt.</b> Two modules now own the plumbing and a third pretends to, so a reader cannot tell from <code>framer.py</code> which names are its own. Repoint the harness's imports and the twelve aliases delete themselves."
           }
         ]
       },
