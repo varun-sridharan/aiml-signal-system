@@ -68,20 +68,19 @@ def health() -> JSONResponse:
 
 
 # WHAT: render plan/Plan.json through templates/page.html at request time.
-# CONCEPT: the first page that stops being a hand-regenerated ~800KB artefact. The
-# frozen plan/Plan.html stays exactly where it is and keeps serving from the static
-# mount — the two URLs sit side by side on purpose, so the rendered page can be
-# compared against the reference rather than trusted.
+# CONCEPT: the first page that stopped being a hand-regenerated ~800KB artefact. The
+# frozen plan/Plan.html served beside it for a while so the rendered page could be
+# compared against the reference rather than trusted; that comparison is done and the
+# bundle is gone, because a second copy of a page is a second thing to go stale.
 #
 # Keys beginning with an underscore are authoring notes and are never rendered. The
 # template reads named keys only, so no underscore key can reach the page.
 @app.get("/plan")
 def plan(request: Request):
     content = json.loads((ROOT / "plan" / "Plan.json").read_text(encoding="utf-8"))
-    # WHAT: pass the JSON through, minus its own progress block.
-    # CONCEPT: phases[0].progress is hardcoded and has already gone stale once. The
-    # template derives progress from the table instead, so the stale copy is left in
-    # the file for a later cleanup but never given to the renderer.
+    # WHAT: pass the JSON through by name.
+    # CONCEPT: the template derives progress from the Plan table, so there is no
+    # progress key to pass — it was deleted once the derivation was proved.
     return templates.TemplateResponse(
         request=request,
         name="page.html",
@@ -93,6 +92,21 @@ def plan(request: Request):
             "lastUpdated": content["lastUpdated"],
         },
     )
+
+
+# WHAT: the old bundle's URL, permanently redirected to the route that replaced it.
+# CONCEPT: the four other pages are generated bundles with ../plan/Plan.html baked into
+# six links, and rewriting those means regenerating four pages through Claude Design to
+# change one string. A redirect costs one route and makes every existing link — in the
+# bundles, in anyone's history, in the decision log's prose — land on the live page.
+# 301 rather than 302 because the move is permanent: the file is deleted in this commit.
+#
+# Registered BEFORE the mount. Starlette matches in registration order and a mount at
+# "/" matches every path, so after it this would never fire — and it would not 404
+# either, it would silently keep serving whatever file happened to be there.
+@app.get("/plan/Plan.html")
+def plan_legacy() -> RedirectResponse:
+    return RedirectResponse("/plan", status_code=301)
 
 
 app.mount("/", StaticFiles(directory=ROOT, html=True), name="site")

@@ -219,3 +219,9 @@ __marimo__/
 
 # macOS
 .DS_Store
+
+# The Plan page is rendered from plan/Plan.json by the /plan route. A Design export
+# dropped here would be served by the static mount and shadow nothing — the redirect
+# at /plan/Plan.html is registered before the mount — but it would sit in the repo as a
+# second, silently staling copy of a page that already has one source of truth.
+plan/Plan.html
