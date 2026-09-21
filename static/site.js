@@ -164,9 +164,25 @@
   /* ------------------------------------------------------------------ *
    * 5. Scrollspy. No active class exists in these bundles, so the active
    *    entry is styled inline and its original values are stashed first.
-   *    IntersectionObserver reports what is on screen; the topmost
-   *    intersecting section wins, which keeps a short trailing section
-   *    from stealing the highlight from a long one above it.
+   *    IntersectionObserver reports what is on screen; among the sections
+   *    intersecting, the most deeply nested one wins.
+   *
+   *    Depth, not position, and the reason is parity. /plan and
+   *    /plan/Plan.html render the same content, and the bundle that
+   *    produces the second one highlights the innermost section. Picking
+   *    the topmost instead made the two pages disagree through the first
+   *    half of the scroll: the bundle marked m1-plan while this marked its
+   *    parent m1. The bundle is what Design decided, so it is the rule.
+   *
+   *    The trade being accepted: a nested section now takes the highlight
+   *    from its parent whenever both are on screen, which they usually are,
+   *    since the child lives inside the parent. So a long parent section
+   *    rarely holds the highlight once any child of it comes into view.
+   *    That is the behaviour being matched, not a side effect of it.
+   *
+   *    Depth is read from the DOM rather than inferred from coordinates.
+   *    Nesting is structural, and a geometric proxy would get it wrong the
+   *    moment a child were positioned above its parent's box.
    * ------------------------------------------------------------------ */
   var targets = entries
     .map(function (a) {
@@ -175,6 +191,12 @@
       return el ? { link: a, el: el } : null;
     })
     .filter(Boolean);
+
+  targets.forEach(function (t) {
+    var d = 0, n = t.el;
+    while ((n = n.parentElement)) d++;
+    t.depth = d;
+  });
 
   if (targets.length && "IntersectionObserver" in window) {
     /* Stash what mark() overwrites, per the rule at the top of this file. Note it is
@@ -215,10 +237,16 @@
       recs.forEach(function (r) {
         if (r.isIntersecting) visible.add(r.target); else visible.delete(r.target);
       });
-      var best = null, bestTop = Infinity;
+      /* Deepest wins; topmost breaks a tie between siblings at equal depth, which
+       * keeps the choice stable rather than dependent on observer callback order. */
+      var best = null, bestDepth = -1, bestTop = Infinity;
       visible.forEach(function (el) {
+        var t = targets.filter(function (x) { return x.el === el; })[0];
+        if (!t) return;
         var top = el.getBoundingClientRect().top;
-        if (top < bestTop) { bestTop = top; best = el; }
+        if (t.depth > bestDepth || (t.depth === bestDepth && top < bestTop)) {
+          bestDepth = t.depth; bestTop = top; best = el;
+        }
       });
       if (best) {
         var t = targets.filter(function (x) { return x.el === best; })[0];
