@@ -8,7 +8,7 @@ A multi-agent system that turns the AI/ML firehose into a **weekly** signal brie
 
 ## Status: one agent built, four designed — and mid-pivot
 
-This repo is a **design with one vertical slice built end to end**, not a finished five-agent system. It is also mid-pivot: a separate weekly digest that has run for weeks is being merged onto this engine and retired. See [Roadmap & Backlog](https://varun-sridharan.github.io/aiml-signal-system/plan/Roadmap.html). Being precise about that up front, because the architecture section below describes more than the code does.
+This repo is a **design with one vertical slice built end to end**, not a finished five-agent system. It is also mid-pivot: a separate weekly digest that has run for weeks is being merged onto this engine and retired. See [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap). Being precise about that up front, because the architecture section below describes more than the code does.
 
 | | Built and running | Designed, not built |
 | --- | --- | --- |
@@ -26,10 +26,10 @@ No API key needed, nothing to install:
 
 | | |
 | --- | --- |
-| [The Weekly Digest](https://varun-sridharan.github.io/aiml-signal-system/application/Weekly-Digest.html) | real Framer output for a fixed date, rendered |
-| [Design record](https://varun-sridharan.github.io/aiml-signal-system/design/System-Design.html) | architecture + an append-only decision log, 38 entries |
-| [Roadmap & Backlog](https://varun-sridharan.github.io/aiml-signal-system/plan/Roadmap.html) | what is next, with binary exit criteria — and every item deliberately deferred, with the reason |
-| [Plan & Progress](https://varun-sridharan.github.io/aiml-signal-system/plan/Plan.html) | the one live milestone in detail, plus the archive of finished work |
+| [The Weekly Digest](https://aiml-signal-system-production.up.railway.app/application/Weekly-Digest.html) | real Framer output for a fixed date, rendered |
+| [Design record](https://aiml-signal-system-production.up.railway.app/design/System-Design.html) | architecture + an append-only decision log, 38 entries |
+| [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap) | what is next, with binary exit criteria — and every item deliberately deferred, with the reason |
+| [Plan & Progress](https://aiml-signal-system-production.up.railway.app/plan) | the one live milestone in detail, plus the archive of finished work |
 
 Prefer the raw data? [`data/briefs/framer_2026-08-04.json`](data/briefs/framer_2026-08-04.json) is the same brief as the agent produced it, and [`data/evals/golden/2026-08-04/labels.json`](data/evals/golden/2026-08-04/labels.json) is a hand-labelled eval case with the reasoning for each label written down.
 
@@ -108,7 +108,8 @@ data/
   state/           usage.json (live cost ledger) · metrics.json (seed) · backlog.json
   evals/           run_evals.py + golden/<date>/ (frozen input + output + hand labels)
 design/            System_Design.json → System-Design.html — design record & decision log
-plan/              Plan.json → Plan.html — rolling build plan, one ~60-min phase per session
+plan/              plan.md · roadmap.md → rendered at /plan and /roadmap on every request;
+                   the format is plan/FORMAT.md and a check refuses a malformed file
 prompts/           Canonical prompt per phase + CONVENTIONS.md
                    <agent>-prompt.md   = that agent's system prompt, nothing else
                    <agent>-contract.md = its input/output contract + hard rules
@@ -139,4 +140,4 @@ Single-user today, but every record carries `user_id` and agents take `(profile,
 
 `data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. The Control Hub is the surface that stays private in the design — where a real user's ratings, spend and pending actions would live. It is not built and not linked; its content contract is kept in `application/Control-Hub.json` for the milestone that builds it.
 
-Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/Plan.json` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.
+Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/plan.md` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.
