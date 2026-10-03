@@ -1,0 +1,44 @@
+{#
+  The site header and navigation, shared by every rendered page.
+
+  THE HEADER IS IDENTICAL ON ALL FIVE PAGES. wordmark + wordmarkAccent render as one
+  lockup in the serif face, the accent character in --accent. It is the site name and
+  never changes per page. The page you are on is shown ONLY by nav.current. There is no
+  descriptor pill, no page title, and no second active state in the header.
+
+  The span sits flush against the wordmark with no whitespace between the tags, because
+  any whitespace there renders as a space before the accent character.
+
+  Font sizes are tokens, not literals: the Plan page sets --fs-body:17px and the Roadmap
+  page 15px, which is what each page's bundle rendered.
+
+  Import with: {% from "_site.html" import NAV, site_header %}
+#}
+{%- set WORDMARK = "AI/ML Signal" %}
+{%- set WORDMARK_ACCENT = "." %}
+{%- set HOME = "/application/Product.html" %}
+{%- set NAV = [
+  {"label": "Product", "href": "/application/Product.html"},
+  {"label": "Weekly Digest", "href": "/application/Weekly-Digest.html"},
+  {"label": "System Design", "href": "/design/System-Design.html"},
+  {"label": "Roadmap & Backlog", "href": "/roadmap"},
+  {"label": "Plan & Progress", "href": "/plan"},
+] %}
+
+{%- macro site_header(current) %}
+  <header style="position:fixed;top:0;left:var(--rail);right:0;z-index:20;background:rgba(244,241,232,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);transition:left .22s ease">
+    <div style="padding:12px 40px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap">
+      <a href="{{ HOME }}" style="font-family:var(--serif);font-size:var(--fs-body);font-weight:600;letter-spacing:-.012em;color:var(--ink);text-decoration:none;flex:none;white-space:nowrap">{{ WORDMARK }}<span style="color:var(--accent)">{{ WORDMARK_ACCENT }}</span></a>
+      <div style="display:flex;align-items:center;gap:10px 19px;flex-wrap:wrap;font-size:var(--fs-small);min-width:0">
+        {%- for item in NAV %}
+        {%- if item.label == current %}
+        <span aria-current="page" style="color:var(--accent);font-weight:600;border-bottom:1.5px solid var(--accent);padding-bottom:2px">{{ item.label }}</span>
+        {%- else %}
+        <a href="{{ item.href }}" style="color:var(--soft);text-decoration:none;border-bottom:0">{{ item.label }}</a>
+        {%- endif %}
+        {%- endfor %}
+      </div>
+    </div>
+    <div style="height:2px;background:transparent"><div data-scrollfill="" style="height:100%;width:0%;background:var(--accent)"></div></div>
+  </header>
+{%- endmacro %}

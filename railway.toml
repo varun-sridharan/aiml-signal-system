@@ -1,0 +1,11 @@
+# Railway config as code. Values here override the dashboard.
+#
+# The healthcheck is what makes a malformed plan.md or roadmap.md stop a deploy instead
+# of taking the site down. app.py runs the format check at import and exits if it fails,
+# so a bad deployment never answers /health. Railway only makes a new deployment active,
+# and the previous one inactive, after the healthcheck path returns a 2xx; a deployment
+# that never does is marked failed and the previous one keeps serving.
+#
+# The start command still comes from the Procfile.
+[deploy]
+healthcheckPath = "/health"

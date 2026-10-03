@@ -7,18 +7,25 @@ attributed to either.
 
 The static mount is the repository root, so dotfiles are refused explicitly: an
 unguarded root mount serves `.env` over HTTP, and the README invites people to run
-this locally, where that file holds a real API key. Everything else under the root
-is already in the public repo, so the guard is the whole of what needs hiding.
+this locally, where that file holds a real API key. Page sources (*.md,
+*.template.html, templates/, scripts/) are refused too: they are public in the repo, but the site
+serves their rendered pages, not a second raw copy of each.
+
+Plan and Roadmap render from markdown at request time (plan/FORMAT.md is the format),
+and the app refuses to start if either file breaks that format.
 """
 
-import json
 import os
+import sys
 from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from jinja2 import ChoiceLoader, FileSystemLoader
+
+from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
 # CONCEPT: the pages live in application/, design/ and plan/, and link across each
@@ -29,19 +36,56 @@ ROOT = Path(__file__).resolve().parent
 
 HOME = "/application/Product.html"
 
+PLAN_MD = ROOT / "plan" / "plan.md"
+ROADMAP_MD = ROOT / "plan" / "roadmap.md"
+
+# WHAT: refuse to start when either markdown source breaks plan/FORMAT.md.
+# CONCEPT: a malformed file must stop the deploy, not become a page that quietly shows
+# the wrong thing. Exiting here means the process never binds its port, so /health
+# never answers, so Railway's healthcheck fails and the previous deployment keeps
+# serving. The same check runs in the pre-commit hook, which catches it sooner.
+_errors = check(PLAN_MD, ROADMAP_MD)
+if _errors:
+    for _e in _errors:
+        print(_e, file=sys.stderr)
+    sys.exit(f"plan format check failed with {len(_errors)} error(s); refusing to start")
+
+# WHAT: templates come from plan/ (the two page templates, beside their sources) and
+# templates/ (the shared head and header partials).
 templates = Jinja2Templates(directory=ROOT / "templates")
+templates.env.loader = ChoiceLoader([
+    FileSystemLoader(ROOT / "plan"),
+    FileSystemLoader(ROOT / "templates"),
+])
 
 app = FastAPI(title="aiml-signal-system", docs_url=None, redoc_url=None)
 
 
-# WHAT: refuse any path with a dot-prefixed segment, before routing.
+# WHAT: refuse dotfiles and page sources, before routing.
 # CONCEPT: the cost of mounting the whole tree. `.env` is gitignored so it never
 # reaches the deploy, but it does exist locally, and a static mount would hand it
 # to anyone who asked. Checking every segment also covers `.git/config` and any
 # dotfile added later, which a single hardcoded `.env` check would not.
+#
+# The Plan and Roadmap sources are refused for a different reason: they are served as
+# rendered pages at /plan and /roadmap, and the raw markdown, its templates and the
+# format contract would be a second, unrendered copy of each page — including the HTML
+# comments that are authoring notes and never meant to be shown. Matched on the path
+# rather than the directory so that a source added anywhere later is covered too.
+# templates/ holds the shared Jinja partials, which are sources in the same sense.
+def _is_source(path: str) -> bool:
+    segs = path.split("/")
+    if any(seg.startswith(".") for seg in segs):
+        return True
+    if "scripts" in segs or "templates" in segs:
+        return True
+    name = segs[-1].lower()
+    return name.endswith(".md") or name.endswith(".template.html")
+
+
 @app.middleware("http")
-async def block_dotfiles(request: Request, call_next):
-    if any(seg.startswith(".") for seg in request.url.path.split("/")):
+async def block_sources(request: Request, call_next):
+    if _is_source(request.url.path):
         return JSONResponse({"detail": "Not Found"}, status_code=404)
     return await call_next(request)
 
@@ -67,31 +111,23 @@ def health() -> JSONResponse:
     return JSONResponse(body)
 
 
-# WHAT: render plan/Plan.json through templates/page.html at request time.
-# CONCEPT: the first page that stopped being a hand-regenerated ~800KB artefact. The
-# frozen plan/Plan.html served beside it for a while so the rendered page could be
-# compared against the reference rather than trusted; that comparison is done and the
-# bundle is gone, because a second copy of a page is a second thing to go stale.
+# WHAT: render plan/plan.md and plan/roadmap.md at request time.
+# CONCEPT: the markdown is the page. There is no JSON and no build step: an edit to
+# either file shows on the next request. Every number on the page (the plan's
+# "55% · 6 of 11", the backlog counts) is derived by the parser from the content, so
+# there is no written number to go stale.
 #
-# Keys beginning with an underscore are authoring notes and are never rendered. The
-# template reads named keys only, so no underscore key can reach the page.
+# The startup check already proved both files parse; parsing again per request is what
+# makes a local edit show without a restart. A file broken after startup raises here and
+# returns a 500 rather than a page that quietly shows the wrong thing.
 @app.get("/plan")
 def plan(request: Request):
-    content = json.loads((ROOT / "plan" / "Plan.json").read_text(encoding="utf-8"))
-    # WHAT: pass the JSON through by name.
-    # CONCEPT: the template derives progress from the Plan table, so there is no
-    # progress key to pass — it was deleted once the derivation was proved.
-    return templates.TemplateResponse(
-        request=request,
-        name="page.html",
-        context={
-            "site": content["site"],
-            "nav": content["nav"],
-            "phases": content["phases"],
-            "decisionLog": content["decisionLog"],
-            "lastUpdated": content["lastUpdated"],
-        },
-    )
+    return templates.TemplateResponse(request=request, name="plan.template.html", context=load_plan(PLAN_MD))
+
+
+@app.get("/roadmap")
+def roadmap(request: Request):
+    return templates.TemplateResponse(request=request, name="roadmap.template.html", context=load_roadmap(ROADMAP_MD))
 
 
 # WHAT: the old bundle's URL, permanently redirected to the route that replaced it.
@@ -107,6 +143,12 @@ def plan(request: Request):
 @app.get("/plan/Plan.html")
 def plan_legacy() -> RedirectResponse:
     return RedirectResponse("/plan", status_code=301)
+
+
+# WHAT: the same for the Roadmap bundle, which the other bundles also link to.
+@app.get("/plan/Roadmap.html")
+def roadmap_legacy() -> RedirectResponse:
+    return RedirectResponse("/roadmap", status_code=301)
 
 
 app.mount("/", StaticFiles(directory=ROOT, html=True), name="site")

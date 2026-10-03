@@ -8,14 +8,14 @@
   carry preconnect hints to fonts.googleapis.com with no stylesheet behind them — this
   is the stylesheet those hints were waiting for.
 
-  This is an ADDITION. The bundle's verbatim <style> block is untouched; its dead
-  @font-face rules simply lose the race to these, which resolve.
+  The templates carry none of those dead rules: this link is the only font source on
+  /plan and /roadmap.
 
   The weight list is not the full families. It mirrors exactly what the bundle declares,
-  which is what Claude Design subset for this page: Newsreader 400/500/600 plus 400
+  which is what Claude Design subset for these pages: Newsreader 400/500/600 plus 400
   italic, Public Sans 400/500/600/700, IBM Plex Mono 400/500. Same 34 faces, same
   subsets. Mono at 600 (the status pills) is synthesised from 500 here exactly as it is
-  in the bundle, so the two render the same rather than one looking heavier.
+  in the bundle, so the pages render as the bundles did rather than looking heavier.
 #}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">

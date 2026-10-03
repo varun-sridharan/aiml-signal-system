@@ -1,0 +1,24 @@
+#!/bin/sh
+# Git pre-commit hook: refuse a commit whose plan/plan.md or plan/roadmap.md breaks
+# plan/FORMAT.md. Install with:  ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+#
+# It checks the STAGED versions of the two files, not the working tree, so it judges
+# exactly what is being committed. The same check gates app startup, and so the deploy.
+set -e
+ROOT=$(git rev-parse --show-toplevel)
+PY="$ROOT/.venv/bin/python"
+[ -x "$PY" ] || PY=python3
+
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+for f in plan.md roadmap.md; do
+  if ! git show ":plan/$f" > "$TMP/$f" 2>/dev/null; then
+    cp "$ROOT/plan/$f" "$TMP/$f" 2>/dev/null || { echo "pre-commit: plan/$f is missing"; exit 1; }
+  fi
+done
+
+if ! OUT=$("$PY" "$ROOT/scripts/check_plan_format.py" "$TMP/plan.md" "$TMP/roadmap.md" 2>&1); then
+  echo "$OUT" | sed "s#$TMP/#plan/#g"
+  echo "pre-commit: commit refused. Fix the staged file(s) above; the format is plan/FORMAT.md."
+  exit 1
+fi

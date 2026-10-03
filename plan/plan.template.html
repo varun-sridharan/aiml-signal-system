@@ -1,0 +1,218 @@
+{#
+  The Plan & Progress page. Rendered by the /plan route from plan/plan.md, which
+  scripts/plan_format.py parses into:
+
+    meta        title, kicker, lede_html, footer_html, updated
+    milestones  code, id, title, end_state, plan_intro, rows, status_paras,
+                done, total, percent, progress   (the last four derived, never written)
+    decisions   date, title, paras
+
+  Every *_html / rendered field is HTML the parser produced from markdown, hence |safe.
+  HTML comments in plan.md were dropped by the parser and never reach this template.
+
+  ---- Status vocabulary (layout note, carried from Plan.json _statusVocabulary) ----
+
+  Four status values, and each should read as its own state rather than as a shade of
+  alarm.
+
+  DONE — Finished. Settled, not celebratory.
+    Colour: --ok, outlined or lightly tinted.
+
+  IN PROGRESS — Being worked on right now. Exactly one row carries this, and the
+    milestone itself shows a percentage instead. Active is a neutral state, and the
+    colour should say *here*, not *problem*.
+    Colour: **Mustard, not red.** Fill `--active-soft` #F5EAD0 with `--active` #7A5F14
+    text and a 1px `--active` border — the same lightly-tinted treatment DONE gets in
+    green, so the two read as members of one scale rather than as success and failure.
+    **Do not use --accent or --warn here**; both are terracotta and both read as danger.
+
+  TO DO — Planned, not started. Quiet.
+    Colour: --faint, outlined.
+
+  TO DO · blocks paid runs — Planned, not started, and it gates something. The only row
+    with an ordering constraint.
+    Colour: `--faint` outline for the TO DO half, and the blocker half in `--warn`
+    terracotta with a warning mark. **This is the only place terracotta is correct on
+    this page** — it is the one row where something really is at risk.
+
+  ---- Palette addition (layout note, carried from Plan.json _paletteAddition) ----
+
+  Why: The palette had no colour for *active*. `--ok` is green for done, `--faint` grey
+  for idle, and `--accent` and `--warn` are **the same terracotta** (#B5502A). So
+  anything in progress was rendered in the danger colour by default — not a rendering
+  mistake, a gap in the vocabulary.
+
+  --active       #7A5F14  text and border for the in-progress state — a deep mustard,
+                          warm enough to belong beside the cream paper and clearly not
+                          the terracotta
+  --active-soft  #F5EAD0  the pill's fill — a light mustard tint, the amber counterpart
+                          to the green DONE tint
+
+  Note: Belongs in tokens.css when that lands; carried here meanwhile so the page and the
+  record agree.
+#}
+{%- from "_site.html" import site_header %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ meta.title }}</title>
+{% include "_head.html" %}
+<style>
+  :root{
+    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#8B8375;
+    --rule:#DED7C6; --rule2:#EAE4D6; --accent:#B5502A; --accent-soft:#F4E7DF;
+    --dark:#201C17; --darktext:#EFE6D4; --ok:#2F6B52; --active:#7A5F14; --active-soft:#F5EAD0;
+    --sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --serif:'Newsreader',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --rail:288px;
+    --fs-hero:clamp(40px,5.4vw,68px);
+    --fs-h2:40px;
+    --fs-h3:21px;
+    --fs-body:17px;
+    --fs-small:13px;
+    --fs-micro:10.5px;
+    --fs-display:38px;
+  }
+  .pjust{text-align:justify;hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
+  .foot code{font-family:var(--mono);font-size:11.5px}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.62;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{color:var(--ink);text-decoration:underline}
+  ::selection{background:var(--accent-soft)}
+  input::placeholder{color:var(--faint)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#D2CBBA;border-radius:8px;border:3px solid var(--paper)}
+</style>
+</head>
+<body>
+{#- One pill style, four colourings. DONE and the blocker are wrapped in <b> because the
+    JSON this page used to read carried them that way, so they render a step heavier
+    than TO DO; dropping the <b> would quietly change the page. #}
+{%- set PILL = "display:inline-block;font-family:var(--mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:.12em;border-radius:3px;padding:3px 9px;white-space:nowrap;" %}
+{%- set CELL = "padding:13px 14px 13px 0;border-bottom:1px solid var(--rule2);vertical-align:top;color:var(--soft);font-size:var(--fs-small);line-height:1.66;overflow-wrap:anywhere" %}
+<div style="display:block;min-height:100vh">
+  <aside data-sidebar="" style="position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--panel);border-right:1px solid var(--rule);z-index:30;display:flex;flex-direction:column;overflow:hidden;transition:width .22s ease">
+    <div style="display:flex;align-items:center;gap:12px;padding:15px 14px;border-bottom:1px solid var(--rule2);flex:none">
+      <div data-toggle-toc="" title="Contents" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--rule);border-radius:6px;background:var(--paper);cursor:pointer;flex:none;font-size:var(--fs-micro);color:var(--soft);user-select:none">&#9776;</div>
+      <div data-toc-label="" style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);white-space:nowrap">Contents</div>
+    </div>
+    <div data-toc-top="" style="flex:none;padding:14px 14px 12px;border-bottom:1px solid var(--rule2);display:flex;flex-direction:column;gap:11px">
+      <input data-search="" type="text" placeholder="Filter&#8230;" style="width:100%;font-family:var(--sans);font-size:var(--fs-small);color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:7px;padding:8px 10px;outline:none">
+    </div>
+    <div data-toc-body="" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 12px 28px">
+      {%- for ms in milestones %}
+        <a data-toc="{{ ms.id }}" href="#{{ ms.id }}" style="display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--soft);font-size:var(--fs-small);font-weight:500;line-height:1.3;padding:5px 8px;border-radius:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--active);flex:none;align-self:center"></span><span>{{ ms.code }} &middot; {{ ms.title | safe }}</span></a>
+        <a data-toc="{{ ms.id }}-plan" href="#{{ ms.id }}-plan" style="display:flex;text-decoration:none;color:var(--faint);font-size:var(--fs-micro);line-height:1.3;padding:4px 8px 4px 26px;border-radius:5px"><span>Plan</span></a>
+        <a data-toc="{{ ms.id }}-status" href="#{{ ms.id }}-status" style="display:flex;text-decoration:none;color:var(--faint);font-size:var(--fs-micro);line-height:1.3;padding:4px 8px 4px 26px;border-radius:5px"><span>Status</span></a>
+      {%- endfor %}
+        <a data-toc="decision-log" href="#decision-log" style="display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--soft);font-size:var(--fs-small);font-weight:500;line-height:1.3;padding:5px 8px;border-radius:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--rule);flex:none;align-self:center"></span><span>Decision Log</span></a>
+    </div>
+  </aside>
+
+  {{ site_header("Plan & Progress") }}
+
+  <main style="margin-left:var(--rail);padding:0 40px 120px;transition:margin-left .22s ease">
+    <article style="max-width:820px;margin:0 auto;padding-top:132px">
+      <div style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">{{ meta.kicker }}</div>
+      <h1 style="font-family:var(--serif);font-weight:600;font-size:var(--fs-hero);line-height:1.03;letter-spacing:-.022em;margin:14px 0 0">{{ meta.title }}</h1>
+      <p style="font-family:var(--serif);font-size:var(--fs-h3);line-height:1.45;color:var(--soft);margin:18px 0 0;max-width:52ch;text-wrap:pretty">{{ meta.lede_html | safe }}</p>
+
+      {%- for ms in milestones %}
+
+      <div data-phase="" data-status="{{ ms.percent }}%" id="{{ ms.id }}" style="scroll-margin-top:110px;background:var(--active-soft);border:1px solid #E6D9B6;border-left:3px solid var(--active);border-radius:0 4px 4px 0;margin:34px 0 0">
+        <div data-phase-head="" style="display:flex;gap:16px;align-items:flex-start;padding:20px 24px;cursor:pointer">
+          <span data-chev="" style="font-size:var(--fs-micro);color:var(--faint);display:inline-block;transform:rotate(0deg);margin-top:9px;transition:transform .18s ease;flex:none">&#9660;</span>
+          <span style="font-family:var(--mono);font-size:var(--fs-small);font-weight:600;color:var(--active);letter-spacing:.04em;flex:none;margin-top:5px">{{ ms.code }}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:11px;flex-wrap:wrap">
+              <h1 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.018em;line-height:1.18;margin:0">{{ ms.title | safe }}</h1>
+              <span style="display:inline-flex;align-items:center;gap:8px">
+                <span style="{{ PILL }}color:var(--active);border:1px solid var(--active);background:var(--active-soft)">{{ ms.percent }}%</span>
+                <span style="font-family:var(--mono);font-size:var(--fs-small);letter-spacing:.06em;color:var(--soft)">{{ ms.progress }}</span>
+              </span>
+            </div>
+            <p style="margin:10px 0 0;color:var(--soft);font-size:var(--fs-body);line-height:1.7;max-width:84ch;text-wrap:pretty"><span style="color:var(--ink);font-weight:600">End state:</span> {{ ms.end_state | safe }}</p>
+          </div>
+        </div>
+        <div data-phase-body="" data-open="1" style="display:block;padding:0 24px 24px 56px">
+        <div id="{{ ms.id }}-plan" style="scroll-margin-top:110px;margin:0">
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 10px">
+            <h2 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.014em;line-height:1.2;margin:0">Plan</h2>
+            <span style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--faint)">{{ ms.total }} activities</span>
+          </div>
+          {%- if ms.plan_intro %}
+          <p style="margin:0 0 14px;color:var(--soft);font-size:var(--fs-small);line-height:1.72;max-width:86ch;text-wrap:pretty">{{ ms.plan_intro | safe }}</p>
+          {%- endif %}
+          <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed">
+            <tr>
+              {%- for h in ["Activity", "Outcome", "Why it matters", "Status"] %}
+              <th style="text-align:left;padding:10px 14px 10px 0;border-bottom:1px solid var(--ink);color:var(--ink);font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;font-weight:500;width:{{ [21, 25, 36, 18][loop.index0] }}%{% if loop.last %};text-align:right{% endif %}">{{ h }}</th>
+              {%- endfor %}
+            </tr>
+            {%- for row in ms.rows %}
+            <tr>
+              <td style="{{ CELL }};color:var(--ink);font-weight:600">{{ row.activity | safe }}</td>
+              <td style="{{ CELL }}">{{ row.outcome | safe }}</td>
+              <td style="{{ CELL }};color:var(--soft)">{{ row.why | safe }}</td>
+              <td style="{{ CELL }};text-align:right;white-space:nowrap">
+                <span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:5px">
+                {%- if row.status == "done" %}
+                <span style="{{ PILL }}color:var(--ok);border:1px solid #C4D6CB;background:#EAF1EC"><b>{{ row.label }}</b></span>
+                {%- elif row.status == "progress" %}
+                <span style="{{ PILL }}color:var(--active);border:1px solid var(--active);background:var(--active-soft)">{{ row.label }}</span>
+                {%- elif row.status == "blocked" %}
+                <span style="{{ PILL }}color:var(--faint);border:1px solid var(--rule);background:transparent">{{ row.label }}</span><span style="{{ PILL }}white-space:normal;text-align:right;line-height:1.35;color:var(--accent);border:1px solid var(--accent);background:var(--accent-soft);text-transform:none;letter-spacing:.06em">&#9888; <b>{{ row.blocker }}</b></span>
+                {%- else %}
+                <span style="{{ PILL }}color:var(--faint);border:1px solid var(--rule);background:transparent">{{ row.label }}</span>
+                {%- endif %}
+                </span>
+              </td>
+            </tr>
+            {%- endfor %}
+          </table></div>
+        </div>
+
+        <div id="{{ ms.id }}-status" style="scroll-margin-top:110px;margin:30px 0 0;padding-top:18px;border-top:1px solid var(--rule)">
+          <h2 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.014em;line-height:1.2;margin:0 0 10px">Status</h2>
+          {%- for p in ms.status_paras %}
+          <p style="margin:{{ '0' if loop.first else '14px 0 0' }};color:var(--soft);font-size:var(--fs-body);line-height:1.78;max-width:84ch;text-wrap:pretty">{{ p | safe }}</p>
+          {%- endfor %}
+        </div>
+
+        </div>
+      </div>
+      {%- endfor %}
+      <div id="decision-log" style="scroll-margin-top:110px;margin:52px 0 0;padding-top:18px;border-top:1px solid var(--ink)">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+          <h1 style="font-family:var(--serif);font-weight:600;font-size:var(--fs-h3);letter-spacing:-.018em;margin:0">Decision Log</h1>
+          <span style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--faint)">{{ decisions | length }} entries &middot; newest first</span>
+        </div>
+        <div style="margin:16px 0 0">
+          {%- for entry in decisions %}
+          <div style="display:flex;gap:18px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--rule2)">
+            <span style="font-family:var(--mono);font-size:var(--fs-small);color:var(--faint);flex:none;min-width:88px;margin-top:2px">{{ entry.date }}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-family:var(--serif);color:var(--ink);font-size:var(--fs-h3);font-weight:600;line-height:1.28;letter-spacing:-.012em;text-wrap:pretty">{{ entry.title | safe }}</div>
+              {%- for p in entry.paras %}
+              <p class="pjust" style="margin:7px 0 0;color:var(--soft);font-size:var(--fs-body);line-height:1.72;max-width:88ch">{{ p | safe }}</p>
+              {%- endfor %}
+            </div>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+
+      <div class="foot" style="margin-top:60px;padding-top:16px;border-top:1px solid var(--rule);font-size:var(--fs-small);color:var(--faint)">{{ meta.footer_html | safe }} Last updated {{ meta.updated }}.</div>
+    </article>
+  </main>
+</div>
+{#- site.js is the page's behaviour: the collapsible milestone (data-phase-head /
+    data-phase-body / data-chev), the ToC filter (data-search), the scrollspy (data-toc),
+    the rail toggle (data-toggle-toc) and the progress bar (data-scrollfill). #}
+<script src="/static/site.js" defer></script>
+</body>
+</html>
