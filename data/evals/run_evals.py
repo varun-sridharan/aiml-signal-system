@@ -27,7 +27,6 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -170,15 +169,18 @@ def check_regression(case: dict, claims: list) -> tuple[bool, str]:
     return True, f"{claim['claim']!r} → {span[:70]!r}" if span else f"{claim['claim']!r}"
 
 
-def run_faithfulness(client, usage_log, timestamp, profile, case, show_claims: bool) -> dict:
+def run_faithfulness(client, profile, case, show_claims: bool) -> dict:
     """Regrade the golden framing and compare every verdict to the labels."""
     labels = case["labels"]["units"]
     framing = framing_from_framed_day(case["output"])
 
-    verdicts, thread_verdict, usage = framer.check_faithfulness(client, case["input"], framing)
-    cost = framer.record_call(
-        usage_log, profile["user_id"], "eval-faithfulness", framer.CHECK_MODEL, usage, timestamp
+    # WHAT: the harness's phase label goes down with the call; llm.call() books it.
+    # CONCEPT: one booking per call. The harness used to book this itself, against its
+    # own copy of the file ledger, while the Framer's call path skipped recording.
+    verdicts, thread_verdict, usage = framer.check_faithfulness(
+        client, case["input"], framing, user_id=profile["user_id"], phase="eval-faithfulness"
     )
+    cost = framer.estimate_cost_usd(framer.CHECK_MODEL, usage)
     graded = {**verdicts, "thread": thread_verdict}
 
     print("\n  FAITHFULNESS (hard gate)")
@@ -311,8 +313,8 @@ def run_structural(profile: dict, case: dict) -> dict:
 # ---------------------------------------------------------------- usefulness
 
 
-def run_usefulness(client, usage_log, timestamp, profile, case) -> dict:
-    """Score the framing against a rubric with an LLM judge. Reported, never gated."""
+def usefulness_request(profile, case) -> dict:
+    """The judge call's arguments, built without making it."""
     # WHAT: the subjective half — is the writing actually worth reading?
     # CONCEPT: eval — subjective grader, deliberately kept out of the gate. Faithfulness
     # is objective and can fail a build; usefulness is a judge's opinion and stays
@@ -336,17 +338,24 @@ def run_usefulness(client, usage_log, timestamp, profile, case) -> dict:
         ],
     }
 
-    message = client.messages.create(
+    return dict(
         model=framer.CHECK_MODEL,
         max_tokens=framer.CHECK_MAX_TOKENS,
         system=JUDGE_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": json.dumps(payload, indent=2)}],
         output_config={"format": {"type": "json_schema", "schema": USEFULNESS_SCHEMA}},
     )
-    cost = framer.record_call(
-        usage_log, profile["user_id"], "eval-usefulness", framer.CHECK_MODEL, message.usage, timestamp
+
+
+def run_usefulness(client, profile, case) -> dict:
+    """Score the framing against a rubric with an LLM judge. Reported, never gated."""
+    # WHAT: through llm.call(), like every other paid call.
+    # CONCEPT: loop — this call used to go straight to client.messages.create, so it
+    # skipped the pre-flight breaker entirely and was only booked after it had spent.
+    text, _usage, cost = framer.llm.call(
+        client, user_id=profile["user_id"], phase="eval-usefulness", **usefulness_request(profile, case)
     )
-    units = json.loads(framer.structured_text(message))["units"]
+    units = json.loads(text)["units"]
 
     print("\n  USEFULNESS (reported, not gated — needs your ratings to calibrate)")
     header = "  ".join(f"{d[:9]:>9}" for d in RUBRIC_DIMENSIONS)
@@ -407,7 +416,7 @@ def main() -> None:
         sys.exit(f"No golden cases found in {GOLDEN_DIR.relative_to(REPO)}"
                  + (f" matching {args.case!r}" if args.case else ""))
 
-    client, usage_log, timestamp = None, None, None
+    client = None
     spent = 0.0
     if not args.no_api:
         load_dotenv(REPO / ".env")
@@ -416,11 +425,13 @@ def main() -> None:
 
         # WHAT: refuse to start if this month's spend is already over budget.
         # CONCEPT: loop — the same circuit breaker the Framer uses, reading the same
-        # ledger. An eval that can run unbounded is a way to spend the budget twice.
-        now = datetime.now(timezone.utc)
-        timestamp, month = now.isoformat(timespec="seconds"), now.strftime("%Y-%m")
-        usage_log = framer.load_usage_log()
-        spent = framer.month_to_date_spend(usage_log, month)
+        # ledger, in Postgres. Each call is still reserved and checked on its own inside
+        # llm.call(); this only saves starting a run that cannot finish. No ledger, no run.
+        try:
+            with framer.budget.connect() as conn:
+                spent = framer.month_to_date_spend(conn)
+        except framer.budget.LedgerUnavailable as missing:
+            sys.exit(str(missing))
         if spent >= framer.MONTHLY_BUDGET_USD:
             sys.exit(
                 f"Month-to-date spend ${spent:.2f} has reached MONTHLY_BUDGET_USD "
@@ -444,19 +455,16 @@ def main() -> None:
 
         faithfulness = usefulness = None
         if not args.no_api:
-            faithfulness = run_faithfulness(client, usage_log, timestamp, profile, case, args.show_claims)
+            faithfulness = run_faithfulness(client, profile, case, args.show_claims)
             hard_failures += [f"{case['name']} faithfulness: {f}" for f in faithfulness["failures"]]
             cost += faithfulness["cost"]
 
             if not args.skip_usefulness:
-                usefulness = run_usefulness(client, usage_log, timestamp, profile, case)
+                usefulness = run_usefulness(client, profile, case)
                 cost += usefulness["cost"]
 
         summaries.append({"case": case["name"], "structural": structural,
                           "faithfulness": faithfulness, "usefulness": usefulness})
-
-    if not args.no_api:
-        framer.USAGE_PATH.write_text(json.dumps(usage_log, indent=2) + "\n")
 
     print(f"\n{'=' * 72}\nSUMMARY")
     for summary in summaries:
@@ -471,7 +479,7 @@ def main() -> None:
         print(" ".join(line))
 
     if not args.no_api:
-        print(f"\n  cost: ${cost:.4f} this run · ${spent + cost:.2f} month-to-date "
+        print(f"\n  cost: ${cost:.4f} this run · ${float(spent) + cost:.2f} month-to-date "
               f"of ${framer.MONTHLY_BUDGET_USD:.2f}")
 
     # WHAT: a failing hard gate exits non-zero.

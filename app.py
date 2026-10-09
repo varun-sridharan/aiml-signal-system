@@ -17,6 +17,7 @@ and the app refuses to start if either file breaks that format.
 
 import os
 import sys
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -25,6 +26,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import ChoiceLoader, FileSystemLoader
 
+from agents import budget
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -49,6 +51,16 @@ if _errors:
     for _e in _errors:
         print(_e, file=sys.stderr)
     sys.exit(f"plan format check failed with {len(_errors)} error(s); refusing to start")
+
+# WHAT: create the spend ledger's table if it is missing, from agents/schema.sql.
+# CONCEPT: unlike the format check, this does not stop the app. The pages do not need
+# the database, and the ledger fails closed on its own: with no table or no database,
+# every paid call is refused. /health reports whether the ledger is reachable.
+try:
+    with budget.connect():
+        pass  # connect() applies the schema idempotently on first use
+except budget.LedgerUnavailable as _missing:
+    print(f"spend ledger unavailable at startup: {_missing}", file=sys.stderr)
 
 # WHAT: templates come from plan/ (the two page templates, beside their sources) and
 # templates/ (the shared head and header partials).
@@ -108,7 +120,27 @@ def health() -> JSONResponse:
     body = {"status": "ok"}
     if sha:
         body["sha"] = sha[:7]
+    # WHAT: say whether the spend ledger answers, and nothing else about it.
+    # CONCEPT: no figures and no URL, because /health is public. An unreachable ledger
+    # is still a 200: the site is serving, and paid calls are refused on their own.
+    body["ledger"] = "ok" if _ledger_ok() else "unavailable"
     return JSONResponse(body)
+
+
+# A public endpoint that opens a database connection per request is a cheap way to
+# load the database, so the answer is cached briefly.
+_LEDGER_TTL_S = 15
+# `at` starts as None, not 0: time.monotonic() can itself start near zero in a fresh
+# process, and a zero would read as "checked just now" for the first 15 seconds, which
+# is exactly when the deploy healthcheck asks.
+_ledger_cache = {"at": None, "ok": False}
+
+
+def _ledger_ok() -> bool:
+    now = time.monotonic()
+    if _ledger_cache["at"] is None or now - _ledger_cache["at"] > _LEDGER_TTL_S:
+        _ledger_cache.update(at=now, ok=budget.ledger_reachable())
+    return _ledger_cache["ok"]
 
 
 # WHAT: render plan/plan.md and plan/roadmap.md at request time.

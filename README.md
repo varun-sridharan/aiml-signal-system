@@ -42,7 +42,7 @@ Takes a verified pool of items and a user profile, and writes the edition — wh
 It ships with its own guardrails rather than relying on the eval to catch things later:
 
 - **Faithfulness self-check** — a second, cheaper model regrades the generated brief against the source pool and returns a claim-by-claim verdict (`check_faithfulness`, `suspicious_unsupported`, `normalise_verdict`). Omission and fabrication are treated as different failures.
-- **Cost ledger and circuit breaker** — every API call is appended to `data/state/usage.json` with tokens and estimated cost, and month-to-date spend is checked against `MONTHLY_BUDGET_USD` *before* a run starts, not reconciled after (`record_call`, `month_to_date_spend`).
+- **Cost ledger and circuit breaker** — every API call is booked in the `spend_ledger` table in Railway Postgres (`agents/schema.sql`). Before a call, its worst case is reserved in the same locked transaction as the check against `MONTHLY_BUDGET_USD`, so a call that would cross the ceiling is refused before it is made; after it, the row settles to the actual cost (`budget.reserve`, `budget.settle`). With no reachable database, no paid call is made.
 
 ### The eval harness
 
@@ -105,7 +105,7 @@ data/
   verified/        Gatekeeper-shaped input pool  → gatekeeper_YYYY-MM-DD.json
   briefs/          Framer output                 → framer_YYYY-MM-DD.json
                    one real generated brief is committed, for 2026-08-04
-  state/           usage.json (live cost ledger) · metrics.json (seed) · backlog.json
+  state/           metrics.json (seed) · backlog.json — the cost ledger is in Postgres, not here
   evals/           run_evals.py + golden/<date>/ (frozen input + output + hand labels)
 design/            System_Design.json → System-Design.html — design record & decision log
 plan/              plan.md · roadmap.md → rendered at /plan and /roadmap on every request;
@@ -128,9 +128,19 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 echo "ANTHROPIC_API_KEY=sk-..." > .env
 
-python data/evals/run_evals.py --no-api      # structural gates only, no API call
+python data/evals/run_evals.py --no-api      # structural gates only, no API call, no database
 python data/evals/run_evals.py               # full harness, ~$0.02
 ```
+
+Any run that calls the API books it in the spend ledger, a Postgres table, and refuses to start without one. The project's database is private on Railway; locally it is reached through a tunnel on a fixed port:
+
+```bash
+railway connect Postgres --tunnel-only --port 15432   # leave running in another terminal
+# .env: DATABASE_URL=postgresql://<user>:<password>@127.0.0.1:15432/<db>
+python -m unittest tests.test_ledger -v              # the ledger's tests; no API calls
+```
+
+Your own deployment needs only a `DATABASE_URL` pointing at any Postgres; the table is created on first connect.
 
 ## Notes
 
@@ -138,6 +148,6 @@ Single-user today, but every record carries `user_id` and agents take `(profile,
 
 `config/profile.json` is a **problem statement, not a settings file** — it describes the reader the system is solving for, and every agent takes it as input rather than having any of it baked into a prompt. That is the seam personalization runs through: the pipeline up to the Framer is identical for every reader, and only the framing step is per-person. Replace it with your own and nothing in the agent code changes.
 
-`data/` is committed on purpose, so the repo can be read without running it: `usage.json` is the real cost ledger from my own runs, `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. The Control Hub is the surface that stays private in the design — where a real user's ratings, spend and pending actions would live. It is not built and not linked; its content contract is kept in `application/Control-Hub.json` for the milestone that builds it.
+`data/` is committed on purpose, so the repo can be read without running it: `metrics.json` is seed-state with every value `null`, and `data/evals/golden/` holds a real frozen case with hand-written labels. The Control Hub is the surface that stays private in the design — where a real user's ratings, spend and pending actions would live. It is not built and not linked; its content contract is kept in `application/Control-Hub.json` for the milestone that builds it.
 
 Built in timeboxed ~60-minute sessions, each one planned and committed as a phase — `plan/plan.md` is the rolling record and `prompts/` holds the canonical prompt for each phase. That workflow is itself part of the experiment.

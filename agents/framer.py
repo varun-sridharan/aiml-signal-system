@@ -18,7 +18,6 @@ from __future__ import annotations
 import json
 import re
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 # WHAT: the shared plumbing now lives in two sibling modules.
@@ -52,11 +51,11 @@ MONTHLY_BUDGET_USD = budget.MONTHLY_BUDGET_USD
 PRICING_PER_MTOK = budget.PRICING_PER_MTOK
 CACHE_READ_MULTIPLIER = budget.CACHE_READ_MULTIPLIER
 CACHE_WRITE_MULTIPLIER = budget.CACHE_WRITE_MULTIPLIER
-USAGE_PATH = budget.USAGE_PATH
 estimate_cost_usd = budget.estimate_cost_usd
-load_usage_log = budget.load_usage_log
 month_to_date_spend = budget.month_to_date_spend
-record_call = budget.record_call
+# USAGE_PATH, load_usage_log and record_call are gone, not aliased: they were the file
+# ledger, and keeping a name that points at a second ledger is the bug the move to
+# Postgres fixed. The harness now books through check_faithfulness and llm.call().
 
 WORDS_PER_MINUTE = 200
 
@@ -297,8 +296,12 @@ def load_framer_system_prompt() -> str:
 # ---------------------------------------------------------------- api calls
 
 
-def frame_day(client, system_prompt: str, profile: dict, raw_day: dict, timestamp: str, ledger: dict):
-    """Frame every item plus the day-level thread in a single structured call."""
+def framing_request(system_prompt: str, profile: dict, raw_day: dict) -> dict:
+    """The framing call's arguments, built without making it.
+
+    Split out of frame_day so the spend estimate can be tested against the request that
+    is actually sent, rather than a guess at its size.
+    """
     # WHAT: send the profile and all raw items in ONE request, not one per item.
     # CONCEPT: harness — batching. N items cost one round trip instead of N, and the
     # model can only write the cross-item "thread" if it sees every item at once.
@@ -328,15 +331,10 @@ def frame_day(client, system_prompt: str, profile: dict, raw_day: dict, timestam
     # could outlast the HTTP timeout, and thinking is on by default on Opus 5, so
     # the budget has to cover reasoning as well as the JSON. We don't render the
     # tokens; get_final_message() just gives us timeout safety for free.
-    text, usage, cost = llm.call(
-        client,
+    return dict(
         model=llm.FRAMER_MODEL,
         max_tokens=llm.FRAMER_MAX_TOKENS,
         stream=True,
-        timestamp=timestamp,
-        ledger=ledger,
-        user_id=profile["user_id"],
-        phase="framing",
         # WHAT: the static prompt goes in `system` with a cache breakpoint; the
         # per-day profile and items go in the user turn, after it.
         # CONCEPT: harness — prompt caching. Caching is a prefix match, so stable
@@ -353,6 +351,14 @@ def frame_day(client, system_prompt: str, profile: dict, raw_day: dict, timestam
             "format": {"type": "json_schema", "schema": FRAMING_SCHEMA},
             "effort": llm.FRAMER_EFFORT,
         },
+    )
+
+
+def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
+    """Frame every item plus the day-level thread in a single structured call."""
+    text, usage, cost = llm.call(
+        client, user_id=profile["user_id"], phase="framing",
+        **framing_request(system_prompt, profile, raw_day),
     )
     return json.loads(text), usage, cost
 
@@ -548,33 +554,13 @@ def normalise_verdict(raw: dict, ground_truth: str, writing: str = "") -> dict:
     }
 
 
-def check_faithfulness(client, raw_day: dict, framing: dict, timestamp: str | None = None,
-                       ledger: dict | None = None, user_id: str | None = None):
-    """Grade each item against its own excerpt and the thread against all of them, in one cheap call.
-
-    `timestamp` and `ledger` are optional because data/evals/run_evals.py calls this
-    with three arguments and books the call itself, under its own phase label and
-    against its own log. Left unset, the call is still budget-checked; it is only the
-    recording that the caller takes responsibility for.
-    """
-    # WHAT: re-read our own output against the sources before emitting it, on a
-    # cheaper model than the one that wrote it. Items and thread in a single request.
-    # CONCEPT: loop — reflection / self-verification before emit; eval — grounding.
-    # A second pair of eyes is worth more than a bigger model marking its own work.
-    # One call keeps the run at two API calls total, thread check included.
-    payload = build_check_payload(raw_day, framing)
-
+def check_request(payload: dict) -> dict:
+    """The grading call's arguments for a built payload, without making it."""
     # No cache_control here: Haiku 4.5 needs a ~4096-token prefix before anything
     # caches, and this system prompt is far shorter than that.
-    stamp = timestamp or datetime.now(timezone.utc).isoformat(timespec="seconds")
-    text, usage, _cost = llm.call(
-        client,
+    return dict(
         model=llm.CHECK_MODEL,
         max_tokens=llm.CHECK_MAX_TOKENS,
-        timestamp=stamp,
-        ledger=ledger,
-        user_id=user_id,
-        phase="faithfulness",
         system=CHECK_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": json.dumps(payload, indent=2)}],
         # WHAT: sample at zero so the same brief grades the same way twice.
@@ -585,6 +571,22 @@ def check_faithfulness(client, raw_day: dict, framing: dict, timestamp: str | No
         temperature=0,
         output_config={"format": {"type": "json_schema", "schema": FAITHFULNESS_SCHEMA}},
     )
+
+
+def check_faithfulness(client, raw_day: dict, framing: dict, *, user_id: str, phase: str):
+    """Grade each item against its own excerpt and the thread against all of them, in one cheap call.
+
+    `phase` is the caller's label for the booking: "faithfulness" when the Framer grades
+    its own run, "eval-faithfulness" when data/evals/run_evals.py regrades a golden case.
+    The call is booked once, by llm.call(), under whichever the caller passes.
+    """
+    # WHAT: re-read our own output against the sources before emitting it, on a
+    # cheaper model than the one that wrote it. Items and thread in a single request.
+    # CONCEPT: loop — reflection / self-verification before emit; eval — grounding.
+    # A second pair of eyes is worth more than a bigger model marking its own work.
+    # One call keeps the run at two API calls total, thread check included.
+    payload = build_check_payload(raw_day, framing)
+    text, usage, _cost = llm.call(client, user_id=user_id, phase=phase, **check_request(payload))
     graded = json.loads(text)
     per_item_truth, union_truth = ground_truth_for(raw_day)
     # The grader saw only the fact clauses, so that is what "the writing" means when we
@@ -725,42 +727,36 @@ def main() -> None:
     raw_day = load_json(raw_path)
     system_prompt = load_framer_system_prompt()
 
-    # WHAT: read the ledger; llm.call() runs the breaker before each request.
-    # CONCEPT: loop — circuit breaker, now stop-BEFORE rather than stop-after. The old
-    # check here refused only once spend had already passed the ceiling, which let the
-    # call that crossed the line through every time. budget.assert_within_budget adds
-    # this call's worst case to month-to-date first, so the crossing never happens.
-    now = datetime.now(timezone.utc)
-    timestamp, month = now.isoformat(timespec="seconds"), now.strftime("%Y-%m")
-    usage_log = budget.load_usage_log()
-    spent = budget.month_to_date_spend(usage_log, month)
+    # WHAT: read month-to-date from the ledger, for the banner only.
+    # CONCEPT: loop — circuit breaker. The gate itself is inside llm.call(), which
+    # reserves each call's worst case before making it. No ledger, no run: this raises
+    # before the first paid call rather than spending against a guess.
+    try:
+        with budget.connect() as conn:
+            spent = budget.month_to_date_spend(conn)
+    except budget.LedgerUnavailable as missing:
+        sys.exit(str(missing))
 
     print(f"Framing {raw_day['date']} — {len(raw_day['items'])} items "
           f"({llm.FRAMER_MODEL}, ${spent:.2f} spent this month)")
 
     try:
-        framing, _framing_usage, _cost = frame_day(
-            client, system_prompt, profile, raw_day, timestamp, usage_log
-        )
+        framing, _framing_usage, framing_cost = frame_day(client, system_prompt, profile, raw_day)
         verdicts, thread_verdict, _check_usage = check_faithfulness(
-            client, raw_day, framing, timestamp, usage_log, profile["user_id"]
+            client, raw_day, framing, user_id=profile["user_id"], phase="faithfulness"
         )
-    except RuntimeError as breaker:
-        # The ledger is written back on the way out so a partial run still books what
-        # it spent; a call refused before it was made has nothing to book.
-        budget.save_usage_log(usage_log)
+    except (budget.BudgetExceeded, budget.LedgerUnavailable) as breaker:
+        # Every call is booked as it is made, so there is nothing to write back here.
         sys.exit(str(breaker))
 
-    # WHAT: this run's cost is the ledger's movement, not a running total kept by hand.
-    # CONCEPT: one source of truth. llm.call() books each call as it happens, so
-    # re-reading the log is the only figure that cannot drift from what was recorded.
-    cost = budget.month_to_date_spend(usage_log, month) - spent
+    # WHAT: this run's cost is what its two calls settled at, as booked in the ledger.
+    check_cost = budget.estimate_cost_usd(llm.CHECK_MODEL, _check_usage)
+    cost = framing_cost + check_cost
 
     day = assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
 
     out_path = REPO / "data" / "briefs" / f"framer_{raw_day['date']}.json"
     out_path.write_text(json.dumps(day, indent=2, ensure_ascii=False) + "\n")
-    budget.save_usage_log(usage_log)
 
     flagged = [i for i in day["items"] if i["faithfulness"]["unsupported_claims"]]
     confidences = [i["faithfulness"]["confidence"] for i in day["items"]
@@ -789,7 +785,7 @@ def main() -> None:
 
     for note in day["_enforcements"]:
         print(f"  enforced: {note}")
-    print(f"  cost: ${cost:.4f} this run · ${spent + cost:.2f} month-to-date "
+    print(f"  cost: ${cost:.4f} this run · ${float(spent) + cost:.2f} month-to-date "
           f"of ${MONTHLY_BUDGET_USD:.2f}")
 
 

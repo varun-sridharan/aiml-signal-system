@@ -1,10 +1,11 @@
 """The guarded model call: pinned models, one client, and no way to skip the breaker.
 
 Extracted from framer.py at M1 alongside budget.py, when Reader became the second
-caller. The single entry point is call(), which does the pre-flight budget check,
-makes the request, refuses a truncated or declined response, and appends to the
-ledger. A caller that uses this module cannot spend without checking first, because
-the check is not a separate step it could forget to take.
+caller. The single entry point is call(), which reserves the call's worst case in the
+ledger (refusing it if that would cross the ceiling), makes the request, settles the
+reservation at the actual cost, and only then refuses a truncated or declined response.
+A caller cannot spend without being checked or without being booked, because neither
+is a separate step it could forget to take.
 
 Deliberately not generalised: two call shapes exist because the two real callers need
 two — one streamed with a cache breakpoint and a thinking budget, one plain create at
@@ -71,35 +72,44 @@ def call(
     *,
     model: str,
     max_tokens: int,
-    timestamp: str,
+    user_id: str,
+    phase: str,
     stream: bool = False,
-    ledger: dict | None = None,
-    user_id: str | None = None,
-    phase: str | None = None,
+    conn=None,
     **request,
 ):
-    """Budget-check, call, validate, and record. Returns (text, usage, cost).
+    """Reserve, call, settle, validate. Returns (text, usage, cost).
 
-    The pre-flight check always runs. Recording happens when `ledger` is supplied; the
-    eval harness passes none because it books the same call under its own phase label
-    against its own log, and double-booking one call would corrupt the ledger it reads
-    back next run. `cost` is None when nothing was recorded.
+    Every call is booked, exactly once, under the caller's `phase` and `user_id`; both
+    are required. `conn` is for tests, which pass a connection inside a transaction they
+    roll back; everyone else lets this open its own.
     """
-    month = timestamp[:7]
-    # WHAT: check before spending, every time, with no opt-out.
-    # CONCEPT: loop — circuit breaker. Reading the log here rather than taking it as a
-    # required argument is what lets a caller with its own bookkeeping still be gated.
-    log_for_check = ledger if ledger is not None else budget.load_usage_log()
-    budget.assert_within_budget(model, max_tokens, log_for_check, month)
+    # WHAT: no ledger, no call. budget.connect() raises LedgerUnavailable rather than
+    # falling back, and the request below is never reached.
+    own = conn is None
+    if own:
+        conn = budget.connect()
+    try:
+        # WHAT: reserve the worst case before spending, every time, with no opt-out.
+        # CONCEPT: loop — circuit breaker. The check and the booking are one locked
+        # transaction, so an unrecorded call can no longer quietly raise the ceiling.
+        estimate = budget.estimate_call_ceiling_usd(model, max_tokens, request)
+        reservation = budget.reserve(conn, user_id=user_id, phase=phase, model=model, estimate_usd=estimate)
 
-    if stream:
-        with client.messages.stream(model=model, max_tokens=max_tokens, **request) as s:
-            message = s.get_final_message()
-    else:
-        message = client.messages.create(model=model, max_tokens=max_tokens, **request)
+        # If the request raises, the reservation stays at its worst case: the call may
+        # still have billed, and over-counting is the safe direction.
+        if stream:
+            with client.messages.stream(model=model, max_tokens=max_tokens, **request) as s:
+                message = s.get_final_message()
+        else:
+            message = client.messages.create(model=model, max_tokens=max_tokens, **request)
+
+        # WHAT: settle BEFORE validating. A truncated or declined response was still
+        # billed; validating first would exit with the spend unrecorded.
+        cost = budget.settle(conn, reservation, model, message.usage)
+    finally:
+        if own:
+            conn.close()
 
     text = structured_text(message)
-    cost = None
-    if ledger is not None:
-        cost = budget.record_call(ledger, user_id, phase, model, message.usage, timestamp)
-    return text, message.usage, cost
+    return text, message.usage, float(cost)
