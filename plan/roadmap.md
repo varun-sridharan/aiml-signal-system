@@ -65,6 +65,7 @@ Two systems are converging into one. The **AI Weekly News Digest** runs today as
 - Every leader quote passes the substring gate against its stored excerpt
 - Every prediction carries a falsification condition and a resolution date, verified in code
 - The ledger exists, holds its first entry, and all three states are reachable
+- The story video's M2 chapter is written from this milestone's plan, approved, and live on the Product page
 
 ### Not in
 
@@ -94,6 +95,7 @@ Two systems are converging into one. The **AI Weekly News Digest** runs today as
 - Homework lands in Practice, generated from the configured repository
 - Every named path and symbol is verified in code before the exercise ships
 - Status dropdown and time logging work, and estimated-versus-actual is recorded
+- The story video's M3 chapter is written from this milestone's plan, approved, and live on the Product page
 
 ### Not in
 
@@ -211,13 +213,6 @@ Nothing in the current plan uses MCP, which makes it the only entry in the conce
 - **Origin:** Sep-20-2026 — created deliberately during the row 6 extraction, as the cost of not breaking the harness
 
 `agents/framer.py` re-exports twelve names purely so `run_evals.py` can keep reaching them through `framer.X`. That is why the file only went 826 to 797 lines while losing an entire concern. The shim was the right call at the time: every one of those twelve call sites is on an API path, so removing them without it would have broken the paid run while `--no-api` stayed green, which is exactly how the last config break hid. **It is still debt.** Two modules now own the plumbing and a third pretends to, so a reader cannot tell from `framer.py` which names are its own. Repoint the harness's imports and the twelve aliases delete themselves.
-
-### bk-railway-config-migrate · Move railway.toml to Railway's new config before 2026-12-01
-
-- **Size:** S
-- **Origin:** Oct-9-2026 — deprecation warning from `railway link`
-
-The Railway CLI warns that config as code (`railway.toml`) is deprecated and stops working on 2026-12-01; `railway config migrate` produces its replacement. That file holds the healthcheck that keeps a malformed `plan.md` or `roadmap.md` from taking the site down: without it, a deploy that refuses to start replaces the live one instead of being rejected. **Migrate it before that date**, then prove it again: push a deliberately broken file and confirm the previous deployment keeps serving.
 
 ## Product feature backlog
 
