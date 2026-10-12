@@ -1709,6 +1709,11 @@
   ],
   "decisionLog": [
     {
+      "date": "2026-10-11",
+      "lead": "Style is captured apart from news, and the style guide holds how to write, never what to say.",
+      "body": "Newsletters Varun admires become style references through /AGI-add-news-style (a URL) and /AGI-add-news-style-email (the newest email in his AGI News folder, after he confirms it, read-only in the mailbox). Each distils rules in our own words into a style guide, with at most one short attributed quote per source and no facts, because a fact in the guide could surface in a brief as an unsupported claim and the faithfulness gate would rightly fail it. The Framer adopts the guide after its port, with a before-and-after run on the golden case."
+    },
+    {
       "date": "2026-09-16",
       "lead": "The evals reshape around three questions, and a house rule that was being asked for becomes a line of code.",
       "body": "The pivot adds two agents whose output cannot be checked the way the Framer's is, so the eval design had to become general rather than Framer-shaped. It sorts into <b>three shapes</b>, and which shape a check belongs to decides whether it may block a build: <b>deterministic</b> (code answers it — free, gates), <b>model-judged against hand labels</b> (cents, gates once the labels cover both directions of failure), and <b>longitudinal</b> (only time answers it — reports first, gates once there is enough history to know what normal looks like). <b>The sharpest reuse in the whole pivot falls out of that sorting.</b> The old Digest's rule for quoting people was <em>quote, never paraphrase</em>, enforced by writing it in a brief. This system has since measured what enforcement-by-instruction is worth: a grader told in plain language, with a worked example, never to enumerate the excerpt's own sentences did exactly that in three runs out of five. So the rule becomes <code>span_found</code> — the substring check the Framer already runs — pointed at a different pair of documents. <b>Every quote attributed to a named person must be a literal substring of the excerpt fetched from that source.</b> Free, deterministic, unarguable. <b>Predictions get three states, not two.</b> Hit, Miss, and <b>Expired-unresolved</b>. Marking only Hits would guarantee the track record looks good, which is survivorship bias written into the schema; but distinguishing <em>not yet</em> from <em>never</em> is genuinely hard and does not need solving. The resolution date does the work: at the date it resolves one of three ways, and <em>expired</em> is the honest label for a claim that was not falsifiable enough to score — feedback on prediction quality rather than a guess about the future. <b>Two things are recorded as not covered, rather than left implied.</b> MCP appears nowhere in the plan, which makes it the only entry in the concepts reference that stays theoretical; its natural home is Reader's fetch layer and it sits in the backlog. And the Tuner — deferred — is the only place reinforcement learning would live, so deferring it defers a stated focus area. Both are choices made knowingly."
@@ -1899,7 +1904,7 @@
       "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
     }
   ],
-  "lastUpdated": "2026-09-17",
+  "lastUpdated": "2026-10-11",
   "nav": {
     "current": "System Design",
     "items": [

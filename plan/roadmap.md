@@ -3,7 +3,7 @@ title: Roadmap & Backlog
 kicker: AI/ML Signal · roadmap
 lede: What is being built now, what comes next, and every item deliberately left for later. One backlog, so there is nothing to reconcile.
 footer: Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe.
-updated: 2026-10-09
+updated: 2026-10-11
 ---
 
 <!--
@@ -190,6 +190,14 @@ GitHub status counts, per-agent metrics, pending actions and actions taken, a fe
 - **Origin:** Sep-16-2026 — M1 if trivial, here if not
 
 Most of the 91 domains publish feeds. Polling one is cheap and deterministic, and it is the closest thing to an event trigger a newsroom offers — webhooks effectively do not exist in this space. `/add-news` is the genuinely event-driven path and fetches immediately.
+
+
+### bk-style-capture-unattended · Capture style emails automatically, while the Mac is closed
+
+- **Size:** M
+- **Origin:** Oct-11-2026 — the email path chosen for now is interactive
+
+`/AGI-add-news-style-email` runs in a Claude session, because an email connector belongs to Claude sessions and not to the Railway app. The unattended version is a dedicated capture address: Varun forwards a newsletter, an inbound-email service turns it into a request to the Railway app, and the weekly run folds it into the style guide behind an automatic gate (the golden case still passes faithfulness and usefulness does not drop). **It sees only what he forwards**, which is why it beats giving the app read access to his whole mailbox.
 
 ## Platform & cost
 
