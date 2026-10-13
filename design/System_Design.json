@@ -904,8 +904,8 @@
             ],
             [
               "Fetched source excerpts",
-              "<b>Blob store, write-once</b>",
-              "Immutable by rule. Large, append-only, and read by every grading run afterwards."
+              "<b>Postgres, write-once, compressed plain text</b>",
+              "Immutable by rule, and read by every grading run afterwards. Article text only, never the fetched page, and compressed: a page is roughly 100 KB, its text about 6 KB. <b>Kept forever only if a published brief cites it</b>; everything else expires after a few weeks, once dedup, corroboration and prediction checks no longer need it."
             ],
             [
               "Golden cases, prompts, agent code",
@@ -1709,6 +1709,11 @@
   ],
   "decisionLog": [
     {
+      "date": "2026-10-12",
+      "lead": "The excerpt store holds compressed article text in Postgres, and only cited evidence is kept forever.",
+      "body": "At roughly 900 articles a week from 91 sources, storing fetched pages would fill the 5 GB volume within a year. Storing only the article text, compressed, cuts that to under 100 MB a year. Retention does the rest: an excerpt cited by a published brief is evidence and is kept for good, about seven a week; the rest expire after a few weeks, once deduplication, corroboration and prediction checks are done with them. A separate blob store is dropped: at this volume it adds a service and a credential for nothing Postgres cannot do. Expiry deletes uncited rows only; a cited excerpt is never rewritten or removed."
+    },
+    {
       "date": "2026-10-11",
       "lead": "Style is captured apart from news, and the style guide holds how to write, never what to say.",
       "body": "Newsletters Varun admires become style references through /AGI-add-news-style (a URL) and /AGI-add-news-style-email (the newest email in his AGI News folder, after he confirms it, read-only in the mailbox). Each distils rules in our own words into a style guide, with at most one short attributed quote per source and no facts, because a fact in the guide could surface in a brief as an unsupported claim and the faithfulness gate would rightly fail it. The Framer adopts the guide after its port, with a before-and-after run on the golden case."
@@ -1904,7 +1909,7 @@
       "body": "North star = kill FOMO, not maximize coverage; system may declare a quiet day."
     }
   ],
-  "lastUpdated": "2026-10-11",
+  "lastUpdated": "2026-10-12",
   "nav": {
     "current": "System Design",
     "items": [
