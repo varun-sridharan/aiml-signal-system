@@ -129,15 +129,16 @@ _schema_ready = False
 
 
 def connect(*, autocommit: bool = True, connect_timeout: int = 5):
-    """Open a connection to the ledger, or raise LedgerUnavailable. Never falls back."""
+    """Open a connection to the project database (spend ledger, excerpts), or raise
+    LedgerUnavailable. Never falls back."""
     import psycopg
 
     load_dotenv(REPO / ".env")
     url = os.environ.get("DATABASE_URL", "").strip()
     if not url:
         raise LedgerUnavailable(
-            "DATABASE_URL is not set, so there is no spend ledger and no paid call is "
-            "made. Locally, put the tunnel's URL in .env (see README); on Railway the "
+            "DATABASE_URL is not set, so there is no database: no paid call is made and "
+            "nothing is stored. Locally, put the tunnel's URL in .env (see README); on Railway the "
             "app service references the Postgres service's DATABASE_URL."
         )
 
@@ -157,11 +158,11 @@ def connect(*, autocommit: bool = True, connect_timeout: int = 5):
         # not tell anyone what to do. Neither message includes the URL.
         if _is_loopback(parts.hostname):
             raise LedgerUnavailable(
-                f"Cannot reach the spend ledger on 127.0.0.1:{parts.port} — {TUNNEL_HINT}. "
-                "No paid call is made without the ledger."
+                f"Cannot reach the database on 127.0.0.1:{parts.port} — {TUNNEL_HINT}. "
+                "No paid call is made and nothing is stored without it."
             ) from None
         raise LedgerUnavailable(
-            "Cannot reach the spend ledger database. No paid call is made without it."
+            "Cannot reach the database. No paid call is made and nothing is stored without it."
         ) from None
 
     global _schema_ready
