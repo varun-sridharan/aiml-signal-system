@@ -809,9 +809,9 @@
                   "icon": "database"
                 },
                 {
-                  "id": "blob",
+                  "id": "excerpts",
                   "label": "Excerpt store",
-                  "sub": "WRITE ONCE · never re-fetched",
+                  "sub": "Postgres table · write-once, enforced by triggers · compressed text · cited excerpts kept forever",
                   "icon": "lock",
                   "emphasis": true
                 },
@@ -851,11 +851,11 @@
             },
             {
               "from": "readerc",
-              "to": "blob",
+              "to": "excerpts",
               "label": "once"
             },
             {
-              "from": "blob",
+              "from": "excerpts",
               "to": "framerc",
               "label": "graded against"
             },
