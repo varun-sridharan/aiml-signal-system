@@ -3,7 +3,7 @@ title: Roadmap & Backlog
 kicker: AI/ML Signal · roadmap
 lede: What is being built now, what comes next, and every item deliberately left for later. One backlog, so there is nothing to reconcile.
 footer: Roadmap · the only backlog in this system. Personal telemetry stays in the private Control Hub; this page is public-safe.
-updated: 2026-10-11
+updated: 2026-10-14
 ---
 
 <!--
@@ -221,6 +221,13 @@ Nothing in the current plan uses MCP, which makes it the only entry in the conce
 - **Origin:** Sep-20-2026 — created deliberately during the row 6 extraction, as the cost of not breaking the harness
 
 `agents/framer.py` re-exports twelve names purely so `run_evals.py` can keep reaching them through `framer.X`. That is why the file only went 826 to 797 lines while losing an entire concern. The shim was the right call at the time: every one of those twelve call sites is on an API path, so removing them without it would have broken the paid run while `--no-api` stayed green, which is exactly how the last config break hid. **It is still debt.** Two modules now own the plumbing and a third pretends to, so a reader cannot tell from `framer.py` which names are its own. Repoint the harness's imports and the twelve aliases delete themselves.
+
+### bk-railway-iac · Manage the Railway project as code
+
+- **Size:** M
+- **Origin:** Oct-14-2026 — deferred when `railway.toml` was retired
+
+The healthcheck path now lives only in Railway's service settings, so a change to it leaves no trace in the repo. Railway's replacement for config files is `.railway/railway.ts`, which describes the whole project and deletes on apply anything it omits, the database included. Adopt it when there is more than one setting to keep, starting from `railway config pull` rather than `railway config migrate`, and review every `railway config plan` before an apply.
 
 ## Product feature backlog
 
