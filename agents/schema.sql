@@ -112,3 +112,107 @@ END $$;
 CREATE OR REPLACE TRIGGER excerpt_citations_append_only
     BEFORE UPDATE OR DELETE ON excerpt_citations
     FOR EACH ROW EXECUTE FUNCTION excerpt_citations_append_only();
+
+
+-- ======================================================================================
+-- Runs: a weekly run is reader, then framer, then gates, then publish. Each attempt at a
+-- stage is a row; a 'done' attempt is the checkpoint a failed run resumes from, so the
+-- reader is not re-fetched and no paid stage that already finished is paid for again.
+-- ======================================================================================
+
+CREATE TABLE IF NOT EXISTS runs (
+    id           text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),  -- the week key; a rerun reuses it
+    started_at   timestamptz  NOT NULL,
+    finished_at  timestamptz  NULL,
+    status       text         NOT NULL CHECK (status IN ('running', 'done')),
+    CHECK ((status = 'done') = (finished_at IS NOT NULL))
+);
+
+CREATE TABLE IF NOT EXISTS run_stages (
+    run_id       text         NOT NULL REFERENCES runs (id) ON DELETE RESTRICT,
+    stage        text         NOT NULL CHECK (stage IN ('reader', 'framer', 'gates', 'publish')),
+    attempt      integer      NOT NULL CHECK (attempt >= 1),
+    status       text         NOT NULL CHECK (status IN ('running', 'done', 'failed')),
+    started_at   timestamptz  NOT NULL,
+    finished_at  timestamptz  NULL,
+    -- Pointers only (ids of items, excerpts, the brief), never article text: that lives
+    -- in excerpts. The cap is on the JSON as text, so compression cannot hide a page.
+    output       jsonb        NULL CHECK (output IS NULL OR octet_length(output::text) <= 65536),
+    error        text         NULL CHECK (error IS NULL OR length(error) <= 1000),
+    PRIMARY KEY (run_id, stage, attempt),
+    CHECK ((status = 'running') = (finished_at IS NULL))
+);
+
+-- One owner: at most one worker is running a given stage of a given run.
+CREATE UNIQUE INDEX IF NOT EXISTS run_stages_one_running
+    ON run_stages (run_id, stage) WHERE status = 'running';
+-- One checkpoint: a stage is done at most once, so a resume never has to choose.
+CREATE UNIQUE INDEX IF NOT EXISTS run_stages_one_done
+    ON run_stages (run_id, stage) WHERE status = 'done';
+
+-- A DONE STAGE IS THE CHECKPOINT. A resume trusts its output without re-running it, so
+-- once written it is never changed or removed.
+CREATE OR REPLACE FUNCTION run_stages_done_write_once() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF OLD.status = 'done' THEN
+        RAISE EXCEPTION 'run % stage % attempt % is done: a checkpoint is never changed or deleted',
+            OLD.run_id, OLD.stage, OLD.attempt
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END $$;
+
+CREATE OR REPLACE TRIGGER run_stages_done_write_once
+    BEFORE UPDATE OR DELETE ON run_stages
+    FOR EACH ROW EXECUTE FUNCTION run_stages_done_write_once();
+
+-- An attempt is born running and ends once: running -> done or running -> failed. Its
+-- identity (run, stage, attempt, start) never changes.
+CREATE OR REPLACE FUNCTION run_stages_transitions() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        IF NEW.status <> 'running' THEN
+            RAISE EXCEPTION 'run % stage %: an attempt starts as running, not %', NEW.run_id, NEW.stage, NEW.status
+                USING ERRCODE = 'restrict_violation';
+        END IF;
+        RETURN NEW;
+    END IF;
+    IF (NEW.run_id, NEW.stage, NEW.attempt, NEW.started_at)
+       IS DISTINCT FROM (OLD.run_id, OLD.stage, OLD.attempt, OLD.started_at) THEN
+        RAISE EXCEPTION 'run % stage % attempt %: identity columns never change', OLD.run_id, OLD.stage, OLD.attempt
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF NOT (OLD.status = 'running' AND NEW.status IN ('done', 'failed')) THEN
+        RAISE EXCEPTION 'run % stage % attempt %: % -> % is not allowed (only running -> done or failed)',
+            OLD.run_id, OLD.stage, OLD.attempt, OLD.status, NEW.status
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE OR REPLACE TRIGGER run_stages_transitions
+    BEFORE INSERT OR UPDATE ON run_stages
+    FOR EACH ROW EXECUTE FUNCTION run_stages_transitions();
+
+-- Order: a stage starts only after the stage before it is done for this run.
+CREATE OR REPLACE FUNCTION run_stages_order() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    stages text[] := ARRAY['reader', 'framer', 'gates', 'publish'];
+    pos integer := array_position(stages, NEW.stage);
+BEGIN
+    IF pos > 1 AND NOT EXISTS (
+        SELECT 1 FROM run_stages
+        WHERE run_id = NEW.run_id AND stage = stages[pos - 1] AND status = 'done'
+    ) THEN
+        RAISE EXCEPTION 'run %: % cannot start before % is done', NEW.run_id, NEW.stage, stages[pos - 1]
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE OR REPLACE TRIGGER run_stages_order
+    BEFORE INSERT ON run_stages
+    FOR EACH ROW EXECUTE FUNCTION run_stages_order();
