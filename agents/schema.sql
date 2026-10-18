@@ -216,3 +216,29 @@ END $$;
 CREATE OR REPLACE TRIGGER run_stages_order
     BEFORE INSERT ON run_stages
     FOR EACH ROW EXECUTE FUNCTION run_stages_order();
+
+-- A FINISHED RUN IS WRITE-ONCE. The only change a run ever takes is running -> done,
+-- made when publish finishes; after that it is never changed or deleted. A real finished
+-- run also has done stages, so ON DELETE RESTRICT refuses its deletion too; this trigger
+-- refuses first, and also covers the update.
+CREATE OR REPLACE FUNCTION runs_finished_write_once() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF OLD.status = 'done' THEN
+        RAISE EXCEPTION 'run % is done: a finished run is never changed or deleted', OLD.id
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF TG_OP = 'DELETE' THEN
+        RETURN OLD;
+    END IF;
+    IF NOT (OLD.status = 'running' AND NEW.status = 'done')
+       OR (NEW.id, NEW.started_at) IS DISTINCT FROM (OLD.id, OLD.started_at) THEN
+        RAISE EXCEPTION 'run %: the only change allowed is running -> done', OLD.id
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE OR REPLACE TRIGGER runs_finished_write_once
+    BEFORE UPDATE OR DELETE ON runs
+    FOR EACH ROW EXECUTE FUNCTION runs_finished_write_once();

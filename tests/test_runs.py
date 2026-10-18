@@ -54,7 +54,8 @@ class Runs(unittest.TestCase):
         self.conn.execute("SELECT 1")  # open the outer transaction; everything below is a savepoint
         self.live = self.counts()
         if DISABLED:
-            self.conn.execute(f"ALTER TABLE run_stages DISABLE TRIGGER {DISABLED}")
+            table = "runs" if DISABLED.startswith("runs_") else "run_stages"
+            self.conn.execute(f"ALTER TABLE {table} DISABLE TRIGGER {DISABLED}")
 
     def tearDown(self):
         self.conn.rollback()
@@ -103,14 +104,20 @@ class Runs(unittest.TestCase):
             runs.start_stage(self.conn, RUN, "reader", NOW)
 
     # 3 ----------------------------------------------------------------------------
-    def test_3_database_refuses_to_change_or_delete_a_done_stage(self):
+    # The update is also refused by run_stages_transitions (done -> done is not a
+    # transition), so 3a checks the message to tell the two apart. 3b has no backstop.
+    def test_3a_database_refuses_to_change_a_done_stage(self):
         runs.open_run(self.conn, RUN, NOW)
         self.complete("reader", READER_OUT)
         msg = self.assertRefusedByDatabase(
             "UPDATE run_stages SET output = '{\"items\": []}' WHERE run_id = %s AND stage = 'reader'", (RUN,))
         self.assertIn("checkpoint", msg)
-        msg = self.assertRefusedByDatabase("DELETE FROM run_stages WHERE run_id = %s AND stage = 'reader'", (RUN,))
-        self.assertIn("checkpoint", msg)
+        self.assertEqual(runs.stage_output(self.conn, RUN, "reader"), READER_OUT)
+
+    def test_3b_database_refuses_to_delete_a_done_stage(self):
+        runs.open_run(self.conn, RUN, NOW)
+        self.complete("reader", READER_OUT)
+        self.assertRefusedByDatabase("DELETE FROM run_stages WHERE run_id = %s AND stage = 'reader'", (RUN,))
         self.assertEqual(runs.stage_output(self.conn, RUN, "reader"), READER_OUT)
 
     # 4 ----------------------------------------------------------------------------
@@ -199,6 +206,32 @@ class Runs(unittest.TestCase):
         self.assertNotIn("hunter2", error)
         self.assertNotIn("sk-ant", error)
         self.assertLessEqual(len(error), runs.MAX_ERROR_CHARS)
+
+    # 11-13: a finished run ------------------------------------------------------------
+    def test_11_database_refuses_to_change_a_finished_run(self):
+        runs.open_run(self.conn, RUN, NOW)
+        for stage in runs.STAGES:
+            self.complete(stage)
+        self.assertRefusedByDatabase(  # reopened
+            "UPDATE runs SET status = 'running', finished_at = NULL WHERE id = %s", (RUN,))
+        self.assertRefusedByDatabase(  # re-dated
+            "UPDATE runs SET finished_at = %s WHERE id = %s", (NOW + timedelta(days=1), RUN))
+        self.assertEqual(runs.open_run(self.conn, RUN, NOW).finished_at, NOW)
+
+    def test_12_database_refuses_to_delete_a_finished_run(self):
+        # Marked done by hand, with no stages, so ON DELETE RESTRICT cannot be what refuses.
+        runs.open_run(self.conn, RUN, NOW)
+        self.conn.execute("UPDATE runs SET status = 'done', finished_at = %s WHERE id = %s", (NOW, RUN))
+        self.assertRefusedByDatabase("DELETE FROM runs WHERE id = %s", (RUN,))
+        self.assertEqual(runs.open_run(self.conn, RUN, NOW).status, "done")
+
+    def test_13_database_allows_a_run_only_running_to_done(self):
+        runs.open_run(self.conn, RUN, NOW)
+        self.assertRefusedByDatabase("UPDATE runs SET started_at = %s WHERE id = %s", (NOW - timedelta(days=1), RUN))
+        self.assertRefusedByDatabase("UPDATE runs SET id = '1999-W02' WHERE id = %s", (RUN,))
+        self.assertRefusedByDatabase("UPDATE runs SET status = 'running' WHERE id = %s", (RUN,))
+        self.conn.execute("UPDATE runs SET status = 'done', finished_at = %s WHERE id = %s", (NOW, RUN))  # allowed
+        self.assertEqual(runs.open_run(self.conn, RUN, NOW).status, "done")
 
 
 if __name__ == "__main__":
