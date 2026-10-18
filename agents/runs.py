@@ -230,7 +230,6 @@ def checkpointed(conn, run_id: str, stage: str, now: datetime, work):
 
 def save_artifact(conn, run_id: str, stage: str, attempt: int, body: dict, now: datetime) -> None:
     """Store a stage's work product (text and all) for the next stage to load."""
-    from psycopg.types.json import Jsonb
     _aware(now)
     with conn.transaction():
         conn.execute("INSERT INTO run_artifacts (run_id, stage, attempt, body, created_at) VALUES (%s, %s, %s, %s, %s)",

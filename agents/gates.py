@@ -63,6 +63,30 @@ def structural_failures(profile: dict, day: dict, framing: dict | None = None) -
     return failures
 
 
+def completeness_failures(raw_day: dict, framing: dict, verdicts: dict, thread_verdict: dict | None) -> list[str]:
+    """Anything that would reach publication UNGRADED. Empty means every story was graded.
+
+    The faithfulness gate reads the claims the grader flagged; a story the grader skipped,
+    or one the Framer left out, has no flags and would pass as if it were clean. So each
+    story must have been written, must have a verdict, and the verdict must have enumerated
+    at least one claim; the thread must have been graded too. Fail closed.
+    """
+    failures = []
+    written = {f.get("id"): f for f in framing.get("items", [])}
+    for item in raw_day["items"]:
+        ident = item["id"]
+        if ident not in written or not (written[ident].get("why") or "").strip():
+            failures.append(f"{ident}: the Framer wrote nothing for this story")
+        verdict = verdicts.get(ident)
+        if not verdict:
+            failures.append(f"{ident}: the grader returned no verdict")
+        elif not verdict.get("claims"):
+            failures.append(f"{ident}: the grader enumerated no claims, so nothing was checked")
+    if not thread_verdict or not thread_verdict.get("claims"):
+        failures.append("thread: the grader enumerated no claims, so nothing was checked")
+    return failures
+
+
 def faithfulness_failures(day: dict) -> list[str]:
     """Every claim the grader left unsupported, per item and in the thread. Empty means green.
 
