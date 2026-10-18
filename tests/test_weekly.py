@@ -357,6 +357,19 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         raw = weekly.build_raw_day(self.conn, WEEK, ids, framer.load_json(framer.PROFILE_PATH))
         self.assertEqual([i["headline"] for i in raw["items"]], ["Grounded story with no figures"])
 
+    def test_w17_stages_are_stamped_when_they_run_and_the_edition_is_dated_when_it_was_made(self):
+        ticks = iter(NOW + timedelta(minutes=m) for m in range(1, 200))
+        self.run_week(clock=lambda: next(ticks))
+        rows = self.conn.execute(
+            "SELECT stage, started_at, finished_at FROM run_stages WHERE run_id = %s "
+            "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage)", (WEEK,)).fetchall()
+        for (_, _, done_a), (_, start_b, _) in zip(rows, rows[1:]):
+            self.assertLessEqual(done_a, start_b)                # each stage starts after the one before ended
+        self.assertTrue(all(started < finished for _, started, finished in rows))
+        _id, body, published = briefs.get(self.conn, WEEK)
+        self.assertGreaterEqual(published, rows[-1][1])         # published during the publish stage, not at process start
+        self.assertEqual(self.framer_calls[0]["date"], NOW.date().isoformat())   # not the key's Monday (1999-03-08)
+
     def test_w15_status_shows_each_attempt(self):
         self.assertEqual(weekly.status(self.conn, WEEK), [f"{WEEK}: no run yet"])
         self.fail_framer = 1

@@ -198,6 +198,14 @@ class Runs(unittest.TestCase):
         self.assertNotIn("sk-ant", error)
         self.assertLessEqual(len(error), runs.MAX_ERROR_CHARS)
 
+    def test_14_a_clock_stamps_each_stage_when_it_really_starts_and_ends(self):
+        runs.open_run(self.conn, RUN, NOW)
+        ticks = iter(NOW + timedelta(minutes=m) for m in range(1, 20))
+        runs.checkpointed(self.conn, RUN, "reader", lambda: next(ticks), lambda attempt: {"ok": 1})
+        started, finished = self.conn.execute(
+            "SELECT started_at, finished_at FROM run_stages WHERE run_id = %s AND stage = 'reader'", (RUN,)).fetchone()
+        self.assertEqual((started, finished), (NOW + timedelta(minutes=1), NOW + timedelta(minutes=2)))
+
     # 11-13: a finished run ------------------------------------------------------------
     def test_11_database_refuses_to_change_a_finished_run(self):
         runs.open_run(self.conn, RUN, NOW)

@@ -21,6 +21,8 @@ made. There is deliberately no fallback to a local file: two ledgers is the bug.
 
 from __future__ import annotations
 
+import functools
+import hashlib
 import json
 import math
 import os
@@ -189,13 +191,47 @@ def connect(*, autocommit: bool = True, connect_timeout: int = 5):
 
 
 def ensure_schema(conn) -> None:
-    """Create the ledger table if it does not exist. Safe to run any number of times."""
+    """Create the project's tables if they are missing. Safe to run any number of times.
+
+    The DDL takes table locks, which can deadlock a paid call's ledger insert that is in
+    flight in another process (a deploy starting while a weekly run is mid-call). So the
+    schema is applied only when schema.sql has changed since it was last applied: the file's
+    hash is kept in `schema_version`, and an ordinary startup reads one row and returns.
+    """
+    text = SCHEMA_PATH.read_text(encoding="utf-8")
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
     # The lock keeps two processes starting together (an overlapping deploy) from
     # racing on CREATE TABLE IF NOT EXISTS, which is not itself concurrency-safe.
     with conn.transaction():
         conn.execute("SELECT pg_advisory_xact_lock(%s)", (SCHEMA_LOCK_KEY,))
+        conn.execute("CREATE TABLE IF NOT EXISTS schema_version (id integer PRIMARY KEY CHECK (id = 1), sha text NOT NULL)")
+        row = conn.execute("SELECT sha FROM schema_version WHERE id = 1").fetchone()
+        if row and row[0] == digest:
+            return
         conn.execute("SET LOCAL lock_timeout = '15s'")
-        conn.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
+        conn.execute(text)
+        conn.execute("INSERT INTO schema_version (id, sha) VALUES (1, %s) ON CONFLICT (id) DO UPDATE SET sha = EXCLUDED.sha",
+                     (digest,))
+
+
+def _retry_deadlock(fn):
+    """Retry a ledger write that was chosen as a deadlock victim, when it is safe to.
+
+    Only when the connection is not inside someone else's transaction: a deadlock aborts the
+    whole transaction, so inside an outer one there is nothing to retry into.
+    """
+    @functools.wraps(fn)
+    def wrapper(conn, *args, **kwargs):
+        import psycopg
+        for attempt in range(3):
+            idle = conn.info.transaction_status == psycopg.pq.TransactionStatus.IDLE
+            try:
+                return fn(conn, *args, **kwargs)
+            except psycopg.errors.DeadlockDetected:
+                if attempt == 2 or not idle:
+                    raise
+                time.sleep(0.5 * (attempt + 1))
+    return wrapper
 
 
 # --------------------------------------------------------------------------------------
@@ -221,6 +257,7 @@ def month_to_date_spend(conn, now: datetime | None = None) -> Decimal:
     return Decimal(row[0])
 
 
+@_retry_deadlock
 def reserve(conn, *, user_id: str, phase: str, model: str, estimate_usd, now: datetime | None = None) -> uuid.UUID:
     """Book the call's worst case, or refuse it. Returns the reservation id."""
     if not user_id or not phase:
@@ -250,6 +287,7 @@ def reserve(conn, *, user_id: str, phase: str, model: str, estimate_usd, now: da
     return rid
 
 
+@_retry_deadlock
 def settle(conn, reservation_id: uuid.UUID, model: str, usage) -> Decimal:
     """Replace a reservation's worst case with the call's actual tokens and cost."""
     cost = _usd(estimate_cost_usd(model, usage))

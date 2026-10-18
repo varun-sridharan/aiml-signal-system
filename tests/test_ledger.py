@@ -21,6 +21,7 @@ import sys
 import threading
 import time
 import unittest
+import unittest.mock
 import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -385,6 +386,55 @@ class EstimateIsAnUpperBound(unittest.TestCase):
 # --------------------------------------------------------------------------------------
 # b) fail closed
 # --------------------------------------------------------------------------------------
+
+class SchemaAndDeadlocks(unittest.TestCase):
+    def fake_conn(self, idle=True):
+        import psycopg
+        status = psycopg.pq.TransactionStatus.IDLE if idle else psycopg.pq.TransactionStatus.INTRANS
+        return SimpleNamespace(info=SimpleNamespace(transaction_status=status))
+
+    def test_a_deadlock_victim_is_retried_when_it_is_safe_and_not_otherwise(self):
+        import psycopg
+        calls = []
+
+        @budget._retry_deadlock
+        def flaky(conn):
+            calls.append(1)
+            if len(calls) < 3:
+                raise psycopg.errors.DeadlockDetected("deadlock")
+            return "done"
+        with unittest.mock.patch.object(budget.time, "sleep", lambda s: None):
+            self.assertEqual(flaky(self.fake_conn()), "done")
+            self.assertEqual(len(calls), 3)
+            calls.clear()
+            with self.assertRaises(psycopg.errors.DeadlockDetected):      # inside someone else's transaction: nothing to retry into
+                flaky(self.fake_conn(idle=False))
+            self.assertEqual(len(calls), 1)
+
+    @needs_db
+    def test_an_unchanged_schema_is_not_reapplied(self):
+        import hashlib
+        import tempfile
+        conn = budget.connect(autocommit=False)
+        conn.execute("SELECT 1")
+        try:
+            real = budget.SCHEMA_PATH
+            with tempfile.TemporaryDirectory() as d:
+                fake = Path(d) / "schema.sql"
+                fake.write_text("THIS IS NOT SQL AND WOULD FAIL IF IT RAN;")
+                digest = hashlib.sha256(fake.read_bytes()).hexdigest()
+                conn.execute("UPDATE schema_version SET sha = %s WHERE id = 1", (digest,))
+                with unittest.mock.patch.object(budget, "SCHEMA_PATH", fake):
+                    budget.ensure_schema(conn)                              # same hash: returns without touching the DDL
+                    conn.execute("UPDATE schema_version SET sha = 'stale' WHERE id = 1")
+                    import psycopg
+                    with self.assertRaises(psycopg.errors.SyntaxError):     # changed hash: it does run
+                        budget.ensure_schema(conn)
+            self.assertIs(budget.SCHEMA_PATH, real)
+        finally:
+            conn.rollback()
+            conn.close()
+
 
 class FailsClosed(unittest.TestCase):
     def test_no_database_url_refuses_the_call(self):

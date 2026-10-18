@@ -160,7 +160,8 @@ def tags_for(domain: str, topics: list[str], core_topics: set[str], do_this_left
     return ["KNOW"]
 
 
-def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: list | None = None) -> dict:
+def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: list | None = None,
+                  as_of: date | None = None) -> dict:
     """The Framer's input for a week, from verified items in the database."""
     core = {t for (t,) in conn.execute("SELECT topic FROM interest_nodes WHERE user_id = %s AND ring = 'core'",
                                        (profile["user_id"],)).fetchall()}
@@ -191,7 +192,9 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
                        "source_excerpt": excerpt, "sources": sources})
         if len(chosen) >= MAX_BRIEF_ITEMS:
             break
-    return {"date": week_start(week).isoformat(), "items": chosen}
+    # The edition is dated the day it was made: what a run reads is the last days up to now,
+    # whatever its week key says, so the key's Monday would date the brief wrongly.
+    return {"date": (as_of or week_start(week)).isoformat(), "items": chosen}
 
 
 # --------------------------------------------------------------------------------------
@@ -202,13 +205,13 @@ def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     def work(attempt: int) -> dict:
         reader_out = runs.stage_output(conn, week, "reader")
         skipped: list = []
-        raw_day = build_raw_day(conn, week, reader_out["items"], profile, skipped)
+        raw_day = build_raw_day(conn, week, reader_out["items"], profile, skipped, as_of=runs._at(now).date())
         for note in skipped:
             print(f"  not framed — {note}", file=sys.stderr)
         if not raw_day["items"]:
             raise RuntimeError("no verified, readable items this week; nothing to frame")
         framing, _usage, cost = framer.frame_day(client, framer.load_framer_system_prompt(), profile, raw_day)
-        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing}, now)
+        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing}, runs._at(now))
         return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped), "cost_usd": round(cost, 4)}
     return runs.checkpointed(conn, week, "framer", now, work)
 
@@ -222,7 +225,7 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
         day = framer.assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
         failures = (gates.completeness_failures(raw_day, framing, verdicts, thread_verdict)
                     + gates.structural_failures(profile, day, framing) + gates.faithfulness_failures(day))
-        runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, now)
+        runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
         if failures:
             raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
         return {"artifact": "gates", "items": len(day["items"]),
@@ -236,7 +239,7 @@ def publish_stage(conn, week: str, now: datetime) -> dict:
         with conn.transaction():
             existing = briefs.get(conn, week)
             if existing is None:
-                briefs.publish(conn, week, week, day, now)
+                briefs.publish(conn, week, week, day, runs._at(now))
             elif existing[1] != day:
                 # A different brief is already live for this week: never overwrite, never guess.
                 raise RuntimeError(f"a different brief is already published for {week}")
@@ -251,17 +254,22 @@ def publish_stage(conn, week: str, now: datetime) -> dict:
     return runs.checkpointed(conn, week, "publish", now, work)
 
 
-def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None) -> dict:
-    """Run, or resume, one week. Returns each stage's output; stops early only when asked."""
+def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None, clock=None) -> dict:
+    """Run, or resume, one week. Returns each stage's output; stops early only when asked.
+
+    `now` fixes the Reader's window; `clock` (a zero-argument callable) stamps each stage when
+    it actually starts and ends. Without a clock every stamp is `now`, which is what tests want.
+    """
     week = week or week_key(now)
+    stamp = clock or now
     profile = framer.load_json(framer.PROFILE_PATH)
-    runs.open_run(conn, week, now)
+    runs.open_run(conn, week, runs._at(stamp))
     outputs = {}
     plan = [
-        ("reader", lambda: reader.run_stage(conn, client, now, week, profile=profile)),
-        ("framer", lambda: framer_stage(conn, client, week, now, profile)),
-        ("gates", lambda: gates_stage(conn, client, week, now, profile)),
-        ("publish", lambda: publish_stage(conn, week, now)),
+        ("reader", lambda: reader.run_stage(conn, client, now, week, stamp=stamp, profile=profile)),
+        ("framer", lambda: framer_stage(conn, client, week, stamp, profile)),
+        ("gates", lambda: gates_stage(conn, client, week, stamp, profile)),
+        ("publish", lambda: publish_stage(conn, week, stamp)),
     ]
     for stage, go in plan:
         outputs[stage] = go()
@@ -302,7 +310,7 @@ def main() -> int:
             week = args.week or week_key(now)
             before = runs.next_stage(conn, week) if conn.execute("SELECT 1 FROM runs WHERE id = %s", (week,)).fetchone() else "reader"
             print(f"week {week}: starting at {before or 'nothing (already complete)'}")
-            out = run_week(conn, client, now, week, stop_after=args.stop_after)
+            out = run_week(conn, client, now, week, stop_after=args.stop_after, clock=lambda: datetime.now(timezone.utc))
     except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, runs.StageBusy) as stop:
         print(f"stopped: {stop}", file=sys.stderr)
         return 1

@@ -208,7 +208,13 @@ def stage_output(conn, run_id: str, stage: str):
     return row[0]
 
 
-def checkpointed(conn, run_id: str, stage: str, now: datetime, work):
+def _at(now) -> datetime:
+    """`now` may be a moment or a clock (a zero-argument callable): a long run must stamp each
+    stage when it starts and finishes, not with the moment the process began."""
+    return now() if callable(now) else now
+
+
+def checkpointed(conn, run_id: str, stage: str, now, work):
     """Run one stage of a run, once: load its checkpoint if it is done, else do the work.
 
     `work(attempt)` returns the stage's pointers-only output. A failure marks the attempt
@@ -218,13 +224,13 @@ def checkpointed(conn, run_id: str, stage: str, now: datetime, work):
     """
     if stage in _done_stages(conn, run_id):
         return stage_output(conn, run_id, stage)
-    attempt = start_stage(conn, run_id, stage, now)
+    attempt = start_stage(conn, run_id, stage, _at(now))
     try:
         output = work(attempt)
     except BaseException as e:  # including KeyboardInterrupt: the attempt must not stay 'running'
-        fail_stage(conn, run_id, stage, attempt, f"{type(e).__name__}: {e}", now)
+        fail_stage(conn, run_id, stage, attempt, f"{type(e).__name__}: {e}", _at(now))
         raise
-    finish_stage(conn, run_id, stage, attempt, output, now)
+    finish_stage(conn, run_id, stage, attempt, output, _at(now))
     return output
 
 

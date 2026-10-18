@@ -474,12 +474,13 @@ def add_url(conn, client, url: str, now: datetime, user_id: str = USER_ID) -> di
     return {"item": str(iid), "created": created, "fetched": ok, "cost_usd": round(stats.fetch_cost_usd, 6)}
 
 
-def run_stage(conn, client, now: datetime, week: str, **kw) -> dict:
+def run_stage(conn, client, now: datetime, week: str, stamp=None, **kw) -> dict:
     """Reader as the `reader` stage of a weekly run.
 
     A rerun of a week whose Reader already finished loads that output and fetches nothing
     (the checkpoint is the point of the `runs` table). A failure marks the attempt failed
     with its message, so the retry can start at once rather than wait out the lease.
     """
-    runs.open_run(conn, week, now)
-    return runs.checkpointed(conn, week, "reader", now, lambda attempt: run(conn, client, now, **kw))
+    stamp = stamp or now      # when the stage began and ended; `now` fixes the window the Reader looks at
+    runs.open_run(conn, week, runs._at(stamp))
+    return runs.checkpointed(conn, week, "reader", stamp, lambda attempt: run(conn, client, now, **kw))
