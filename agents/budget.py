@@ -37,7 +37,7 @@ SCHEMA_PATH = Path(__file__).resolve().parent / "schema.sql"
 
 # WHAT: hard monthly ceiling; a call is refused before it can spend past it.
 # CONCEPT: loop — cost circuit-breaker guardrail.
-MONTHLY_BUDGET_USD = Decimal("20.00")
+MONTHLY_BUDGET_USD = Decimal("40.00")
 
 # WHAT: USD per million tokens, per model. Cache reads bill at ~0.1x input, cache
 # writes at ~1.25x, so they are priced separately rather than folded into input.

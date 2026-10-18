@@ -41,6 +41,20 @@ FEB_2099 = datetime(2099, 2, 1, 0, 0, tzinfo=timezone.utc)
 HISTORICAL_PHASES = ("framing", "faithfulness", "eval-faithfulness", "eval-usefulness")
 
 
+# The tests' arithmetic is written against a $20 ceiling. Pinning it here, for the whole
+# module, keeps them independent of the production figure in agents/budget.py.
+PINNED_CEILING = Decimal("20.00")
+_production_ceiling = budget.MONTHLY_BUDGET_USD
+
+
+def setUpModule():
+    budget.MONTHLY_BUDGET_USD = PINNED_CEILING
+
+
+def tearDownModule():
+    budget.MONTHLY_BUDGET_USD = _production_ceiling
+
+
 def usage(inp=1000, out=500, cache_read=0, cache_write=0):
     return SimpleNamespace(input_tokens=inp, output_tokens=out,
                            cache_read_input_tokens=cache_read, cache_creation_input_tokens=cache_write)
