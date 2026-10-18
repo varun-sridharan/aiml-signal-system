@@ -3,8 +3,8 @@
     python -m unittest tests.test_ledger -v
 
 No test makes an API call: the model client is a fake that returns canned usage. Tests
-that need the database skip when it is unreachable (start the tunnel first), except the
-fail-closed tests, which are the point of having no database.
+that need the database skip when it is unreachable (start the tunnel first), or fail with
+REQUIRE_DB=1; the fail-closed tests run either way, since no database is their point.
 
 Everything written to the live `spend_ledger` table happens inside a transaction that is
 rolled back, in a synthetic month (2099-01) so live spend cannot affect the arithmetic.
@@ -34,6 +34,7 @@ sys.path.insert(0, str(REPO / "agents"))
 sys.path.insert(0, str(REPO / "data" / "evals"))
 
 from agents import budget, llm  # noqa: E402
+from tests._db import needs_db  # noqa: E402
 
 JAN_2099 = datetime(2099, 1, 15, 12, 0, tzinfo=timezone.utc)
 FEB_2099 = datetime(2099, 2, 1, 0, 0, tzinfo=timezone.utc)
@@ -61,16 +62,6 @@ class FakeClient:
                                content=[SimpleNamespace(type="text", text='{"ok": true}')])
 
 
-def database_available() -> bool:
-    try:
-        with budget.connect():
-            return True
-    except budget.LedgerUnavailable:
-        return False
-
-
-DB = database_available()
-needs_db = unittest.skipUnless(DB, f"ledger database unreachable — {budget.TUNNEL_HINT}")
 
 
 @contextmanager

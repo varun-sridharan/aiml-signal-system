@@ -4,7 +4,7 @@
 
 Every test runs inside a transaction that is rolled back, so no run or stage it writes
 survives it; tearDown checks the live row counts are unchanged. Tests skip when the
-database is unreachable (start the tunnel first).
+database is unreachable (start the tunnel first), or fail with REQUIRE_DB=1.
 
 To prove the trigger tests can fail, run with a trigger disabled:
 
@@ -28,22 +28,13 @@ sys.path.insert(0, str(REPO))
 import psycopg  # noqa: E402
 
 from agents import budget, runs  # noqa: E402
+from tests._db import needs_db  # noqa: E402
 
 NOW = datetime(2026, 10, 17, 9, 0, tzinfo=timezone.utc)
 RUN = "1999-W01"  # a week no real run will ever use, so a live row cannot collide
 READER_OUT = {"items": ["item-01", "item-02"], "excerpts": ["6f1c0e6e-0b4e-4b0e-9a57-1f1f0c3c9a01"], "fetched": 2}
 
 
-def database_available() -> bool:
-    try:
-        with budget.connect():
-            return True
-    except budget.LedgerUnavailable:
-        return False
-
-
-DB = database_available()
-needs_db = unittest.skipUnless(DB, f"database unreachable — {budget.TUNNEL_HINT}")
 DISABLED = os.environ.get("RUNS_TEST_DISABLE_TRIGGER", "").strip()
 
 
