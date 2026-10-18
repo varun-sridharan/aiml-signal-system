@@ -277,7 +277,7 @@ CREATE TABLE IF NOT EXISTS items (
     title            text         NOT NULL,
     source_id        text         NOT NULL REFERENCES sources (id) ON DELETE RESTRICT,  -- who surfaced it first
     discovered_at    timestamptz  NOT NULL,
-    status           text         NOT NULL CHECK (status IN ('discovered', 'skipped', 'fetched', 'failed')),
+    status           text         NOT NULL CHECK (status IN ('discovered', 'skipped', 'fetched', 'failed', 'expired')),
     relevance_score  integer      NOT NULL DEFAULT 0 CHECK (relevance_score >= 0),
     relevance_terms  text[]       NOT NULL DEFAULT '{}',
     category         text         NULL,
@@ -286,6 +286,19 @@ CREATE TABLE IF NOT EXISTS items (
     CHECK ((status = 'fetched') = (excerpt_id IS NOT NULL))
 );
 CREATE INDEX IF NOT EXISTS items_status_idx ON items (status, discovered_at);
+
+-- An item whose text has aged out of the excerpt store is 'expired': it keeps its identity and
+-- provenance, and its excerpt pointer is cleared. The CHECK above was first written without
+-- 'expired', and CREATE TABLE IF NOT EXISTS will not change a table that exists, so widen it once.
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'items_status_check'
+                   AND conrelid = 'items'::regclass AND pg_get_constraintdef(oid) LIKE '%expired%') THEN
+        ALTER TABLE items DROP CONSTRAINT IF EXISTS items_status_check;
+        ALTER TABLE items ADD CONSTRAINT items_status_check
+            CHECK (status IN ('discovered', 'skipped', 'fetched', 'failed', 'expired'));
+    END IF;
+END $$;
 
 -- Provenance and corroboration: every place an item was seen, appended, never edited.
 -- 'primary' is the publisher's own page; 'corroboration' is another outlet reporting it.
@@ -351,15 +364,17 @@ BEGIN
        IS DISTINCT FROM (OLD.id, OLD.canonical_url, OLD.domain, OLD.source_id, OLD.discovered_at) THEN
         RAISE EXCEPTION 'item %: identity columns never change', OLD.id USING ERRCODE = 'restrict_violation';
     END IF;
-    IF OLD.excerpt_id IS NOT NULL AND NEW.excerpt_id IS DISTINCT FROM OLD.excerpt_id THEN
-        RAISE EXCEPTION 'item %: its excerpt is attached once and never swapped', OLD.id
+    IF OLD.excerpt_id IS NOT NULL AND NEW.excerpt_id IS DISTINCT FROM OLD.excerpt_id
+       AND NOT (OLD.status = 'fetched' AND NEW.status = 'expired' AND NEW.excerpt_id IS NULL) THEN
+        RAISE EXCEPTION 'item %: its excerpt is attached once and never swapped (only expiry clears it)', OLD.id
             USING ERRCODE = 'restrict_violation';
     END IF;
     IF NEW.status IS DISTINCT FROM OLD.status AND NOT (
            (OLD.status = 'discovered' AND NEW.status IN ('skipped', 'fetched', 'failed'))
         OR (OLD.status = 'skipped'    AND NEW.status IN ('discovered', 'fetched', 'failed'))
-        OR (OLD.status = 'failed'     AND NEW.status IN ('discovered', 'fetched'))) THEN
-        RAISE EXCEPTION 'item %: % -> % is not allowed (fetched is final)', OLD.id, OLD.status, NEW.status
+        OR (OLD.status = 'failed'     AND NEW.status IN ('discovered', 'fetched'))
+        OR (OLD.status = 'fetched'    AND NEW.status = 'expired')) THEN
+        RAISE EXCEPTION 'item %: % -> % is not allowed (fetched only ever expires)', OLD.id, OLD.status, NEW.status
             USING ERRCODE = 'restrict_violation';
     END IF;
     RETURN NEW;

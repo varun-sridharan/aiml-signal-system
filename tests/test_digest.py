@@ -167,7 +167,7 @@ class Routes(unittest.TestCase):
             self.conn.rollback()
             self.conn.execute("SELECT 1")
             self.publish(body)
-            r = self.client.get("/weekly-digest")
+            r = self.client.get(f"/weekly-digest?week={WEEK}")     # by key: the database also holds a real, newer edition
             self.assertEqual(r.status_code, 200, body)
             self.assertIn("cannot be shown", r.text)
             self.assertIn('role="alert"', r.text)

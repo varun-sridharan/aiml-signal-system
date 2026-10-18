@@ -174,11 +174,15 @@ def expire(conn, now: datetime) -> int:
 
     Not scheduled yet: the weekly run will call this first. A cited excerpt has no date
     (cite() pinned it), and the database refuses to delete one regardless.
+
+    An item that was fetched from an expiring excerpt is marked 'expired' and loses its
+    pointer first; the database will not delete text an item still points at, and an item
+    is never deleted (a brief may have been written from it).
     """
     with conn.transaction():
-        cur = conn.execute(
-            "DELETE FROM excerpts e WHERE e.expires_at < %s "
-            "AND NOT EXISTS (SELECT 1 FROM excerpt_citations c WHERE c.excerpt_id = e.id)",
-            (now,),
-        )
+        doomed = ("SELECT e.id FROM excerpts e WHERE e.expires_at < %s "
+                  "AND NOT EXISTS (SELECT 1 FROM excerpt_citations c WHERE c.excerpt_id = e.id)")
+        conn.execute(f"UPDATE items SET status = 'expired', excerpt_id = NULL, fetch_error = NULL "
+                     f"WHERE status = 'fetched' AND excerpt_id IN ({doomed})", (now,))
+        cur = conn.execute(f"DELETE FROM excerpts WHERE id IN ({doomed})", (now,))
     return cur.rowcount

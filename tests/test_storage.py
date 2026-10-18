@@ -178,6 +178,28 @@ class Storage(unittest.TestCase):
         own = excerpts.store(self.conn, "https://www.openai.com/index/one?utm_source=x", "Text of the article.", NOW)
         items.attach_excerpt(self.conn, iid, own)  # same canonical page, spelled differently: fine
 
+    def test_i8_an_item_whose_text_expires_is_marked_expired_not_left_dangling(self):
+        iid, eid = self.fetched_item()
+        self.assertEqual(excerpts.expire(self.conn, NOW + timedelta(days=excerpts.RETENTION_DAYS + 1)) >= 1, True)
+        self.assertEqual(self.conn.execute("SELECT status, excerpt_id FROM items WHERE id = %s", (iid,)).fetchone(), ("expired", None))
+        self.assertIsNone(self.conn.execute("SELECT 1 FROM excerpts WHERE id = %s", (eid,)).fetchone())
+        again, created = items.upsert(self.conn, "https://openai.com/index/a-story/", "A story", NOW)
+        self.assertEqual((again, created), (iid, False))      # the item is still the item
+
+    def test_i9_a_cited_items_text_is_never_expired(self):
+        iid, eid = self.fetched_item()
+        excerpts.cite(self.conn, eid, "1999-W77")
+        excerpts.expire(self.conn, NOW + timedelta(days=36500))
+        self.assertEqual(self.conn.execute("SELECT status, excerpt_id FROM items WHERE id = %s", (iid,)).fetchone(), ("fetched", eid))
+
+    def test_i10_only_expiry_may_clear_an_excerpt_and_expired_is_final(self):
+        iid, eid = self.fetched_item()
+        # Clearing the pointer while staying 'fetched' is refused by the CHECK; by the trigger when it tries another status.
+        self.assertRefusedByDatabase("UPDATE items SET excerpt_id = NULL, status = 'failed' WHERE id = %s", (iid,))
+        self.conn.execute("UPDATE items SET status = 'expired', excerpt_id = NULL WHERE id = %s", (iid,))
+        for status in ("fetched", "discovered", "failed", "skipped"):
+            self.assertRefusedByDatabase("UPDATE items SET status = %s WHERE id = %s", (status, iid))
+
     def test_i6_a_fetched_item_has_an_excerpt_and_only_then(self):
         iid = self.item()
         self.assertRefusedByDatabase("UPDATE items SET status = 'fetched' WHERE id = %s", (iid,),
