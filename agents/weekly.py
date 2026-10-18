@@ -220,12 +220,32 @@ def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after
     return outputs
 
 
+def status(conn, week: str) -> list[str]:
+    """One line per attempt at each stage of a week, for a person to read."""
+    rows = conn.execute(
+        "SELECT stage, attempt, status, started_at, finished_at, coalesce(error, '') FROM run_stages WHERE run_id = %s "
+        "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage), attempt", (week,)).fetchall()
+    if not rows:
+        return [f"{week}: no run yet"]
+    run = conn.execute("SELECT status FROM runs WHERE id = %s", (week,)).fetchone()[0]
+    lines = [f"{week}: run {run}"]
+    for stage, attempt, state, started, finished, error in rows:
+        took = f"{(finished - started).total_seconds():.0f}s" if finished else "-"
+        lines.append(f"  {stage:<8} attempt {attempt}  {state:<8} {took:>5}  {error[:90]}")
+    return lines
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--week", help="ISO week key like 2026-W42 (default: this week)")
+    parser.add_argument("--status", action="store_true", help="print the week's stages and exit; no model call")
     parser.add_argument("--stop-after", choices=runs.STAGES, help="stop cleanly after this stage")
     args = parser.parse_args()
     now = datetime.now(timezone.utc)
+    if args.status:
+        with budget.connect() as conn:
+            print("\n".join(status(conn, args.week or week_key(now))))
+        return 0
     try:
         client = llm.build_client()
         with budget.connect() as conn:

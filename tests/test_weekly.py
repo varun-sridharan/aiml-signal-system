@@ -284,6 +284,16 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.run_week()
 
+    def test_w15_status_shows_each_attempt(self):
+        self.assertEqual(weekly.status(self.conn, WEEK), [f"{WEEK}: no run yet"])
+        self.fail_framer = 1
+        with self.assertRaises(RuntimeError):
+            self.run_week()
+        lines = weekly.status(self.conn, WEEK)
+        self.assertEqual(lines[0], f"{WEEK}: run running")
+        self.assertRegex(lines[1], r"reader\s+attempt 1\s+done")
+        self.assertRegex(lines[2], r"framer\s+attempt 1\s+failed.*model returned no text")
+
     def test_w6_a_finished_week_does_nothing_when_run_again(self):
         self.run_week()
         asked, framed, checked = len(self.client.requests), len(self.framer_calls), len(self.check_calls)

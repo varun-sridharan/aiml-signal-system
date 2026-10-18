@@ -25,6 +25,9 @@ MIN_SALT_CHARS = 16
 # boxes), tight for anything automated.
 RATE_LIMIT_VOTES = 30
 RATE_LIMIT_WINDOW = timedelta(hours=1)
+# A ceiling on all votes, whoever sends them: rotating addresses defeats a per-client limit,
+# and this keeps the table from being filled by one script.
+GLOBAL_LIMIT_VOTES = 1_000
 
 
 class RateLimited(RuntimeError):
@@ -66,8 +69,10 @@ def vote(conn, brief_id: str, item_ref: str, direction: str, comment: str | None
     """Record a vote. `client` is already a client_hash. Comments are for thumbs-down only."""
     if direction not in ("up", "down"):
         raise FeedbackRefused("vote must be 'up' or 'down'")
-    comment = (comment or "").strip() or None
+    comment = (comment or "").replace("\r\n", "\n").strip() or None   # a browser sends CRLF; count it as one
     if comment is not None:
+        if "\x00" in comment:
+            raise FeedbackRefused("a note cannot contain a NUL character")
         if direction != "down":
             raise FeedbackRefused("a note goes with a thumbs-down only")
         if len(comment) > MAX_COMMENT_CHARS:
@@ -79,6 +84,9 @@ def vote(conn, brief_id: str, item_ref: str, direction: str, comment: str | None
                               (client, now - RATE_LIMIT_WINDOW)).fetchone()[0]
         if recent >= RATE_LIMIT_VOTES:
             raise RateLimited(f"more than {RATE_LIMIT_VOTES} votes in {RATE_LIMIT_WINDOW}")
+        everyone = conn.execute("SELECT count(*) FROM feedback WHERE created_at > %s", (now - RATE_LIMIT_WINDOW,)).fetchone()[0]
+        if everyone >= GLOBAL_LIMIT_VOTES:
+            raise RateLimited(f"more than {GLOBAL_LIMIT_VOTES} votes from everyone in {RATE_LIMIT_WINDOW}")
         row_id = uuid.uuid4()
         try:
             with conn.transaction():

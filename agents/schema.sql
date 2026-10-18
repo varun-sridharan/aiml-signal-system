@@ -337,6 +337,7 @@ CREATE TABLE IF NOT EXISTS feedback (
 );
 CREATE INDEX IF NOT EXISTS feedback_brief_idx ON feedback (brief_id, item_ref, created_at);
 CREATE INDEX IF NOT EXISTS feedback_client_idx ON feedback (client_hash, created_at);
+CREATE INDEX IF NOT EXISTS feedback_time_idx ON feedback (created_at);
 
 -- ITEMS. Identity is fixed; the text is attached once; status only moves forward;
 -- an item is never deleted, because a brief may have been written from it.

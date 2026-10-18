@@ -17,11 +17,13 @@ and the app refuses to start if either file breaks that format.
 
 import hmac
 import os
+import re
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import urlsplit
+from typing import Optional
+from urllib.parse import parse_qs, quote, urlsplit
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -30,7 +32,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from agents import budget, llm, reader
+from agents import briefs, budget, digest, llm, reader
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -185,6 +187,127 @@ def plan_legacy() -> RedirectResponse:
 @app.get("/plan/Roadmap.html")
 def roadmap_legacy() -> RedirectResponse:
     return RedirectResponse("/roadmap", status_code=301)
+
+
+# WHAT: the Weekly Digest, rendered at request time from the newest published brief.
+# CONCEPT: same pattern as /plan: the database holds the content, the template shows it,
+# and nothing is built. A brief that cannot be shown (malformed, or the database is down)
+# becomes an error panel on the page, never a 500: a bad row must not take the site down,
+# and the healthcheck is deliberately blind to it (the brief is data, not code).
+WEEK_RE = re.compile(r"\d{4}-W\d{2}")   # always used with .fullmatch: "$" would let a trailing newline through
+NOTICES = {
+    "voted-up": ("Thanks. Marked useful.", True),
+    "voted-down": ("Thanks. Marked not useful, and your note was kept.", True),
+    "slow-down": ("That is a lot of votes in a short time. Please try again later.", False),
+    "bad-vote": ("That vote could not be recorded.", False),
+}
+MAX_FORM_BYTES = 8_192
+
+
+def _connect():
+    return budget.connect()
+
+
+def _panel(request: Request, title: str, text: str, status: int = 200):
+    return templates.TemplateResponse(request=request, name="digest.template.html", status_code=status,
+                                      context={"digest": None, "error": {"title": title, "text": text},
+                                               "notice": None, "weeks": []})
+
+
+@app.get("/weekly-digest")
+def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional[str] = None, item: Optional[str] = None):
+    if week is not None and not WEEK_RE.fullmatch(week):
+        return _panel(request, "No such edition", "That is not a week this digest knows.", 404)
+    try:
+        with _connect() as conn:
+            weeks = [r[0] for r in conn.execute("SELECT id FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
+            row = briefs.get(conn, week) if week else briefs.latest(conn)
+    except Exception as e:  # database down or unreachable: say so on the page, with the right status
+        print(f"weekly digest: database unavailable ({type(e).__name__})", file=sys.stderr)
+        return _panel(request, "The digest is unavailable right now", "The database that holds it did not answer. "
+                      "Nothing is lost; try again in a minute.", 503)
+    shown = NOTICES.get(notice or "")
+    context = {"digest": None, "error": None, "weeks": weeks, "notice_item": (item or "")[:200],
+               "notice": {"text": shown[0], "good": shown[1]} if shown else None}
+    if row is None:
+        if week:
+            return _panel(request, "No such edition", f"There is no edition for {week}.", 404)
+        return templates.TemplateResponse(request=request, name="digest.template.html", context=context)
+    try:
+        context["digest"] = digest.view(row[0], row[1], row[2])
+    except digest.DigestMalformed as bad:
+        print(f"weekly digest: brief {row[0]} cannot be shown ({type(bad).__name__})", file=sys.stderr)
+        context["error"] = {"title": "This edition cannot be shown",
+                            "text": f"The brief for {row[0]} was published but is not in a shape this page can display. "
+                                    "The edition is intact in the database; the page will show it once it is fixed."}
+    return templates.TemplateResponse(request=request, name="digest.template.html", context=context)
+
+
+def _cast_vote(fields: dict, address: str):
+    """Record one vote; returns the notice key. Runs off the event loop (it blocks on the database)."""
+    brief_id, item, direction = fields.get("brief", ""), fields.get("item", ""), fields.get("vote", "")
+    salt = digest.vote_salt()
+    if not WEEK_RE.fullmatch(brief_id) or not salt:
+        return "bad-vote", brief_id
+    with _connect() as conn:
+        row = briefs.get(conn, brief_id)
+        try:
+            known = digest.view(row[0], row[1])["item_ids"] if row else set()
+        except digest.DigestMalformed:
+            known = set()
+        if item not in known:
+            return "bad-vote", brief_id
+        try:
+            briefs.vote(conn, brief_id, item, direction, fields.get("comment"),
+                        briefs.client_hash(address, salt), datetime.now(timezone.utc))
+        except briefs.RateLimited:
+            return "slow-down", brief_id
+        except briefs.FeedbackRefused:
+            return "bad-vote", brief_id
+    return ("voted-down" if direction == "down" else "voted-up"), brief_id
+
+
+@app.post("/weekly-digest/vote")
+async def weekly_digest_vote(request: Request):
+    # Same-origin only: a browser sends Origin on a cross-site POST, and another site should
+    # not be able to cast votes from a visitor's address. Requests with no Origin (curl,
+    # old clients) are allowed; the rate limits are what bound those.
+    origin = request.headers.get("origin")
+    if origin and urlsplit(origin).netloc != request.headers.get("host", ""):
+        return JSONResponse({"detail": "cross-site vote refused"}, status_code=403)
+    if int(request.headers.get("content-length", "0") or 0) > MAX_FORM_BYTES:
+        return JSONResponse({"detail": "too large"}, status_code=413)
+    raw = b""
+    async for chunk in request.stream():       # capped as it is read, not after
+        raw += chunk
+        if len(raw) > MAX_FORM_BYTES:
+            return JSONResponse({"detail": "too large"}, status_code=413)
+    try:
+        fields = {k: v[0] for k, v in parse_qs(raw.decode("utf-8", "replace"), max_num_fields=10).items()}
+    except ValueError:  # more fields than a vote has
+        return RedirectResponse("/weekly-digest?notice=bad-vote", status_code=303)
+    address = digest.client_address(request.headers, request.client.host if request.client else None)
+    try:
+        notice, brief_id = await run_in_threadpool(_cast_vote, fields, address)
+    except Exception as e:
+        print(f"weekly digest vote failed ({type(e).__name__})", file=sys.stderr)
+        return JSONResponse({"detail": "voting is unavailable right now"}, status_code=503)
+    week = brief_id if WEEK_RE.fullmatch(brief_id) else ""
+    if week and notice.startswith("voted"):
+        item_q = quote(fields.get("item", ""), safe="")
+        # The notice is shown on the story that was voted on, and the page lands there.
+        return RedirectResponse(f"/weekly-digest?week={week}&notice={notice}&item={item_q}#item-{item_q}", status_code=303)
+    return RedirectResponse(f"/weekly-digest?week={week}&notice={notice}" if week else f"/weekly-digest?notice={notice}",
+                            status_code=303)
+
+
+# WHAT: the old snapshot's URL, permanently redirected to the rendered page that replaced it.
+# CONCEPT: the same move /plan made. The other Design snapshots link to Weekly-Digest.html
+# in their baked navigation; a 301 sends every existing link, bookmark and history entry to
+# the live page, and must be registered before the mount for the reason /plan's was.
+@app.get("/application/Weekly-Digest.html")
+def weekly_digest_legacy() -> RedirectResponse:
+    return RedirectResponse("/weekly-digest", status_code=301)
 
 
 # WHAT: /add-news, a URL handed to the app is fetched on arrival through Reader's own path.

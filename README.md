@@ -26,7 +26,7 @@ No API key needed, nothing to install:
 
 | | |
 | --- | --- |
-| [The Weekly Digest](https://aiml-signal-system-production.up.railway.app/application/Weekly-Digest.html) | real Framer output for a fixed date, rendered |
+| [The Weekly Digest](https://aiml-signal-system-production.up.railway.app/weekly-digest) | the newest published brief, rendered from the database, with thumbs on every story. The old `/application/Weekly-Digest.html` redirects here |
 | [Design record](https://aiml-signal-system-production.up.railway.app/design/System-Design.html) | architecture + an append-only decision log, 38 entries |
 | [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap) | what is next, with binary exit criteria — and every item deliberately deferred, with the reason |
 | [Plan & Progress](https://aiml-signal-system-production.up.railway.app/plan) | the one live milestone in detail, plus the archive of finished work |
@@ -139,6 +139,26 @@ railway connect Postgres --tunnel-only --port 15432   # leave running in another
 # .env: DATABASE_URL=postgresql://<user>:<password>@127.0.0.1:15432/<db>
 python -m unittest tests.test_ledger -v              # the ledger's tests; no API calls
 ```
+
+Run all the tests with the tunnel open, failing rather than skipping when it is not:
+
+```bash
+REQUIRE_DB=1 .venv/bin/python -m unittest discover -s tests -t .
+```
+
+### The weekly run
+
+```bash
+python -m agents.weekly                      # this ISO week: Reader, Framer, gates, publish
+python -m agents.weekly --week 2026-W42      # a specific week
+python -m agents.weekly --stop-after reader  # stop cleanly after a stage; the next run resumes
+```
+
+Each stage is checkpointed in the `runs` tables, so a rerun of the same week loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A week that fails a hard gate publishes nothing and stays failed until a person looks at it. A typical run costs about $0.15 to $0.30, all booked in the ledger.
+
+**It is not scheduled.** The scheduled Weekly Digest keeps running in parallel until the new one has earned the switch. To schedule it, create a Railway cron service from this repository with the start command `python -m agents.weekly` and a weekly schedule; it needs `ANTHROPIC_API_KEY` and `DATABASE_URL` and nothing else.
+
+`/add-news` fetches a URL handed to it (`POST` JSON `{"url": "..."}` with an `X-Add-News-Token` header). It is off until `ADD_NEWS_TOKEN` is set in the environment. Voting on the digest needs no setting; it hashes the voter's address with a salt derived from `DATABASE_URL`, or from `VOTE_SALT` if you set one.
 
 Your own deployment needs only a `DATABASE_URL` pointing at any Postgres; the table is created on first connect.
 

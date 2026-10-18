@@ -418,12 +418,12 @@ def prepare(conn, profile: dict | None = None) -> None:
     graph.sync(conn, profile)
 
 
-def run(conn, client, now: datetime, *, fetch=http_get, limit: int = MAX_FETCHES_PER_RUN,
+def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER_RUN,
         profile: dict | None = None, user_id: str = USER_ID) -> dict:
     """One Reader pass. Returns the pointers-only output the run record keeps."""
     stats = Stats()
     prepare(conn, profile)
-    kept = build_items(conn, discover(stats, fetch), now, stats, user_id)
+    kept = build_items(conn, discover(stats, fetch or http_get), now, stats, user_id)
     # The most one fetch can be reserved at, times the count, must fit the run's ceiling.
     worst_case = budget.estimate_call_ceiling_usd(
         FETCH_MODEL, FETCH_MAX_TOKENS, {"tools": [{}], "messages": [{"role": "user", "content": "x" * 400}]},

@@ -189,7 +189,7 @@ GitHub status counts, per-agent metrics, pending actions and actions taken, a fe
 - **Size:** S
 - **Origin:** Sep-16-2026 — M1 if trivial, here if not
 
-Most of the 91 domains publish feeds. Polling one is cheap and deterministic, and it is the closest thing to an event trigger a newsroom offers — webhooks effectively do not exist in this space. `/add-news` is the genuinely event-driven path and fetches immediately.
+Most of the 91 domains publish feeds. Polling one is cheap and deterministic, and it is the closest thing to an event trigger a newsroom offers — webhooks effectively do not exist in this space. `/add-news` is the genuinely event-driven path and fetches immediately. **Partly done:** Reader polls nine feeds on every weekly run (arXiv, Hugging Face Papers, the GitHub changelog, the MCP blog, OpenAI, DeepMind, Latent Space, Import AI and the Hacker News front page); what is left is the labs and newsletters for which no feed address has been verified (Anthropic, Meta AI, Mistral, Qwen, DeepSeek, Moonshot, NVIDIA, The Batch), and the 91-domain list the plan cites is not in the repository.
 
 
 ### bk-style-capture-unattended · Capture style emails automatically, while the Mac is closed

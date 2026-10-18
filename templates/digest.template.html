@@ -1,0 +1,172 @@
+{#
+  The Weekly Digest page. Rendered by the /weekly-digest route from a published brief in
+  the database (agents/digest.py builds the view). Everything is autoescaped: the brief is
+  model output built from other people's pages, and none of it is trusted as HTML.
+
+  Two subsections with a sticky sub-nav: Learning for the Week (the DO THIS items) and
+  This Week's Stories. Each item takes a thumbs up, or a thumbs down with an optional
+  note. Voting is plain forms, so it works without JavaScript; the page's only script
+  highlights the sub-nav link of the section in view.
+#}
+{%- from "_site.html" import site_header %}
+{%- macro vote(item) %}
+  {%- if notice and notice_item == item.id %}<div class="notice {{ 'good' if notice.good else '' }}" role="status">{{ notice.text }}</div>{% endif %}
+  <div class="vote" id="vote-{{ item.id }}">
+    <form method="post" action="/weekly-digest/vote">
+      <input type="hidden" name="brief" value="{{ digest.week }}">
+      <input type="hidden" name="item" value="{{ item.id }}">
+      <input type="hidden" name="vote" value="up">
+      <button type="submit" aria-label="Useful: {{ item.headline }}">&#9650; Useful</button>
+    </form>
+    <details>
+      <summary aria-label="Not useful: {{ item.headline }}">&#9660; Not useful</summary>
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="{{ digest.week }}">
+        <input type="hidden" name="item" value="{{ item.id }}">
+        <input type="hidden" name="vote" value="down">
+        <label>What was wrong with it? <span class="optional">(optional)</span>
+          <textarea name="comment" rows="3" maxlength="2000" placeholder="Too vague, already knew it, wrong about something&#8230;"></textarea>
+        </label>
+        <button type="submit">Send</button>
+      </form>
+    </details>
+  </div>
+{%- endmacro %}
+{%- macro card(item) %}
+  <article class="card" id="item-{{ item.id }}">
+    <div class="tags">{% for t in item.tags %}<span>{{ t }}</span>{% endfor %}{% if item.checked %}<span class="ok" title="Every factual claim was checked against its source">checked against source</span>{% endif %}</div>
+    <h3>{{ item.headline }}</h3>
+    {%- if item.why %}<p class="why">{{ item.why }}</p>{% endif %}
+    {%- if item.example %}<p class="example"><b>Try it.</b> {{ item.example }}</p>{% endif %}
+    {%- if item.ninety %}
+    <dl class="ninety">
+      <dt class="ninety-title">In 90 seconds</dt>
+      {%- for label, text in item.ninety %}<dt>{{ label }}</dt><dd>{{ text }}</dd>{% endfor %}
+    </dl>
+    {%- endif %}
+    {%- if item.connection %}<p class="connection">{{ item.connection }}</p>{% endif %}
+    {%- if item.sources %}
+    <p class="sources">{% for s in item.sources %}<a href="{{ s.url }}" rel="noopener noreferrer">{{ s.label }}</a>{% if s.tier == "primary" %} <i>(primary)</i>{% endif %}{% if not loop.last %} &middot; {% endif %}{% endfor %}</p>
+    {%- endif %}
+    {{ vote(item) }}
+  </article>
+{%- endmacro %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Digest</title>
+{% include "_head.html" %}
+<style>
+  :root{
+    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#8B8375;
+    --rule:#DED7C6; --rule2:#EAE4D6; --accent:#B5502A; --accent-soft:#F4E7DF; --ok:#2F6B52;
+    --sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    --serif:'Newsreader',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+    --rail:0px; --fs-hero:clamp(36px,5vw,60px); --fs-h3:21px; --fs-body:17px; --fs-small:13px; --fs-micro:10.5px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.62;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none} a:hover{color:var(--ink);text-decoration:underline}
+  main{padding:0 20px 120px} article.page{max-width:760px;margin:0 auto;padding-top:104px}
+  .kicker{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:var(--fs-hero);line-height:1.04;letter-spacing:-.022em;margin:14px 0 0}
+  .lede{font-family:var(--serif);font-size:var(--fs-h3);line-height:1.45;color:var(--soft);margin:16px 0 0}
+  .subnav{position:sticky;top:50px;z-index:15;background:rgba(244,241,232,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);margin:28px -20px 0;padding:0 20px}
+  .subnav div{max-width:760px;margin:0 auto;display:flex;gap:22px;overflow-x:auto}
+  .subnav a{padding:12px 0;font-size:var(--fs-small);font-weight:500;color:var(--soft);border-bottom:2px solid transparent;white-space:nowrap}
+  .subnav a.on{color:var(--accent);border-bottom-color:var(--accent)}
+  section{scroll-margin-top:110px;padding-top:30px}
+  h2{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:-.016em;margin:0 0 4px}
+  .section-note{color:var(--faint);font-size:var(--fs-small);margin:0 0 6px}
+  .thread{font-family:var(--serif);font-size:var(--fs-h3);line-height:1.55;color:var(--ink);border-left:3px solid var(--accent);padding:2px 0 2px 18px;margin:18px 0 6px;text-wrap:pretty}
+  .card{padding:22px 0;border-bottom:1px solid var(--rule2);scroll-margin-top:130px} .card:last-child{border-bottom:0}
+  .card h3{font-family:var(--serif);font-size:var(--fs-h3);line-height:1.28;font-weight:600;letter-spacing:-.012em;margin:8px 0 0;text-wrap:pretty}
+  .tags{display:flex;gap:8px;flex-wrap:wrap} .tags span{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 8px}
+  .tags span.ok{color:var(--ok);border-color:#C4D6CB;background:#EAF1EC}
+  .card p{margin:10px 0 0;color:var(--soft)} .card .why{color:var(--ink)} .card .connection{font-style:italic}
+  .example{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:12px 14px}
+  dl.ninety{margin:12px 0 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;font-size:var(--fs-small);color:var(--soft)}
+  dl.ninety dt{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+  dl.ninety dt.ninety-title{grid-column:1/-1;color:var(--accent)} dl.ninety dd{margin:0}
+  .sources{font-size:var(--fs-small)} .sources i{color:var(--faint)}
+  .vote{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;font-size:var(--fs-small)}
+  .vote button,.vote summary{font:inherit;font-size:var(--fs-small);color:var(--soft);background:var(--panel);border:1px solid var(--rule);border-radius:5px;padding:5px 12px;cursor:pointer;list-style:none}
+  .vote button:hover,.vote summary:hover{border-color:var(--accent);color:var(--accent)}
+  .vote summary::-webkit-details-marker{display:none}
+  .vote details[open] summary{border-color:var(--accent);color:var(--accent)}
+  .vote details form{margin-top:8px;display:grid;gap:8px;max-width:420px}
+  .vote textarea{width:100%;font:inherit;font-size:var(--fs-small);padding:8px 10px;border:1px solid var(--rule);border-radius:5px;background:#fff;color:var(--ink)}
+  .optional{color:var(--faint)}
+  .notice,.panel{border:1px solid var(--rule);border-radius:5px;background:var(--panel);padding:14px 18px;margin:22px 0 0;color:var(--soft)}
+  .notice.good{border-color:#C4D6CB;background:#EAF1EC;color:var(--ok)}
+  .panel{border-left:3px solid var(--accent)} .panel h2{font-size:22px}
+  .weeks{margin:34px 0 0;padding-top:16px;border-top:1px solid var(--rule);font-size:var(--fs-small);color:var(--faint)}
+  .weeks a{margin-right:12px}
+  @media (max-width:560px){ dl.ninety{grid-template-columns:1fr} .subnav{top:76px} article.page{padding-top:128px} section{scroll-margin-top:140px} .card{scroll-margin-top:150px} }
+</style>
+</head>
+<body>
+{{ site_header("Weekly Digest") }}
+<main>
+<article class="page">
+  <div class="kicker">AI/ML Signal &middot; {% if digest %}week {{ digest.week }}{% else %}weekly{% endif %}</div>
+  <h1>Weekly Digest</h1>
+
+  {%- if notice and not notice_item %}<div class="notice {{ 'good' if notice.good else '' }}" role="status">{{ notice.text }}</div>{% endif %}
+
+  {%- if digest %}
+  <p class="lede">{{ digest.learning | length + digest.stories | length }} stories{% if digest.reading_time %}, about {{ digest.reading_time }} minutes{% endif %}, each checked against the page it came from.</p>
+
+  <nav class="subnav" aria-label="Sections"><div>
+    <a href="#learning" data-sec="learning">Learning for the Week</a>
+    <a href="#stories" data-sec="stories">This Week's Stories</a>
+  </div></nav>
+
+  <section id="learning">
+    <h2>Learning for the Week</h2>
+    <p class="section-note">Things worth trying, not just reading.</p>
+    {%- for item in digest.learning %}{{ card(item) }}{% else %}
+    <p class="section-note">Nothing this week was worth setting aside time to practise. That is allowed.</p>
+    {%- endfor %}
+  </section>
+
+  <section id="stories">
+    <h2>This Week's Stories</h2>
+    {%- if digest.thread %}<p class="thread">{{ digest.thread }}</p>{% endif %}
+    {%- for item in digest.stories %}{{ card(item) }}{% else %}
+    <p class="section-note">Every story this week is in Learning.</p>
+    {%- endfor %}
+  </section>
+
+  {%- elif error %}
+  <div class="panel" role="alert"><h2>{{ error.title }}</h2><p>{{ error.text }}</p></div>
+  {%- else %}
+  <p class="lede">The first edition has not been published yet.</p>
+  {%- endif %}
+
+  {%- if weeks and weeks | length > 1 %}
+  <p class="weeks">Earlier editions: {% for w in weeks %}{% if not digest or w != digest.week %}<a href="/weekly-digest?week={{ w }}">{{ w }}</a>{% endif %}{% endfor %}</p>
+  {%- endif %}
+</article>
+</main>
+<script src="/static/site.js" defer></script>
+<script>
+(function () {
+  var links = [].slice.call(document.querySelectorAll('.subnav a'));
+  if (!links.length || !('IntersectionObserver' in window)) return;
+  var seen = {};
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { seen[e.target.id] = e.isIntersecting ? e.boundingClientRect.top : null; });
+    var live = Object.keys(seen).filter(function (k) { return seen[k] !== null; });
+    var pick = live.length ? live.sort(function (a, b) { return Math.abs(seen[a]) - Math.abs(seen[b]); })[0] : null;
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-sec') === pick); });
+  }, {rootMargin: '-110px 0px -55% 0px'});
+  links.forEach(function (a) { var s = document.getElementById(a.getAttribute('data-sec')); if (s) io.observe(s); });
+})();
+</script>
+</body>
+</html>
