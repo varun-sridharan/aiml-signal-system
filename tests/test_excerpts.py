@@ -49,6 +49,16 @@ class Canonicalise(unittest.TestCase):
         self.assertEqual(excerpts.canonicalise(URL), "https://example.com/news/Story-One")
         self.assertEqual(excerpts.canonicalise("http://WWW.example.com/"), "https://example.com")
 
+    def test_arxiv_versions_and_formats_are_one_paper(self):
+        want = "https://arxiv.org/abs/2610.00001"
+        for url in ("http://arxiv.org/abs/2610.00001v1", "https://arxiv.org/abs/2610.00001v12", "https://arxiv.org/pdf/2610.00001v2.pdf",
+                    "https://arxiv.org/pdf/2610.00001", "https://www.arxiv.org/html/2610.00001v1/", "https://arxiv.org/abs/2610.00001?context=cs"):
+            self.assertEqual(excerpts.canonicalise(url), want, url)
+        self.assertEqual(excerpts.canonicalise("https://arxiv.org/abs/cs/0301001v2"), "https://arxiv.org/abs/cs/0301001")
+        self.assertNotEqual(excerpts.canonicalise("https://arxiv.org/abs/2610.00002"), want)  # a different paper
+        self.assertEqual(excerpts.canonicalise("https://example.com/pdf/2610.00001v1.pdf"),
+                         "https://example.com/pdf/2610.00001v1.pdf")  # only arXiv gets the rule
+
 
 @needs_db
 class ExcerptStore(unittest.TestCase):

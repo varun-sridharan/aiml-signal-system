@@ -206,3 +206,42 @@ def stage_output(conn, run_id: str, stage: str):
     if row is None:
         raise KeyError(f"run {run_id} stage {stage} has no done attempt")
     return row[0]
+
+
+def checkpointed(conn, run_id: str, stage: str, now: datetime, work):
+    """Run one stage of a run, once: load its checkpoint if it is done, else do the work.
+
+    `work(attempt)` returns the stage's pointers-only output. A failure marks the attempt
+    failed with its (redacted) message, so a retry can start at once instead of waiting out
+    STALE_AFTER, and then re-raises. The stage's predecessor must be done (the database
+    refuses otherwise).
+    """
+    if stage in _done_stages(conn, run_id):
+        return stage_output(conn, run_id, stage)
+    attempt = start_stage(conn, run_id, stage, now)
+    try:
+        output = work(attempt)
+    except BaseException as e:  # including KeyboardInterrupt: the attempt must not stay 'running'
+        fail_stage(conn, run_id, stage, attempt, f"{type(e).__name__}: {e}", now)
+        raise
+    finish_stage(conn, run_id, stage, attempt, output, now)
+    return output
+
+
+def save_artifact(conn, run_id: str, stage: str, attempt: int, body: dict, now: datetime) -> None:
+    """Store a stage's work product (text and all) for the next stage to load."""
+    from psycopg.types.json import Jsonb
+    _aware(now)
+    with conn.transaction():
+        conn.execute("INSERT INTO run_artifacts (run_id, stage, attempt, body, created_at) VALUES (%s, %s, %s, %s, %s)",
+                     (run_id, stage, attempt, Jsonb(body), now))
+
+
+def load_artifact(conn, run_id: str, stage: str) -> dict:
+    """The work product of a stage's done attempt."""
+    row = conn.execute(
+        "SELECT a.body FROM run_artifacts a JOIN run_stages s USING (run_id, stage, attempt) "
+        "WHERE a.run_id = %s AND a.stage = %s AND s.status = 'done'", (run_id, stage)).fetchone()
+    if row is None:
+        raise KeyError(f"run {run_id} stage {stage} has no done attempt with an artifact")
+    return row[0]

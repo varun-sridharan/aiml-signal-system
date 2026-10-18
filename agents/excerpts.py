@@ -17,10 +17,11 @@ same Postgres as the spend ledger.
 from __future__ import annotations
 
 import hashlib
+import re
 import uuid
 import zlib
 from datetime import datetime, timedelta
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 # WHAT: how long an uncited excerpt is kept.
 # CONCEPT: retention. Eight weeks covers what an uncited excerpt is still needed for:
@@ -47,13 +48,36 @@ class ExcerptCorrupted(RuntimeError):
     """The stored text no longer hashes to what was stored. The gate must not use it."""
 
 
-def canonicalise(url: str) -> str:
-    """One form per article, the same way AGI-add-news canonicalises.
+# Query parameters that say where a visitor came from, not which article they asked for.
+TRACKING_PARAMS = frozenset({
+    "fbclid", "gclid", "dclid", "msclkid", "yclid", "mc_cid", "mc_eid", "igshid",
+    "ref", "ref_src", "cmpid", "_hsenc", "_hsmi",
+})
 
-    Force https, lowercase the host and strip a leading www., drop the whole query
-    string and fragment (tracking parameters, #:~:text= and the rest), and strip the
-    trailing slash. The path keeps its case: servers are entitled to treat it as
-    significant.
+
+def _is_tracking(name: str) -> bool:
+    name = name.lower()
+    return name.startswith("utm_") or name in TRACKING_PARAMS
+
+
+def canonicalise(url: str) -> str:
+    """One form per article, the way AGI-add-news canonicalises, with one deliberate difference.
+
+    Force https, lowercase the host and strip a leading www., drop the fragment
+    (#:~:text= and the rest) and the trailing slash. The path keeps its case: servers
+    are entitled to treat it as significant.
+
+    The difference: AGI-add-news drops the whole query string, and this drops only
+    TRACKING parameters (utm_*, fbclid, gclid, ref and the like). A query that names the
+    article (?id=42) is kept, because dropping it would merge two different articles,
+    and that is the one dedup failure nobody sees in the finished edition. The price is
+    that an unknown tracking parameter leaves two copies of one article, which is
+    visible and harmless.
+
+    One site-specific rule, because Reader meets the same paper at several addresses:
+    arXiv's /abs/, /pdf/ and /html/ pages, with or without a version suffix, are one
+    paper, so they collapse to /abs/<id>. (A new version is a revision of the same
+    paper, not a different article.)
     """
     parts = urlsplit(url.strip())
     if not parts.netloc:
@@ -62,7 +86,13 @@ def canonicalise(url: str) -> str:
     if host.startswith("www."):
         host = host[4:]
     path = parts.path.rstrip("/")
-    return urlunsplit(("https", host, path, "", ""))
+    query = parts.query
+    if host == "arxiv.org":
+        m = re.match(r"^/(?:abs|pdf|html)/(?P<id>.+?)(?:v\d+)?(?:\.pdf)?$", path)
+        if m:
+            path, query = "/abs/" + m.group("id"), ""  # the path names the paper; the query only a listing context
+    kept = sorted((k, v) for k, v in parse_qsl(query, keep_blank_values=True) if not _is_tracking(k))
+    return urlunsplit(("https", host, path, urlencode(kept), ""))
 
 
 def _sha256(data: bytes) -> str:

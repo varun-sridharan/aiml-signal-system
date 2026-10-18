@@ -40,6 +40,7 @@ GOLDEN_DIR = REPO / "data" / "evals" / "golden"
 # what actually ships.
 sys.path.insert(0, str(REPO / "agents"))
 import framer  # noqa: E402
+import gates  # noqa: E402
 
 RUBRIC_DIMENSIONS = ["relevance", "insight", "concision", "tradeoff_named"]
 
@@ -260,36 +261,9 @@ def run_structural(profile: dict, case: dict) -> dict:
     preferences = profile["preferences"]
     do_this_category = preferences["doThisCategory"]
     example_categories = preferences["examplesOnlyForCategories"]
-    failures = []
-
-    for item in day["items"]:
-        if "DO THIS" in item["tags"] and item["category"] != do_this_category:
-            failures.append(f"{item['id']}: DO THIS on a {item['category']} item (allowed: {do_this_category})")
-        if item.get("example") and item["category"] not in example_categories:
-            failures.append(f"{item['id']}: worked example on a {item['category']} item (allowed: {example_categories})")
-        if not item.get("sources"):
-            failures.append(f"{item['id']}: no sources")
-
-    if not day.get("thread", "").strip():
-        failures.append("thread is missing or empty")
-
-    # WHAT: every fact/interpretation split must reproduce the field it describes.
-    # CONCEPT: harness — the deterministic half of the split. A model decides which
-    # clauses are checkable; code decides that it accounted for all of them. Without
-    # this, a claim can be hidden from the grader by leaving it out of the split, and
-    # the omission is invisible — a silent failure in the dangerous direction.
-    framing = framing_from_framed_day(day)
-    failures += [f"coverage — {f}" for f in framer.coverage_failures(framing)]
-
-    # Recomputed with the Framer's own functions: this catches a brief whose header
-    # disagrees with its own body — a hand-edit, or a formula change without a rerun.
-    expected_reading_time = framer.compute_reading_time(day["thread"], day["items"])
-    if day["readingTimeMin"] != expected_reading_time:
-        failures.append(f"readingTimeMin is {day['readingTimeMin']}, recomputes to {expected_reading_time}")
-
-    expected_counts = framer.compute_counts(profile, day["items"])
-    if day["counts"] != expected_counts:
-        failures.append(f"counts are {day['counts']}, recompute to {expected_counts}")
+    # The rules live in agents/gates.py, which the weekly run enforces too: what this
+    # eval proves is what the hosted run applies.
+    failures = gates.structural_failures(profile, day)
 
     print("\n  STRUCTURAL (hard gate, no API)")
     checks = [

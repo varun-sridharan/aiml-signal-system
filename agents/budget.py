@@ -24,6 +24,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import time
 import uuid
 from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Decimal
@@ -102,15 +103,20 @@ def estimate_input_tokens(request: dict) -> int:
     return math.ceil(chars / CHARS_PER_TOKEN_ESTIMATE)
 
 
-def estimate_call_ceiling_usd(model: str, max_tokens: int, request: dict) -> float:
-    """Worst-case cost of one call, before it is made."""
+def estimate_call_ceiling_usd(model: str, max_tokens: int, request: dict, extra_input_tokens: int = 0) -> float:
+    """Worst-case cost of one call, before it is made.
+
+    `extra_input_tokens` is for input the request does not contain: a server tool such
+    as web fetch pulls a page into the context during the call, and the caller bounds
+    that with the tool's own content cap.
+    """
     # WHAT: estimated input priced at the cache-WRITE rate, plus max_tokens of output.
     # CONCEPT: loop — the reservation must never come in under the real cost, or the
     # ceiling is soft. Output (thinking included) is capped by max_tokens. Input is
     # priced at 1.25x because a cache write is the dearest way an input token can bill;
     # the old estimate charged max_tokens as input, which a large payload could exceed.
     price = PRICING_PER_MTOK[model]
-    input_tokens = estimate_input_tokens(request)
+    input_tokens = estimate_input_tokens(request) + extra_input_tokens
     return (
         input_tokens * price["input"] * CACHE_WRITE_MULTIPLIER
         + max_tokens * price["output"]
@@ -167,7 +173,17 @@ def connect(*, autocommit: bool = True, connect_timeout: int = 5):
 
     global _schema_ready
     if not _schema_ready:
-        ensure_schema(conn)
+        # The DDL takes table locks, so it can collide with a transaction another process
+        # holds open (a run writing while a deploy starts). One side is chosen as the
+        # deadlock victim; the schema is idempotent, so waiting a moment and retrying is safe.
+        for attempt in range(4):
+            try:
+                ensure_schema(conn)
+                break
+            except (psycopg.errors.DeadlockDetected, psycopg.errors.LockNotAvailable):
+                if attempt == 3:
+                    raise
+                time.sleep(2 * (attempt + 1))
         _schema_ready = True
     return conn
 
@@ -178,6 +194,7 @@ def ensure_schema(conn) -> None:
     # racing on CREATE TABLE IF NOT EXISTS, which is not itself concurrency-safe.
     with conn.transaction():
         conn.execute("SELECT pg_advisory_xact_lock(%s)", (SCHEMA_LOCK_KEY,))
+        conn.execute("SET LOCAL lock_timeout = '15s'")
         conn.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
 
 

@@ -1,0 +1,28 @@
+{
+  "status": "draft, awaiting Varun's review",
+  "about": "URL pairs for Reader's canonicalisation gate (plan row 9). Free and deterministic: no model, no network. 'same' pairs must collapse to one canonical URL; 'different' pairs must NOT. Dedup silently merging two different articles is Reader's only failure that is invisible in the finished edition, so the 'different' pairs are the ones that matter most. Written by the autopilot run of 2026-10-18 from the rules in agents/excerpts.canonicalise; every pair is a judgement about what counts as the same article, which is why the set needs Varun's sign-off before row 9 is DONE.",
+  "pairs": [
+    {"id": "scheme", "expect": "same", "a": "http://example.com/blog/post-one", "b": "https://example.com/blog/post-one", "why": "http and https serve one page"},
+    {"id": "www", "expect": "same", "a": "https://www.example.com/blog/post-one", "b": "https://example.com/blog/post-one", "why": "a leading www. is not a different site"},
+    {"id": "host-case", "expect": "same", "a": "https://EXAMPLE.com/blog/post-one", "b": "https://example.com/blog/post-one", "why": "hostnames are case-insensitive"},
+    {"id": "trailing-slash", "expect": "same", "a": "https://example.com/blog/post-one/", "b": "https://example.com/blog/post-one", "why": "a trailing slash is the same page"},
+    {"id": "utm", "expect": "same", "a": "https://example.com/blog/post-one?utm_source=newsletter&utm_medium=email&utm_campaign=weekly", "b": "https://example.com/blog/post-one", "why": "utm_* says where the reader came from"},
+    {"id": "click-ids", "expect": "same", "a": "https://example.com/blog/post-one?fbclid=IwAR0abc&gclid=xyz&ref=twitter", "b": "https://example.com/blog/post-one", "why": "click ids and ref are tracking"},
+    {"id": "fragment", "expect": "same", "a": "https://example.com/blog/post-one#:~:text=a%20quoted%20span", "b": "https://example.com/blog/post-one", "why": "a fragment never reaches the server"},
+    {"id": "everything-at-once", "expect": "same", "a": " HTTP://www.GitHub.blog/changelog/2026-10-16-open-source-license-compliance-generally-available/?utm_source=rss&ref=feed#top ", "b": "https://github.blog/changelog/2026-10-16-open-source-license-compliance-generally-available", "why": "every difference above in one URL, with stray whitespace"},
+    {"id": "query-order", "expect": "same", "a": "https://example.com/read?id=7&lang=en", "b": "https://example.com/read?lang=en&id=7", "why": "the same parameters in another order"},
+    {"id": "arxiv-version", "expect": "same", "a": "https://arxiv.org/abs/2610.00001v1", "b": "https://arxiv.org/abs/2610.00001v3", "why": "a new version of a paper is the same paper"},
+    {"id": "arxiv-pdf", "expect": "same", "a": "https://arxiv.org/pdf/2610.00001v2.pdf", "b": "https://arxiv.org/abs/2610.00001", "why": "the PDF and the abstract page are one paper"},
+    {"id": "arxiv-html", "expect": "same", "a": "https://www.arxiv.org/html/2610.00001v1/", "b": "http://arxiv.org/abs/2610.00001?context=cs", "why": "the HTML rendering, with listing context, is the same paper"},
+
+    {"id": "PLANTED-near-duplicate-ids", "expect": "different", "planted": true, "a": "https://arxiv.org/abs/2610.00001", "b": "https://arxiv.org/abs/2610.00002", "why": "PLANTED: two papers whose addresses differ by one digit. Merging them loses a paper without a trace"},
+    {"id": "PLANTED-near-duplicate-slugs", "expect": "different", "planted": true, "a": "https://github.blog/changelog/2026-10-16-copilot-agent-mode-generally-available", "b": "https://github.blog/changelog/2026-10-16-copilot-agent-mode-now-in-preview", "why": "PLANTED: same day, almost the same slug, opposite news (GA versus preview)"},
+    {"id": "PLANTED-near-duplicate-query-id", "expect": "different", "planted": true, "a": "https://example.com/article?id=1041", "b": "https://example.com/article?id=1042", "why": "PLANTED: sites that name the article in the query. Dropping the whole query string would merge every article on the site"},
+    {"id": "path-case", "expect": "different", "a": "https://example.com/Docs/Guide", "b": "https://example.com/docs/guide", "why": "paths may be case-sensitive, so they are not folded"},
+    {"id": "month", "expect": "different", "a": "https://example.com/2026/09/mcp-update", "b": "https://example.com/2026/10/mcp-update", "why": "the same slug a month apart is a later article"},
+    {"id": "subdomain", "expect": "different", "a": "https://docs.example.com/guide", "b": "https://example.com/guide", "why": "only www. is stripped, not subdomains"},
+    {"id": "syndicated-copy", "expect": "different", "a": "https://example.com/news/record-funding-round", "b": "https://syndicator.example/reprints/record-funding-round", "why": "one story at two addresses is corroboration, found by title, not a URL duplicate"},
+    {"id": "query-meaning", "expect": "different", "a": "https://example.com/search?q=mcp", "b": "https://example.com/search?q=rlhf", "why": "a query that changes the content is part of the address"},
+    {"id": "arxiv-other-site", "expect": "different", "a": "https://example.com/pdf/2610.00001v1.pdf", "b": "https://example.com/abs/2610.00001", "why": "the arXiv rule applies to arxiv.org only"}
+  ]
+}

@@ -242,3 +242,163 @@ END $$;
 CREATE OR REPLACE TRIGGER runs_finished_write_once
     BEFORE UPDATE OR DELETE ON runs
     FOR EACH ROW EXECUTE FUNCTION runs_finished_write_once();
+
+
+-- ======================================================================================
+-- Sources, items, the interest graph, briefs and feedback: the rest of the storage layer.
+--
+-- Shaped by what Reader writes and what the Weekly Digest surface reads. An item is one
+-- canonical URL; it carries the provenance of every place it was seen (item_sources) and
+-- the excerpt that holds its text. Rules a later caller could forget are enforced here.
+-- ======================================================================================
+
+-- A source is a publisher Reader knows the reputation of. tier and reputation_prior come
+-- from config/scout-sources.md; a domain Reader meets that the list does not name is
+-- recorded as 'unrated' rather than guessed at. domain is NULL where the list names a
+-- source without giving its address.
+CREATE TABLE IF NOT EXISTS sources (
+    id                text         PRIMARY KEY CHECK (id ~ '^[a-z0-9][a-z0-9._-]*$'),
+    name              text         NOT NULL,
+    domain            text         NULL UNIQUE,
+    tier              text         NOT NULL CHECK (tier IN ('A', 'B', 'C', 'D', 'unrated')),
+    reputation_prior  text         NOT NULL CHECK (reputation_prior IN ('high', 'medium', 'low', 'unrated')),
+    feed_url          text         NULL,
+    notes             text         NULL,
+    CHECK ((tier IN ('A', 'B')) = (reputation_prior = 'high')),
+    CHECK ((tier = 'C') = (reputation_prior = 'medium')),
+    CHECK ((tier = 'D') = (reputation_prior = 'low'))
+);
+
+-- One row per canonical URL (agents/excerpts.canonicalise). Its text lives in excerpts.
+CREATE TABLE IF NOT EXISTS items (
+    id               uuid         PRIMARY KEY,
+    canonical_url    text         NOT NULL UNIQUE,
+    domain           text         NOT NULL,
+    title            text         NOT NULL,
+    source_id        text         NOT NULL REFERENCES sources (id) ON DELETE RESTRICT,  -- who surfaced it first
+    discovered_at    timestamptz  NOT NULL,
+    status           text         NOT NULL CHECK (status IN ('discovered', 'skipped', 'fetched', 'failed')),
+    relevance_score  integer      NOT NULL DEFAULT 0 CHECK (relevance_score >= 0),
+    relevance_terms  text[]       NOT NULL DEFAULT '{}',
+    category         text         NULL,
+    excerpt_id       uuid         NULL REFERENCES excerpts (id) ON DELETE RESTRICT,
+    fetch_error      text         NULL CHECK (fetch_error IS NULL OR length(fetch_error) <= 500),
+    CHECK ((status = 'fetched') = (excerpt_id IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS items_status_idx ON items (status, discovered_at);
+
+-- Provenance and corroboration: every place an item was seen, appended, never edited.
+-- 'primary' is the publisher's own page; 'corroboration' is another outlet reporting it.
+CREATE TABLE IF NOT EXISTS item_sources (
+    item_id    uuid         NOT NULL REFERENCES items (id) ON DELETE RESTRICT,
+    url        text         NOT NULL,
+    source_id  text         NOT NULL REFERENCES sources (id) ON DELETE RESTRICT,
+    role       text         NOT NULL CHECK (role IN ('primary', 'corroboration')),
+    seen_at    timestamptz  NOT NULL,
+    PRIMARY KEY (item_id, url)
+);
+
+-- The interest graph, from config/profile.json: topics in rings, and the terms that
+-- recognise each one. Reloaded from the profile, so it carries no history of its own.
+CREATE TABLE IF NOT EXISTS interest_nodes (
+    user_id  text  NOT NULL,
+    topic    text  NOT NULL,
+    ring     text  NOT NULL CHECK (ring IN ('core', 'adjacent', 'explore')),
+    PRIMARY KEY (user_id, topic)
+);
+CREATE TABLE IF NOT EXISTS interest_terms (
+    user_id  text  NOT NULL,
+    topic    text  NOT NULL,
+    term     text  NOT NULL CHECK (term = lower(term) AND length(term) >= 2),
+    PRIMARY KEY (user_id, topic, term),
+    FOREIGN KEY (user_id, topic) REFERENCES interest_nodes (user_id, topic) ON DELETE CASCADE
+);
+
+-- A published weekly brief: the Framer's output, as written. One per run, never edited.
+CREATE TABLE IF NOT EXISTS briefs (
+    id            text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),
+    run_id        text         NOT NULL UNIQUE REFERENCES runs (id) ON DELETE RESTRICT,
+    body          jsonb        NOT NULL CHECK (octet_length(body::text) <= 1048576),
+    published_at  timestamptz  NOT NULL
+);
+
+-- Thumbs and notes on a brief's items, from anyone (no login). client_hash is a salted
+-- hash of the voter's address, never the address. A changed mind is a new row; the
+-- latest per (brief, item, client) counts.
+CREATE TABLE IF NOT EXISTS feedback (
+    id           uuid         PRIMARY KEY,
+    brief_id     text         NOT NULL REFERENCES briefs (id) ON DELETE RESTRICT,
+    item_ref     text         NOT NULL CHECK (length(item_ref) BETWEEN 1 AND 200),
+    vote         text         NOT NULL CHECK (vote IN ('up', 'down')),
+    comment      text         NULL CHECK (comment IS NULL OR length(comment) BETWEEN 1 AND 2000),
+    client_hash  text         NOT NULL CHECK (client_hash ~ '^[0-9a-f]{64}$'),
+    created_at   timestamptz  NOT NULL,
+    CHECK (comment IS NULL OR vote = 'down')
+);
+CREATE INDEX IF NOT EXISTS feedback_brief_idx ON feedback (brief_id, item_ref, created_at);
+CREATE INDEX IF NOT EXISTS feedback_client_idx ON feedback (client_hash, created_at);
+
+-- ITEMS. Identity is fixed; the text is attached once; status only moves forward;
+-- an item is never deleted, because a brief may have been written from it.
+CREATE OR REPLACE FUNCTION items_guard() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION 'item % is never deleted', OLD.id USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF (NEW.id, NEW.canonical_url, NEW.domain, NEW.source_id, NEW.discovered_at)
+       IS DISTINCT FROM (OLD.id, OLD.canonical_url, OLD.domain, OLD.source_id, OLD.discovered_at) THEN
+        RAISE EXCEPTION 'item %: identity columns never change', OLD.id USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF OLD.excerpt_id IS NOT NULL AND NEW.excerpt_id IS DISTINCT FROM OLD.excerpt_id THEN
+        RAISE EXCEPTION 'item %: its excerpt is attached once and never swapped', OLD.id
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF NEW.status IS DISTINCT FROM OLD.status AND NOT (
+           (OLD.status = 'discovered' AND NEW.status IN ('skipped', 'fetched', 'failed'))
+        OR (OLD.status = 'skipped'    AND NEW.status IN ('discovered', 'fetched', 'failed'))
+        OR (OLD.status = 'failed'     AND NEW.status IN ('discovered', 'fetched'))) THEN
+        RAISE EXCEPTION 'item %: % -> % is not allowed (fetched is final)', OLD.id, OLD.status, NEW.status
+            USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE OR REPLACE TRIGGER items_guard
+    BEFORE UPDATE OR DELETE ON items
+    FOR EACH ROW EXECUTE FUNCTION items_guard();
+
+-- Provenance, briefs and feedback are append-only: a record of what happened.
+CREATE OR REPLACE FUNCTION append_only() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    RAISE EXCEPTION '% is append-only: rows are never updated or deleted', TG_TABLE_NAME
+        USING ERRCODE = 'restrict_violation';
+END $$;
+
+CREATE OR REPLACE TRIGGER item_sources_append_only
+    BEFORE UPDATE OR DELETE ON item_sources
+    FOR EACH ROW EXECUTE FUNCTION append_only();
+CREATE OR REPLACE TRIGGER briefs_append_only
+    BEFORE UPDATE OR DELETE ON briefs
+    FOR EACH ROW EXECUTE FUNCTION append_only();
+CREATE OR REPLACE TRIGGER feedback_append_only
+    BEFORE UPDATE OR DELETE ON feedback
+    FOR EACH ROW EXECUTE FUNCTION append_only();
+
+-- Work products a stage hands to the next one. run_stages.output holds POINTERS only, so
+-- the Framer's writing (text, not an id) lives here, and the stage's output names it.
+-- Append-only: an attempt's product is a record of what that attempt made.
+CREATE TABLE IF NOT EXISTS run_artifacts (
+    run_id      text         NOT NULL REFERENCES runs (id) ON DELETE RESTRICT,
+    stage       text         NOT NULL CHECK (stage IN ('reader', 'framer', 'gates', 'publish')),
+    attempt     integer      NOT NULL CHECK (attempt >= 1),
+    body        jsonb        NOT NULL CHECK (octet_length(body::text) <= 1048576),
+    created_at  timestamptz  NOT NULL,
+    PRIMARY KEY (run_id, stage, attempt),
+    FOREIGN KEY (run_id, stage, attempt) REFERENCES run_stages (run_id, stage, attempt) ON DELETE RESTRICT
+);
+
+CREATE OR REPLACE TRIGGER run_artifacts_append_only
+    BEFORE UPDATE OR DELETE ON run_artifacts
+    FOR EACH ROW EXECUTE FUNCTION append_only();

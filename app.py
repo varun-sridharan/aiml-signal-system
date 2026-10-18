@@ -15,18 +15,22 @@ Plan and Roadmap render from markdown at request time (plan/FORMAT.md is the for
 and the app refuses to start if either file breaks that format.
 """
 
+import hmac
 import os
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.concurrency import run_in_threadpool
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from agents import budget
+from agents import budget, llm, reader
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -181,6 +185,54 @@ def plan_legacy() -> RedirectResponse:
 @app.get("/plan/Roadmap.html")
 def roadmap_legacy() -> RedirectResponse:
     return RedirectResponse("/roadmap", status_code=301)
+
+
+# WHAT: /add-news, a URL handed to the app is fetched on arrival through Reader's own path.
+# CONCEPT: an open endpoint that spends money is an invitation. It needs a shared secret
+# (the ADD_NEWS_TOKEN environment variable, sent as the X-Add-News-Token header) and is
+# switched OFF, answering 503, until that variable is set. Each fetch is booked in the
+# ledger and refused at the ceiling like any other paid call, and a per-process limit
+# stops a loop with the right token from running up the month in an hour.
+ADD_NEWS_LIMIT = 10
+_add_news_times: list = []
+
+
+@app.post("/add-news")
+async def add_news(request: Request) -> JSONResponse:
+    token = os.environ.get("ADD_NEWS_TOKEN", "")
+    if not token:
+        return JSONResponse({"detail": "add-news is not configured"}, status_code=503)
+    if not hmac.compare_digest(request.headers.get("x-add-news-token", "").encode("utf-8"), token.encode("utf-8")):
+        return JSONResponse({"detail": "Forbidden"}, status_code=403)
+    try:
+        url = str((await request.json()).get("url", "")).strip()
+    except Exception:
+        return JSONResponse({"detail": "send JSON: {\"url\": \"https://...\"}"}, status_code=400)
+    parts = urlsplit(url)
+    if parts.scheme not in ("http", "https") or not parts.netloc or len(url) > 250:
+        return JSONResponse({"detail": "a http(s) URL of at most 250 characters is required"}, status_code=400)
+    now = time.monotonic()
+    _add_news_times[:] = [t for t in _add_news_times if now - t < 3600]
+    if len(_add_news_times) >= ADD_NEWS_LIMIT:
+        return JSONResponse({"detail": "too many additions this hour"}, status_code=429)
+    _add_news_times.append(now)
+    try:
+        result = await run_in_threadpool(_add_news, url)  # blocking database and API work, off the event loop
+    except (budget.BudgetExceeded, budget.LedgerUnavailable):
+        return JSONResponse({"detail": "refused: the spend ledger will not allow another paid call"}, status_code=503)
+    except Exception as e:  # after the money may be spent: say so plainly, never a bare 500
+        print(f"add-news failed: {type(e).__name__}", file=sys.stderr)
+        return JSONResponse({"detail": "the page could not be added"}, status_code=502)
+    return JSONResponse(result)
+
+
+def _add_news(url: str) -> dict:
+    try:
+        client = llm.build_client()
+    except SystemExit:  # build_client exits when the API key is missing; a route must not
+        raise RuntimeError("no API key configured") from None
+    with budget.connect() as conn:
+        return reader.add_url(conn, client, url, datetime.now(timezone.utc))
 
 
 app.mount("/", StaticFiles(directory=ROOT, html=True), name="site")

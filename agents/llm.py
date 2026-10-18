@@ -67,7 +67,7 @@ def structured_text(message) -> str:
     return next(block.text for block in message.content if block.type == "text")
 
 
-def call(
+def call_message(
     client,
     *,
     model: str,
@@ -76,13 +76,14 @@ def call(
     phase: str,
     stream: bool = False,
     conn=None,
+    extra_input_tokens: int = 0,
     **request,
 ):
-    """Reserve, call, settle, validate. Returns (text, usage, cost).
+    """Reserve, call, settle. Returns (message, usage, cost), without reading the content.
 
-    Every call is booked, exactly once, under the caller's `phase` and `user_id`; both
-    are required. `conn` is for tests, which pass a connection inside a transaction they
-    roll back; everyone else lets this open its own.
+    For callers that need the whole response rather than its text: Reader's fetch driver
+    reads the page out of a server tool's result block. Everything call() guarantees about
+    booking holds here; call() is this plus structured_text.
     """
     # WHAT: no ledger, no call. budget.connect() raises LedgerUnavailable rather than
     # falling back, and the request below is never reached.
@@ -93,7 +94,7 @@ def call(
         # WHAT: reserve the worst case before spending, every time, with no opt-out.
         # CONCEPT: loop — circuit breaker. The check and the booking are one locked
         # transaction, so an unrecorded call can no longer quietly raise the ceiling.
-        estimate = budget.estimate_call_ceiling_usd(model, max_tokens, request)
+        estimate = budget.estimate_call_ceiling_usd(model, max_tokens, request, extra_input_tokens)
         reservation = budget.reserve(conn, user_id=user_id, phase=phase, model=model, estimate_usd=estimate)
 
         # If the request raises, the reservation stays at its worst case: the call may
@@ -110,6 +111,16 @@ def call(
     finally:
         if own:
             conn.close()
+    return message, message.usage, float(cost)
 
-    text = structured_text(message)
-    return text, message.usage, float(cost)
+
+def call(client, *, model: str, max_tokens: int, user_id: str, phase: str, stream: bool = False, conn=None, **request):
+    """Reserve, call, settle, validate. Returns (text, usage, cost).
+
+    Every call is booked, exactly once, under the caller's `phase` and `user_id`; both
+    are required. `conn` is for tests, which pass a connection inside a transaction they
+    roll back; everyone else lets this open its own.
+    """
+    message, usage, cost = call_message(client, model=model, max_tokens=max_tokens, user_id=user_id,
+                                        phase=phase, stream=stream, conn=conn, **request)
+    return structured_text(message), usage, cost
