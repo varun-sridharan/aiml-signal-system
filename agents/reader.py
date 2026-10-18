@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -62,6 +63,9 @@ TRANSIENT_FETCH_ERRORS = ("too_many_requests", "unavailable", "no_fetch_result",
 # One domain cannot take the whole fetch budget: arXiv alone would otherwise fill all twenty
 # slots and leave the lab blogs, the MCP blog and the changelog unread.
 MAX_FETCHES_PER_DOMAIN = 4
+# A pause before a second fetch from the same site. The first real run had two of four arXiv
+# fetches answered 'too_many_requests'; spacing them is cheaper than retrying them.
+FETCH_PAUSE_SECONDS = 3.0
 WINDOW = timedelta(days=8)  # a weekly run looks back a week plus a day of slack
 FEED_TIMEOUT = 20
 FEED_MAX_BYTES = 3_000_000
@@ -121,7 +125,7 @@ class Stats:
     corroborated: int = 0
     fetched: int = 0
     fetch_failed: int = 0
-    not_surfaceable: int = 0
+    left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
     fetch_cost_usd: float = 0.0
 
     def as_dict(self) -> dict:
@@ -390,13 +394,18 @@ def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats
     return True
 
 
-def select_for_fetch(conn, limit: int = MAX_FETCHES_PER_RUN) -> list[tuple]:
-    """Items waiting for a body that may surface, best first. Anything else costs nothing."""
+def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> list[tuple]:
+    """Items waiting for a body that may surface, best first. Anything else costs nothing.
+
+    Only items first seen inside this run's window (the last WINDOW up to `now`) are
+    considered: last month's news is not this week's story, and a run is judged by what it
+    could see at its own time, not by whatever else the database holds.
+    """
     rows = conn.execute(
         "SELECT i.id, i.canonical_url FROM items i WHERE (i.status = 'discovered' OR (i.status = 'failed' "
         "AND split_part(i.fetch_error, ':', 1) = ANY(%s))) AND i.relevance_score > 0 "
-        "AND i.discovered_at > now() - interval '30 days' ORDER BY i.relevance_score DESC, i.discovered_at DESC LIMIT 200",
-        (list(TRANSIENT_FETCH_ERRORS),)).fetchall()
+        "AND i.discovered_at > %s AND i.discovered_at <= %s ORDER BY i.relevance_score DESC, i.discovered_at DESC LIMIT 200",
+        (list(TRANSIENT_FETCH_ERRORS), now - WINDOW, now)).fetchall()
     chosen, per_domain = [], {}
     for iid, url in rows:
         domain = sources.domain_of(url)
@@ -428,13 +437,18 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
     worst_case = budget.estimate_call_ceiling_usd(
         FETCH_MODEL, FETCH_MAX_TOKENS, {"tools": [{}], "messages": [{"role": "user", "content": "x" * 400}]},
         int(FETCH_MAX_CONTENT_TOKENS * 1.25))
-    chosen = select_for_fetch(conn, min(limit, int(RUN_COST_CEILING_USD // worst_case)))
-    stats.not_surfaceable = len({iid for iid, _ in kept}) - len({iid for iid, _ in chosen})
+    chosen = select_for_fetch(conn, now, min(limit, int(RUN_COST_CEILING_USD // worst_case)))
+    stats.left_for_later = len({iid for iid, _ in kept}) - len({iid for iid, _ in chosen})
+    last_domain = None
     for iid, url in chosen:
+        domain = sources.domain_of(url)
+        if domain == last_domain:
+            time.sleep(FETCH_PAUSE_SECONDS)
+        last_domain = domain
         fetch_and_store(conn, client, iid, url, now, stats)
     fetched = conn.execute(
-        "SELECT i.id, i.excerpt_id FROM items i WHERE i.status = 'fetched' AND i.discovered_at > %s "
-        "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (now - WINDOW,)).fetchall()
+        "SELECT i.id, i.excerpt_id FROM items i WHERE i.status = 'fetched' AND i.discovered_at > %s AND i.discovered_at <= %s "
+        "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (now - WINDOW, now)).fetchall()
     return {
         "items": [str(i) for i, _ in fetched],
         "excerpts": [str(e) for _, e in fetched],

@@ -227,6 +227,15 @@ class Storage(unittest.TestCase):
         score, topics = graph.score(self.conn, "storage-test", "Multi-agent MCP servers")
         self.assertEqual((score, topics), (6, ["MCP architecture", "multi-agent systems"]))
         self.assertEqual(graph.score(self.conn, "storage-test", "Celebrity gossip roundup"), (0, []))
+        full = graph.load_profile()                      # the real profile, with the generous aliases
+        graph.sync(self.conn, {**full, "user_id": "storage-test"})
+        for title, topic in (("Agentic autofix for code scanning alerts", "agentic coding"),
+                             ("Gemini 4 Argon: built to solve your hardest problems", "model releases"),
+                             ("Amp puts AI agents to work beyond code", "multi-agent systems"),
+                             ("DeepSeek-v4.1-Flash-1017", "model releases")):
+            self.assertIn(topic, graph.score(self.conn, "storage-test", title)[1], title)
+        self.assertEqual(graph.score(self.conn, "storage-test", "Solar surpasses nuclear power globally for first time")[0], 0)
+        graph.sync(self.conn, PROFILE)
         self.assertEqual(graph.score(self.conn, "storage-test", "The mcpserver mcps")[0], 0)  # whole terms only
 
     def test_g3_a_generic_word_recognises_nothing_and_a_double_listed_topic_keeps_its_best_ring(self):

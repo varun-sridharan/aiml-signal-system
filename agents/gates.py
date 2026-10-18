@@ -75,7 +75,10 @@ def completeness_failures(raw_day: dict, framing: dict, verdicts: dict, thread_v
     written = {f.get("id"): f for f in framing.get("items", [])}
     for item in raw_day["items"]:
         ident = item["id"]
-        if ident not in written or not (written[ident].get("why") or "").strip():
+        # A story is written as a `why`, or as an example together with a 90-second summary (the
+        # golden iStar item has no `why`); a lone connection or a lone example is not a story.
+        entry = written.get(ident) or {}
+        if not (entry.get("why") or (entry.get("example") and entry.get("ninety"))):
             failures.append(f"{ident}: the Framer wrote nothing for this story")
         verdict = verdicts.get(ident)
         if not verdict:

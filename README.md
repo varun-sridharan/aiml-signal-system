@@ -6,15 +6,15 @@ A multi-agent system that turns the AI/ML firehose into a **weekly** signal brie
 
 ---
 
-## Status: one agent built, four designed — and mid-pivot
+## Status: the weekly loop runs end to end — two agents of six
 
-This repo is a **design with one vertical slice built end to end**, not a finished five-agent system. It is also mid-pivot: a separate weekly digest that has run for weeks is being merged onto this engine and retired. See [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap). Being precise about that up front, because the architecture section below describes more than the code does.
+This repo now runs **one weekly loop for real**: Reader finds and fetches the week's stories, the Framer writes them, two hard gates check the writing against its sources, and the result is published at [`/weekly-digest`](https://aiml-signal-system-production.up.railway.app/weekly-digest), where anyone can vote on each story. It is not scheduled; the scheduled digest it will replace is still running in parallel. See [Plan & Progress](https://aiml-signal-system-production.up.railway.app/plan) for what is open, and [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap) for what is next. The architecture section below still describes more than the code does.
 
 | | Built and running | Designed, not built |
 | --- | --- | --- |
-| **Agents** | Framer (`agents/framer.py`) | Reader (Scout + Gatekeeper, merged), Thought Leadership, Coach, Tuner |
-| **Evals** | Framer's offline harness (`data/evals/run_evals.py`, 473 LOC) — faithfulness gate, structural gate, usefulness rubric | Evaluator / Prescriber / Control Room as separate services |
-| **Infrastructure** | Append-only cost ledger + circuit breaker, frozen golden cases, non-zero exit gating | Multi-agent orchestration, feedback-driven recalibration |
+| **Agents** | Reader (`agents/reader.py`), Framer (`agents/framer.py`), the weekly run (`agents/weekly.py`) | Thought Leadership, Coach, Tuner |
+| **Evals** | Framer's offline harness (`data/evals/run_evals.py`), the canonicalisation gate (`data/evals/canonical/`, draft), the shared hard gates (`agents/gates.py`) | Evaluator / Prescriber / Control Room as separate services |
+| **Infrastructure** | Postgres on Railway: spend ledger with a circuit breaker, write-once excerpt store, run checkpoints, sources, items, interest graph, briefs, feedback; every rule that must not be forgotten is a database trigger | Multi-agent orchestration, feedback-driven recalibration |
 
 The slice that exists was chosen deliberately: the agent whose output a human actually reads, plus the harness that can stop it from shipping. Everything else is easier once those two exist, and much harder to retrofit afterwards.
 
@@ -97,7 +97,8 @@ Each agent is intended to carry its own metric rather than inherit a system-leve
 Folders are organised by **role**; data files are named after the agent that produced them, so the producer is obvious at a glance. The same file is one agent's output and the next agent's input.
 
 ```
-agents/            Agent code — framer.py today
+agents/            Agent code — framer.py, reader.py, weekly.py; budget.py/llm.py (the guarded model call);
+                   the Postgres modules (excerpts, runs, items, sources, graph, briefs, digest); schema.sql
 application/       Surfaces — Signal (the daily brief) · Control-Hub (private surface, sample data)
                    each is <name>.json (content contract) → <name>.html (generated)
 config/            Hand-authored — profile.json · scout-sources.md
@@ -150,11 +151,11 @@ REQUIRE_DB=1 .venv/bin/python -m unittest discover -s tests -t .
 
 ```bash
 python -m agents.weekly                      # this ISO week: Reader, Framer, gates, publish
-python -m agents.weekly --week 2026-W42      # a specific week
+python -m agents.weekly --week 2026-W42      # a run label: it names the run and its brief, it does not change what is read
 python -m agents.weekly --stop-after reader  # stop cleanly after a stage; the next run resumes
 ```
 
-Each stage is checkpointed in the `runs` tables, so a rerun of the same week loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A week that fails a hard gate publishes nothing and stays failed until a person looks at it. A typical run costs about $0.15 to $0.30, all booked in the ledger.
+Each stage is checkpointed in the `runs` tables, so a rerun of the same week loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A week that fails a hard gate publishes nothing and stays failed until a person looks at it. What a run reads is always the last eight days up to the moment it starts, whatever its label. A typical run costs about $0.30 to $0.60, all booked in the ledger.
 
 **It is not scheduled.** The scheduled Weekly Digest keeps running in parallel until the new one has earned the switch. To schedule it, create a Railway cron service from this repository with the start command `python -m agents.weekly` and a weekly schedule; it needs `ANTHROPIC_API_KEY` and `DATABASE_URL` and nothing else.
 

@@ -24,7 +24,8 @@ from agents import briefs, budget, excerpts, framer, items, reader, runs, weekly
 from tests._db import needs_db  # noqa: E402
 from tests.test_reader import ATOM, ATOM_FEED, HF, HF_FEED, HN, HN_FEED, RSS, RSS_FEED, FakeClient  # noqa: E402
 
-NOW = datetime(2026, 10, 18, 9, 0, tzinfo=timezone.utc)
+# Earlier on 2026-10-18 than the first real run, so that run's items (all discovered later) are outside this window.
+NOW = datetime(2026, 10, 18, 4, 0, tzinfo=timezone.utc)
 WEEK = "1999-W10"
 PAGE = """---
 canonical: https://openai.com/index/mcp-stateless/
@@ -48,6 +49,31 @@ Existing clients keep working for twelve months, after which the old handshake i
 """
 
 
+class GoldenDayIsComplete(unittest.TestCase):
+    """The completeness gate must pass the day the whole system was calibrated on."""
+
+    def test_the_golden_framing_has_no_completeness_failures(self):
+        import json
+        from agents import gates
+        golden = REPO / "data" / "evals" / "golden" / "2026-08-04"
+        day = json.loads((golden / "output.json").read_text())
+        raw = json.loads((golden / "input.json").read_text())
+        graded = {"claims": [{"claim": "c"}]}      # the frozen day predates the claim ledger; the framing is what is checked
+        verdicts = {i["id"]: graded for i in day["items"]}
+        self.assertEqual(gates.completeness_failures(raw, gates.framing_from_day(day), verdicts, graded), [])
+
+    def test_a_story_with_only_an_example_and_a_summary_counts_as_written(self):
+        from agents import gates
+        raw = {"items": [{"id": "a"}]}
+        framing = {"items": [{"id": "a", "why": "", "example": "Try this.", "ninety": {"method": "m"}}]}
+        verdict = {"claims": [{"claim": "c"}]}
+        self.assertEqual(gates.completeness_failures(raw, framing, {"a": verdict}, verdict), [])
+        framing["items"][0].update(example="", ninety={}, connection="Linked to something else.")
+        self.assertEqual(len(gates.completeness_failures(raw, framing, {"a": verdict}, verdict)), 1)   # a connection alone is not a story
+        framing["items"][0].update(example="Try this.", ninety={})
+        self.assertEqual(len(gates.completeness_failures(raw, framing, {"a": verdict}, verdict)), 1)   # nor an example alone
+
+
 class Lead(unittest.TestCase):
     def test_keeps_running_prose_and_drops_the_page_furniture(self):
         got = weekly.lead(PAGE)
@@ -68,11 +94,46 @@ class Lead(unittest.TestCase):
         self.assertEqual(weekly.lead(only_menus), "The page's own summary of what it covers, in a sentence.")
         self.assertEqual(weekly.lead("---\ncanonical: x\n---\n\n- [a](b)\n"), "")
 
+    def test_an_arxiv_page_is_read_from_its_abstract_not_its_author_list(self):
+        page = ("---\ncanonical: https://arxiv.org/abs/2610.20939\nmeta-citation_abstract: We introduce a platform that unifies "
+                "agent evaluation and training. It scales to twenty thousand parallel environments and reaches state of the art. "
+                "Importantly, training in a mocked app transfers to the real one.\n---\n\nAuthors:Panrong Tong, Quyu Kong, Pengxiang Li, "
+                "Tianyu Xia, Hanzhang Zhou, Lei Wang, Chenglin Cai, Long Li, Long Chen, Jianan Zhang arXivLabs is a framework that "
+                "allows collaborators to develop and share new arXiv features directly on our website, with partners who share its values.\n")
+        got = weekly.lead(page, prefer_meta=True)
+        self.assertTrue(got.startswith("We introduce a platform"))
+        self.assertNotIn("arXivLabs", got)
+        self.assertNotIn("Authors", got)
+        self.assertEqual(weekly.lead(page), "We introduce a platform that unifies agent evaluation and training. "
+                         "It scales to twenty thousand parallel environments and reaches state of the art. "
+                         "Importantly, training in a mocked app transfers to the real one.")   # boilerplate body rejected, abstract is the fallback
+
+    def test_a_headline_may_not_claim_what_its_excerpt_does_not_say(self):
+        facts = weekly.headline_facts_missing
+        self.assertEqual(facts("Upcoming deprecation of selected GitHub Copilot models in mid-November",
+                               "Please update your workflows before this date."), ["November"])
+        self.assertEqual(facts("Upcoming deprecation in mid-November", "Models are retired on November 15."), [])
+        self.assertEqual(facts("How Third Moment runs 10,000 agents for 36+ hours", "This lab builds agents that focus for days."),
+                         ["10,000", "36+"])
+        self.assertEqual(facts("OpenAI raises $122B", "OpenAI closed a round of $122B at a high valuation."), [])
+        self.assertEqual(facts("GPT-5.6 beats Opus 5 at 89.5%", "Scores: GPT-5.6 reached 89.5% and Opus 5 reached 89.1%."), [])
+        self.assertEqual(facts("A headline with no figures at all", "Any text."), [])
+        self.assertEqual(facts("Version 10 ships", "It first shipped in 2010 and again in 2015."), ["10"])   # not found inside 2010
+        self.assertEqual(facts("Why this may matter to you", "Nothing here."), [])                           # "may" is a verb
+        self.assertEqual(facts("Why this may matter in March", "Nothing here."), ["March"])                  # "March" is a date here
+        self.assertEqual(facts("Models retire in mid-November", "They retire on November 15."), [])
+
+    def test_boilerplate_paragraphs_are_not_prose(self):
+        page = ("---\ncanonical: x\n---\n\nSubscribe to our newsletter to get every post in your inbox every single week, for free, forever.\n\n"
+                "The real article begins here and says something specific about how the new release changes deployment for everyone.\n")
+        self.assertTrue(weekly.lead(page).startswith("The real article begins"))
+
     def test_tags_are_deterministic(self):
         core = {"MCP architecture"}
         self.assertEqual(weekly.tags_for("arxiv.org", ["MCP architecture"], core, 2), ["RADAR"])
         self.assertEqual(weekly.tags_for("github.blog", ["MCP architecture"], core, 2), ["DO THIS", "KNOW"])
         self.assertEqual(weekly.tags_for("github.blog", ["MCP architecture"], core, 0), ["KNOW"])   # the cap
+        self.assertEqual(weekly.tags_for("github.blog", ["multi-agent systems"], {"multi-agent systems"}, 2), ["KNOW"])   # a generic 'agents' mention
         self.assertEqual(weekly.tags_for("github.blog", ["evals"], core, 2), ["KNOW"])              # not a core topic
         self.assertEqual(weekly.tags_for("openai.com", ["MCP architecture"], core, 2), ["KNOW"])
 
@@ -283,6 +344,18 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         briefs.publish(self.conn, WEEK, WEEK, {"items": [], "other": True}, NOW)
         with self.assertRaises(RuntimeError):
             self.run_week()
+
+    def test_w16_a_story_whose_headline_outruns_its_excerpt_is_not_framed(self):
+        reader.prepare(self.conn)
+        text = "The release notes explain how the new default works for every customer on the platform today and tomorrow."
+        ids = []
+        for n, title in enumerate(("Grounded story with no figures", "Deprecation of models in mid-November")):
+            url = f"https://openai.com/index/ground-{n}"
+            iid, _ = items.upsert(self.conn, url, title, NOW, relevance=(5, ["x"]))
+            items.attach_excerpt(self.conn, iid, excerpts.store(self.conn, url, text, NOW))
+            ids.append(str(iid))
+        raw = weekly.build_raw_day(self.conn, WEEK, ids, framer.load_json(framer.PROFILE_PATH))
+        self.assertEqual([i["headline"] for i in raw["items"]], ["Grounded story with no figures"])
 
     def test_w15_status_shows_each_attempt(self):
         self.assertEqual(weekly.status(self.conn, WEEK), [f"{WEEK}: no run yet"])

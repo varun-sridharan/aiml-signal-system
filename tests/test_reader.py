@@ -23,7 +23,8 @@ sys.path.insert(0, str(REPO))
 from agents import budget, excerpts, items, llm, reader, runs  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 
-NOW = datetime(2026, 10, 18, 9, 0, tzinfo=timezone.utc)
+# Earlier on 2026-10-18 than the first real run, so that run's items (all discovered later) are outside this window.
+NOW = datetime(2026, 10, 18, 4, 0, tzinfo=timezone.utc)
 RSS_FEED = reader.Feed("openai", "openai", "openai.com", "https://openai.com/news/rss.xml", "rss")
 HN_FEED = next(f for f in reader.FEEDS if f.id == "hacker-news")
 HF_FEED = next(f for f in reader.FEEDS if f.id == "hf-papers")
@@ -136,6 +137,9 @@ class ReaderAgainstDatabase(unittest.TestCase):
         self.conn = budget.connect(autocommit=False)
         self.conn.execute("SELECT 1")
         self.live = self.counts()
+        pause = unittest.mock.patch.object(reader, "FETCH_PAUSE_SECONDS", 0)   # the real pause is for real sites
+        pause.start()
+        self.addCleanup(pause.stop)
 
     def tearDown(self):
         self.conn.rollback()
@@ -172,7 +176,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
         # The openai post (tier A) and the arXiv paper (tier A, also on HF) are fetched. The
         # blog Hacker News linked to is an unrated domain seen only via a low-prior
         # aggregator: discovery only, never fetched alone.
-        self.assertEqual((stats["fetched"], stats["not_surfaceable"]), (2, 1))
+        self.assertEqual((stats["fetched"], stats["left_for_later"]), (2, 1))
         self.assertEqual(len(client.requests), 2)
         self.assertEqual(len(out["items"]), 2)
         self.assertEqual(len(out["excerpts"]), 2)
@@ -215,13 +219,13 @@ class ReaderAgainstDatabase(unittest.TestCase):
         failing = FakeClient(error="url_not_accessible")
         out = self.run_reader(failing, limit=5)
         self.assertEqual((out["stats"]["fetched"], out["stats"]["fetch_failed"]), (0, 1))
-        status, err = self.conn.execute("SELECT status, fetch_error FROM items WHERE status = 'failed'").fetchone()
+        status, err = self.conn.execute("SELECT status, fetch_error FROM items WHERE status = 'failed' AND discovered_at = %s", (NOW,)).fetchone()
         self.assertEqual((status, err), ("failed", "url_not_accessible"))
 
     def test_r5_a_page_is_never_stored_as_text(self):
         out = self.run_reader(FakeClient(text="<html><body>raw page</body></html>"))
         self.assertEqual(out["stats"]["fetched"], 0)
-        err = self.conn.execute("SELECT fetch_error FROM items WHERE status = 'failed' LIMIT 1").fetchone()[0]
+        err = self.conn.execute("SELECT fetch_error FROM items WHERE status = 'failed' AND discovered_at = %s LIMIT 1", (NOW,)).fetchone()[0]
         self.assertIn("excerpt refused", err)
         self.assertEqual(self.counts()[1], self.live[1])  # nothing stored
 
@@ -254,7 +258,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
             items.upsert(self.conn, f"https://arxiv.org/abs/2610.0010{i}", f"Paper {i} on agents", NOW, relevance=(9, ["x"]))
         for i in range(2):
             items.upsert(self.conn, f"https://openai.com/index/post-{i}", f"Post {i} on MCP", NOW, relevance=(3, ["x"]))
-        chosen = reader.select_for_fetch(self.conn, limit=20)
+        chosen = reader.select_for_fetch(self.conn, NOW, limit=20)
         domains = [reader.sources.domain_of(u) for _, u in chosen]
         self.assertEqual(domains.count("arxiv.org"), reader.MAX_FETCHES_PER_DOMAIN)
         self.assertEqual(domains.count("openai.com"), 2)   # lower score, but not crowded out
@@ -297,7 +301,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
                             ("d", "unavailable")):
             iid, _ = items.upsert(self.conn, f"https://openai.com/index/{name}", name, NOW, relevance=(5, ["x"]))
             items.mark(self.conn, iid, "failed", error=error)
-        urls = {u.rsplit("/", 1)[1] for _, u in reader.select_for_fetch(self.conn)}
+        urls = {u.rsplit("/", 1)[1] for _, u in reader.select_for_fetch(self.conn, NOW)}
         self.assertEqual(urls, {"b", "d"})
 
     def test_r13_the_fetch_reserves_for_the_page_it_will_pull_in(self):
@@ -332,6 +336,20 @@ class ReaderAgainstDatabase(unittest.TestCase):
             reader.RUN_COST_CEILING_USD = original
         self.assertEqual(len(client.requests), 1)
         self.assertEqual(out["stats"]["fetched"], 1)
+
+    def test_r16_a_second_fetch_from_the_same_site_waits(self):
+        reader.prepare(self.conn)
+        for i in range(2):
+            items.upsert(self.conn, f"https://openai.com/index/pause-{i}", f"Post {i} on agents", NOW, relevance=(5, ["x"]))
+        slept = []
+        with unittest.mock.patch.object(reader, "FETCH_PAUSE_SECONDS", 7), \
+                unittest.mock.patch.object(reader.time, "sleep", lambda s: slept.append(s)):
+            original, reader.FEEDS = reader.FEEDS, []
+            try:
+                reader.run(self.conn, FakeClient(text="Some page text about agents."), NOW, fetch=lambda url: b"<rss/>")
+            finally:
+                reader.FEEDS = original
+        self.assertEqual(slept, [7])        # two fetches from one site: one pause between them, none before the first
 
     def test_r8_call_message_books_like_call(self):
         before = self.counts()[2]

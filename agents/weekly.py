@@ -43,6 +43,9 @@ LEAD_MIN_PARAGRAPH_CHARS = 80
 
 # Where a practitioner can act on what they read; items from these on a core topic are DO THIS.
 PRACTICE_DOMAINS = {"github.blog", "blog.modelcontextprotocol.io"}
+# ...and only on topics a practitioner can try. A GitHub post that merely mentions "agents" matches the
+# core multi-agent topic through a generic word, and must not take one of the two DO THIS slots.
+PRACTICE_TOPICS = {"MCP architecture", "agentic coding", "harness engineering"}
 CORE_TOPICS_USER = "varun"
 
 
@@ -71,28 +74,38 @@ def _plain(paragraph: str) -> str:
     return " ".join(_LINK.sub(lambda m: m.group(1), paragraph).replace("**", "").replace("`", "").split())
 
 
-def lead(text: str, max_chars: int = LEAD_MAX_CHARS) -> str:
+_BOILERPLATE = ("arxivlabs", "cookie", "subscribe", "newsletter", "sign up", "all rights reserved", "privacy policy",
+                "skip to content", "opens in a new window", "authors:", "share this", "follow us")
+
+
+def lead(text: str, max_chars: int = LEAD_MAX_CHARS, prefer_meta: bool = False) -> str:
     """The opening of an article as plain sentences: the Framer's `source_excerpt`.
 
     The fetch returns a whole page (metadata, menus, the article, a footer). The Framer's
     contract is 1-3 factual sentences, and the faithfulness gate grades against exactly
     what it was shown, so this keeps the first running paragraphs of prose and nothing
     else. Deterministic and offline. Returns "" when a page has no prose to show.
+
+    `prefer_meta` is for pages whose body is not the article: an arXiv abstract page's body
+    is an author list and site notices, and the abstract itself is in the page metadata.
     """
     body = text
     match = re.match(r"^---\n.*?\n---\n", text, re.S)
     description = ""
     if match:
         body = text[match.end():]
-        m = re.search(r"^meta-og:description:\s*(.+)$", match.group(0), re.M)
-        description = m.group(1).strip() if m else ""
+        meta = dict(re.findall(r"^meta-([\w:.-]+):\s*(.+)$", match.group(0), re.M))
+        description = (meta.get("citation_abstract") or meta.get("og:description") or meta.get("description") or "").strip()
+        if prefer_meta and description:
+            body = ""
     paragraphs = []
     for block in re.split(r"\n\s*\n", body):
         block = block.strip()
         if not block or block.startswith(("#", "- ", "* ", "!", "|", "```", ">", "[")) or "](" in block[:2]:
             continue
         plain = _plain(block)
-        if len(plain) >= LEAD_MIN_PARAGRAPH_CHARS and len(plain.split()) >= 12 and not plain.endswith(("•", ":")):
+        if (len(plain) >= LEAD_MIN_PARAGRAPH_CHARS and len(plain.split()) >= 12 and not plain.endswith(("•", ":"))
+                and not any(b in plain.lower() for b in _BOILERPLATE)):
             paragraphs.append(plain)
     chosen = " ".join(paragraphs) if paragraphs else _plain(description)
     # The Framer's contract is a few factual sentences, and the gate grades against exactly
@@ -109,16 +122,45 @@ def lead(text: str, max_chars: int = LEAD_MAX_CHARS) -> str:
     return chosen[:max_chars].rstrip()
 
 
+_UNAMBIGUOUS_MONTHS = ("january", "february", "april", "june", "july", "august", "september", "october", "november", "december")
+# "May" and "March" are also verbs: they count as dates only when capitalised and next to a number or a date word.
+_FACT_TOKEN = re.compile(r"\$?\d[\d,.]*[%BMTKx+]?|\b(?:" + "|".join(_UNAMBIGUOUS_MONTHS) + r")\b", re.I)
+
+
+def headline_facts_missing(headline: str, excerpt: str) -> list[str]:
+    """Checkable facts in a headline (numbers, money, dates) that the excerpt does not contain.
+
+    The Framer writes from the excerpt but sees the headline too, and a headline's figures are
+    the first thing it restates. The faithfulness gate then (rightly) finds them unsupported,
+    because the only ground truth is the excerpt. So a story whose headline claims something
+    its excerpt does not say is not a verified item yet, and is not framed.
+
+    Numbers match as whole numbers ("10" is not found inside "2010"); "May" and "March" count
+    only as dates, not as verbs.
+    """
+    haystack = " ".join(excerpt.lower().replace(",", "").split())
+    tokens = _FACT_TOKEN.findall(headline) + [m.group(1) for m in re.finditer(r"\b(?:in|since|until|by|of|early|late|mid|on)[- ](May|March)\b", headline)]
+    missing = []
+    for token in tokens:
+        plain = token.lower().replace(",", "").strip(".")
+        if len(plain) < 2 and not plain.isdigit():
+            continue
+        found = re.search(r"(?<![\w.])" + re.escape(plain) + r"(?![\w])", haystack) if plain[0].isalnum() or plain[0] == "$" else plain in haystack
+        if not found and token not in missing:
+            missing.append(token)
+    return missing
+
+
 def tags_for(domain: str, topics: list[str], core_topics: set[str], do_this_left: int) -> list[str]:
     """The Gatekeeper's tags, deterministically: DO THIS where it can be acted on, RADAR for papers."""
     if domain == "arxiv.org":
         return ["RADAR"]
-    if domain in PRACTICE_DOMAINS and core_topics & set(topics) and do_this_left > 0:
+    if domain in PRACTICE_DOMAINS and core_topics & PRACTICE_TOPICS & set(topics) and do_this_left > 0:
         return ["DO THIS", "KNOW"]
     return ["KNOW"]
 
 
-def build_raw_day(conn, week: str, item_ids: list[str], profile: dict) -> dict:
+def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: list | None = None) -> dict:
     """The Framer's input for a week, from verified items in the database."""
     core = {t for (t,) in conn.execute("SELECT topic FROM interest_nodes WHERE user_id = %s AND ring = 'core'",
                                        (profile["user_id"],)).fetchall()}
@@ -130,9 +172,14 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict) -> dict:
     for iid, url, domain, title, _score, topics, eid in rows:
         if per_domain.get(domain, 0) >= MAX_PER_DOMAIN or not items.surfaceable(conn, iid):
             continue
-        excerpt = lead(excerpts.get(conn, eid))
+        excerpt = lead(excerpts.get(conn, eid), prefer_meta=(domain == "arxiv.org"))
         if not excerpt:
             continue  # nothing readable on the page: not a story we can ground
+        missing = headline_facts_missing(title, excerpt)
+        if missing:  # the headline claims what the excerpt does not say: not verified
+            if skipped is not None:
+                skipped.append(f"{title[:60]}: {', '.join(missing)} not in the excerpt")
+            continue
         tags = tags_for(domain, topics, core, do_this_left)
         do_this_left -= "DO THIS" in tags
         per_domain[domain] = per_domain.get(domain, 0) + 1
@@ -154,12 +201,15 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict) -> dict:
 def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     def work(attempt: int) -> dict:
         reader_out = runs.stage_output(conn, week, "reader")
-        raw_day = build_raw_day(conn, week, reader_out["items"], profile)
+        skipped: list = []
+        raw_day = build_raw_day(conn, week, reader_out["items"], profile, skipped)
+        for note in skipped:
+            print(f"  not framed — {note}", file=sys.stderr)
         if not raw_day["items"]:
             raise RuntimeError("no verified, readable items this week; nothing to frame")
         framing, _usage, cost = framer.frame_day(client, framer.load_framer_system_prompt(), profile, raw_day)
         runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing}, now)
-        return {"artifact": "framer", "items": len(raw_day["items"]), "cost_usd": round(cost, 4)}
+        return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped), "cost_usd": round(cost, 4)}
     return runs.checkpointed(conn, week, "framer", now, work)
 
 

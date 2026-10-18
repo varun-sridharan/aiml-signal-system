@@ -113,7 +113,7 @@
 {{ site_header("Weekly Digest") }}
 <main>
 <article class="page">
-  <div class="kicker">AI/ML Signal &middot; {% if digest %}week {{ digest.week }}{% else %}weekly{% endif %}</div>
+  <div class="kicker">AI/ML Signal &middot; {% if digest %}week {{ digest.week }}{% if digest.published_at %} &middot; published {{ digest.published_at.strftime('%b %d, %Y') }}{% endif %}{% else %}weekly{% endif %}</div>
   <h1>Weekly Digest</h1>
 
   {%- if notice and not notice_item %}<div class="notice {{ 'good' if notice.good else '' }}" role="status">{{ notice.text }}</div>{% endif %}

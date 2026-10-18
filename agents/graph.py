@@ -28,17 +28,25 @@ RING_WEIGHT = {"core": 3, "adjacent": 2, "explore": 1}
 
 # WHAT: extra recognisable terms per topic, beyond the words of its own name.
 # CONCEPT: alias table. "MCP architecture" never appears in a headline, but "MCP" and
-# "Model Context Protocol" do. Kept short and explicit so every match is explainable; a
-# topic missing here still matches on its own words.
+# "Model Context Protocol" do. Explicit, so every match is explainable. The profile's
+# gatekeeper bias is recall-over-precision, so these are generous: a wrong inclusion costs
+# one cheap fetch and the Framer's judgement, a wrong exclusion is a story nobody sees.
+# (The first real run, with a narrower table, matched nothing from the GitHub changelog,
+# the MCP blog or DeepMind in a week they published eighteen posts.)
 ALIASES = {
-    "multi-agent systems": ["multi-agent", "multi agent", "multiagent", "agent swarm", "agent orchestration"],
-    "reinforcement learning": ["reinforcement learning", "rlhf", "rlvr", "grpo", "policy gradient"],
+    "multi-agent systems": ["multi-agent", "multi agent", "multiagent", "agent swarm", "agent orchestration", "agents",
+                            "ai agent", "ai agents", "agent", "agentic"],
+    "reinforcement learning": ["reinforcement learning", "rlhf", "rlvr", "grpo", "policy gradient", "rl training",
+                               "reward model", "reward"],
     "mcp architecture": ["mcp", "model context protocol"],
-    "agentic coding": ["agentic coding", "coding agent", "claude code", "codex", "swe-bench", "terminal-bench"],
-    "model releases": ["model release", "releases", "new model", "open-weight", "open weights"],
-    "serving & inference": ["inference", "serving", "vllm", "latency", "throughput", "quantization"],
-    "evals": ["eval", "evals", "benchmark", "benchmarks", "leaderboard"],
-    "harness engineering": ["harness", "scaffold", "agent loop", "tool use", "tool-use"],
+    "agentic coding": ["agentic coding", "coding agent", "coding agents", "claude code", "codex", "copilot", "swe-bench",
+                       "terminal-bench", "code review", "autofix", "ai-assisted coding", "vibe coding"],
+    "model releases": ["model release", "new model", "open-weight", "open weights", "gemini", "gpt", "claude", "llama",
+                       "qwen", "deepseek", "mistral", "kimi", "opus", "sonnet", "haiku", "grok", "frontier model"],
+    "serving & inference": ["inference", "serving", "vllm", "latency", "throughput", "quantization", "gpu", "gpus",
+                            "kv cache", "speculative decoding"],
+    "evals": ["eval", "evals", "benchmark", "benchmarks", "leaderboard", "evaluation"],
+    "harness engineering": ["harness", "scaffold", "agent loop", "tool use", "tool-use", "tool calling", "context engineering"],
 }
 
 
@@ -87,13 +95,13 @@ def sync(conn, profile: dict | None = None) -> int:
 
 def score(conn, user_id: str, text: str) -> tuple[int, list[str]]:
     """Relevance of a text to the stored graph: (score, matched topics). Zero means none."""
-    haystack = " " + re.sub(r"[^a-z0-9&+#-]+", " ", text.lower()) + " "
+    haystack = " " + re.sub(r"[^a-z0-9&+#]+", " ", text.lower()) + " "   # hyphens separate words: "DeepSeek-v4" has "deepseek" in it
     rows = conn.execute(
         "SELECT n.topic, n.ring, t.term FROM interest_nodes n "
         "JOIN interest_terms t USING (user_id, topic) WHERE n.user_id = %s", (user_id,)).fetchall()
     best: dict[str, int] = {}
     for topic, ring, term in rows:
-        needle = " " + re.sub(r"[^a-z0-9&+#-]+", " ", term).strip() + " "
+        needle = " " + re.sub(r"[^a-z0-9&+#]+", " ", term).strip() + " "   # so "multi-agent" matches "multi agent" too
         if needle in haystack:
             best[topic] = max(best.get(topic, 0), RING_WEIGHT[ring])
     return sum(best.values()), sorted(best)

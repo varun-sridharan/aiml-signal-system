@@ -150,6 +150,7 @@ class Routes(unittest.TestCase):
         self.publish()
         r = self.client.get(f"/weekly-digest?week={WEEK}")
         self.assertEqual(r.status_code, 200)
+        self.assertIn("published Oct 18, 2026", r.text)
         for needle in ("Learning for the Week", "This Week's Stories", 'class="subnav"', 'href="#learning"', 'href="#stories"',
                        "The frontier stopped", "Useful</button>", "Not useful</summary>", 'name="comment"', "spec moves the core"):
             self.assertIn(needle, r.text, needle)
