@@ -1,0 +1,23 @@
+2026-W43 raw items 7 framed 7
+  headlines: [('3f492823', 'Scalable Weak-to-Strong Verifier Hardening for Age', 'arXiv'), ('e737684d', 'MAI-Gym: An Open All-in-One Platform for GUI Agent', 'arXiv'), ('52a170e5', 'GitHub Copilot models deprecated on October 19, 20', 'GitHub Changelog'), ('7e6815bf', 'Terminal-RSI: Recursive Self-Improving Terminal Ag', 'arXiv'), ('d9a050a8', 'Agentic autofix for code scanning alerts general a', 'GitHub Changelog'), ('ab5c373b', 'Amp puts AI agents to work beyond code with OpenAI', 'OpenAI'), ('3dad9966', 'Copilot model policy API for enterprise, orgs, and', 'GitHub Changelog')]
+  failures: ["7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story", "thread: unsupported — Amp says OpenAI models account for the majority of tokens used in it"]
+2026-W43-r2 raw items 7 framed 7
+  headlines: [('3f492823', 'Scalable Weak-to-Strong Verifier Hardening for Age', 'arXiv'), ('e737684d', 'MAI-Gym: An Open All-in-One Platform for GUI Agent', 'arXiv'), ('52a170e5', 'GitHub Copilot models deprecated on October 19, 20', 'GitHub Changelog'), ('7e6815bf', 'Terminal-RSI: Recursive Self-Improving Terminal Ag', 'arXiv'), ('d9a050a8', 'Agentic autofix for code scanning alerts general a', 'GitHub Changelog'), ('ab5c373b', 'Amp puts AI agents to work beyond code with OpenAI', 'OpenAI'), ('3dad9966', 'Copilot model policy API for enterprise, orgs, and', 'GitHub Changelog')]
+  failures: ["e737684d-1765-4327-9304-b31ccafefd54: the Framer wrote nothing for this story", "7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story", "3f492823-d77e-443a-aa43-117a37ab8d55: unsupported — it converts verifier outcomes into policy updates", "52a170e5-da2c-43cf-a29d-338757f3d5c8: unsupported — Copilot model policies can be retrieved and updated over REST", "ab5c373b-fe19-466e-96cc-56ddf145f28b: unsupported — The models named are GPT‐6 Astra, Ultrafast, GPT‐Live‐1, and Sign in with ChatGPT"]
+ledger reader-fetch 8 0.0426 02:18:36 02:19:01
+ledger framing 2 0.8785 02:19:05 02:23:27
+ledger faithfulness 2 0.0302 02:22:36 02:26:09
+ledger faithfulness-retry 1 0.0079 02:22:54 02:22:54
+reader [('2026-W43', '02:17:31', '02:19:03'), ('2026-W43-r2', '02:23:25', '02:23:25')]
+framer [('2026-W43', '02:19:03', '02:22:36'), ('2026-W43-r2', '02:23:25', '02:26:09')]
+gates [('2026-W43', '02:22:36', '02:23:02'), ('2026-W43-r2', '02:26:09', '02:26:29')]
+
+--- after attempt 3 ---
+r3 failures: ["7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story", "e737684d-1765-4327-9304-b31ccafefd54: unsupported — dense and partial-credit rewards from verified trajectories can be attacked into awarding full credit to cheating agents", "52a170e5-da2c-43cf-a29d-338757f3d5c8: unsupported — the same enablement, done over REST across enterprises, enterprise teams, enterprise apps, and organizations", "d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2: unsupported — The rerun confirms the alert is closed and the pull request opens with its summary and validation steps", "thread: unsupported — GitHub deprecated models and shipped a policy API to manage which ones run"]
+ledger reader-fetch 8 0.0426 02:18:36 02:19:01
+ledger framing 3 1.2693 02:19:05 02:27:16
+ledger faithfulness 3 0.0459 02:22:36 02:30:09
+ledger faithfulness-retry 1 0.0079 02:22:54 02:22:54
+reader-fetch rows after r2 reader adoption (02:23:25): 0
+month-to-date: 2.694698
+brief for W43: 0

@@ -1,7 +1,0 @@
-.add-news failed: RuntimeError
-...add-news failed: RuntimeError
-..................weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
-weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
-weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
-..weekly digest: database unavailable (LedgerUnavailable)
-............................................................................................................................................................................

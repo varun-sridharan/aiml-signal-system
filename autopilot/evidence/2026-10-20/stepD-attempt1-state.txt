@@ -1,0 +1,8 @@
+reader stats: {"fetched": 4, "feeds_ok": 16, "dated_out": 0, "new_items": 148, "candidates": 1813, "irrelevant": 191, "feed_errors": ["deepmind: ParseError"], "known_items": 19, "corroborated": 26, "fetch_failed": 4, "out_of_window": 1455, "fetch_cost_usd": 0.042577000000000004, "left_for_later": 159}
+window: Oct 12 – Oct 20, 2026 | items: 21
+reader [('done', '2026-10-20 02:17:31', '2026-10-20 02:19:03')]
+framer [('done', '2026-10-20 02:19:03', '2026-10-20 02:22:36')]
+gates [('failed', '2026-10-20 02:22:36', '2026-10-20 02:23:02')]
+reader-fetch ledger rows since 2026-10-20 00:00Z: 
+ledger columns: ['id', 'ts', 'output_tokens', 'cache_read_tokens', 'cache_write_tokens', 'estimated_cost_usd', 'input_tokens', 'user_id', 'phase', 'model', 'state']
+gate failures: ["7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story", "thread: unsupported — Amp says OpenAI models account for the majority of tokens used in it"]

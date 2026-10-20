@@ -1,0 +1,2 @@
+THREAD retried: {"lifted_before": ["OpenAI models account for the majority of tokens used in Amp"], "unsupported_before": []} | unsupported now: ['Amp says OpenAI models account for the majority of tokens used in it']
+lifted remaining: [] []

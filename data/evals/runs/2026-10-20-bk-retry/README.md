@@ -34,6 +34,16 @@ least 4 of 5, 0 clean-day false positives) the bar is met.
    autopilot run and are awaiting Varun's review.
 6. `caught` means no false negative was reported for the labelled plant unit. It ignores
    `regression_cases` and does not identify which flag matched; the full ledger per run is in the JSON.
+8. **Its first real firing made a correct verdict wrong** (added after Step D; evidence in
+   `autopilot/evidence/2026-10-20/stepD-retry-in-the-wild.txt`). In the first real weekly run the thread's
+   claim "OpenAI models account for the majority of tokens used in Amp" was lifted (its wording is the
+   excerpt's, which says exactly that), the thread was retried, and the retry's verdict flagged the writing's
+   own version of that claim as unsupported with no span, so a thread the first pass had passed failed the
+   gate. Two plausible causes, neither tested: the retry replaces the verdict, and the retry note tells the
+   grader not to repeat the lifted claim, which may push it away from a claim that was in fact supported.
+   It fired once in three real attempts (attempts 2 and 3 had no lift). Treat the retry as unsafe to rely on
+   until it is reworked or switched off (`framer.RETRY_ON_LIFT`); that is Varun's call, and it was not changed
+   during the run so that nothing is tuned against one observation.
 7. The retry replaces a unit's verdict. In principle a retry that drops a flag the first pass made would
    erase a catch; this was not observed because the retry never fired on a plant, and it is untested on the
    real grader.

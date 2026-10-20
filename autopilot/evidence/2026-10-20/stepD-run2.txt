@@ -1,0 +1,6 @@
+  not framed — Scale Agentic Coding Workflows with Meta’s Muse Spark Open o: 300, 72 not in the excerpt
+  not framed — Upcoming deprecation of selected GitHub Copilot models in mi: November not in the excerpt
+  not framed — NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with : 3.5 not in the excerpt
+stopped: 5 hard-gate failure(s): e737684d-1765-4327-9304-b31ccafefd54: the Framer wrote nothing for this story; 7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story; 3f492823-d77e-443a-aa43-117a37ab8d55: unsupported — it converts verifier outcomes into policy updates; 52a170e5-da2c-43cf-a29d-338757f3d5c8: unsupported — Copilot model policies can be retriev
+run 2026-W43-r2: starting at reader (adopting 2026-W43's)
+exit=1

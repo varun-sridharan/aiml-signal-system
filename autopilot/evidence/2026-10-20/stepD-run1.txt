@@ -1,0 +1,6 @@
+  not framed — Scale Agentic Coding Workflows with Meta’s Muse Spark Open o: 300, 72 not in the excerpt
+  not framed — Upcoming deprecation of selected GitHub Copilot models in mi: November not in the excerpt
+  not framed — NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with : 3.5 not in the excerpt
+stopped: 2 hard-gate failure(s): 7e6815bf-fa86-4684-af6c-cbcbf43e955b: the Framer wrote nothing for this story; thread: unsupported — Amp says OpenAI models account for the majority of tokens used in it
+run 2026-W43: starting at reader
+exit=1
