@@ -1,0 +1,570 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Digest &middot; Oct 12 – Oct 20, 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#6B6357; --rule:#DED7C6; --rule2:#EAE4D6; --edge:#B3A994;
+    --accent:#B5502A; --ok:#2F6B52; --text:#2B2620; --wash:#EFE9DC;
+    --serif:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --rail:0px; --fs-body:17px; --fs-small:13px; --hdr:52px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth} @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  html,body{margin:0;background:#E8E2D4}
+  body{color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+  a:hover{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+  ::selection{background:#F4E7DF}
+  .wrap{padding:76px 16px 96px}
+  main{max-width:1080px;margin:14px auto 0;background:var(--paper);border:1px solid var(--rule);padding:0 clamp(18px,5.7vw,62px) 72px}
+  .titlebar{display:flex;justify-content:space-between;align-items:baseline;gap:10px 20px;flex-wrap:wrap;padding:26px 0 16px;border-bottom:1px solid var(--ink)}
+  .titlebar h1{font-size:24px;font-weight:600;letter-spacing:-.012em;margin:0}
+  .editionline{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--soft)}
+  .tabs{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:1px solid var(--rule)}
+  .tabs::-webkit-scrollbar,.subscroll::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;display:flex;align-items:center;gap:8px;background:transparent;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:14px 14px 12px;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;font-weight:600;color:var(--soft)}
+  .tabs button.on{border-bottom-color:var(--accent);color:var(--ink)}
+  [role=tabpanel][hidden]{display:none}
+  .notice{border:1px solid var(--rule);border-radius:4px;background:var(--panel);padding:12px 16px;margin:16px 0 0;font-size:15px;color:var(--soft)}
+  .notice.good{border-color:#C4D6CB;background:#EAF1EC;color:var(--ok)}
+  .panel{border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--panel);padding:16px 20px;margin:28px 0 0}
+  .panel h2{margin:0;font-size:22px} .panel p{margin:8px 0 0;color:var(--soft)}
+  .lede{font-size:20px;line-height:1.5;margin:56px 0 0;max-width:680px;color:var(--text)}
+
+  nav.subnav{position:sticky;top:var(--hdr);z-index:6;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:stretch;gap:14px}
+  .subwrap{position:relative;flex:1;min-width:0;display:flex}
+  .subscroll{flex:1;min-width:0;display:flex;gap:4px 16px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding-right:28px}
+  .subfade{position:absolute;top:0;right:0;bottom:1px;width:36px;pointer-events:none;background:linear-gradient(to right,rgba(244,241,232,0),var(--paper))}
+  nav.subnav a{flex:none;display:flex;align-items:center;gap:8px;padding:13px 0 11px;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;font-weight:600;color:var(--soft);white-space:nowrap}
+  nav.subnav a[aria-current=true]{color:var(--ink)}
+  .sw{width:8px;height:8px;border-radius:2px;flex:none}
+  .subpill,.pill{font-family:var(--mono);border:1px solid var(--edge);border-radius:999px;color:var(--soft)}
+  .subpill{font-size:10px;padding:1px 7px} .pill{font-size:10.5px;letter-spacing:.06em;padding:1px 8px}
+  #toggle-all{flex:none;align-self:center;background:transparent;border:1px solid var(--edge);border-radius:3px;padding:5px 10px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;color:var(--ink);white-space:nowrap}
+
+  .s-thread{--c:#B5502A;--ink2:#A3451F} .s-learning{--c:#2F5D7C;--ink2:#2F5D7C} .s-stories{--c:#8A4F7D;--ink2:#7E4572} .s-leaders{--c:#7A5F14;--ink2:#7A5F14}
+  .news-sec{scroll-margin-top:60px;padding:34px 0 34px 26px;border-top:1px solid var(--rule);border-left:3px solid transparent;transition:border-color .15s ease}
+  .news-sec:first-of-type{padding-top:40px;border-top:0}
+  .news-sec.open{border-left-color:var(--c)}
+  .news-sec h2{margin:0;font-weight:400}
+  .sec-toggle{display:flex;gap:8px;align-items:flex-start;width:calc(100% + 26px);margin:0 0 0 -26px;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:var(--ink);font-family:inherit}
+  .arrow{flex:none;width:18px;font-size:14px;line-height:18px;color:var(--c);text-align:center}
+  .head{display:block;flex:1;min-width:0;max-width:760px}
+  .kick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--ink2)}
+  .big{display:block;font-weight:600;margin:14px 0 0;text-wrap:balance}
+  .big44{font-size:44px;line-height:1.08;letter-spacing:-.022em}
+  .big36{font-size:36px;line-height:1.14;letter-spacing:-.018em}
+  .line{display:block}
+  .rule{display:block;width:48px;height:2px;background:var(--c);margin:16px 0 10px}
+  .preview{display:block;font-size:17px;line-height:1.5;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview[hidden]{display:none}
+  .sec-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .15s ease,visibility 0s linear .15s}
+  .sec-body[data-open=true]{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .15s ease,visibility 0s linear 0s}
+  .sec-clip{overflow:hidden;min-height:0} .sec-pad{padding-top:24px}
+  .sec-body[data-open=true] .sec-clip{overflow:visible}              /* an open section lets a footnote definition rise above its first line */
+  .tabs button:focus-visible,nav.subnav a:focus-visible{outline-offset:-3px}
+  @media (prefers-reduced-motion:reduce){.sec-body,.news-sec{transition:none}}
+
+  .copy{max-width:680px}
+  .thread-body{font-size:18px;line-height:1.6;margin:24px 0 0;color:var(--text);text-wrap:pretty}
+  .signals{display:flex;align-items:center;gap:12px;margin-top:26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--soft)}
+  .signals:before{content:"";width:28px;height:1px;background:var(--accent)}
+  .essay{display:flex;flex-wrap:wrap;gap:44px 56px;align-items:flex-start}
+  .essay-main{flex:1 1 460px;max-width:680px;min-width:0}
+  .essay-p{font-size:18px;line-height:1.6;margin:0 0 20px;color:var(--text);text-wrap:pretty}
+  .fn{position:relative} .fn sup{line-height:0}
+  .fn-mark{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;padding:0 2px}
+  .fn-tip{display:none;position:absolute;left:0;bottom:calc(100% + 10px);z-index:10;width:270px;background:var(--ink);color:var(--paper);font-size:14.5px;line-height:1.5;padding:11px 14px;border-radius:4px;text-indent:0;font-style:normal}
+  .fn:hover .fn-tip,.fn:focus-within .fn-tip{display:block}
+  .notes{list-style:none;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:9px}
+  .notes li{display:flex;gap:12px;font-size:15px;line-height:1.5;color:var(--soft);scroll-margin-top:70px}
+  .notes .n{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);min-width:18px;padding-top:3px}
+  .notes b,.fn-tip b{font-weight:600} .notes b{color:var(--ink)}
+  .do{margin-top:32px;background:var(--wash);border-left:2px solid var(--accent);padding:18px 22px}
+  .do .lab{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);font-weight:600}
+  .do p{font-size:18px;line-height:1.55;margin:8px 0 0;color:var(--ink)}
+  aside.method{flex:0 1 220px;min-width:200px;display:flex;flex-direction:column;gap:30px;padding-top:4px}
+  .lab3{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600}
+  .drawn .lab3{padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .drawn ul{list-style:none;margin:0;padding:0}
+  .drawn li{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid var(--rule2);font-size:15px;line-height:1.4}
+  .drawn .dn{font-family:var(--mono);font-size:10.5px;color:var(--faint);padding-top:3px}
+  .numbers{display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--soft)}
+  .numbers div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted #CFC6B2;padding-bottom:6px}
+  .numbers b{color:var(--ink);font-weight:600}
+  .made p{font-size:14.5px;line-height:1.55;color:var(--soft);margin:8px 0 0}
+
+  .divider{display:flex;align-items:center;gap:16px;margin:40px 0 4px}
+  .divider span:first-child,.divider span:last-child{flex:1;height:1px;background:var(--edge)}
+  .divider span:nth-child(2){font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--soft);text-align:center}
+  .story{scroll-margin-top:64px;padding:32px 0;border-top:1px solid var(--rule)}
+  .story.feature{margin:28px 0 8px;padding:30px 32px;background:var(--panel);border:1px solid var(--rule);border-top:2px solid var(--ink)}
+  .story-meta{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+  .num{font-family:var(--mono);font-size:24px;font-weight:500;line-height:1;color:var(--faint);min-width:46px}
+  .feature .num{font-size:34px;color:var(--accent);min-width:64px}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;font-weight:600;border-radius:999px;padding:2px 9px}
+  .tag-do-this{color:var(--paper);background:var(--accent);border:1px solid var(--accent)}
+  .tag-know{color:var(--ink);background:transparent;border:1px solid var(--ink)}
+  .tag-radar{color:var(--soft);background:transparent;border:1px dashed var(--faint)}
+  .feature-mark{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink);border-bottom:1px solid var(--ink)}
+  .backlog{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);display:inline-flex;align-items:center;gap:5px}
+  .backlog .flag{width:0;height:0;border-left:6px solid var(--accent);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .story h3{font-size:25px;line-height:1.24;font-weight:600;letter-spacing:-.01em;margin:14px 0;text-wrap:pretty}
+  .feature h3{font-size:34px;line-height:1.14;letter-spacing:-.018em}
+  .hashtags{display:flex;gap:4px 12px;flex-wrap:wrap;margin:-4px 0 16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--faint)}
+  .story-p{font-size:18px;line-height:1.6;margin:0;color:var(--text);text-wrap:pretty}
+  .feature-p{margin:0 0 18px}
+  .why{font-size:17px;line-height:1.55;margin:18px 0 0;color:var(--text)}
+  .why .lab,.lab2{font-family:var(--mono);letter-spacing:.14em;font-weight:600}
+  .why .lab{font-size:11px;color:var(--accent)}
+  .lab2{font-size:10.5px;letter-spacing:.16em;color:var(--soft)}
+  .connection{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--soft);font-style:italic}
+  .tryit{margin:18px 0 0 18px;padding:14px 18px;background:var(--wash);border-left:1px solid var(--edge)}
+  .tryit p{font-size:16.5px;line-height:1.55;margin:6px 0 0;color:var(--text)}
+  .ninety{margin-top:18px} .ninety .lab2{margin-bottom:6px}
+  .ninety table{width:100%;border-collapse:collapse;font-size:15.5px;line-height:1.5}
+  .ninety th{text-align:left;vertical-align:top;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;font-weight:600;color:var(--soft);padding:9px 16px 9px 0;border-top:1px solid var(--rule);width:76px}
+  .ninety td{padding:9px 0;border-top:1px solid var(--rule);color:var(--text)}
+  .tie{font-size:16px;line-height:1.5;margin:16px 0 0;color:var(--soft)} .tie span{color:var(--accent)}
+  .srcs{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--soft)}
+  .checked{color:var(--ok);display:inline-flex;align-items:center;gap:5px}
+  .vote{margin-top:16px;padding-top:14px;border-top:1px dotted #CFC6B2;scroll-margin-top:90px}
+  .thumbs{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .thumbs form{margin:0}
+  .thumb{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--edge);color:var(--soft);list-style:none}
+  .thumb::-webkit-details-marker{display:none}
+  .thumb:hover,.down[open] summary{border-color:#8A4F7D;color:#8A4F7D}
+  .down[open]{flex-basis:100%}
+  .down-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-width:460px}
+  .down-form label{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--soft)}
+  .down-form .opt{letter-spacing:.02em;color:var(--faint)}
+  .down-form input[type=text]{font-family:var(--serif);font-size:16px;letter-spacing:0;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:3px;padding:8px 10px}
+  .send{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.14em;font-weight:600;color:var(--paper);background:var(--ink);border:0;border-radius:3px;padding:9px 14px;cursor:pointer}
+  .closing{margin:44px 0 0;padding-top:28px;border-top:2px solid var(--ink)}
+  .closing .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}
+  .closing .cl{font-size:34px;line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
+  .closing .cl span{display:block} .closing .cl span+span{color:var(--accent)}
+  .closing p{font-size:18px;line-height:1.6;margin:18px 0 0;color:var(--text)}
+  .closing .try{margin-top:18px;display:flex;gap:14px;align-items:baseline}
+  .closing .try .lab{white-space:nowrap;letter-spacing:.14em}
+  .closing .try span:last-child{font-size:18px;line-height:1.55;color:var(--ink)}
+  .empty{font-size:18px;margin:0;color:var(--text)}
+
+  .archive{padding:44px 0 0}
+  .archive h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600;margin:0;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+  .archive ul{list-style:none;margin:0;padding:0}
+  .archive li{display:flex;align-items:baseline;gap:10px 24px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .archive .el{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ink);font-weight:600;min-width:84px}
+  .archive .et{flex:1 1 340px;min-width:0}
+  .archive .t1{display:block;font-size:21px;line-height:1.25;font-weight:600} .archive .t1 span{color:var(--accent)}
+  .archive .t2{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--soft);margin-top:6px}
+  .archive .rd{font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+  @media (max-width:760px){.big44{font-size:34px}.big36{font-size:28px}.story.feature{padding:22px 18px}.feature h3{font-size:28px}.closing .cl{font-size:28px}}
+  @media (max-width:560px){:root{--hdr:78px}.wrap{padding-top:100px}}
+</style>
+<noscript><style>
+  .sec-body{grid-template-rows:1fr!important;visibility:visible!important} .preview{display:none} .tabs,#toggle-all{display:none}
+  [role=tabpanel][hidden]{display:block} .news-sec{border-left-color:var(--c)}
+</style></noscript>
+</head>
+<body>
+
+  <header style="position:fixed;top:0;left:var(--rail);right:0;z-index:20;background:rgba(244,241,232,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);transition:left .22s ease">
+    <div style="padding:12px 40px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap">
+      <a href="/application/Product.html" style="font-family:var(--serif);font-size:var(--fs-body);font-weight:600;letter-spacing:-.012em;color:var(--ink);text-decoration:none;flex:none;white-space:nowrap">AI/ML Signal<span style="color:var(--accent)">.</span></a>
+      <div style="display:flex;align-items:center;gap:10px 19px;flex-wrap:wrap;font-size:var(--fs-small);min-width:0">
+        <a href="/application/Product.html" style="color:var(--soft);text-decoration:none;border-bottom:0">Product</a>
+        <span aria-current="page" style="color:var(--accent);font-weight:600;border-bottom:1.5px solid var(--accent);padding-bottom:2px">Weekly Digest</span>
+        <a href="/design/System-Design.html" style="color:var(--soft);text-decoration:none;border-bottom:0">System Design</a>
+        <a href="/roadmap" style="color:var(--soft);text-decoration:none;border-bottom:0">Roadmap &amp; Backlog</a>
+        <a href="/plan" style="color:var(--soft);text-decoration:none;border-bottom:0">Plan &amp; Progress</a>
+      </div>
+    </div>
+    <div style="height:2px;background:transparent"><div data-scrollfill="" style="height:100%;width:0%;background:var(--accent)"></div></div>
+  </header>
+<div class="wrap">
+<main>
+  <div class="titlebar">
+    <h1>Weekly Digest</h1>
+    <span class="editionline">EDITION 02 &middot; OCT-12-2026 TO OCT-20-2026</span>
+  </div>
+
+  <div role="tablist" aria-label="Edition sections" class="tabs">
+    <button role="tab" id="tab-news" aria-selected="true" aria-controls="panel-news" tabindex="0" class="on" type="button"><span>NEWS</span></button>
+    <button role="tab" id="tab-archive" aria-selected="false" aria-controls="panel-archive" tabindex="-1" class="" type="button"><span>ARCHIVE</span></button>
+  </div>
+
+  <section role="tabpanel" id="panel-news" aria-labelledby="tab-news" tabindex="0">
+    <nav class="subnav" aria-label="In this edition">
+      <div class="subwrap">
+        <div class="subscroll">
+          <a href="#sec-thread" data-go="thread" aria-current="true"><span class="sw" style="background:#B5502A" aria-hidden="true"></span><span>THE WEEK IN ONE THREAD</span></a>
+          <a href="#sec-learning" data-go="learning"><span class="sw" style="background:#2F5D7C" aria-hidden="true"></span><span>LEARNING FOR THE WEEK</span></a>
+          <a href="#sec-stories" data-go="stories"><span class="sw" style="background:#8A4F7D" aria-hidden="true"></span><span>THIS WEEK&#39;S STORIES</span><span class="subpill">7</span></a>
+          <a href="#sec-leaders" data-go="leaders"><span class="sw" style="background:#7A5F14" aria-hidden="true"></span><span>WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="subpill">0</span></a>
+        </div>
+        <span class="subfade" aria-hidden="true"></span>
+      </div>
+      <button type="button" id="toggle-all">EXPAND ALL</button>
+    </nav>
+
+    
+<section id="sec-thread" class="news-sec s-thread" data-news-sec="thread" aria-labelledby="h-thread">
+  <h2 id="h-thread">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-thread">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THE WEEK IN ONE THREAD</span><span class="pill">7 signals</span></span>
+        <span class="big big44"><span class="line">Three GitHub changes moved model choice, autofix and deprecation into admin policy.</span><span class="line">Three papers spent their compute on <span style="color:#A3451F">verifiers, environments and rewards</span>.</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">The week moved work away from the model and into the scaffolding around it.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-thread" class="sec-body" role="region" aria-labelledby="h-thread" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy">
+        <p class="thread-body">The week moved work away from the model and into the scaffolding around it. GitHub <a href="#s03">deprecated a set of Copilot models</a> across Chat, inline edits, ask and agent modes and code completions, shipped a REST API for model policies, and made agentic autofix generally available with CodeQL rerun as the acceptance test. On the research side, MAI-Gym <a href="#s02">scaled to 20,000 parallel environment instances</a> and verifier hardening <a href="#s01">repaired exploitable verifiers</a> on Terminal Bench, KernelBench and SETA. The harder question: when the verifier is the reward and the policy is a setting, who checks that a passing run actually finished the task?</p>
+        <div class="signals">7 SIGNALS WORTH YOUR ATTENTION</div>
+      </div>
+    
+  </div></div></div>
+</section>
+    
+<section id="sec-learning" class="news-sec s-learning" data-news-sec="learning" aria-labelledby="h-learning">
+  <h2 id="h-learning">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-learning">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">LEARNING FOR THE WEEK</span><span class="pill">6 sources</span></span>
+        <span class="big big36">Verifiers turn outcomes into rewards. Attacked verifiers award full credit for no work.</span>
+    
+        <span class="rule"></span>
+        <span class="preview">arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11, applying one hacker-fixer loop to 3 agent environments: Terminal Bench, KernelBench and SETA.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-learning" class="sec-body" role="region" aria-labelledby="h-learning" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="essay">
+        <div class="essay-main"><p class="essay-p">arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11, applying one hacker-fixer loop to 3 agent environments: Terminal Bench, KernelBench and SETA. Their framing is blunt about why this matters at all: agent environments use programmatic <span class="fn"><span>verifiers</span><sup><a class="fn-mark" href="#note-verifier" aria-describedby="tip-verifier">1</a></sup><span role="tooltip" id="tip-verifier" class="fn-tip"><b>Programmatic verifier</b>. A program in an agent environment that turns complex outcomes into rewards.</span></span> to turn complex outcomes into rewards, and a verifier that can be attacked awards full credit to a cheating agent without the intended task being done. Evaluation and training break together, because both read the same signal.</p><p class="essay-p">The verifier-hardening authors applied their hacker-fixer loop to Terminal Bench, KernelBench, and SETA in a paper published 2026-10-11, substantially reducing attack success across all 3 environments. The design has 2 parts: an isolated verifier sandbox agents cannot directly modify, then the loop that finds and repairs what remains. An earlier version of that loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments, which is a stronger signal than a self-reported score.</p><p class="essay-p">MAI-Gym&#39;s authors released their platform on 2026-10-14 with support for 10 established benchmarks and scaling to 20,000 parallel environment instances. They name the two blockers for GUI agents directly: the high cost of interactive environments and the scarcity of realistic training tasks. Parallelism answers the first. The second is answered by automated synthesis of GUI applications, resettable mocked apps and cross-app worlds with execution-validated task verifiers — which puts verifier quality back at the centre.</p><p class="essay-p">MAI-Gym trained MAI-Gym-9B, a 9B unified mobile and computer agent, reported on 2026-10-14 at 78.4% on MobileWorld and 76.2% on OSWorld-Verified. The more interesting number is the transfer result: <span class="fn"><span>RL</span><sup><a class="fn-mark" href="#note-rl" aria-describedby="tip-rl">2</a></sup><span role="tooltip" id="tip-rl" class="fn-tip"><b>Online reinforcement learning</b>. Training with verifiable rewards, which has driven rapid progress in mathematics, coding, and tool use.</span></span> in a mocked train-ticketing app lifted task success on a physical phone from 28.8% to 48.1%, a gain of 19.3 points. A mock that is cheap to reset taught something that survived contact with real hardware, for one app.</p><p class="essay-p">Terminal-RSI&#39;s authors published on 2026-10-15 a five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2, reporting 86.52% on Terminal-Bench 2.1 and 19.84% on Terminal-Bench 4.0. The gap between those two numbers, 66.68 points apart, is the honest picture of where terminal agents stand when the benchmark gets harder. On LHTB, strict completion moved from 0 of 46 tasks to 5 of 46, and SWR100 success from 3.00% to 6.00%.</p><p class="essay-p">Terminal-RSI also splits its reward in 2 on 2026-10-15: Success-Prioritized Reward separates strict success from bounded partial credit, while Family Dense Reward calibrates semantic progress across task families. Partial credit buys learning signal on tasks the agent cannot yet finish. It is also the softest target in the system, and the one a policy can learn to farm — which is precisely the failure the hardening work exists to catch.</p><p class="essay-p">GitHub deprecated models across most Copilot experiences on October 19, 2026, and in the same product line made agentic autofix for code scanning alerts generally available, with the pull request it opens carrying 3 things: a summary of the fix, why it closes the alert, and the validation steps Copilot took. Before opening that pull request, it reruns CodeQL to confirm the fix closes the alert. That is a programmatic verifier deciding whether work counts, shipped to Code Security and Advanced Security customers on GitHub Enterprise Cloud, with alerts outside the default branch excluded.</p><p class="essay-p">GitHub deprecated a set of Copilot models on October 19, 2026 across most Copilot experiences, including Chat, inline edits, ask and agent modes and code completions, and separately exposed REST endpoints covering 4 scopes: enterprises, enterprise teams, enterprise apps and organizations. Which model answers a request is now a policy record that an administrator may need to enable. The research says the reward signal decides what an agent learns; the changelog says the model and the acceptance test are now someone else&#39;s configuration.</p>
+          <ol class="notes" aria-label="Notes"><li id="note-verifier"><span class="n">1</span><span><b>Programmatic verifier</b>. A program in an agent environment that turns complex outcomes into rewards.</span></li><li id="note-rl"><span class="n">2</span><span><b>Online reinforcement learning</b>. Training with verifiable rewards, which has driven rapid progress in mathematics, coding, and tool use.</span></li>
+          </ol>
+          <div class="do"><div class="lab">WHAT TO DO DIFFERENTLY THIS WEEK</div><p>Before you trust any agent score this week, try to pass your own verifier without doing the task. If you can, your evaluation numbers and your training signal are both wrong in the same direction.</p></div>
+        </div>
+        <aside class="method" aria-label="Sources and method">
+          <div class="drawn"><div class="lab3">WHAT IT WAS DRAWN FROM</div>
+            <ul><li><span class="dn">01</span><a href="#s01">A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA</a></li><li><span class="dn">02</span><a href="#s02">GUI agent RL in a mocked app lifted real-phone success from 28.8% to 48.1%</a></li><li><span class="dn">04</span><a href="#s04">A 27B terminal agent scores 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0</a></li><li><span class="dn">05</span><a href="#s05">Copilot now reruns CodeQL to confirm its own fix before opening the PR</a></li><li><span class="dn">03</span><a href="#s03">A pinned Copilot model name in your workflow stopped working on October 19</a></li><li><span class="dn">07</span><a href="#s07">Copilot model availability is now a REST call across four scopes</a></li></ul>
+          </div>
+          <div class="numbers"><div><span>CANDIDATE LINKS CONSIDERED</span><b>1813</b></div><div><span>STORIES SYNTHESISED</span><b>7</b></div><div><span>MINUTES OF SOURCE READING</span><b>37</b></div></div>
+          <div class="made"><div class="lab3">HOW THIS EDITION WAS MADE</div><p>The Reader looked at 1813 candidate links from 16 places, fetched 4 pages in full, and kept 7 stories. About 37 minutes of reading stand behind them. Every factual clause in the edition was checked by a second model against the page it came from, and a story marked checked passed with no unsupported claim.</p></div>
+        </aside>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-stories" class="news-sec s-stories" data-news-sec="stories" aria-labelledby="h-stories">
+  <h2 id="h-stories">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-stories">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THIS WEEK&#39;S STORIES</span><span class="pill">7</span></span>
+        <span class="big big36">Three papers rebuilt the reward signal. Four GitHub changes moved model choice into policy.</span>
+    
+        <span class="rule"></span>
+        <span class="preview">Lead: A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-stories" class="sec-body" role="region" aria-labelledby="h-stories" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy"><div role="separator" aria-label="Verifiers, environments and rewards" class="divider"><span></span><span>Verifiers, environments and rewards</span><span></span></div>
+        
+<article id="s01" class="story feature" aria-labelledby="h-s01">
+  <div class="story-meta">
+    <span class="num">01/</span>
+    <span class="tag tag-radar">RADAR</span><span class="feature-mark">FEATURE</span>
+  </div>
+  <h3 id="h-s01">A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA</h3>
+  <div class="hashtags"><span>#Evals</span><span>#Agents</span><span>#RL</span><span>#RewardHacking</span></div><p class="story-p feature-p">Agent environments use programmatic verifiers to turn complex outcomes into rewards. That sentence sounds like plumbing until you follow it: the verifier is the only thing standing between a scored run and a scored lie. The arXiv paper published on 2026-10-11 states the failure plainly — verifiers can be attacked into awarding full credit to cheating agents without the intended task being completed, which causes inaccurate evaluation and misalignment in training. One broken component corrupts both the number you report and the gradient you train on.</p><p class="story-p feature-p">The question the authors pose is a weak-to-strong one: can today&#39;s model, given scaled compute, automatically harden environments against potentially stronger future models? Their answer has two moving parts. First, an isolated verifier sandbox that agents cannot directly modify, which removes the crudest attack — editing the judge. Second, a hacker-fixer loop that goes looking for the vulnerabilities the sandbox does not close, and repairs them. Both parts are fully automatic, which is the point: manual auditing does not scale with the number of environments.</p><p class="story-p feature-p">Applied to Terminal Bench, KernelBench and SETA, the loop substantially reduced attack success across all three. The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline. The comparison that carries the most weight is not internal: an earlier version of the hacker-fixer loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments. A benchmark maintainer running your attack tool on their own environments is an external check that a self-reported reduction cannot match.</p><p class="story-p feature-p">The twist the framing hides is in the word scalable. The authors note that as agent environments scale in numbers and difficulty, so must the repairing of exploitable verifiers. Hardening is not a one-time fix applied to a fixed set; it is a recurring cost attached to every environment anyone adds. Three environments were hardened here. The question the paper leaves open is what the per-environment cost looks like when the count is three hundred, and whether a hardening budget keeps pace with an environment budget that is growing faster.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Reward hacking is not a training curiosity here: a verifier attacked into awarding full credit to a cheating agent corrupts evaluation and training in the same stroke. The cost is that hardening has to scale with the environments — as agent environments grow in number and difficulty, so does the repair work, so every environment you add is a new surface to fix.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Take one of your own task verifiers and spend an hour trying to earn full credit without doing the task. The paper&#39;s sandbox idea is the cheapest first move: make the verifier a component your agent cannot directly modify, then look for what is still exploitable.</p></div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s04">Ties to 04</a>: Terminal-RSI&#39;s bounded partial credit is exactly the kind of soft target this work exists to audit.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.15924" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a> · Also: <a href="https://huggingface.co/papers/2610.15924" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face Papers (opens in a new tab)">Hugging Face Papers &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-3f492823-d77e-443a-aa43-117a37ab8d55">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="3f492823-d77e-443a-aa43-117a37ab8d55"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="3f492823-d77e-443a-aa43-117a37ab8d55"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s02" class="story feature" aria-labelledby="h-s02">
+  <div class="story-meta">
+    <span class="num">02/</span>
+    <span class="tag tag-radar">RADAR</span><span class="feature-mark">FEATURE</span>
+  </div>
+  <h3 id="h-s02">GUI agent RL in a mocked app lifted real-phone success from 28.8% to 48.1%</h3>
+  <div class="hashtags"><span>#Agents</span><span>#RL</span><span>#Evals</span><span>#OpenWeights</span></div><p class="story-p feature-p">Online RL with verifiable rewards has driven rapid progress in mathematics, coding and tool use. GUI agents did not get the same ride, and the MAI-Gym authors name why on 2026-10-14: the high cost of interactive environments, and the scarcity of realistic training tasks. Those are two separate problems that get discussed as one. A platform can throw hardware at the first. The second needs tasks that someone, or something, has to author and verify.</p><p class="story-p feature-p">MAI-Gym attacks the cost problem with scale and consistency. It unifies evaluation, data collection and online RL training across mobile, computer and web environments, supports ten established benchmarks, and scales to 20,000 parallel environment instances. The piece worth noticing is the shared rollout pipeline, which ensures consistent agent behavior across evaluation and training. Harness drift between the training loop and the eval loop is a common source of numbers that do not reproduce; a single pipeline removes it by construction rather than by discipline.</p><p class="story-p feature-p">The task-scarcity problem gets a different answer: automated synthesis of diverse GUI applications and challenging tasks, including resettable mocked apps and coherent cross-app worlds with execution-validated task verifiers. Resettable matters because an RL loop needs to run the same episode thousands of times from a clean state, which a real train-ticketing app will not let you do. Execution-validated verifiers matter because the synthesised task is only as good as the check that says it was completed.</p><p class="story-p feature-p">Trained on this, MAI-Gym-9B reaches 78.4% on MobileWorld and 76.2% on OSWorld-Verified, state-of-the-art among open GUI agents under 10B parameters. The number that should move your priors is a different one. RL in the mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1% — a gain of 19.3 points on hardware, learned inside a fake. That is the sim-to-real claim in miniature, and it is reported for one app.</p><p class="story-p feature-p">The release list is unusually complete: the framework, the synthesis skills, the mocked apps, 2,000 verified tasks and the model checkpoint. The twist is in the arithmetic of those two figures. Twenty thousand parallel instances is an infrastructure number; 2,000 verified tasks is a content number, and content is the blocker the paper itself named second. Ten instances per verified task is a lot of rollout capacity pointed at a finite set of things worth rolling out.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>If you are training a GUI agent, the transferable idea is the mock: build a resettable version of the one app your agent fails on most, with an execution-validated verifier for task completion. The release includes the synthesis skills, the mocked apps and 2,000 verified tasks, so you can see the shape of a verified task before writing your own.</p></div>
+  <div class="ninety"><div class="lab2">IN 90 SECONDS</div>
+    <table><tr><th scope="row">METHOD</th><td>Unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments, with a shared rollout pipeline so agent behavior stays consistent between evaluation and training.</td></tr><tr><th scope="row">RESULT</th><td>Ten established benchmarks supported, and the platform scales to 20,000 parallel environment instances.</td></tr><tr><th scope="row">CAVEAT</th><td>The headline is infrastructure, not scores — the excerpt names two blockers, the high cost of interactive environments and the scarcity of realistic training tasks, and parallelism only attacks the first.</td></tr></table>
+  </div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s01">Ties to 01</a>: execution-validated task verifiers are the component the hardening paper shows can be attacked.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.20939" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a> · Also: <a href="https://huggingface.co/papers/2610.20939" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face Papers (opens in a new tab)">Hugging Face Papers &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-e737684d-1765-4327-9304-b31ccafefd54">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="e737684d-1765-4327-9304-b31ccafefd54"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: GUI agent RL in a mocked app lifted real-phone success from 28.8% to 48.1%"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: GUI agent RL in a mocked app lifted real-phone success from 28.8% to 48.1%"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="e737684d-1765-4327-9304-b31ccafefd54"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article><div role="separator" aria-label="Model choice moves into policy" class="divider"><span></span><span>Model choice moves into policy</span><span></span></div>
+        
+<article id="s03" class="story" aria-labelledby="h-s03">
+  <div class="story-meta">
+    <span class="num">03/</span>
+    <span class="tag tag-do-this">DO THIS</span>
+  </div>
+  <h3 id="h-s03">A pinned Copilot model name in your workflow stopped working on October 19</h3>
+  <div class="hashtags"><span>#AgenticCoding</span><span>#Tooling</span></div><p class="story-p">As of October 19, 2026, GitHub deprecated a set of models across most Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions. Workflows and integrations need updating to use supported models; no action is required to remove the deprecated ones. Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings, then confirm the policy is enabled for the specific model. Once enabled, the model appears in the Copilot Chat model selector in VS Code and on github.com. The switch to an alternative is therefore not automatic for enterprises — an admin step sits between the deprecation and a working replacement.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>The deprecation covers most Copilot experiences — Copilot Chat, inline edits, ask and agent modes, and code completions — so a pinned model name in a workflow or integration breaks rather than degrades. The tradeoff for enterprises: moving to an alternative model is not automatic, because admins may need to enable it through model policies in Copilot settings first.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Grep your repos and CI config for hardcoded Copilot model names now. If you are on Copilot Enterprise, check individual Copilot settings to confirm the policy is enabled for your replacement model, and look for it in the Copilot Chat model selector in VS Code before assuming it works.</p></div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s07">Ties to 07</a>: the new REST endpoints are how you would script the policy change this deprecation requires.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://github.blog/changelog/2026-10-19-github-copilot-models-deprecated-on-october-19-2026" target="_blank" rel="noopener noreferrer" aria-label="GitHub Changelog (opens in a new tab)">GitHub Changelog &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-52a170e5-da2c-43cf-a29d-338757f3d5c8">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="52a170e5-da2c-43cf-a29d-338757f3d5c8"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: A pinned Copilot model name in your workflow stopped working on October 19"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: A pinned Copilot model name in your workflow stopped working on October 19"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="52a170e5-da2c-43cf-a29d-338757f3d5c8"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s04" class="story" aria-labelledby="h-s04">
+  <div class="story-meta">
+    <span class="num">04/</span>
+    <span class="tag tag-radar">RADAR</span>
+  </div>
+  <h3 id="h-s04">A 27B terminal agent scores 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0</h3>
+  <div class="hashtags"><span>#RL</span><span>#Agents</span><span>#AgenticCoding</span></div><p class="story-p">Terminal-RSI, published 2026-10-15, alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine, across a five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2. It formulates Turn-Boundary Skip-Observation GAE to retain token-specific baselines while decaying credit across interaction turns, and splits reward into Family Dense Reward for semantic progress across task families and Success-Prioritized Reward separating strict success from bounded partial credit. The resulting Terminal-RSI-27B reports 19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1, 16.95% on Terminal-Bench 3.0 and 79.00% on Terminal-Bench Hard. On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46, while SWR100 success doubles from 3.00% to 6.00%. The spread across benchmark versions is wide enough that no single figure characterises the agent.</p>
+  <div class="ninety"><div class="lab2">IN 90 SECONDS</div>
+    <table><tr><th scope="row">METHOD</th><td>Alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine, and uses Turn-Boundary Skip-Observation GAE to keep token-specific baselines while decaying credit across interaction turns.</td></tr><tr><th scope="row">RESULT</th><td>No headline number in the excerpt — what is stated is the reward design: Family Dense Reward calibrates semantic progress across task families, and Success-Prioritized Reward separates strict success from bounded partial credit.</td></tr><tr><th scope="row">CAVEAT</th><td>Partial credit is where the difficulty hides: a bounded reward for semantic progress is a softer target than strict success, and soft targets are the ones a policy learns to farm without resolving the task.</td></tr></table>
+  </div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s01">Ties to 01</a>: bounded partial credit is a softer target than strict success, which is what verifier hardening audits for.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.22192" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-7e6815bf-fa86-4684-af6c-cbcbf43e955b">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="7e6815bf-fa86-4684-af6c-cbcbf43e955b"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: A 27B terminal agent scores 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: A 27B terminal agent scores 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="7e6815bf-fa86-4684-af6c-cbcbf43e955b"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s05" class="story" aria-labelledby="h-s05">
+  <div class="story-meta">
+    <span class="num">05/</span>
+    <span class="tag tag-do-this">DO THIS</span>
+  </div>
+  <h3 id="h-s05">Copilot now reruns CodeQL to confirm its own fix before opening the PR</h3>
+  <div class="hashtags"><span>#Agents</span><span>#AgenticCoding</span><span>#Security</span></div><p class="story-p">Agentic autofix for code scanning alerts is now generally available, remediating alerts by exploring relevant files, proposing a fix, and rerunning CodeQL to confirm the fix closes the alert before opening a pull request for review. The pull request includes a summary of the fix, why it closes the alert, and the validation steps Copilot took; you can request further changes by commenting on the PR or using the Agents tab. It is available to GitHub Code Security and Advanced Security customers on GitHub Enterprise Cloud, including with data residency, and requires an enterprise administrator to enable the new &#34;Agentic autofix&#34; policy before org or repo admins turn it on. Two limits matter: it supports alerts on the repository&#39;s default branch only, and it consumes AI Credits from your Code Security budget plus GitHub Actions minutes. When enabled, it replaces the free Generate Fix option on individual alerts with an Assign to Copilot button.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>The loop now closes without a human in it: it explores relevant files, proposes a fix, reruns CodeQL to confirm the fix closes the alert, then opens a pull request. The tradeoff is that CodeQL closure is the acceptance test — the PR arrives with a summary of the fix, why it closes the alert, and the validation steps taken, which makes it easy to approve on process rather than on whether the underlying bug is gone.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Enable it on one repository first and set a SKU level budget for Code Security AI credits before you widen it, since each run draws on AI Credits and Actions minutes. Read the validation steps section of the first few pull requests rather than the summary — CodeQL closing the alert and the bug being gone are not the same claim.</p></div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s01">Ties to 01</a>: a verifier deciding whether the work counts is the same arrangement the hardening paper shows can be gamed.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability" target="_blank" rel="noopener noreferrer" aria-label="GitHub Changelog (opens in a new tab)">GitHub Changelog &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Copilot now reruns CodeQL to confirm its own fix before opening the PR"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Copilot now reruns CodeQL to confirm its own fix before opening the PR"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s06" class="story" aria-labelledby="h-s06">
+  <div class="story-meta">
+    <span class="num">06/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s06">Some Amp users consume 10 billion tokens a week, and the harness picks the model</h3>
+  <div class="hashtags"><span>#Agents</span><span>#Harness</span><span>#ModelRouting</span></div><p class="story-p">Amp chooses and recommends models based on what works best for its users, and OpenAI models account for the majority of tokens used in Amp, spanning GPT-6 Astra, Ultrafast, GPT-Live-1 and Sign in with ChatGPT. Quinn describes some Amp users consuming 10 billion tokens a week, and argues that watching every increment of usage holds people back from finding out what an agent can do; the Sign in with ChatGPT integration gives users access to more tokens and OpenAI models. Amp also announced Puck, a conversational assistant built into Amp that launches and manages other agents, with Calling Puck powered by GPT-Live-1 allowing real-time speech, including from a watch. Amp&#39;s own 20-person team uses agents beyond code, including marketing work with no person devoted to it. The stated reason for the model choice is transparency about safeguards rather than a benchmark result, so the selection logic is a product judgment users inherit.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>The harness, not the user, is choosing the model: Amp chooses and recommends models based on what works best for its users, and OpenAI models account for the majority of tokens used in Amp. The tradeoff is concentration — the stated reason is that OpenAI is transparent and users know when safeguards are applied, not a benchmark result, so the selection logic is a product judgment you inherit.</p>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s07">Ties to 07</a>: Amp&#39;s harness picks models for its users; GitHub&#39;s policy API hands that same choice to an administrator.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://openai.com/index/amp-beyond-coding" target="_blank" rel="noopener noreferrer" aria-label="OpenAI (opens in a new tab)">OpenAI &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-ab5c373b-fe19-466e-96cc-56ddf145f28b">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="ab5c373b-fe19-466e-96cc-56ddf145f28b"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Some Amp users consume 10 billion tokens a week, and the harness picks the model"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Some Amp users consume 10 billion tokens a week, and the harness picks the model"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="ab5c373b-fe19-466e-96cc-56ddf145f28b"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s07" class="story" aria-labelledby="h-s07">
+  <div class="story-meta">
+    <span class="num">07/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s07">Copilot model availability is now a REST call across four scopes</h3>
+  <div class="hashtags"><span>#Tooling</span><span>#AgenticCoding</span><span>#Governance</span></div><p class="story-p">GitHub now exposes REST API endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps and organizations. Together they make it easier to manage Copilot model availability across an enterprise, which means rollouts and rollbacks become scriptable and reviewable rather than click-by-click. Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode. That delegation is the catch: the answer to which model a given team is using can now live at more than one level of the hierarchy.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Model availability becomes config: REST endpoints retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations, so rollouts and rollbacks can be scripted and reviewed. The tradeoff is delegation — enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode, which means the answer to &#34;which model is this team on&#34; now lives at more than one level.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Script a read of your Copilot model policies across all four scopes and store the output, so you have a before-state the next time a model is deprecated. Check which delegation mode you are in first, since organization mode and enterprise teams mode put the effective policy in different places.</p></div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s03">Ties to 03</a>: the October 19 deprecation is the first thing worth scripting against these endpoints.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://github.blog/changelog/2026-10-19-copilot-model-policy-api-for-enterprise-orgs-and-teams" target="_blank" rel="noopener noreferrer" aria-label="GitHub Changelog (opens in a new tab)">GitHub Changelog &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-3dad9966-99ae-46e8-b6ff-620d852ef8fa">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="3dad9966-99ae-46e8-b6ff-620d852ef8fa"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Copilot model availability is now a REST call across four scopes"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Copilot model availability is now a REST call across four scopes"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1999-W20"><input type="hidden" name="item" value="3dad9966-99ae-46e8-b6ff-620d852ef8fa"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        <div class="closing">
+          <div class="lab">THE THREAD THROUGH IT ALL</div>
+          <div class="cl"><span>A mocked app taught a phone agent to go from 28.8% to 48.1%.</span><span>A hardened verifier stopped an agent from getting credit for nothing.</span></div>
+          <p>Three papers this week spent their effort on the thing that decides whether a run counts: hardened verifiers on Terminal Bench, KernelBench and SETA, execution-validated task verifiers in MAI-Gym, and a reward split between strict success and bounded partial credit in Terminal-RSI. GitHub shipped the same idea in production, with CodeQL rerun deciding whether an autofix pull request opens at all.</p>
+          <div class="try"><span class="lab">TRY THIS WEEK /</span><span>Pick the one verifier your team trusts most and try to pass it without doing the work. Whatever you find is already in your eval numbers.</span></div>
+        </div>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-leaders" class="news-sec s-leaders" data-news-sec="leaders" aria-labelledby="h-leaders">
+  <h2 id="h-leaders">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-leaders">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="pill">0</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">Nothing quotable surfaced this week.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-leaders" class="sec-body" role="region" aria-labelledby="h-leaders" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <p class="empty">Nothing quotable surfaced this week.</p>
+    
+  </div></div></div>
+</section>
+  </section>
+
+  <section role="tabpanel" id="panel-archive" aria-labelledby="tab-archive" tabindex="0" class="archive" hidden>
+    <h2>PAST EDITIONS &middot; NEWEST FIRST</h2>
+    
+    <ul>
+      <li>
+        <span class="el">ED 02</span>
+        <span class="et"><span class="t1">Three GitHub changes moved model choice, autofix and deprecation into admin policy. <span>Three papers spent their compute on verifiers, environments and rewards.</span></span><span class="t2">OCT-12-2026 TO OCT-20-2026 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest?week=1999-W20">READ &#8599;</a>
+      </li>
+      <li>
+        <span class="el">ED 01</span>
+        <span class="et"><span class="t1">The tension today is between agents that can be trusted to close a loop and agents whose loop can be gamed.</span><span class="t2">OCT-10-2026 TO OCT-18-2026 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest?week=2026-W40">READ &#8599;</a>
+      </li>
+      <li>
+        <span class="el">SAMPLE</span>
+        <span class="et"><span class="t1">Capability spread out. <span>Capital concentrated.</span></span><span class="t2">Sample edition · week ending 2026-08-04 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest/sample-2026-08-04">READ &#8599;</a>
+      </li>
+    </ul>
+  </section>
+</main>
+</div>
+<script src="/static/site.js" defer></script>
+<script src="/static/digest.js" defer></script>
+</body>
+</html>

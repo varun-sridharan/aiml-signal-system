@@ -1,0 +1,7 @@
+tokens_unparsed FAILURES: 6
+two_primaries FAILURES: 2
+archive_oldest_first FAILURES: 1
+no_sample_row FAILURES: 3
+unknown_tokens_visible FAILURES: 1
+unsafe_links_allowed FAILURES: 3
+ids_unchecked FAILURES: 1

@@ -26,7 +26,7 @@ No API key needed, nothing to install:
 
 | | |
 | --- | --- |
-| [The Weekly Digest](https://aiml-signal-system-production.up.railway.app/weekly-digest) | the newest published brief, rendered from the database, with thumbs on every story. The old `/application/Weekly-Digest.html` redirects here |
+| [The Weekly Digest](https://aiml-signal-system-production.up.railway.app/weekly-digest) | the newest published edition in the signed-off design (thread, Learning essay, stories, closing), rendered on the server from the database, with an archive of every edition and thumbs on every story. The old `/application/Weekly-Digest.html` redirects here; the sample edition is at `/weekly-digest/sample-2026-08-04` |
 | [Design record](https://aiml-signal-system-production.up.railway.app/design/System-Design.html) | architecture + an append-only decision log, 38 entries |
 | [Roadmap & Backlog](https://aiml-signal-system-production.up.railway.app/roadmap) | what is next, with binary exit criteria — and every item deliberately deferred, with the reason |
 | [Plan & Progress](https://aiml-signal-system-production.up.railway.app/plan) | the one live milestone in detail, plus the archive of finished work |

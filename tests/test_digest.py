@@ -30,16 +30,144 @@ WEEK = "1999-W20"
 GOLDEN = json.loads((REPO / "data" / "evals" / "golden" / "2026-08-04" / "output.json").read_text())
 
 
+def composed_body():
+    """A brief written by the composing pass: GOLDEN's items plus the `edition` the template's slot list asks for."""
+    from agents import composer
+    from tests.test_composer import raw_day, valid
+    day = raw_day()
+    items = [{"id": i["id"], "category": "AI", "headline": i["headline"], "tags": i["tags"], "why": f"Why {i['id']}.",
+              "sources": [{"label": s["label"], "url": s["url"], "tier": s["tier"]} for s in i["sources"]],
+              "faithfulness": {"confidence": 0.9, "unsupported_claims": []}} for i in day["items"]]
+    verdict = {"confidence": 0.9, "claims": [{"claim": "c"}], "unsupported_claims": []}
+    composed = valid()
+    edition = composer.assemble_edition(composed, day, {"items": [{"id": i["id"], "why": f"Why {i['id']}."} for i in day["items"]]},
+                                        {f"s{n:02d}": verdict for n in range(1, 6)}, verdict, stats={"candidates": 1700, "fetched": 12, "feeds_ok": 17},
+                                        source_minutes=34, style=[])
+    return {"date": "2026-10-20", "thread": "a first-pass thread", "items": items, "edition": edition, "window": {
+        "from": "2026-10-12T05:00:00+00:00", "to": "2026-10-20T05:00:00+00:00", "label": "Oct 12 \u2013 Oct 20, 2026"}}
+
+
 class View(unittest.TestCase):
-    def test_the_golden_week_splits_into_learning_and_stories(self):
-        v = digest.view(WEEK, GOLDEN)
-        self.assertEqual([i["id"] for i in v["learning"]], ["2026-08-04-mcp", "2026-08-04-istar"])   # the DO THIS items
-        self.assertEqual(len(v["stories"]), 5)
-        self.assertTrue(v["thread"].startswith("The frontier stopped"))
-        self.assertEqual(v["reading_time"], 5)
-        istar = v["learning"][1]
-        self.assertEqual([label for label, _ in istar["ninety"]], ["Method", "Result", "Caveat"])
-        self.assertTrue(all(i["sources"] for i in v["learning"] + v["stories"]))
+    def test_an_older_brief_shows_the_fields_it_has_and_no_others(self):
+        v = digest.view(WEEK, GOLDEN, None, 1)
+        self.assertEqual((v["number"], v["composed"], v["sections"]), ("01", False, ["thread", "stories", "leaders"]))   # no essay: it was never written
+        self.assertIsNone(v["learning"])
+        self.assertIsNone(v["thread"]["lines"])
+        self.assertTrue(v["thread"]["body"][0]["text"].startswith("The frontier stopped"))
+        rows = v["stories"]["rows"]
+        self.assertEqual((len(rows), v["stories"]["closing"]), (7, None))
+        self.assertEqual([r["num"] for r in rows], [f"{n:02d}" for n in range(1, 8)])
+        self.assertEqual(rows[2]["tag"], "DO THIS")                                            # the pill: DO THIS first, then RADAR, then KNOW
+        self.assertEqual([k for k, _ in rows[2]["ninety"]], ["METHOD", "RESULT", "CAVEAT"])
+        self.assertTrue(all(len(r["sources"]) >= 1 and sum(s["primary"] for s in r["sources"]) == 1 for r in rows))
+        self.assertTrue(all(r["hashtags"] == [] and not r["feature"] for r in rows))
+        self.assertEqual(v["leaders"]["count"], 0)
+
+    def test_a_composed_edition_carries_every_slot(self):
+        body = composed_body()
+        v = digest.view(WEEK, body, None, 2)
+        self.assertEqual((v["number"], v["composed"], v["range_line"]), ("02", True, "OCT-12-2026 TO OCT-20-2026"))
+        self.assertEqual(v["sections"], ["thread", "learning", "stories", "leaders"])
+        self.assertEqual([(k, c) for k, _, c in v["subnav"]], [("thread", None), ("learning", None), ("stories", 5), ("leaders", 0)])
+        lines = v["thread"]["lines"]
+        self.assertEqual(len(lines), 2)
+        self.assertEqual(v["thread"]["count"], "5 signals")
+        links = [r for r in v["thread"]["body"] if r["kind"] == "link"]
+        self.assertEqual([r["href"] for r in links], ["#s01", "#s02"])
+        learning = v["learning"]
+        self.assertEqual([n["key"] for n in learning["notes"]], ["queue"])                        # numbered by first appearance
+        fn = [r for p in learning["paras"] for r in p["segs"] if r["kind"] == "fn"]
+        self.assertEqual((fn[0]["n"], fn[0]["term"]), (1, "review queue"))
+        self.assertEqual([d["num"] for d in learning["drawn"]], ["01", "02"])
+        self.assertEqual(len(learning["numbers"]), 3)
+        self.assertEqual(learning["numbers"][0], {"label": "CANDIDATE LINKS CONSIDERED", "value": "1700"})
+        rows = v["stories"]["rows"]
+        self.assertEqual([r["feature"] for r in rows], [True, True, False, False, False])
+        self.assertEqual(rows[0]["tie"], {"num": "02", "href": "#s02", "text": "Helio Labs shipped product 2 the following day."})
+        self.assertEqual([r["divider"] for r in rows], [None, None, "Smaller releases", None, None])
+        self.assertTrue(all(r["hashtags"] and r["tag"] in ("DO THIS", "KNOW", "RADAR") for r in rows))
+        self.assertEqual(sum(s["primary"] for s in rows[0]["sources"]), 1)
+        self.assertEqual(rows[0]["sources"][0]["prefix"], "Primary: ")
+        self.assertEqual(v["stories"]["closing"]["l1"], "One lab shipped a queue.")
+
+    def test_tokens_that_point_nowhere_become_plain_text(self):
+        body = composed_body()
+        body["edition"]["thread"]["body"] = "See [[#s02|story two]] and [[#s99|story ninety-nine]] and [[fn:nope|a term]] and [[bogus|x]]."
+        v = digest.view(WEEK, body)
+        kinds = [(r["kind"], r["text"]) for r in v["thread"]["body"]]
+        self.assertIn(("link", "story two"), kinds)
+        self.assertIn(("plain", "story ninety-nine"), kinds)
+        self.assertIn(("plain", "a term"), kinds)
+        self.assertIn(("plain", "x"), kinds)
+        self.assertNotIn("[[", "".join(t for _, t in kinds))
+
+    def test_a_tie_to_a_story_not_in_the_edition_is_hidden_and_the_one_highlight_is_painted_once(self):
+        body = composed_body()
+        body["edition"]["stories"][0]["tie"] = {"to": "s77", "text": "Nowhere."}
+        self.assertIsNone(digest.view(WEEK, body)["stories"]["rows"][0]["tie"])
+        body["edition"]["thread"]["lines"] = ["Four [[hl|releases]] cut cost.", "Three [[hl|decisions]] restricted who may look."]
+        first, second = digest.view(WEEK, body)["thread"]["lines"]
+        self.assertEqual([r["kind"] for r in first], ["plain", "hl", "plain"])
+        self.assertTrue(all(r["kind"] == "plain" for r in second))
+
+    def test_a_malformed_edition_is_refused_cleanly(self):
+        for mutate in (lambda e: e.pop("closing"), lambda e: e.update(stories=[]), lambda e: e["stories"][0].update(itemId="no-such-item"),
+                       lambda e: e["learning"].update(paras="text"), lambda e: e.update(thread=[]), lambda e: e["stories"][0].pop("headline")):
+            body = composed_body()
+            mutate(body["edition"])
+            with self.assertRaises(digest.DigestMalformed):
+                digest.view(WEEK, body)
+
+    def test_brittle_limits_clip_instead_of_refusing_the_edition(self):
+        body = composed_body()
+        body["edition"]["stories"][2]["hashtags"] = ["#a", "#b", "#c", "#d", "#e", "#f"]
+        body["edition"]["stories"][0]["featureParas"] = ["one", "two", "three", "four", "five", "six", "seven"]
+        body["edition"]["thread"]["lines"] = ["one", "two", "three"]
+        v = digest.view(WEEK, body)
+        self.assertEqual(len(v["stories"]["rows"][2]["hashtags"]), 4)
+        self.assertEqual(len(v["stories"]["rows"][0]["feature_paras"]), 5)
+        self.assertIsNone(v["thread"]["lines"])
+
+    def test_a_feature_with_no_readable_paragraphs_is_not_a_feature_and_keeps_its_body(self):
+        body = composed_body()
+        body["edition"]["stories"][0]["featureParas"] = [" ", ""]
+        row = digest.view(WEEK, body)["stories"]["rows"][0]
+        self.assertFalse(row["feature"])
+        self.assertTrue(row["body"])
+
+    def test_ids_that_would_break_the_pages_anchors_are_refused_or_dropped(self):
+        for bad in ("sec-thread", "s01 s02", "S1", "s1\"onclick=x", "../x"):
+            body = composed_body()
+            body["edition"]["stories"][0]["id"] = bad
+            with self.assertRaises(digest.DigestMalformed, msg=bad):
+                digest.view(WEEK, body)
+        body = composed_body()
+        body["edition"]["learning"]["notes"]["bad key"] = ["T", "D"]
+        body["edition"]["learning"]["paras"][0] += " [[fn:bad key|x]]"
+        self.assertEqual([n["key"] for n in digest.view(WEEK, body)["learning"]["notes"]], ["queue"])         # a key with a space is plain text
+        body = composed_body()
+        body["items"][0]["id"] = 'item "x" <y>'
+        body["edition"]["stories"][0]["itemId"] = 'item "x" <y>'
+        with self.assertRaises(digest.DigestMalformed):
+            digest.view(WEEK, body)
+
+    def test_an_empty_tie_is_hidden_and_a_second_highlight_is_plain(self):
+        body = composed_body()
+        body["edition"]["stories"][0]["tie"] = {"to": "s02", "text": "   "}
+        self.assertIsNone(digest.view(WEEK, body)["stories"]["rows"][0]["tie"])
+        body["edition"]["thread"]["lines"] = ["No highlight here.", "[[hl|One]] and [[hl|two]] highlights."]
+        first, second = digest.view(WEEK, body)["thread"]["lines"]
+        self.assertEqual([r["kind"] for r in second], ["hl", "plain", "plain", "plain"])
+        self.assertEqual("".join(r["text"] for r in second), "One and two highlights.")
+
+    def test_the_archive_entry_and_the_edition_line(self):
+        e = digest.archive_entry("2026-W43", 2, ["Four [[hl|releases]] cut cost.", "Three decisions restricted."], "x", 7,
+                                 {"from": "2026-10-12T05:00:00+00:00", "to": "2026-10-20T05:00:00+00:00"}, None)
+        self.assertEqual((e["label"], e["l1"], e["l2"], e["stories"], e["range"], e["href"]),
+                         ("ED 02", "Four releases cut cost.", "Three decisions restricted.", 7, "OCT-12-2026 TO OCT-20-2026", "/weekly-digest?week=2026-W43"))
+        old = digest.archive_entry("2026-W40", 1, None, "First sentence here. And a second.", 7, None, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))
+        self.assertEqual((old["l1"], old["l2"], old["range"]), ("First sentence here.", "", "OCT-10-2026 TO OCT-18-2026"))
+        self.assertEqual(digest.range_line({"from": "junk", "to": "junk"}), "")
 
     def test_the_edition_is_labelled_by_its_window_never_by_the_run_key(self):
         body = json.loads(json.dumps(GOLDEN))
@@ -58,7 +186,7 @@ class View(unittest.TestCase):
         body = json.loads(json.dumps(GOLDEN))
         body["items"][0]["sources"] = [{"label": "x", "url": "javascript:alert(1)", "tier": "primary"},
                                        {"label": "ok", "url": "https://example.com/a", "tier": "primary"}]
-        self.assertEqual([s["url"] for s in digest.view(WEEK, body)["learning"][0]["sources"]], ["https://example.com/a"])
+        self.assertEqual([s["href"] for s in digest.view(WEEK, body)["stories"]["rows"][0]["sources"]], ["https://example.com/a"])
 
     def test_malformed_briefs_are_refused_with_one_exception(self):
         bad = [None, [], {}, {"items": "nope"}, {"items": []}, {"items": [1]}, {"items": [{"id": "a"}]},
@@ -83,8 +211,7 @@ class View(unittest.TestCase):
                 pass   # refused cleanly
             # (a body that is merely unusual and still shows is fine; what must not happen is any other exception)
         shown = digest.view(WEEK, item(sources=[{"label": "x", "url": "http://[x"}]))   # the bad link is dropped, the story stays
-        self.assertEqual(shown["stories"][0]["sources"], [])
-        self.assertIsNone(digest.view(WEEK, {**item(), "readingTimeMin": True})["reading_time"])
+        self.assertEqual(shown["stories"]["rows"][0]["sources"], [])
 
     def test_the_voter_address_is_taken_from_the_nearest_proxy_hop(self):
         self.assertEqual(digest.client_address({"x-forwarded-for": "6.6.6.6, 203.0.113.9"}, "10.0.0.1"), "203.0.113.9")
@@ -159,23 +286,158 @@ class Routes(unittest.TestCase):
         self.assertIn("first edition has not been published", r.text)
         self.assertIsNotNone(original)
 
-    def test_d2_a_published_brief_shows_both_sections_a_sticky_subnav_and_vote_controls(self):
+    def test_d2_an_older_brief_renders_in_the_template_with_the_fields_it_has(self):
         self.publish()
         r = self.client.get(f"/weekly-digest?week={WEEK}")
         self.assertEqual(r.status_code, 200)
-        self.assertIn("published Oct 18, 2026", r.text)
-        for needle in ("Learning for the Week", "This Week's Stories", 'class="subnav"', 'href="#learning"', 'href="#stories"',
-                       "The frontier stopped", "Useful</button>", "Not useful</summary>", 'name="comment"', "spec moves the core"):
+        for needle in ("THE WEEK IN ONE THREAD", "THIS WEEK&#39;S STORIES", 'class="subnav"', 'href="#sec-thread"', 'href="#sec-stories"',
+                       "The frontier stopped", 'aria-label="Useful: ', 'aria-label="Not useful: ', 'name="comment"', "spec moves the core", 'role="tablist"',
+                       "EDITION 0"):
             self.assertIn(needle, r.text, needle)
+        self.assertNotIn("LEARNING FOR THE WEEK", r.text)                                        # an older brief has no essay, so no empty section either
         self.assertEqual(r.text.count('action="/weekly-digest/vote"'), 2 * len(GOLDEN["items"]))   # an up form and a down form each
-        self.assertLess(r.text.index(">Method<"), r.text.index(">Caveat<"))   # reading order survives jsonb
+        self.assertLess(r.text.index(">METHOD<"), r.text.index(">CAVEAT<"))                       # reading order survives jsonb
+
+    def test_d2a_a_composed_edition_renders_every_slot_and_only_news_and_archive(self):
+        self.publish(composed_body())
+        r = self.client.get(f"/weekly-digest?week={WEEK}")
+        self.assertEqual(r.status_code, 200)
+        for needle in ("LEARNING FOR THE WEEK", "WHAT TO DO DIFFERENTLY THIS WEEK", "WHAT IT WAS DRAWN FROM", "HOW THIS EDITION WAS MADE", "THE THREAD THROUGH IT ALL",
+                       "TRY THIS WEEK /", "WHY IT MATTERS /", "TRY IT", "FEATURE", "Ties to 02", "Smaller releases", "#Agents", "checked against source",
+                       'id="note-queue"', 'role="tooltip"', "Nothing quotable surfaced this week.", "WHAT ARE INDUSTRY LEADERS TALKING?"):
+            self.assertIn(needle, r.text, needle)
+        self.assertEqual(r.text.count('role="tab"'), 2)                                         # NEWS and ARCHIVE; nothing else is built
+        for absent in ("PREDICTION", "HOMEWORK", "RETIRED PREDICTIONS", "React", "__bundler"):
+            self.assertNotIn(absent, r.text, absent)
+        self.assertEqual(r.text.count("FEATURE</span>"), 2)
+        self.assertEqual(r.text.count('aria-expanded="false"'), 4)                              # every section starts collapsed
+        self.assertEqual(r.text.count("Primary: "), 5)                                          # exactly one primary per story
+        for key in ("thread", "learning", "stories", "leaders"):
+            self.assertIn(f'aria-controls="body-{key}"', r.text)
+        self.assertIn("/static/digest.js", r.text)
+        self.assertNotIn("<script>alert", r.text)
 
     def test_d2b_the_page_shows_the_window_not_the_week_key(self):
-        self.publish({**GOLDEN, "window": {"label": "Oct 10 \u2013 Oct 18, 2026"}})
+        self.publish({**GOLDEN, "window": {"from": "2026-10-10T05:00:00+00:00", "to": "2026-10-18T05:00:00+00:00", "label": "Oct 10 \u2013 Oct 18, 2026"}})
         text = self.client.get(f"/weekly-digest?week={WEEK}").text
-        kicker = text[text.index('class="kicker"'):][:300]
-        self.assertIn("Oct 10 \u2013 Oct 18, 2026", kicker)
-        self.assertNotIn(WEEK, kicker)
+        line = text[text.index('class="editionline"'):][:200]
+        self.assertIn("OCT-10-2026 TO OCT-18-2026", line)
+        self.assertNotIn(WEEK, line)
+        self.assertIn("<title>Weekly Digest &middot; Oct 10 \u2013 Oct 18, 2026</title>", text)
+
+    def test_d2c_the_archive_lists_every_edition_newest_first_with_the_sample_and_every_link_opens(self):
+        self.publish(composed_body(), WEEK)
+        self.publish(GOLDEN, "1999-W21")
+        text = self.client.get("/weekly-digest?tab=archive").text
+        self.assertIn('id="tab-archive" aria-selected="true"', text)
+        panel = text[text.index('id="panel-archive"'):]
+        self.assertIn("PAST EDITIONS", panel)
+        import re
+        hrefs = [h.replace("&amp;", "&") for h in re.findall(r'class="rd" href="([^"]+)"', panel)]
+        mine = [hrefs.index(f"/weekly-digest?week={w}") for w in ("1999-W21", "1999-W20")]
+        self.assertLess(mine[0], mine[1])                                                         # published later, listed first
+        self.assertEqual(hrefs[-1], site.SAMPLE_EDITION_URL)                                      # the sample edition is the last row
+        numbers = [int(n) for n in re.findall(r'class="el">ED (\d+)<', panel)]
+        self.assertEqual(numbers, sorted(numbers, reverse=True))                                  # ED numbers fall down the page
+        self.assertEqual(len(numbers), len(hrefs) - 1)                                            # every edition has a number; the sample has SAMPLE
+        self.assertIn("SAMPLE", panel)
+        for href in re.findall(r'class="rd" href="([^"]+)"', panel):
+            r = self.client.get(href.replace("&amp;", "&"))
+            self.assertEqual(r.status_code, 200, href)
+        self.assertIn(site.SAMPLE_EDITION_URL, panel)
+
+    def test_d2e_keyboard_and_screen_reader_structure(self):
+        import re
+        self.publish(composed_body())
+        text = self.client.get(f"/weekly-digest?week={WEEK}").text
+        ids = set(re.findall(r'\bid="([^"]+)"', text))
+        for attr in ("aria-controls", "aria-labelledby", "aria-describedby"):
+            for ref in re.findall(rf'{attr}="([^"]+)"', text):
+                for one in ref.split():
+                    if one.startswith(("body-", "h-", "tab-", "panel-", "tip-")):
+                        self.assertIn(one, ids, f"{attr} points at a missing id: {one}")
+        self.assertEqual(len(re.findall(r'<button type="button" class="sec-toggle" aria-expanded="(?:true|false)"', text)), 4)   # a real button, with its state
+        self.assertEqual(re.findall(r'role="tab" id="(tab-[a-z]+)" aria-selected="(true|false)"', text), [("tab-news", "true"), ("tab-archive", "false")])
+        self.assertEqual(len(re.findall(r'tabindex="-1"', text)), 1)                                # roving tabindex: only the selected tab is in the tab order
+        self.assertEqual(len(re.findall(r'<nav class="subnav" aria-label="In this edition">', text)), 1)
+        self.assertIn('<html lang="en">', text)
+        self.assertEqual(len(re.findall(r"<h1", text)), 1)
+        for link in re.findall(r'<a href="(https?://[^"]+)" target="_blank" rel="([^"]+)"', text):
+            self.assertEqual(link[1], "noopener noreferrer")
+        for svg in re.findall(r"<svg[^>]*>", text):
+            self.assertIn('aria-hidden="true"', svg)
+        script = (REPO / "static" / "digest.js").read_text()
+        for key in ("ArrowRight", "ArrowLeft", "Home", "End", "aria-expanded", "aria-selected", "prefers-reduced-motion"):
+            self.assertIn(key, script)
+
+    def test_d2d_the_sample_edition_is_the_old_snapshot_served_as_it_is_and_the_old_url_still_redirects(self):
+        r = self.client.get(site.SAMPLE_EDITION_URL)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.text, (REPO / "application" / "Weekly-Digest.html").read_text(encoding="utf-8"))
+        old = self.client.get("/application/Weekly-Digest.html", follow_redirects=False)
+        self.assertEqual((old.status_code, old.headers["location"]), (301, "/weekly-digest"))
+
+    def test_d2f_hostile_text_in_every_field_of_a_composed_edition_is_inert(self):
+        evil = "<script>alert(1)</script><img src=x onerror=alert(2)>\"'"
+        body = composed_body()
+        ed = body["edition"]
+        ed["thread"]["lines"] = [evil, evil]
+        ed["thread"]["body"] = f"{evil} [[#s02|{evil}]]"
+        ed["learning"]["headline"] = evil
+        ed["learning"]["paras"][0] = f"{evil} [[fn:queue|{evil}]]"
+        ed["learning"]["notes"]["queue"] = [evil, evil]
+        ed["learning"]["howMade"] = ed["learning"]["doDifferently"] = evil
+        ed["storiesTitle"] = evil
+        for story in ed["stories"]:
+            story.update(headline=evil, body=evil, why=evil, tryIt=evil, hashtags=["#ok"], featureParas=[evil] if story.get("feature") else story.get("featureParas"))
+            story["sources"] = [{"label": evil, "href": "javascript:alert(3)", "primary": True}, {"label": evil, "href": "https://example.com/a?x=\"onmouseover=alert(4)", "primary": False}]
+            story["tie"] = {"to": "s02", "text": evil}
+        ed["dividers"] = [{"before": "s03", "label": evil}]
+        ed["closing"] = {"lines": [evil, evil], "summary": evil, "oneThing": evil}
+        for item in body["items"]:
+            item["headline"] = evil
+        self.publish(body)
+        text = self.client.get(f"/weekly-digest?week={WEEK}").text
+        self.assertNotIn("<script>alert", text)
+        self.assertNotIn("<img src=x", text)
+        self.assertNotIn("javascript:", text)                                                  # an unsafe link is not rendered as a link
+        from html.parser import HTMLParser
+
+        class Seen(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.tags, self.attrs = [], []
+
+            def handle_starttag(self, tag, attrs):
+                self.tags.append(tag)
+                self.attrs += [(tag, name, value) for name, value in attrs]
+        parsed = Seen()
+        parsed.feed(text)
+        self.assertEqual([t for t in parsed.tags if t == "script"], ["script", "script"])           # only the two files the template loads
+        self.assertNotIn("img", parsed.tags)
+        self.assertEqual([a for a in parsed.attrs if a[1].startswith("on")], [])                    # no event handler attribute anywhere
+        for tag, name, value in parsed.attrs:
+            if name == "href":
+                self.assertTrue(value.startswith(("#", "/", "https://", "http://")), value)         # no javascript: link
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", text)
+
+    def test_d2g_a_notice_about_a_story_the_page_does_not_show_is_not_lost(self):
+        self.publish()
+        text = self.client.get(f"/weekly-digest?week={WEEK}&notice=voted-up&item=not-a-story").text
+        self.assertEqual(text.count("Thanks. Marked useful."), 1)
+
+    def test_d2h_a_malformed_latest_edition_still_offers_the_archive(self):
+        self.publish({"items": [{"id": "a"}]}, "1999-W22")
+        text = self.client.get("/weekly-digest?week=1999-W22").text
+        self.assertIn("cannot be shown", text)
+        self.assertIn("OTHER EDITIONS", text)
+        self.assertIn(site.SAMPLE_EDITION_URL, text)
+
+    def test_d2i_with_no_edition_the_sample_is_still_reachable(self):
+        with unittest.mock.patch.object(briefs, "latest", lambda conn: None):
+            text = self.client.get("/weekly-digest").text
+        self.assertIn("first edition has not been published", text)
+        self.assertIn(site.SAMPLE_EDITION_URL, text)
 
     def test_d3_the_header_links_to_the_page_and_the_old_url_redirects(self):
         self.assertIn('href="/weekly-digest"', self.client.get("/plan").text)

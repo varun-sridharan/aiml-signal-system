@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weekly Digest · slot list</title>
+<style>
+body{margin:0;background:#E8E2D4;color:#201C17;font-family:Newsreader,Georgia,serif;-webkit-font-smoothing:antialiased}
+main{max-width:920px;margin:24px auto 80px;background:#F4F1E8;border:1px solid #DED7C6;padding:40px clamp(18px,5vw,56px)}
+h1{font-size:34px;font-weight:600;letter-spacing:-.018em;margin:0 0 14px}
+h2{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#A3451F;margin:40px 0 10px;padding-top:16px;border-top:1px solid #DED7C6}
+p{font-size:17px;line-height:1.6;margin:0 0 14px;color:#2B2620}
+table{width:100%;border-collapse:collapse;font-size:15px;line-height:1.45;margin:6px 0 14px}
+th{text-align:left;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#4C463D;font-weight:600;padding:8px 12px 8px 0;border-bottom:1px solid #201C17}
+td{padding:9px 12px 9px 0;border-bottom:1px solid #DED7C6;vertical-align:top;color:#2B2620}
+code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;color:#7A3A1C;background:#EFE9DC;padding:1px 4px;border-radius:2px}
+</style></head><body><main>
+<h1>Weekly Digest — slot list</h1>
+<p>The pipeline fills these slots and nothing else. <b>Opt</b> = optional. A section with nothing to show gets its one empty line, never a placeholder. Inline tokens inside prose: <code>[[#s03|text]]</code> links to a story tile, <code>[[fn:key|Term]]</code> places a footnote marker (Learning only). <code>[[hl|phrase]]</code> highlights one phrase of up to about five words in a section headline, in that section's colour: at most one per headline, and a headline without one renders entirely in ink.</p>
+<h2>Edition frame</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty / notes</th></tr></thead><tbody>
+<tr><td><code>edition.number</code></td><td>string, 2 digits</td><td>no</td><td></td></tr>
+<tr><td><code>edition.range</code></td><td>string <code>MMM-DD-YYYY TO MMM-DD-YYYY</code></td><td>no</td><td></td></tr>
+<tr><td><code>edition.prevNumber</code>, <code>prevRange</code></td><td>string</td><td>no</td><td>shown in the bar during Generating / Stale</td></tr>
+<tr><td><code>edition.sample</code></td><td>bool</td><td>yes</td><td>true shows the SAMPLE chip</td></tr>
+<tr><td><code>tabs.built[]</code></td><td>enum <code>news · prediction · homework · archive</code></td><td>no</td><td>an unbuilt tab is <b>not rendered</b></td></tr>
+<tr><td><code>state</code></td><td>enum <code>edition · generating · stale · quiet · failed</code></td><td>no</td><td>see States</td></tr>
+</tbody></table>
+<h2>NEWS sections (all four)</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty / notes</th></tr></thead><tbody>
+<tr><td><code>sections.thread.color</code></td><td>hex</td><td>no</td><td><code>#B5502A</code>, the brand accent</td></tr>
+<tr><td><code>sections.learning.color</code></td><td>hex</td><td>no</td><td><code>#2F5D7C</code></td></tr>
+<tr><td><code>sections.stories.color</code></td><td>hex</td><td>no</td><td><code>#8A4F7D</code>; also fills the chosen thumb</td></tr>
+<tr><td><code>sections.leaders.color</code></td><td>hex</td><td>no</td><td><code>#7A5F14</code></td></tr>
+<tr><td>collapsed preview</td><td>derived</td><td>n/a</td><td>first sentence, lead headline or names; shown only while collapsed</td></tr>
+</tbody></table>
+<p>Each colour paints the section's arrow, kicker, heading rule, open left rule and sub-tab marker. Never green or red, text at 4.5:1 or better, and the label always shows. All four sections start collapsed; open and closed is UI state, not a slot.</p>
+<h2>NEWS · The week in one thread</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>thread.lines[2]</code></td><td>string × 2, at most one <code>[[hl|phrase]]</code> across the pair</td><td>no</td><td>the highlighted phrase renders in the section colour</td></tr>
+<tr><td><code>thread.body</code></td><td>string, 80–120 words, 2–3 <code>[[#id|…]]</code> links</td><td>no</td><td></td></tr>
+<tr><td>signals line</td><td>derived from <code>stories.length</code></td><td>n/a</td><td></td></tr>
+</tbody></table>
+<h2>NEWS · Learning for the Week</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>learning.headline</code></td><td>string, states a fact; optional <code>[[hl|phrase]]</code></td><td>no</td><td></td></tr>
+<tr><td><code>learning.paras[]</code></td><td>string × 6–12, <code>[[fn:…]]</code> tokens</td><td>no</td><td></td></tr>
+<tr><td><code>learning.notes{key}</code></td><td><code>[term, definition]</code></td><td>no</td><td>one per <code>fn</code> key; numbered by first appearance</td></tr>
+<tr><td><code>learning.drawnFrom[]</code></td><td>story id × 2–6</td><td>no</td><td>ids not in this edition are dropped</td></tr>
+<tr><td><code>learning.numbers[]</code></td><td><code>[label, value]</code> × 3 (considered, synthesised, source minutes)</td><td>no</td><td>synthesised is derived</td></tr>
+<tr><td><code>learning.howMade</code></td><td>string, one paragraph</td><td>no</td><td></td></tr>
+<tr><td><code>learning.doDifferently</code></td><td>string, one instruction</td><td>no</td><td></td></tr>
+</tbody></table>
+<h2>NEWS · This Week's Stories</h2>
+<p><code>stories[]</code>, 4–11 items. First 1–2 may set <code>feature: true</code>.</p>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty / notes</th></tr></thead><tbody>
+<tr><td><code>stories.title</code></td><td>string; optional <code>[[hl|phrase]]</code></td><td>no</td><td>section headline</td></tr>
+<tr><td><code>id</code></td><td><code>s01</code>…</td><td>no</td><td>anchor target</td></tr>
+<tr><td><code>hashtags[]</code></td><td>string × 1–4, e.g. <code>#Agents</code></td><td>no</td><td>one line under the headline; labels for skimming, not links</td></tr>
+<tr><td><code>tag</code></td><td>enum <code>DO THIS · KNOW · RADAR</code></td><td>no</td><td></td></tr>
+<tr><td><code>headline</code></td><td>string, states the consequence</td><td>no</td><td></td></tr>
+<tr><td><code>body</code></td><td>string, 3–5 sentences</td><td>no for short tiles</td><td></td></tr>
+<tr><td><code>feature</code></td><td>bool</td><td>yes</td><td>swaps <code>body</code> for <code>featureParas</code></td></tr>
+<tr><td><code>featureParas[]</code></td><td>string × 3–5, 300–500 words</td><td>feature only</td><td></td></tr>
+<tr><td><code>experts[2]</code></td><td><code>{name, role, view}</code></td><td>yes</td><td>"Two views" block</td></tr>
+<tr><td><code>why</code></td><td>string, names the trade-off</td><td>no</td><td></td></tr>
+<tr><td><code>tryIt</code></td><td>string, 2–4 sentences</td><td>yes</td><td></td></tr>
+<tr><td><code>ninety[3]</code></td><td><code>[METHOD|RESULT|CAVEAT, text]</code></td><td>yes</td><td>papers only</td></tr>
+<tr><td><code>tie</code></td><td><code>{to, text}</code></td><td>yes</td><td>hidden if target not in edition</td></tr>
+<tr><td><code>sources[]</code></td><td><code>{label, href, primary}</code></td><td>no</td><td>exactly one <code>primary: true</code>, rendered first; every link opens the exact article in a new tab</td></tr>
+<tr><td><code>checked</code></td><td>bool</td><td>no</td><td>green mark</td></tr>
+<tr><td><code>fromBacklog</code></td><td>bool</td><td>yes</td><td>accent flag</td></tr>
+<tr><td><code>dividers[]</code></td><td><code>{before: id, label}</code></td><td>yes</td><td><b>none</b> = one continuous list</td></tr>
+<tr><td><code>closing.lines[2]</code>, <code>summary</code>, <code>oneThing</code></td><td>string</td><td>no</td><td>mirrors the opening thread</td></tr>
+</tbody></table>
+<p>Reader feedback (thumbs up / thumbs down, plus a one-line reason after thumbs down) is UI state, not a slot.</p>
+<h2>NEWS · What are industry leaders talking?</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>leaders.title</code></td><td>string; optional <code>[[hl|phrase]]</code></td><td>no</td><td></td></tr>
+<tr><td><code>leaders.tiles[]</code></td><td><code>{name, role, date, type: POST|EXCERPT, href, quote, why}</code></td><td>yes</td><td>quote verbatim; truncation shown as <code>…</code></td></tr>
+<tr><td><code>leaders.disagreements[]</code></td><td><code>{heading, note, a, b}</code> (a, b as tiles)</td><td>yes</td><td></td></tr>
+<tr><td><code>leaders.common</code></td><td>string, one paragraph</td><td>no if any tiles</td><td></td></tr>
+<tr><td>(all empty)</td><td></td><td></td><td>"Nothing quotable surfaced this week."</td></tr>
+</tbody></table>
+<p>Initials are derived from <code>name</code>; no photos.</p>
+<h2>PREDICTION</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>predictions.limit</code></td><td>int</td><td>no</td><td></td></tr>
+<tr><td><code>predictions.record</code></td><td><code>{hit, miss}</code></td><td>no</td><td>open is derived</td></tr>
+<tr><td><code>board[]</code></td><td><code>{claim, resolves, criteria, why, sources[[label, href]], operator, badly}</code></td><td>yes</td><td>"No new prediction this week. Nothing cleared the bar."</td></tr>
+<tr><td><code>scored[]</code></td><td><code>{claim, resolves, status: HIT|MISS, criteria, postMortem}</code></td><td>yes</td><td><code>postMortem</code> required on MISS, never hidden</td></tr>
+</tbody></table>
+<h2>HOMEWORK</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>homework</code></td><td>object</td><td>yes</td><td>"No homework this week."</td></tr>
+<tr><td><code>title</code>, <code>timebox</code></td><td>string</td><td>no</td><td></td></tr>
+<tr><td><code>why</code></td><td><code>{text, href}</code> to a story</td><td>no</td><td></td></tr>
+<tr><td><code>measured</code></td><td><code>{minutes, sessions, from, to}</code></td><td>yes</td><td>from Claude Code sessions; absent shows "Not measured: no Claude Code session found for this exercise."</td></tr>
+<tr><td><code>where[]</code></td><td><code>{repo, path, fn, ok}</code></td><td>no</td><td><code>ok</code> false shows "not found"</td></tr>
+<tr><td><code>steps[]</code>, <code>done[]</code></td><td>string</td><td>no</td><td><code>done</code> renders as checkboxes</td></tr>
+<tr><td><code>previous[]</code></td><td><code>{edition, title, status: done / skipped, minutes, minutesSource: measured / edited}</code></td><td>yes</td><td>marker shown beside the saved minutes</td></tr>
+</tbody></table>
+<p>The minutes box arrives pre-filled from <code>measured</code>. The reader's edit is UI state; Submit saves it with <code>minutesSource: edited</code>.</p>
+<h2>ARCHIVE</h2>
+<table><thead><tr><th>Slot</th><th>Type</th><th>Opt</th><th>Empty</th></tr></thead><tbody>
+<tr><td><code>archive.editions[]</code></td><td><code>{label, range, l1, l2, stories, href}</code> newest first</td><td>no</td><td>includes the Sample edition row</td></tr>
+<tr><td><code>archive.retired[]</code></td><td><code>{edition, claim, reason}</code></td><td>yes</td><td></td></tr>
+</tbody></table>
+<h2>States</h2>
+<table><thead><tr><th><code>state</code></th><th>Banner</th><th>Below it</th></tr></thead><tbody>
+<tr><td><code>generating</code></td><td>"Generating this week's edition…"</td><td>last week's edition, readable</td></tr>
+<tr><td><code>stale</code></td><td>"This week's run hasn't finished. You are reading last week's edition."</td><td>last week's edition</td></tr>
+<tr><td><code>quiet</code></td><td>"Quiet week. Nothing cleared the bar. Go build."</td><td>NEWS body replaced by that line</td></tr>
+<tr><td><code>failed</code></td><td>"No edition this week: the run stopped before writing anything." + <code>cause</code></td><td>NEWS body replaced</td></tr>
+</tbody></table>
+</main></body></html>

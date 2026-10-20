@@ -26,7 +26,7 @@ from typing import Optional
 from urllib.parse import parse_qs, quote, urlsplit
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
@@ -211,37 +211,61 @@ def _connect():
 def _panel(request: Request, title: str, text: str, status: int = 200):
     return templates.TemplateResponse(request=request, name="digest.template.html", status_code=status,
                                       context={"digest": None, "error": {"title": title, "text": text},
-                                               "notice": None, "weeks": []})
+                                               "notice": None, "notice_item": "", "archive": [], "active_tab": "news"})
+
+
+# The October 2026 design snapshot of an edition, kept as the sample the archive links to. It is served as the file it is.
+SAMPLE_EDITION_PATH = ROOT / "application" / "Weekly-Digest.html"
+SAMPLE_EDITION_URL = "/weekly-digest/sample-2026-08-04"
+
+
+def _archive(conn) -> tuple[list, dict]:
+    """Every published edition, newest first, with the sample edition last; and each edition's number (01 is the first published)."""
+    rows = conn.execute(
+        "SELECT id, body #> '{edition,thread,lines}', body -> 'thread', "
+        "CASE WHEN jsonb_typeof(body -> 'items') = 'array' THEN jsonb_array_length(body -> 'items') ELSE 0 END, "
+        "body -> 'window', published_at FROM briefs ORDER BY published_at ASC, id ASC").fetchall()
+    numbers = {r[0]: n for n, r in enumerate(rows, start=1)}
+    entries = [digest.archive_entry(r[0], numbers[r[0]], r[1], r[2], r[3], r[4], r[5]) for r in reversed(rows)]
+    return entries + [dict(digest.SAMPLE)], numbers
 
 
 @app.get("/weekly-digest")
-def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional[str] = None, item: Optional[str] = None):
+def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional[str] = None, item: Optional[str] = None,
+                  tab: Optional[str] = None):
     if week is not None and not WEEK_RE.fullmatch(week):
         return _panel(request, "No such edition", "That is not a week this digest knows.", 404)
     try:
         with _connect() as conn:
-            weeks = [{"id": r[0], "label": digest.edition_label({"window": r[1]}, r[2]) or r[0]} for r in conn.execute(
-                "SELECT id, body -> 'window', published_at FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
+            archive, numbers = _archive(conn)
             row = briefs.get(conn, week) if week else briefs.latest(conn)
     except Exception as e:  # database down or unreachable: say so on the page, with the right status
         print(f"weekly digest: database unavailable ({type(e).__name__})", file=sys.stderr)
         return _panel(request, "The digest is unavailable right now", "The database that holds it did not answer. "
                       "Nothing is lost; try again in a minute.", 503)
     shown = NOTICES.get(notice or "")
-    context = {"digest": None, "error": None, "weeks": weeks, "notice_item": (item or "")[:200],
+    context = {"digest": None, "error": None, "archive": archive, "notice_item": (item or "")[:200],
+               "active_tab": "archive" if tab == "archive" else "news",
                "notice": {"text": shown[0], "good": shown[1]} if shown else None}
     if row is None:
         if week:
             return _panel(request, "No such edition", f"There is no edition for {week}.", 404)
         return templates.TemplateResponse(request=request, name="digest.template.html", context=context)
     try:
-        context["digest"] = digest.view(row[0], row[1], row[2])
+        context["digest"] = digest.view(row[0], row[1], row[2], numbers.get(row[0]))
+        if context["notice_item"] not in context["digest"]["item_ids"]:
+            context["notice_item"] = ""          # a notice about a story this edition does not show is shown at the top instead of being lost
     except digest.DigestMalformed as bad:
         print(f"weekly digest: brief {row[0]} cannot be shown ({type(bad).__name__})", file=sys.stderr)
         context["error"] = {"title": "This edition cannot be shown",
                             "text": f"The brief for {row[0]} was published but is not in a shape this page can display. "
                                     "The edition is intact in the database; the page will show it once it is fixed."}
     return templates.TemplateResponse(request=request, name="digest.template.html", context=context)
+
+
+@app.get(SAMPLE_EDITION_URL)
+def weekly_digest_sample() -> HTMLResponse:
+    return HTMLResponse(SAMPLE_EDITION_PATH.read_text(encoding="utf-8"))
 
 
 def _cast_vote(fields: dict, address: str):

@@ -1,0 +1,10 @@
+.........weekly digest: brief 1999-W22 cannot be shown (DigestMalformed)
+...weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+...............................
+----------------------------------------------------------------------
+Ran 45 tests in 35.591s
+
+OK

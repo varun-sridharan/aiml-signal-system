@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Digest &middot; Oct 10 – Oct 18, 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#6B6357; --rule:#DED7C6; --rule2:#EAE4D6; --edge:#B3A994;
+    --accent:#B5502A; --ok:#2F6B52; --text:#2B2620; --wash:#EFE9DC;
+    --serif:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --rail:0px; --fs-body:17px; --fs-small:13px; --hdr:52px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth} @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  html,body{margin:0;background:#E8E2D4}
+  body{color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+  a:hover{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+  ::selection{background:#F4E7DF}
+  .wrap{padding:76px 16px 96px}
+  main{max-width:1080px;margin:14px auto 0;background:var(--paper);border:1px solid var(--rule);padding:0 clamp(18px,5.7vw,62px) 72px}
+  .titlebar{display:flex;justify-content:space-between;align-items:baseline;gap:10px 20px;flex-wrap:wrap;padding:26px 0 16px;border-bottom:1px solid var(--ink)}
+  .titlebar h1{font-size:24px;font-weight:600;letter-spacing:-.012em;margin:0}
+  .editionline{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--soft)}
+  .tabs{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:1px solid var(--rule)}
+  .tabs::-webkit-scrollbar,.subscroll::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;display:flex;align-items:center;gap:8px;background:transparent;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:14px 14px 12px;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;font-weight:600;color:var(--soft)}
+  .tabs button.on{border-bottom-color:var(--accent);color:var(--ink)}
+  [role=tabpanel][hidden]{display:none}
+  .notice{border:1px solid var(--rule);border-radius:4px;background:var(--panel);padding:12px 16px;margin:16px 0 0;font-size:15px;color:var(--soft)}
+  .notice.good{border-color:#C4D6CB;background:#EAF1EC;color:var(--ok)}
+  .panel{border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--panel);padding:16px 20px;margin:28px 0 0}
+  .panel h2{margin:0;font-size:22px} .panel p{margin:8px 0 0;color:var(--soft)}
+  .lede{font-size:20px;line-height:1.5;margin:56px 0 0;max-width:680px;color:var(--text)}
+
+  nav.subnav{position:sticky;top:var(--hdr);z-index:6;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:stretch;gap:14px}
+  .subwrap{position:relative;flex:1;min-width:0;display:flex}
+  .subscroll{flex:1;min-width:0;display:flex;gap:4px 16px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding-right:28px}
+  .subfade{position:absolute;top:0;right:0;bottom:1px;width:36px;pointer-events:none;background:linear-gradient(to right,rgba(244,241,232,0),var(--paper))}
+  nav.subnav a{flex:none;display:flex;align-items:center;gap:8px;padding:13px 0 11px;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;font-weight:600;color:var(--soft);white-space:nowrap}
+  nav.subnav a[aria-current=true]{color:var(--ink)}
+  .sw{width:8px;height:8px;border-radius:2px;flex:none}
+  .subpill,.pill{font-family:var(--mono);border:1px solid var(--edge);border-radius:999px;color:var(--soft)}
+  .subpill{font-size:10px;padding:1px 7px} .pill{font-size:10.5px;letter-spacing:.06em;padding:1px 8px}
+  #toggle-all{flex:none;align-self:center;background:transparent;border:1px solid var(--edge);border-radius:3px;padding:5px 10px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;color:var(--ink);white-space:nowrap}
+
+  .s-thread{--c:#B5502A;--ink2:#A3451F} .s-learning{--c:#2F5D7C;--ink2:#2F5D7C} .s-stories{--c:#8A4F7D;--ink2:#7E4572} .s-leaders{--c:#7A5F14;--ink2:#7A5F14}
+  .news-sec{scroll-margin-top:60px;padding:34px 0 34px 26px;border-top:1px solid var(--rule);border-left:3px solid transparent;transition:border-color .15s ease}
+  .news-sec:first-of-type{padding-top:40px;border-top:0}
+  .news-sec.open{border-left-color:var(--c)}
+  .news-sec h2{margin:0;font-weight:400}
+  .sec-toggle{display:flex;gap:8px;align-items:flex-start;width:calc(100% + 26px);margin:0 0 0 -26px;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:var(--ink);font-family:inherit}
+  .arrow{flex:none;width:18px;font-size:14px;line-height:18px;color:var(--c);text-align:center}
+  .head{display:block;flex:1;min-width:0;max-width:760px}
+  .kick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--ink2)}
+  .big{display:block;font-weight:600;margin:14px 0 0;text-wrap:balance}
+  .big44{font-size:44px;line-height:1.08;letter-spacing:-.022em}
+  .big36{font-size:36px;line-height:1.14;letter-spacing:-.018em}
+  .line{display:block}
+  .rule{display:block;width:48px;height:2px;background:var(--c);margin:16px 0 10px}
+  .preview{display:block;font-size:17px;line-height:1.5;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview[hidden]{display:none}
+  .sec-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .15s ease,visibility 0s linear .15s}
+  .sec-body[data-open=true]{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .15s ease,visibility 0s linear 0s}
+  .sec-clip{overflow:hidden;min-height:0} .sec-pad{padding-top:24px}
+  .sec-body[data-open=true] .sec-clip{overflow:visible}              /* an open section lets a footnote definition rise above its first line */
+  .tabs button:focus-visible,nav.subnav a:focus-visible{outline-offset:-3px}
+  @media (prefers-reduced-motion:reduce){.sec-body,.news-sec{transition:none}}
+
+  .copy{max-width:680px}
+  .thread-body{font-size:18px;line-height:1.6;margin:24px 0 0;color:var(--text);text-wrap:pretty}
+  .signals{display:flex;align-items:center;gap:12px;margin-top:26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--soft)}
+  .signals:before{content:"";width:28px;height:1px;background:var(--accent)}
+  .essay{display:flex;flex-wrap:wrap;gap:44px 56px;align-items:flex-start}
+  .essay-main{flex:1 1 460px;max-width:680px;min-width:0}
+  .essay-p{font-size:18px;line-height:1.6;margin:0 0 20px;color:var(--text);text-wrap:pretty}
+  .fn{position:relative} .fn sup{line-height:0}
+  .fn-mark{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;padding:0 2px}
+  .fn-tip{display:none;position:absolute;left:0;bottom:calc(100% + 10px);z-index:10;width:270px;background:var(--ink);color:var(--paper);font-size:14.5px;line-height:1.5;padding:11px 14px;border-radius:4px;text-indent:0;font-style:normal}
+  .fn:hover .fn-tip,.fn:focus-within .fn-tip{display:block}
+  .notes{list-style:none;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:9px}
+  .notes li{display:flex;gap:12px;font-size:15px;line-height:1.5;color:var(--soft);scroll-margin-top:70px}
+  .notes .n{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);min-width:18px;padding-top:3px}
+  .notes b,.fn-tip b{font-weight:600} .notes b{color:var(--ink)}
+  .do{margin-top:32px;background:var(--wash);border-left:2px solid var(--accent);padding:18px 22px}
+  .do .lab{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);font-weight:600}
+  .do p{font-size:18px;line-height:1.55;margin:8px 0 0;color:var(--ink)}
+  aside.method{flex:0 1 220px;min-width:200px;display:flex;flex-direction:column;gap:30px;padding-top:4px}
+  .lab3{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600}
+  .drawn .lab3{padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .drawn ul{list-style:none;margin:0;padding:0}
+  .drawn li{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid var(--rule2);font-size:15px;line-height:1.4}
+  .drawn .dn{font-family:var(--mono);font-size:10.5px;color:var(--faint);padding-top:3px}
+  .numbers{display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--soft)}
+  .numbers div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted #CFC6B2;padding-bottom:6px}
+  .numbers b{color:var(--ink);font-weight:600}
+  .made p{font-size:14.5px;line-height:1.55;color:var(--soft);margin:8px 0 0}
+
+  .divider{display:flex;align-items:center;gap:16px;margin:40px 0 4px}
+  .divider span:first-child,.divider span:last-child{flex:1;height:1px;background:var(--edge)}
+  .divider span:nth-child(2){font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--soft);text-align:center}
+  .story{scroll-margin-top:64px;padding:32px 0;border-top:1px solid var(--rule)}
+  .story.feature{margin:28px 0 8px;padding:30px 32px;background:var(--panel);border:1px solid var(--rule);border-top:2px solid var(--ink)}
+  .story-meta{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+  .num{font-family:var(--mono);font-size:24px;font-weight:500;line-height:1;color:var(--faint);min-width:46px}
+  .feature .num{font-size:34px;color:var(--accent);min-width:64px}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;font-weight:600;border-radius:999px;padding:2px 9px}
+  .tag-do-this{color:var(--paper);background:var(--accent);border:1px solid var(--accent)}
+  .tag-know{color:var(--ink);background:transparent;border:1px solid var(--ink)}
+  .tag-radar{color:var(--soft);background:transparent;border:1px dashed var(--faint)}
+  .feature-mark{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink);border-bottom:1px solid var(--ink)}
+  .backlog{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);display:inline-flex;align-items:center;gap:5px}
+  .backlog .flag{width:0;height:0;border-left:6px solid var(--accent);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .story h3{font-size:25px;line-height:1.24;font-weight:600;letter-spacing:-.01em;margin:14px 0;text-wrap:pretty}
+  .feature h3{font-size:34px;line-height:1.14;letter-spacing:-.018em}
+  .hashtags{display:flex;gap:4px 12px;flex-wrap:wrap;margin:-4px 0 16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--faint)}
+  .story-p{font-size:18px;line-height:1.6;margin:0;color:var(--text);text-wrap:pretty}
+  .feature-p{margin:0 0 18px}
+  .why{font-size:17px;line-height:1.55;margin:18px 0 0;color:var(--text)}
+  .why .lab,.lab2{font-family:var(--mono);letter-spacing:.14em;font-weight:600}
+  .why .lab{font-size:11px;color:var(--accent)}
+  .lab2{font-size:10.5px;letter-spacing:.16em;color:var(--soft)}
+  .connection{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--soft);font-style:italic}
+  .tryit{margin:18px 0 0 18px;padding:14px 18px;background:var(--wash);border-left:1px solid var(--edge)}
+  .tryit p{font-size:16.5px;line-height:1.55;margin:6px 0 0;color:var(--text)}
+  .ninety{margin-top:18px} .ninety .lab2{margin-bottom:6px}
+  .ninety table{width:100%;border-collapse:collapse;font-size:15.5px;line-height:1.5}
+  .ninety th{text-align:left;vertical-align:top;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;font-weight:600;color:var(--soft);padding:9px 16px 9px 0;border-top:1px solid var(--rule);width:76px}
+  .ninety td{padding:9px 0;border-top:1px solid var(--rule);color:var(--text)}
+  .tie{font-size:16px;line-height:1.5;margin:16px 0 0;color:var(--soft)} .tie span{color:var(--accent)}
+  .srcs{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--soft)}
+  .checked{color:var(--ok);display:inline-flex;align-items:center;gap:5px}
+  .vote{margin-top:16px;padding-top:14px;border-top:1px dotted #CFC6B2;scroll-margin-top:90px}
+  .thumbs{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .thumbs form{margin:0}
+  .thumb{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--edge);color:var(--soft);list-style:none}
+  .thumb::-webkit-details-marker{display:none}
+  .thumb:hover,.down[open] summary{border-color:#8A4F7D;color:#8A4F7D}
+  .down[open]{flex-basis:100%}
+  .down-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-width:460px}
+  .down-form label{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--soft)}
+  .down-form .opt{letter-spacing:.02em;color:var(--faint)}
+  .down-form input[type=text]{font-family:var(--serif);font-size:16px;letter-spacing:0;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:3px;padding:8px 10px}
+  .send{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.14em;font-weight:600;color:var(--paper);background:var(--ink);border:0;border-radius:3px;padding:9px 14px;cursor:pointer}
+  .closing{margin:44px 0 0;padding-top:28px;border-top:2px solid var(--ink)}
+  .closing .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}
+  .closing .cl{font-size:34px;line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
+  .closing .cl span{display:block} .closing .cl span+span{color:var(--accent)}
+  .closing p{font-size:18px;line-height:1.6;margin:18px 0 0;color:var(--text)}
+  .closing .try{margin-top:18px;display:flex;gap:14px;align-items:baseline}
+  .closing .try .lab{white-space:nowrap;letter-spacing:.14em}
+  .closing .try span:last-child{font-size:18px;line-height:1.55;color:var(--ink)}
+  .empty{font-size:18px;margin:0;color:var(--text)}
+
+  .archive{padding:44px 0 0}
+  .archive h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600;margin:0;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+  .archive ul{list-style:none;margin:0;padding:0}
+  .archive li{display:flex;align-items:baseline;gap:10px 24px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .archive .el{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ink);font-weight:600;min-width:84px}
+  .archive .et{flex:1 1 340px;min-width:0}
+  .archive .t1{display:block;font-size:21px;line-height:1.25;font-weight:600} .archive .t1 span{color:var(--accent)}
+  .archive .t2{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--soft);margin-top:6px}
+  .archive .rd{font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+  @media (max-width:760px){.big44{font-size:34px}.big36{font-size:28px}.story.feature{padding:22px 18px}.feature h3{font-size:28px}.closing .cl{font-size:28px}}
+  @media (max-width:560px){:root{--hdr:78px}.wrap{padding-top:100px}}
+</style>
+<noscript><style>
+  .sec-body{grid-template-rows:1fr!important;visibility:visible!important} .preview{display:none} .tabs,#toggle-all{display:none}
+  [role=tabpanel][hidden]{display:block} .news-sec{border-left-color:var(--c)}
+</style></noscript>
+</head>
+<body>
+
+  <header style="position:fixed;top:0;left:var(--rail);right:0;z-index:20;background:rgba(244,241,232,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);transition:left .22s ease">
+    <div style="padding:12px 40px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap">
+      <a href="/application/Product.html" style="font-family:var(--serif);font-size:var(--fs-body);font-weight:600;letter-spacing:-.012em;color:var(--ink);text-decoration:none;flex:none;white-space:nowrap">AI/ML Signal<span style="color:var(--accent)">.</span></a>
+      <div style="display:flex;align-items:center;gap:10px 19px;flex-wrap:wrap;font-size:var(--fs-small);min-width:0">
+        <a href="/application/Product.html" style="color:var(--soft);text-decoration:none;border-bottom:0">Product</a>
+        <span aria-current="page" style="color:var(--accent);font-weight:600;border-bottom:1.5px solid var(--accent);padding-bottom:2px">Weekly Digest</span>
+        <a href="/design/System-Design.html" style="color:var(--soft);text-decoration:none;border-bottom:0">System Design</a>
+        <a href="/roadmap" style="color:var(--soft);text-decoration:none;border-bottom:0">Roadmap &amp; Backlog</a>
+        <a href="/plan" style="color:var(--soft);text-decoration:none;border-bottom:0">Plan &amp; Progress</a>
+      </div>
+    </div>
+    <div style="height:2px;background:transparent"><div data-scrollfill="" style="height:100%;width:0%;background:var(--accent)"></div></div>
+  </header>
+<div class="wrap">
+<main>
+  <div class="titlebar">
+    <h1>Weekly Digest</h1>
+    <span class="editionline">EDITION 01 &middot; OCT-10-2026 TO OCT-18-2026</span>
+  </div>
+
+  <div role="tablist" aria-label="Edition sections" class="tabs">
+    <button role="tab" id="tab-news" aria-selected="true" aria-controls="panel-news" tabindex="0" class="on" type="button"><span>NEWS</span></button>
+    <button role="tab" id="tab-archive" aria-selected="false" aria-controls="panel-archive" tabindex="-1" class="" type="button"><span>ARCHIVE</span></button>
+  </div>
+
+  <section role="tabpanel" id="panel-news" aria-labelledby="tab-news" tabindex="0">
+    <nav class="subnav" aria-label="In this edition">
+      <div class="subwrap">
+        <div class="subscroll">
+          <a href="#sec-thread" data-go="thread" aria-current="true"><span class="sw" style="background:#B5502A" aria-hidden="true"></span><span>THE WEEK IN ONE THREAD</span></a>
+          <a href="#sec-stories" data-go="stories"><span class="sw" style="background:#8A4F7D" aria-hidden="true"></span><span>THIS WEEK&#39;S STORIES</span><span class="subpill">7</span></a>
+          <a href="#sec-leaders" data-go="leaders"><span class="sw" style="background:#7A5F14" aria-hidden="true"></span><span>WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="subpill">0</span></a>
+        </div>
+        <span class="subfade" aria-hidden="true"></span>
+      </div>
+      <button type="button" id="toggle-all">EXPAND ALL</button>
+    </nav>
+
+    
+<section id="sec-thread" class="news-sec s-thread" data-news-sec="thread" aria-labelledby="h-thread">
+  <h2 id="h-thread">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-thread">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THE WEEK IN ONE THREAD</span><span class="pill">7 signals</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">The tension today is between agents that can be trusted to close a loop and agents whose loop can be gamed.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-thread" class="sec-body" role="region" aria-labelledby="h-thread" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy">
+        <p class="thread-body">The tension today is between agents that can be trusted to close a loop and agents whose loop can be gamed. GitHub&#39;s agentic autofix ships generally available by reruning CodeQL to confirm a fix closes the alert before opening a PR — a verifier in the loop as the product. The weak-to-strong verifier hardening item says the quiet part: verifiers can be attacked into awarding full credit to cheating agents, and that breaks both evaluation and training. MAI-Gym and Terminal-RSI both push harder on verifier-driven RL — 20,000 parallel environment instances, reward schemes that split strict success from partial credit — which multiplies the surface the hardening paper is worried about. Meanwhile Amp and HydraFusion hand model choice to an orchestrator, and OpenAI reports agentic use is already a substantial share of ChatGPT Enterprise activity: the stack is being built on verification nobody has yet made attack-proof.</p>
+        <div class="signals">7 SIGNALS WORTH YOUR ATTENTION</div>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-stories" class="news-sec s-stories" data-news-sec="stories" aria-labelledby="h-stories">
+  <h2 id="h-stories">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-stories">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THIS WEEK&#39;S STORIES</span><span class="pill">7</span></span>
+        <span class="big big36">What happened this week</span>
+    
+        <span class="rule"></span>
+        <span class="preview">Lead: Scalable Weak-to-Strong Verifier Hardening for Agent Environments</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-stories" class="sec-body" role="region" aria-labelledby="h-stories" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy">
+        
+<article id="s01" class="story" aria-labelledby="h-s01">
+  <div class="story-meta">
+    <span class="num">01/</span>
+    <span class="tag tag-radar">RADAR</span>
+  </div>
+  <h3 id="h-s01">Scalable Weak-to-Strong Verifier Hardening for Agent Environments</h3><p class="connection">Read against GitHub&#39;s agentic autofix, which ships with CodeQL as its verifier: this is the failure mode that item&#39;s architecture inherits.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>You wire up 500 verified coding tasks for RL. If ten of them have a verifier that can be satisfied by writing to the expected output file directly, the policy finds those ten and generalizes the shortcut — your eval numbers go up and the capability does not.</p></div>
+  <div class="ninety"><div class="lab2">IN 90 SECONDS</div>
+    <table><tr><th scope="row">METHOD</th><td>Frames exploitable programmatic verifiers in agent environments as a repair problem, and argues the repair must scale as environments grow in number and difficulty.</td></tr><tr><th scope="row">RESULT</th><td>The stated stake, not a benchmark number: attacked verifiers award full credit to agents that never completed the intended task, producing both inaccurate evaluation and misalignment during training.</td></tr><tr><th scope="row">CAVEAT</th><td>The excerpt gives the framing and the threat model, not the hardening numbers. Treat it as a reason to audit your own reward functions, not as a method you can lift today.</td></tr></table>
+  </div>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.15924" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a> · Also: <a href="https://huggingface.co/papers/2610.15924" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face Papers (opens in a new tab)">Hugging Face Papers &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-3f492823-d77e-443a-aa43-117a37ab8d55">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="3f492823-d77e-443a-aa43-117a37ab8d55"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Scalable Weak-to-Strong Verifier Hardening for Agent Environments"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Scalable Weak-to-Strong Verifier Hardening for Agent Environments"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="3f492823-d77e-443a-aa43-117a37ab8d55"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s02" class="story" aria-labelledby="h-s02">
+  <div class="story-meta">
+    <span class="num">02/</span>
+    <span class="tag tag-radar">RADAR</span>
+  </div>
+  <h3 id="h-s02">MAI-Gym: An Open All-in-One Platform for GUI Agent Evaluation and RL Training across Mobile and Computer Environments</h3><p class="connection">The 20,000 parallel instances are exactly the scaling the verifier-hardening item warns about: more environments, more surface for a verifier to be gamed, and no human reading each rollout.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Ten benchmarks on one rollout pipeline means a GUI agent you evaluate is literally the same code path you train. If your eval and training rollouts diverge, you can&#39;t tell whether a regression came from the policy or the harness — that&#39;s the gap this closes.</p></div>
+  <div class="ninety"><div class="lab2">IN 90 SECONDS</div>
+    <table><tr><th scope="row">METHOD</th><td>MAI-Gym unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments behind a shared rollout pipeline, so agent behavior stays consistent between evaluation and training.</td></tr><tr><th scope="row">RESULT</th><td>Supports ten established benchmarks and scales to 20,000 parallel environment instances; it is released as an open all-in-one platform.</td></tr><tr><th scope="row">CAVEAT</th><td>The stated motivation is the high cost of interactive environments and scarcity of realistic training tasks — the platform addresses the first. The excerpt reports no trained-agent scores, so the capability claim is infrastructure, not results.</td></tr></table>
+  </div>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.20939" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a> · Also: <a href="https://huggingface.co/papers/2610.20939" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face Papers (opens in a new tab)">Hugging Face Papers &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-e737684d-1765-4327-9304-b31ccafefd54">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="e737684d-1765-4327-9304-b31ccafefd54"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: MAI-Gym: An Open All-in-One Platform for GUI Agent Evaluation and RL Training across Mobile and Computer Environments"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: MAI-Gym: An Open All-in-One Platform for GUI Agent Evaluation and RL Training across Mobile and Computer Environments"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="e737684d-1765-4327-9304-b31ccafefd54"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s03" class="story" aria-labelledby="h-s03">
+  <div class="story-meta">
+    <span class="num">03/</span>
+    <span class="tag tag-do-this">DO THIS</span>
+  </div>
+  <h3 id="h-s03">Agentic autofix for code scanning alerts general availability</h3><p class="why"><span class="lab">WHY IT MATTERS / </span>The shippable item today. Autofix explores files, proposes a fix, and reruns CodeQL to confirm the alert closes before opening a PR — the validation step is what makes it reviewable rather than noise. Tradeoff: the only thing proving the fix is the same static analyzer that raised the alert, so a change that silences CodeQL without fixing the bug still passes. It&#39;s gated to Code Security and Advanced Security customers on GitHub Enterprise Cloud.</p><p class="connection">This is the production version of the exact problem in the weak-to-strong verifier hardening item: CodeQL is the programmatic verifier, and that paper&#39;s claim is that verifiers can be attacked into awarding full credit without the intended task being done.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>An alert fires on an injection sink. The agent rewrites the call to route through a sanitizer CodeQL recognizes, reruns the query, sees the alert close, and opens a PR with the summary and validation steps. Your review is the only check on whether the sanitizer actually covers the payload shape the alert was about.</p></div>
+  <div class="srcs">
+    <span>Primary: <a href="https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability" target="_blank" rel="noopener noreferrer" aria-label="GitHub Changelog (opens in a new tab)">GitHub Changelog &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Agentic autofix for code scanning alerts general availability"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Agentic autofix for code scanning alerts general availability"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="d9a050a8-b29e-4ceb-ba5f-4e4148f7f6a2"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s04" class="story" aria-labelledby="h-s04">
+  <div class="story-meta">
+    <span class="num">04/</span>
+    <span class="tag tag-radar">RADAR</span>
+  </div>
+  <h3 id="h-s04">Terminal-RSI: Recursive Self-Improving Terminal Agents via Recursive Self-Rewrite and Policy-Refine</h3><p class="connection">Shares a premise with the weak-to-strong verifier item — both start from the problem of turning verifier outcomes into trustworthy signal — but moves in the opposite direction: Terminal-RSI makes the reward richer, which gives a weak verifier more ways to be wrong.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>A terminal agent that gets 7 of 9 setup steps right currently scores the same as one that got 0. SPR&#39;s split between strict success and bounded partial credit is what lets the gradient see that difference — and bounding the partial credit is what stops the policy from farming step 1 forever.</p></div>
+  <div class="ninety"><div class="lab2">IN 90 SECONDS</div>
+    <table><tr><th scope="row">METHOD</th><td>Alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine. Credit assignment uses Turn-Boundary Skip-Observation GAE, keeping token-specific baselines while decaying across interaction turns. Family Dense Reward calibrates semantic progress across task families; Success-Prioritized Reward separates strict success from bounded partial credit.</td></tr><tr><th scope="row">RESULT</th><td>The contribution is the machinery for converting verifier outcomes into policy updates and partial progress into complete task resolution — four named components, stated as the crux for terminal agents.</td></tr><tr><th scope="row">CAVEAT</th><td>The excerpt is all method, no numbers — no benchmark, no baseline, no ablation. Four interacting reward and credit-assignment tricks with no ablation is a lot of knobs to attribute any gain to.</td></tr></table>
+  </div>
+  <div class="srcs">
+    <span>Primary: <a href="https://arxiv.org/abs/2610.22192" target="_blank" rel="noopener noreferrer" aria-label="arXiv (opens in a new tab)">arXiv &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-7e6815bf-fa86-4684-af6c-cbcbf43e955b">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="7e6815bf-fa86-4684-af6c-cbcbf43e955b"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Terminal-RSI: Recursive Self-Improving Terminal Agents via Recursive Self-Rewrite and Policy-Refine"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Terminal-RSI: Recursive Self-Improving Terminal Agents via Recursive Self-Rewrite and Policy-Refine"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="7e6815bf-fa86-4684-af6c-cbcbf43e955b"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s05" class="story" aria-labelledby="h-s05">
+  <div class="story-meta">
+    <span class="num">05/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s05">Amp puts AI agents to work beyond code with OpenAI models</h3><p class="why"><span class="lab">WHY IT MATTERS / </span>Harness-level model selection again: Amp chooses and recommends models based on what works for its users, and OpenAI models account for the majority of tokens used. The reason given is transparency — when safeguards are applied, users know — which is a procurement argument, not a capability one.</p><p class="connection">Mirror of HydraFusion: both put the harness in charge of model choice, but Amp concentrates on one vendor&#39;s models while HydraFusion blends a pool into a single response.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://openai.com/index/amp-beyond-coding" target="_blank" rel="noopener noreferrer" aria-label="OpenAI (opens in a new tab)">OpenAI &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-ab5c373b-fe19-466e-96cc-56ddf145f28b">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="ab5c373b-fe19-466e-96cc-56ddf145f28b"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Amp puts AI agents to work beyond code with OpenAI models"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Amp puts AI agents to work beyond code with OpenAI models"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="ab5c373b-fe19-466e-96cc-56ddf145f28b"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s06" class="story" aria-labelledby="h-s06">
+  <div class="story-meta">
+    <span class="num">06/</span>
+    <span class="tag tag-do-this">DO THIS</span>
+  </div>
+  <h3 id="h-s06">HydraFusion updates and new Max option</h3><p class="why"><span class="lab">WHY IT MATTERS / </span>Model routing is becoming a product layer, not a config line: HydraFusion orchestrates multiple models into a single response so you don&#39;t pick a model per task, and Max is the same architecture tuned for frontier capability on harder tasks. The tradeoff is attribution — when one response comes from several models, a bad answer has no single model to blame or swap. Still research preview, across VS Code, the Copilot app, and Copilot CLI.</p><p class="connection">Same bet as Amp, which also chooses and recommends models on the user&#39;s behalf — two harnesses deciding the reader&#39;s model selection is no longer the reader&#39;s decision.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>You hit a refactor that fails twice. With a single named model you downgrade or switch and retry. With HydraFusion the only lever is Max versus standard — the orchestration that picked the contributing models is not yours to tune.</p></div>
+  <div class="srcs">
+    <span>Primary: <a href="https://github.blog/changelog/2026-10-14-hydrafusion-updates-and-new-max-option" target="_blank" rel="noopener noreferrer" aria-label="GitHub Changelog (opens in a new tab)">GitHub Changelog &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-9740bc5b-fc8e-4095-8e3a-f984447f0301">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="9740bc5b-fc8e-4095-8e3a-f984447f0301"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: HydraFusion updates and new Max option"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: HydraFusion updates and new Max option"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="9740bc5b-fc8e-4095-8e3a-f984447f0301"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s07" class="story" aria-labelledby="h-s07">
+  <div class="story-meta">
+    <span class="num">07/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s07">The EU’s next chapter in AI is agentic</h3><p class="why"><span class="lab">WHY IT MATTERS / </span>Demand-side confirmation: OpenAI&#39;s economic research reports that among ChatGPT Enterprise customers, agentic use is already a substantial share of activity, with users moving from asking questions to running tasks from planning through completion. The caveat is the source — this is a vendor measuring its own product&#39;s usage, so read it as a direction, not a market size.</p><p class="connection">The commercial pull behind today&#39;s research items: MAI-Gym and Terminal-RSI are both building the training infrastructure for exactly the plan-through-completion behavior this report says enterprises already rely on.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://openai.com/index/the-eus-next-chapter-in-ai-is-agentic" target="_blank" rel="noopener noreferrer" aria-label="OpenAI (opens in a new tab)">OpenAI &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-c240e0a1-dd53-4d31-924f-b0e2a0713e8a">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="c240e0a1-dd53-4d31-924f-b0e2a0713e8a"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: The EU’s next chapter in AI is agentic"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: The EU’s next chapter in AI is agentic"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="2026-W40"><input type="hidden" name="item" value="c240e0a1-dd53-4d31-924f-b0e2a0713e8a"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-leaders" class="news-sec s-leaders" data-news-sec="leaders" aria-labelledby="h-leaders">
+  <h2 id="h-leaders">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-leaders">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="pill">0</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">Nothing quotable surfaced this week.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-leaders" class="sec-body" role="region" aria-labelledby="h-leaders" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <p class="empty">Nothing quotable surfaced this week.</p>
+    
+  </div></div></div>
+</section>
+  </section>
+
+  <section role="tabpanel" id="panel-archive" aria-labelledby="tab-archive" tabindex="0" class="archive" hidden>
+    <h2>PAST EDITIONS &middot; NEWEST FIRST</h2>
+    
+    <ul>
+      <li>
+        <span class="el">ED 02</span>
+        <span class="et"><span class="t1">Three GitHub changes moved model choice, autofix and deprecation into admin policy. <span>Three papers spent their compute on verifiers, environments and rewards.</span></span><span class="t2">OCT-12-2026 TO OCT-20-2026 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest?week=1999-W20">READ &#8599;</a>
+      </li>
+      <li>
+        <span class="el">ED 01</span>
+        <span class="et"><span class="t1">The tension today is between agents that can be trusted to close a loop and agents whose loop can be gamed.</span><span class="t2">OCT-10-2026 TO OCT-18-2026 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest?week=2026-W40">READ &#8599;</a>
+      </li>
+      <li>
+        <span class="el">SAMPLE</span>
+        <span class="et"><span class="t1">Capability spread out. <span>Capital concentrated.</span></span><span class="t2">Sample edition · week ending 2026-08-04 &middot; 7 STORIES</span></span>
+        <a class="rd" href="/weekly-digest/sample-2026-08-04">READ &#8599;</a>
+      </li>
+    </ul>
+  </section>
+</main>
+</div>
+<script src="/static/site.js" defer></script>
+<script src="/static/digest.js" defer></script>
+</body>
+</html>
