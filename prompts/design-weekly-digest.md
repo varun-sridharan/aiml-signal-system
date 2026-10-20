@@ -36,7 +36,9 @@ and a week with 11 both look right.
 1. **The edition bar** (top right, monospace): `EDITION 09 · OCT-17-2026 TO OCT-23-2026`, and on the
    left a small "Weekly Digest" wordmark.
 2. **Primary tabs:** `NEWS` · `PREDICTION (live/limit)` · `HOMEWORK (n)` · `ARCHIVE`. Each count sits
-   in a small outlined pill.
+   in a small outlined pill. **A tab whose section is not built yet is not rendered at all**, so no
+   "coming soon" badges. Design all four, and show in one small extra frame what the bar looks like
+   with only NEWS and ARCHIVE.
 3. Under NEWS, **sub-tabs** with counts: `THE WEEK IN ONE THREAD` · `LEARNING FOR THE WEEK` ·
    `THIS WEEK'S STORIES · 8` · `WHAT ARE INDUSTRY LEADERS TALKING? · 5`. A sub-tab bar that sticks to
    the top while scrolling.
@@ -69,7 +71,11 @@ The essay: what the stories mean together, which none of them says alone.
 
 ## NEWS · This Week's Stories
 
-Numbered tiles in one column, in the register of a good weekly newsletter.
+Numbered tiles in one column, in the register of a good weekly newsletter. **Depth is hybrid: 8–10
+short tiles, of which the top one or two are FEATURES.** A feature has the same header but a longer
+body (300–500 words that build from the news to how it works, then the twist the headline number
+hides), and it may show two named experts' views side by side. A feature is visibly larger, but it is
+still one numbered tile in the same list.
 
 - **Each tile:**
   - a large monospace number (`01/`);
@@ -165,7 +171,7 @@ predictions also appear here, each with its reason.
 ## What to deliver
 
 1. The page, filled with **realistic sample content** for every slot (an obvious "SAMPLE" chip at the
-   top). Use 8 stories, 2 theme dividers, 5 leader tiles including one disagreement pair, 3
+   top). Use 9 stories (the first one a feature), 2 theme dividers, 5 leader tiles including one disagreement pair, 3
    predictions with 1 scored miss, and 1 homework exercise.
 2. **A slot list:** every repeatable block and field, with its name, type, whether it is optional, and
    its empty state, so the pipeline can be built to fill exactly these slots.

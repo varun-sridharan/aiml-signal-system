@@ -3,7 +3,7 @@ title: Plan & Progress
 kicker: AI/ML Signal · build plan
 lede: One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.
 footer: Plan · the live milestone and the archive of completed work for `aiml-signal-system`. Public-safe.
-updated: 2026-10-18
+updated: 2026-10-19
 ---
 
 <!--
@@ -54,6 +54,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 **Nine of fifteen activities are done.** The five carried in from before the pivot, the shared plumbing, the Railway config move, the storage layer, and now the Weekly Digest surface, which renders a real edition. **The whole pipeline has run end to end** on the live web: Reader to Framer to gates to publish, with a resume proven by the ledger (no fetch after the Reader finished) and seven stories live, but it took three tries, and the gates blocked the first two for reasons worth keeping. **Three rows are open for decisions, not for code:** Reader needs the 91-domain list the plan cites or a decision to proceed without it, the canonicalisation gate needs Varun's review, and the Framer's faithfulness gate still misses the planted fabrication in `negative-01`. **Then go-live, the style row and the story video**, all Varun's. **The remaining estimate is 1 to 3 sessions**, and the risk has moved from canonicalisation to the grader: a zero-tolerance gate over real prose will block some weeks, and a gate that misses a plant is the opposite failure.
 
 # Decision log
+
+### 2026-10-19 · The digest takes one template, hybrid depth, and shows only what is built
+
+Varun chose the shape of the Weekly Digest from the scheduled digest's own page and the Gen Academy newsletter: a thread that ties the week together comes first, then numbered story tiles with a two-level tag and a "why it matters" line, then a closing thread. Depth is hybrid: eight to ten short tiles, with the top one or two written as longer features. Industry leaders and predictions are M2's agent and homework is M3's, so their tabs are designed now but not rendered until those agents exist, which keeps the rule against half-built surfaces. The template is designed once in Claude Design from `prompts/design-weekly-digest.md`, and is built only after Varun signs it off. The source catalogue the old digest keeps in project memory is now copied to `config/digest-sources.md`; it is the 91-domain list the plan referred to.
 
 ### 2026-10-18 · The first real run was stopped twice by the gates, and both times they were right
 
