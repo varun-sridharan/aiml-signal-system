@@ -41,6 +41,19 @@ class View(unittest.TestCase):
         self.assertEqual([label for label, _ in istar["ninety"]], ["Method", "Result", "Caveat"])
         self.assertTrue(all(i["sources"] for i in v["learning"] + v["stories"]))
 
+    def test_the_edition_is_labelled_by_its_window_never_by_the_run_key(self):
+        body = json.loads(json.dumps(GOLDEN))
+        body["window"] = {"from": "2026-10-10T05:00:00+00:00", "to": "2026-10-18T05:00:00+00:00", "label": "Oct 10 \u2013 Oct 18, 2026"}
+        self.assertEqual(digest.view(WEEK, body)["label"], "Oct 10 \u2013 Oct 18, 2026")
+        for bad in ({"label": ""}, {"label": 5}, {"label": "x" * 100}, "text", None):      # a bad stored window falls back
+            body["window"] = bad
+            self.assertEqual(digest.view(WEEK, body, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))["label"],
+                             "Oct 10 \u2013 Oct 18, 2026", msg=repr(bad))
+        old = {k: v for k, v in GOLDEN.items() if k != "window"}                              # an older brief carries none: derived from publish date
+        self.assertEqual(digest.view("2026-W40", old, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))["label"],
+                         "Oct 10 \u2013 Oct 18, 2026")
+        self.assertIsNone(digest.view(WEEK, old)["label"])                                     # nothing to derive from
+
     def test_unsafe_links_are_not_links(self):
         body = json.loads(json.dumps(GOLDEN))
         body["items"][0]["sources"] = [{"label": "x", "url": "javascript:alert(1)", "tier": "primary"},
@@ -156,6 +169,13 @@ class Routes(unittest.TestCase):
             self.assertIn(needle, r.text, needle)
         self.assertEqual(r.text.count('action="/weekly-digest/vote"'), 2 * len(GOLDEN["items"]))   # an up form and a down form each
         self.assertLess(r.text.index(">Method<"), r.text.index(">Caveat<"))   # reading order survives jsonb
+
+    def test_d2b_the_page_shows_the_window_not_the_week_key(self):
+        self.publish({**GOLDEN, "window": {"label": "Oct 10 \u2013 Oct 18, 2026"}})
+        text = self.client.get(f"/weekly-digest?week={WEEK}").text
+        kicker = text[text.index('class="kicker"'):][:300]
+        self.assertIn("Oct 10 \u2013 Oct 18, 2026", kicker)
+        self.assertNotIn(WEEK, kicker)
 
     def test_d3_the_header_links_to_the_page_and_the_old_url_redirects(self):
         self.assertIn('href="/weekly-digest"', self.client.get("/plan").text)

@@ -113,7 +113,7 @@
 {{ site_header("Weekly Digest") }}
 <main>
 <article class="page">
-  <div class="kicker">AI/ML Signal &middot; {% if digest %}week {{ digest.week }}{% if digest.published_at %} &middot; published {{ digest.published_at.strftime('%b %d, %Y') }}{% endif %}{% else %}weekly{% endif %}</div>
+  <div class="kicker">AI/ML Signal &middot; {% if digest %}{{ digest.label or digest.week }}{% if digest.published_at %} &middot; published {{ digest.published_at.strftime('%b %d, %Y') }}{% endif %}{% else %}weekly{% endif %}</div>
   <h1>Weekly Digest</h1>
 
   {%- if notice and not notice_item %}<div class="notice {{ 'good' if notice.good else '' }}" role="status">{{ notice.text }}</div>{% endif %}
@@ -149,7 +149,7 @@
   {%- endif %}
 
   {%- if weeks and weeks | length > 1 %}
-  <p class="weeks">Earlier editions: {% for w in weeks %}{% if not digest or w != digest.week %}<a href="/weekly-digest?week={{ w }}">{{ w }}</a>{% endif %}{% endfor %}</p>
+  <p class="weeks">Earlier editions: {% for w in weeks %}{% if not digest or w.id != digest.week %}<a href="/weekly-digest?week={{ w.id }}">{{ w.label }}</a>{% endif %}{% endfor %}</p>
   {%- endif %}
 </article>
 </main>

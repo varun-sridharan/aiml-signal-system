@@ -67,6 +67,22 @@ MAX_FETCHES_PER_DOMAIN = 4
 # fetches answered 'too_many_requests'; spacing them is cheaper than retrying them.
 FETCH_PAUSE_SECONDS = 3.0
 WINDOW = timedelta(days=8)  # a weekly run looks back a week plus a day of slack
+
+
+def window_label(start: datetime, end: datetime) -> str:
+    """'Oct 10 – Oct 18, 2026': the dates an edition covers, the way a reader would say them.
+
+    An edition is named by what its Reader actually looked at, never by the week key of the
+    run that made it. A window that crosses a year names both years.
+    """
+    first, last = f"{start:%b} {start.day}", f"{end:%b} {end.day}, {end.year}"
+    return f"{first}, {start.year} \u2013 {last}" if start.year != end.year else f"{first} \u2013 {last}"
+
+
+def window_of(now: datetime) -> dict:
+    """The Reader's window as the stage output records it (ISO times and the label)."""
+    start = now - WINDOW
+    return {"from": start.isoformat(), "to": now.isoformat(), "label": window_label(start, now)}
 FEED_TIMEOUT = 20
 FEED_MAX_BYTES = 3_000_000
 USER_AGENT = "aiml-signal-system/1.0 (feed reader; personal project)"
@@ -453,6 +469,7 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
         "items": [str(i) for i, _ in fetched],
         "excerpts": [str(e) for _, e in fetched],
         "stats": stats.as_dict(),
+        "window": window_of(now),
     }
 
 

@@ -112,6 +112,17 @@ class Parsing(unittest.TestCase):
         self.assertFalse(reader.same_story("New model released", "New model released today"))  # too few distinctive words
 
 
+class WindowLabel(unittest.TestCase):
+    def test_the_label_names_the_dates_the_reader_read(self):
+        end = datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc)
+        self.assertEqual(reader.window_label(end - reader.WINDOW, end), "Oct 10 \u2013 Oct 18, 2026")
+        self.assertEqual(reader.window_label(datetime(2026, 12, 28, tzinfo=timezone.utc), datetime(2027, 1, 5, tzinfo=timezone.utc)),
+                         "Dec 28, 2026 \u2013 Jan 5, 2027")
+        got = reader.window_of(end)
+        self.assertEqual((got["from"], got["to"]), ((end - reader.WINDOW).isoformat(), end.isoformat()))
+        self.assertEqual(got["label"], "Oct 10 \u2013 Oct 18, 2026")
+
+
 class FetchResult(unittest.TestCase):
     def test_text_error_and_pdf(self):
         self.assertEqual(reader.extract_fetch_result(fetch_result_message("hello")), ("hello", None))

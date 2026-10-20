@@ -1,0 +1,17 @@
+F.......................................................weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+...............................................
+======================================================================
+FAIL: test_attempt_ids (tests.test_runs.RunIds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_runs.py", line 50, in test_attempt_ids
+    runs.parse_run_id(bad)
+AssertionError: RunRefused not raised : '2026-W43\n'
+
+----------------------------------------------------------------------
+Ran 105 tests in 401.300s
+
+FAILED (failures=1)

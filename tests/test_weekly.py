@@ -380,6 +380,99 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         self.assertRegex(lines[1], r"reader\s+attempt 1\s+done")
         self.assertRegex(lines[2], r"framer\s+attempt 1\s+failed.*model returned no text")
 
+    def fail_gates_once(self):
+        bad = clean_verdict()
+        bad["unsupported_claims"] = ["Revenue doubled in the quarter."]
+
+        def check(client, raw_day, framing, *, user_id, phase):
+            return {i["id"]: bad for i in raw_day["items"]}, clean_verdict(), SimpleUsage()
+        with unittest.mock.patch.object(framer, "check_faithfulness", check):
+            with self.assertRaises(weekly.GateFailed):
+                self.run_week()
+
+    def test_w18_a_failed_week_is_reframed_as_a_new_attempt_that_reuses_the_reader(self):
+        self.fail_gates_once()
+        fetched, framed = len(self.client.requests), len(self.framer_calls)
+        second = f"{WEEK}-r2"
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), second)
+        out = weekly.run_week(self.conn, self.client, NOW, second, reuse_reader=WEEK)
+        self.assertEqual(len(self.client.requests), fetched)                         # nothing fetched again
+        self.assertEqual(out["reader"]["reused_from"], WEEK)
+        self.assertEqual(len(self.framer_calls), framed + 1)                         # the Framer ran again
+        self.assertEqual(self.framer_calls[0]["items"], self.framer_calls[-1]["items"])   # on the same evidence
+        brief_id, body, _ = briefs.get(self.conn, WEEK)                               # stored under the bare week...
+        self.assertEqual(brief_id, WEEK)
+        self.assertEqual(self.conn.execute("SELECT run_id FROM briefs WHERE id = %s", (WEEK,)).fetchone()[0], second)   # ...made by attempt 2
+        self.assertEqual(self.conn.execute("SELECT status FROM runs WHERE id = %s", (WEEK,)).fetchone()[0], "running")   # attempt 1 stays as evidence
+        self.assertEqual(self.conn.execute("SELECT count(*) FROM excerpt_citations WHERE brief_id = %s", (WEEK,)).fetchone()[0], len(body["items"]))
+        lines = weekly.status(self.conn, second)                                      # asking about either attempt shows both
+        self.assertEqual(lines, weekly.status(self.conn, WEEK))
+        self.assertIn(f"{WEEK}: run running (superseded by {second})", lines)
+        self.assertIn(f"{second}: run done (published the edition)", lines)
+        self.assertTrue(any("gates" in l and "failed" in l for l in lines))
+        self.assertTrue(any("reader" in l and f"reused from {WEEK}" in l for l in lines))
+
+    def test_w19_a_week_publishes_one_edition_and_a_second_attempt_is_refused_before_it_spends(self):
+        self.run_week()
+        framed, checked, fetched = len(self.framer_calls), len(self.check_calls), len(self.client.requests)
+        second = f"{WEEK}-r2"
+        with self.assertRaises(weekly.AlreadyPublished):
+            weekly.run_week(self.conn, self.client, NOW, second)
+        self.assertEqual((len(self.framer_calls), len(self.check_calls), len(self.client.requests)), (framed, checked, fetched))
+        self.assertEqual(runs.attempts(self.conn, WEEK), [WEEK])                      # not even a run row was opened
+        # ...and if it got that far, the database refuses: one edition per week, made by that week's own attempt.
+        day = briefs.get(self.conn, WEEK)[1]
+        runs.open_run(self.conn, second, NOW)
+        with self.assertRaises(Exception):
+            with self.conn.transaction():
+                self.conn.execute("INSERT INTO briefs (id, run_id, body, published_at) VALUES (%s, %s, %s, %s)",
+                                  (WEEK, second, '{}', NOW))
+        runs.open_run(self.conn, "1999-W11", NOW)
+        with self.assertRaises(Exception) as wrong_week:
+            with self.conn.transaction():
+                self.conn.execute("INSERT INTO briefs (id, run_id, body, published_at) VALUES (%s, %s, %s, %s)",
+                                  ("1999-W12", "1999-W11", '{}', NOW))
+        self.assertIn("briefs_run_is_this_week", str(wrong_week.exception))
+        self.assertIsNotNone(day)
+
+    def test_w20_the_edition_is_labelled_by_the_window_its_reader_read(self):
+        self.run_week()
+        window = runs.stage_output(self.conn, WEEK, "reader")["window"]
+        self.assertEqual(window["label"], "Oct 10 \u2013 Oct 18, 2026")            # NOW minus the Reader's eight days
+        body = briefs.get(self.conn, WEEK)[1]
+        self.assertEqual(body["window"], window)
+        from agents import digest
+        self.assertEqual(digest.view(WEEK, body)["label"], "Oct 10 \u2013 Oct 18, 2026")
+
+    def test_w21_a_bare_week_resumes_and_a_new_attempt_takes_the_next_number(self):
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK), WEEK)
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), WEEK)    # nothing to supersede yet
+        self.run_week(stop_after="reader")
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK), WEEK)
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), f"{WEEK}-r2")
+        runs.open_run(self.conn, f"{WEEK}-r2", NOW)
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")             # resume the latest
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), f"{WEEK}-r3")
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")
+        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")
+        self.assertEqual(weekly.resolve_run(self.conn, f"{WEEK}-r2"), f"{WEEK}-r2")     # an attempt named outright
+        with self.assertRaises(runs.RunRefused):
+            weekly.resolve_run(self.conn, "not-a-week")
+
+    def test_w22_reuse_reader_is_only_for_a_fresh_attempt(self):
+        self.run_week(stop_after="reader")
+        with self.assertRaises(runs.RunRefused):                                      # this attempt's Reader is already done
+            weekly.run_week(self.conn, self.client, NOW, WEEK, reuse_reader=WEEK)
+        with self.assertRaises(runs.RunRefused):                                      # nothing finished to reuse
+            weekly.run_week(self.conn, self.client, NOW, f"{WEEK}-r2", reuse_reader="1999-W10-r9")
+        self.assertEqual(runs.attempts(self.conn, WEEK), [WEEK])                      # the refused attempt left no empty run behind
+
+    def test_w23_a_named_attempt_must_exist_or_be_exactly_next(self):
+        runs.open_run(self.conn, WEEK, NOW)
+        with self.assertRaisesRegex(runs.RunRefused, "gap"):
+            weekly.resolve_run(self.conn, f"{WEEK}-r5")
+        self.assertEqual(weekly.resolve_run(self.conn, f"{WEEK}-r2"), f"{WEEK}-r2")       # exactly the next
+
     def test_w6_a_finished_week_does_nothing_when_run_again(self):
         self.run_week()
         asked, framed, checked = len(self.client.requests), len(self.framer_calls), len(self.check_calls)

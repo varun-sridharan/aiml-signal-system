@@ -3,7 +3,7 @@ title: Plan & Progress
 kicker: AI/ML Signal · build plan
 lede: One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.
 footer: Plan · the live milestone and the archive of completed work for `aiml-signal-system`. Public-safe.
-updated: 2026-10-19
+updated: 2026-10-20
 ---
 
 <!--
@@ -54,6 +54,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 **Nine of fifteen activities are done.** The five carried in from before the pivot, the shared plumbing, the Railway config move, the storage layer, and now the Weekly Digest surface, which renders a real edition. **The whole pipeline has run end to end** on the live web: Reader to Framer to gates to publish, with a resume proven by the ledger (no fetch after the Reader finished) and seven stories live, but it took three tries, and the gates blocked the first two for reasons worth keeping. **Three rows are open for decisions, not for code:** Reader needs the 91-domain list the plan cites or a decision to proceed without it, the canonicalisation gate needs Varun's review, and the Framer's faithfulness gate still misses the planted fabrication in `negative-01`. **Then go-live, the style row and the story video**, all Varun's. **The remaining estimate is 1 to 3 sessions**, and the risk has moved from canonicalisation to the grader: a zero-tolerance gate over real prose will block some weeks, and a gate that misses a plant is the opposite failure.
 
 # Decision log
+
+### 2026-10-20 · A failed week is reframed as a numbered attempt, and an edition is named by what its Reader read
+
+A finished stage can never be redone, so a week whose gates failed used to be unrecoverable under its own key, and run 1 published under an older key to get round it. A week now takes numbered attempts (`2026-W43`, then `-r2`, `-r3`), a new one starts at the Reader, and `--reuse-reader` adopts an earlier attempt's finished Reader output so a reframe fetches nothing. The edition is still stored under the bare week, which the database limits to one brief, and a second attempt at a published week is refused before it spends. The page now labels an edition by the dates its Reader read, stored with the brief, or for the append-only W40 brief derived from its publish date, and never by the run key. Failed attempts stay as evidence and the status view marks the ones a later attempt superseded.
 
 ### 2026-10-19 · The digest takes one template, hybrid depth, and shows only what is built
 

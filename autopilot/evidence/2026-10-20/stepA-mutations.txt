@@ -1,0 +1,146 @@
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if held is not None and held[0] != run_id:","    if False:");open(p,"w").write(s)  (agents/weekly.py)
+F
+======================================================================
+FAIL: test_w19_a_week_publishes_one_edition_and_a_second_attempt_is_refused_before_it_spends (tests.test_weekly.WeeklyRun)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_weekly.py", line 420, in test_w19_a_week_publishes_one_edition_and_a_second_attempt_is_refused_before_it_spends
+    weekly.run_week(self.conn, self.client, NOW, second)
+AssertionError: AlreadyPublished not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 19.883s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("            day[\"window\"] = window","            pass");open(p,"w").write(s)  (agents/weekly.py)
+E
+======================================================================
+ERROR: test_w20_the_edition_is_labelled_by_the_window_its_reader_read (tests.test_weekly.WeeklyRun)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_weekly.py", line 443, in test_w20_the_edition_is_labelled_by_the_window_its_reader_read
+    self.assertEqual(body["window"], window)
+KeyError: 'window'
+
+----------------------------------------------------------------------
+Ran 1 test in 11.062s
+
+FAILED (errors=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    output[\"reused_from\"] = from_run\n","");open(p,"w").write(s)  (agents/runs.py)
+E
+======================================================================
+ERROR: test_a3_a_new_attempt_adopts_the_readers_output_without_a_second_read (tests.test_runs.Runs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_runs.py", line 271, in test_a3_a_new_attempt_adopts_the_readers_output_without_a_second_read
+    self.assertEqual(got["reused_from"], RUN)
+KeyError: 'reused_from'
+
+----------------------------------------------------------------------
+Ran 1 test in 1.508s
+
+FAILED (errors=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if published_at is not None:\n        return reader.window_label","    if False:\n        return reader.window_label");open(p,"w").write(s)  (agents/digest.py)
+..F....
+======================================================================
+FAIL: test_the_edition_is_labelled_by_its_window_never_by_the_run_key (tests.test_digest.View)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_digest.py", line 50, in test_the_edition_is_labelled_by_its_window_never_by_the_run_key
+    self.assertEqual(digest.view(WEEK, body, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))["label"],
+AssertionError: None != 'Oct 10 – Oct 18, 2026' : {'label': ''}
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.009s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if base_week(run_id) != base_week(from_run):","    if False:");open(p,"w").write(s)  (agents/runs.py)
+F
+======================================================================
+FAIL: test_a4_adoption_refuses_what_it_should (tests.test_runs.Runs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_runs.py", line 288, in test_a4_adoption_refuses_what_it_should
+    runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", "1999-W02", NOW)
+AssertionError: RunRefused not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 1.905s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if from_run == run_id:","    if False:");open(p,"w").write(s)  (agents/runs.py)
+F
+======================================================================
+FAIL: test_a4_adoption_refuses_what_it_should (tests.test_runs.Runs)
+----------------------------------------------------------------------
+agents.runs.RunRefused: run 1999-W01 stage reader is already done; load stage_output() instead
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_runs.py", line 290, in test_a4_adoption_refuses_what_it_should
+    runs.adopt_stage(self.conn, RUN, "reader", RUN, NOW)
+AssertionError: "its own stage" does not match "run 1999-W01 stage reader is already done; load stage_output() instead"
+
+----------------------------------------------------------------------
+Ran 1 test in 1.777s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("[2-9]|[1-9][0-9]+","[0-9]+");open(p,"w").write(s)  (agents/runs.py)
+F
+======================================================================
+FAIL: test_attempt_ids (tests.test_runs.RunIds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_runs.py", line 50, in test_attempt_ids
+    runs.parse_run_id(bad)
+AssertionError: RunRefused not raised : '2026-W43-r1'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if reuse_reader:                                     # validated","    if False:                                     # validated");open(p,"w").write(s)  (agents/weekly.py)
+F
+======================================================================
+FAIL: test_w22_reuse_reader_is_only_for_a_fresh_attempt (tests.test_weekly.WeeklyRun)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_weekly.py", line 468, in test_w22_reuse_reader_is_only_for_a_fresh_attempt
+    self.assertEqual(runs.attempts(self.conn, WEEK), [WEEK])                      # the refused attempt left no empty run behind
+AssertionError: Lists differ: ['1999-W10', '1999-W10-r2'] != ['1999-W10']
+
+First list contains 1 additional elements.
+First extra element 1:
+'1999-W10-r2'
+
+- ['1999-W10', '1999-W10-r2']
++ ['1999-W10']
+
+----------------------------------------------------------------------
+Ran 1 test in 7.949s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("else f\"superseded by {ids[n + 1]}\" if n + 1 < len(ids) else \"\")","else \"\")");open(p,"w").write(s)  (agents/weekly.py)
+F
+======================================================================
+FAIL: test_w18_a_failed_week_is_reframed_as_a_new_attempt_that_reuses_the_reader (tests.test_weekly.WeeklyRun)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_weekly.py", line 410, in test_w18_a_failed_week_is_reframed_as_a_new_attempt_that_reuses_the_reader
+    self.assertIn(f"{WEEK}: run running (superseded by {second})", lines)
+AssertionError: '1999-W10: run running (superseded by 1999-W10-r2)' not found in ['1999-W10: run running', '  reader   attempt 1  done        0s  ', '  framer   attempt 1  done        0s  ', '  gates    attempt 1  failed      0s  GateFailed: 2 hard-gate failure(s): 88cef449-f7d9-4c59-b5fb-819b82ffd9da: unsupported — Re', '1999-W10-r2: run done (published the edition)', '  reader   attempt 1  done        0s  reused from 1999-W10', '  framer   attempt 1  done        0s  ', '  gates    attempt 1  done        0s  ', '  publish  attempt 1  done        0s  ']
+
+----------------------------------------------------------------------
+Ran 1 test in 12.737s
+
+FAILED (failures=1)
+exit=1

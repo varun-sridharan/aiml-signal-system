@@ -38,6 +38,18 @@ READER_OUT = {"items": ["item-01", "item-02"], "excerpts": ["6f1c0e6e-0b4e-4b0e-
 DISABLED = os.environ.get("RUNS_TEST_DISABLE_TRIGGER", "").strip()
 
 
+class RunIds(unittest.TestCase):
+    def test_attempt_ids(self):
+        self.assertEqual(runs.parse_run_id("2026-W43"), ("2026-W43", 1))
+        self.assertEqual(runs.parse_run_id("2026-W43-r2"), ("2026-W43", 2))
+        self.assertEqual(runs.parse_run_id("2026-W43-r12"), ("2026-W43", 12))
+        self.assertEqual(runs.base_week("2026-W43-r3"), "2026-W43")
+        self.assertEqual((runs.attempt_id("2026-W43", 1), runs.attempt_id("2026-W43", 2)), ("2026-W43", "2026-W43-r2"))
+        for bad in ("2026-W43-r1", "2026-W43-r0", "2026-W43-r07", "2026-W43-r\u0662", "2026-W43-r", "2026-W43-x2", "2026-43", "2026-W43-r2-r3", " 2026-W43", "2026-W43\n"):
+            with self.assertRaises(runs.RunRefused, msg=repr(bad)):
+                runs.parse_run_id(bad)
+
+
 @needs_db
 class Runs(unittest.TestCase):
     def setUp(self):
@@ -231,6 +243,54 @@ class Runs(unittest.TestCase):
         self.assertRefusedByDatabase("UPDATE runs SET status = 'running' WHERE id = %s", (RUN,))
         self.conn.execute("UPDATE runs SET status = 'done', finished_at = %s WHERE id = %s", (NOW, RUN))  # allowed
         self.assertEqual(runs.open_run(self.conn, RUN, NOW).status, "done")
+
+    # attempts ---------------------------------------------------------------------
+    def test_a1_a_week_takes_numbered_attempts(self):
+        self.assertEqual(runs.attempts(self.conn, RUN), [])
+        self.assertEqual(runs.next_attempt_id(self.conn, RUN), RUN)
+        runs.open_run(self.conn, RUN, NOW)
+        self.assertEqual(runs.next_attempt_id(self.conn, RUN), f"{RUN}-r2")
+        runs.open_run(self.conn, f"{RUN}-r2", NOW)
+        runs.open_run(self.conn, f"{RUN}-r3", NOW)
+        self.assertEqual(runs.attempts(self.conn, RUN), [RUN, f"{RUN}-r2", f"{RUN}-r3"])
+        self.assertEqual(runs.next_attempt_id(self.conn, RUN), f"{RUN}-r4")
+        self.assertEqual(runs.attempts(self.conn, "1999-W02"), [])          # another week's attempts are not this week's
+        runs.open_run(self.conn, f"{RUN}-r5", NOW)                             # a gap: the next number follows the highest, not the count
+        self.assertEqual(runs.next_attempt_id(self.conn, RUN), f"{RUN}-r6")
+
+    def test_a2_the_database_refuses_a_malformed_run_id(self):
+        for bad in ("1999-W01-r", "1999-W01-x2", "1999-W01-r2-r3", "99-W01", "1999-W01 ", "1999-W01-r1", "1999-W01-r0", "1999-W01-r07"):
+            self.assertRefusedByDatabase("INSERT INTO runs (id, started_at, status) VALUES (%s, %s, 'running')", (bad, NOW),
+                                         psycopg.errors.CheckViolation)
+        runs.open_run(self.conn, f"{RUN}-r2", NOW)                              # the wider form is accepted
+
+    def test_a3_a_new_attempt_adopts_the_readers_output_without_a_second_read(self):
+        runs.open_run(self.conn, RUN, NOW)
+        self.complete("reader", {**READER_OUT, "window": {"label": "Oct 10 \u2013 Oct 18, 2026"}})
+        second = f"{RUN}-r2"
+        runs.open_run(self.conn, second, NOW)
+        got = runs.adopt_stage(self.conn, second, "reader", RUN, NOW)
+        self.assertEqual(got["reused_from"], RUN)
+        self.assertEqual(got["items"], READER_OUT["items"])
+        self.assertEqual(runs.stage_output(self.conn, second, "reader"), got)
+        self.assertEqual(runs.next_stage(self.conn, second), "framer")           # carries on after the Reader
+        self.assertEqual(runs.stage_output(self.conn, RUN, "reader").get("reused_from"), None)   # the original is untouched
+
+    def test_a4_adoption_refuses_what_it_should(self):
+        runs.open_run(self.conn, RUN, NOW)
+        runs.open_run(self.conn, f"{RUN}-r2", NOW)
+        with self.assertRaises(runs.RunRefused):                                   # the earlier attempt never finished its Reader
+            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
+        self.complete("reader")
+        runs.open_run(self.conn, "1999-W02", NOW)                                  # another week, with a finished Reader of its own
+        runs.finish_stage(self.conn, "1999-W02", "reader", runs.start_stage(self.conn, "1999-W02", "reader", NOW), {"x": 1}, NOW)
+        with self.assertRaisesRegex(runs.RunRefused, "not 1999-W01"):              # a different week's evidence
+            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", "1999-W02", NOW)
+        with self.assertRaisesRegex(runs.RunRefused, "its own stage"):             # itself
+            runs.adopt_stage(self.conn, RUN, "reader", RUN, NOW)
+        runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
+        with self.assertRaises(runs.RunRefused):                                   # a done stage is never redone
+            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,694 @@
+diff --git a/agents/digest.py b/agents/digest.py
+index d5db02c..1fce52d 100644
+--- a/agents/digest.py
++++ b/agents/digest.py
+@@ -17,7 +17,10 @@ import os
+ import sys
+ from urllib.parse import urlsplit
+ 
++from . import reader
++
+ MAX_ITEMS = 30
++MAX_LABEL_CHARS = 60
+ 
+ 
+ class DigestMalformed(ValueError):
+@@ -86,6 +89,22 @@ def _item(raw) -> dict:
+     }
+ 
+ 
++def edition_label(body, published_at=None) -> str | None:
++    """The dates an edition covers, like 'Oct 10 \u2013 Oct 18, 2026'. Never the run's week key.
++
++    Editions published since attempts were numbered carry the window their Reader actually read.
++    Briefs are append-only, so an older one has none stored: its Reader looked back reader.WINDOW
++    from the moment it ran, which is within moments of when it was published, so that is the label.
++    """
++    window = body.get("window") if isinstance(body, dict) else None
++    label = window.get("label") if isinstance(window, dict) else None
++    if isinstance(label, str) and 0 < len(label.strip()) <= MAX_LABEL_CHARS:
++        return label.strip()
++    if published_at is not None:
++        return reader.window_label(published_at - reader.WINDOW, published_at)
++    return None
++
++
+ def view(brief_id: str, body, published_at=None) -> dict:
+     """The page's content for one brief. Raises DigestMalformed if it cannot be shown.
+ 
+@@ -114,6 +133,7 @@ def _view(brief_id: str, body, published_at) -> dict:
+     reading = body.get("readingTimeMin")
+     return {
+         "week": brief_id,
++        "label": edition_label(body, published_at),
+         "published_at": published_at,
+         "thread": _text(body.get("thread"), "thread"),
+         "reading_time": reading if isinstance(reading, int) and not isinstance(reading, bool) and 0 < reading < 120 else None,
+diff --git a/agents/reader.py b/agents/reader.py
+index a1b66f3..990d506 100644
+--- a/agents/reader.py
++++ b/agents/reader.py
+@@ -67,6 +67,22 @@ MAX_FETCHES_PER_DOMAIN = 4
+ # fetches answered 'too_many_requests'; spacing them is cheaper than retrying them.
+ FETCH_PAUSE_SECONDS = 3.0
+ WINDOW = timedelta(days=8)  # a weekly run looks back a week plus a day of slack
++
++
++def window_label(start: datetime, end: datetime) -> str:
++    """'Oct 10 – Oct 18, 2026': the dates an edition covers, the way a reader would say them.
++
++    An edition is named by what its Reader actually looked at, never by the week key of the
++    run that made it. A window that crosses a year names both years.
++    """
++    first, last = f"{start:%b} {start.day}", f"{end:%b} {end.day}, {end.year}"
++    return f"{first}, {start.year} \u2013 {last}" if start.year != end.year else f"{first} \u2013 {last}"
++
++
++def window_of(now: datetime) -> dict:
++    """The Reader's window as the stage output records it (ISO times and the label)."""
++    start = now - WINDOW
++    return {"from": start.isoformat(), "to": now.isoformat(), "label": window_label(start, now)}
+ FEED_TIMEOUT = 20
+ FEED_MAX_BYTES = 3_000_000
+ USER_AGENT = "aiml-signal-system/1.0 (feed reader; personal project)"
+@@ -453,6 +469,7 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
+         "items": [str(i) for i, _ in fetched],
+         "excerpts": [str(e) for _, e in fetched],
+         "stats": stats.as_dict(),
++        "window": window_of(now),
+     }
+ 
+ 
+diff --git a/agents/runs.py b/agents/runs.py
+index b6f667e..0f876e1 100644
+--- a/agents/runs.py
++++ b/agents/runs.py
+@@ -68,6 +68,38 @@ class Run(NamedTuple):
+     status: str
+ 
+ 
++RUN_ID_RE = re.compile(r"(?P<week>\d{4}-W\d{2})(?:-r(?P<attempt>\d+))?")
++
++
++def parse_run_id(run_id: str) -> tuple[str, int]:
++    """('2026-W43', 1) for '2026-W43' and ('2026-W43', 2) for '2026-W43-r2'."""
++    m = RUN_ID_RE.fullmatch(run_id)
++    if not m or (m.group("attempt") is not None and int(m.group("attempt")) < 2):
++        raise RunRefused(f"{run_id!r} is not a run id: expected 2026-W43, or 2026-W43-r2 and up for later attempts")
++    return m.group("week"), int(m.group("attempt") or 1)
++
++
++def base_week(run_id: str) -> str:
++    """The week an attempt belongs to: the key an edition is stored under."""
++    return parse_run_id(run_id)[0]
++
++
++def attempt_id(week: str, attempt: int) -> str:
++    return week if attempt == 1 else f"{week}-r{attempt}"
++
++
++def attempts(conn, week: str) -> list[str]:
++    """Every run of a week, first attempt first."""
++    rows = conn.execute("SELECT id FROM runs WHERE id = %s OR id LIKE %s", (week, week + "-r%")).fetchall()
++    return [attempt_id(week, n) for n in sorted(parse_run_id(r[0])[1] for r in rows)]
++
++
++def next_attempt_id(conn, week: str) -> str:
++    """The id a fresh attempt at this week would take."""
++    parse_run_id(week)
++    return attempt_id(week, len(attempts(conn, week)) + 1) if attempts(conn, week) else week
++
++
+ def _aware(now: datetime) -> None:
+     if now.tzinfo is None:
+         raise RunRefused("now must be timezone-aware")
+@@ -197,6 +229,28 @@ def fail_stage(conn, run_id: str, stage: str, attempt: int, error: str, now: dat
+         _end(conn, run_id, stage, attempt, "failed", now, error=scrub(error))
+ 
+ 
++def adopt_stage(conn, run_id: str, stage: str, from_run: str, now) -> dict:
++    """Start this run's stage as done, with the output an earlier attempt's done stage made.
++
++    A reframe of a failed week uses it for the Reader: the new attempt carries the same
++    pointers (items, excerpts, window), so nothing is fetched or paid for twice. The new
++    stage's output says where it came from. Only attempts at the same week may be adopted,
++    and a stage the earlier attempt did not finish cannot be.
++    """
++    if base_week(run_id) != base_week(from_run):
++        raise RunRefused(f"{from_run} is an attempt at {base_week(from_run)}, not {base_week(run_id)}")
++    if from_run == run_id:
++        raise RunRefused("a run cannot adopt its own stage")
++    try:
++        output = dict(stage_output(conn, from_run, stage))
++    except KeyError:
++        raise RunRefused(f"{from_run} has no finished {stage} stage to reuse") from None
++    output["reused_from"] = from_run
++    attempt = start_stage(conn, run_id, stage, _at(now))
++    finish_stage(conn, run_id, stage, attempt, output, _at(now))
++    return output
++
++
+ def stage_output(conn, run_id: str, stage: str):
+     """The output of a stage's done attempt: what a resumed run loads instead of re-running it."""
+     _stage(stage)
+diff --git a/agents/schema.sql b/agents/schema.sql
+index f315008..897da60 100644
+--- a/agents/schema.sql
++++ b/agents/schema.sql
+@@ -121,13 +121,24 @@ CREATE OR REPLACE TRIGGER excerpt_citations_append_only
+ -- ======================================================================================
+ 
+ CREATE TABLE IF NOT EXISTS runs (
+-    id           text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),  -- the week key; a rerun reuses it
++    id           text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}(-r[0-9]+)?$'),  -- the week key; later attempts add -r2, -r3
+     started_at   timestamptz  NOT NULL,
+     finished_at  timestamptz  NULL,
+     status       text         NOT NULL CHECK (status IN ('running', 'done')),
+     CHECK ((status = 'done') = (finished_at IS NOT NULL))
+ );
+ 
++-- A week can have numbered attempts: 2026-W43 is the first, 2026-W43-r2 the second. The CHECK was first
++-- written for the bare week key; widen it once. Existing rows all satisfy the wider pattern.
++DO $$
++BEGIN
++    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'runs_id_check'
++                   AND conrelid = 'runs'::regclass AND pg_get_constraintdef(oid) LIKE '%-r%') THEN
++        ALTER TABLE runs DROP CONSTRAINT IF EXISTS runs_id_check;
++        ALTER TABLE runs ADD CONSTRAINT runs_id_check CHECK (id ~ '^[0-9]{4}-W[0-9]{2}(-r[0-9]+)?$');
++    END IF;
++END $$;
++
+ CREATE TABLE IF NOT EXISTS run_stages (
+     run_id       text         NOT NULL REFERENCES runs (id) ON DELETE RESTRICT,
+     stage        text         NOT NULL CHECK (stage IN ('reader', 'framer', 'gates', 'publish')),
+@@ -327,13 +338,24 @@ CREATE TABLE IF NOT EXISTS interest_terms (
+     FOREIGN KEY (user_id, topic) REFERENCES interest_nodes (user_id, topic) ON DELETE CASCADE
+ );
+ 
+--- A published weekly brief: the Framer's output, as written. One per run, never edited.
++-- A published weekly brief: the Framer's output, as written. One per WEEK (the id is the bare week
++-- key, so a second attempt at a published week cannot publish), made by one of that week's attempts
++-- (2026-W43 or 2026-W43-r2), never edited.
+ CREATE TABLE IF NOT EXISTS briefs (
+     id            text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),
+     run_id        text         NOT NULL UNIQUE REFERENCES runs (id) ON DELETE RESTRICT,
+     body          jsonb        NOT NULL CHECK (octet_length(body::text) <= 1048576),
+     published_at  timestamptz  NOT NULL
+ );
++-- The run must be an attempt at this brief's own week. (Added separately: the table may predate it.)
++DO $$
++BEGIN
++    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'briefs_run_is_this_week'
++                   AND conrelid = 'briefs'::regclass) THEN
++        ALTER TABLE briefs ADD CONSTRAINT briefs_run_is_this_week
++            CHECK (run_id = id OR left(run_id, length(id) + 2) = id || '-r');
++    END IF;
++END $$;
+ 
+ -- Thumbs and notes on a brief's items, from anyone (no login). client_hash is a salted
+ -- hash of the voter's address, never the address. A changed mind is a new row; the
+diff --git a/agents/weekly.py b/agents/weekly.py
+index 08b514c..d3c96ab 100644
+--- a/agents/weekly.py
++++ b/agents/weekly.py
+@@ -1,12 +1,17 @@
+ """The weekly run: Reader, then the Framer, then the gates, then publish.
+ 
+-    python -m agents.weekly                    # this ISO week
++    python -m agents.weekly                    # this ISO week: start it, or resume its latest attempt
+     python -m agents.weekly --week 2026-W42
+     python -m agents.weekly --stop-after reader   # stop cleanly after a stage (resume demo)
++    python -m agents.weekly --week 2026-W43 --new-attempt                       # a fresh attempt, 2026-W43-r2, from the Reader
++    python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43             # ...reframing what that attempt's Reader found
++    python -m agents.weekly --week 2026-W43 --status                            # every attempt at the week
+ 
+-Each stage is checkpointed in the `runs` tables (agents/runs.py). A rerun of a week loads
++Each stage is checkpointed in the `runs` tables (agents/runs.py). A rerun of an attempt loads
+ every stage that already finished and continues at the first that did not, so a failed
+-Framer does not re-fetch the sources or pay for the Reader again. The Framer and its gates
++Framer does not re-fetch the sources or pay for the Reader again. A finished stage is never
++redone, so a week whose gates failed is reframed as a NEW attempt (-r2, -r3), which may adopt
++the earlier attempt's Reader output. A week publishes at most one edition. The Framer and its gates
+ are the ones that shipped (agents/framer.py), ported without change; this module only
+ feeds them verified items from the database and stores what they produce.
+ 
+@@ -49,6 +54,10 @@ PRACTICE_TOPICS = {"MCP architecture", "agentic coding", "harness engineering"}
+ CORE_TOPICS_USER = "varun"
+ 
+ 
++class AlreadyPublished(RuntimeError):
++    """The week already has its edition; a second attempt may not publish another."""
++
++
+ class GateFailed(RuntimeError):
+     """The brief failed a hard gate and was not published."""
+ 
+@@ -59,7 +68,7 @@ def week_key(now: datetime) -> str:
+ 
+ 
+ def week_start(week: str) -> date:
+-    year, number = re.fullmatch(r"(\d{4})-W(\d{2})", week).groups()
++    year, number = re.fullmatch(r"(\d{4})-W(\d{2})", runs.base_week(week)).groups()
+     return date.fromisocalendar(int(year), int(number), 1)
+ 
+ 
+@@ -225,6 +234,9 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
+         day = framer.assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
+         failures = (gates.completeness_failures(raw_day, framing, verdicts, thread_verdict)
+                     + gates.structural_failures(profile, day, framing) + gates.faithfulness_failures(day))
++        window = (runs.stage_output(conn, week, "reader") or {}).get("window")
++        if window:
++            day["window"] = window       # what the edition covers, by what its Reader read; the page labels it with this
+         runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
+         if failures:
+             raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
+@@ -233,37 +245,75 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
+     return runs.checkpointed(conn, week, "gates", now, work)
+ 
+ 
+-def publish_stage(conn, week: str, now: datetime) -> dict:
++def refuse_second_edition(conn, run_id: str) -> None:
++    """A week publishes at most one edition: another attempt's brief is final."""
++    held = conn.execute("SELECT run_id FROM briefs WHERE id = %s", (runs.base_week(run_id),)).fetchone()
++    if held is not None and held[0] != run_id:
++        raise AlreadyPublished(f"{runs.base_week(run_id)} was already published by {held[0]}; "
++                               f"{run_id} may not publish a second edition")
++
++
++def publish_stage(conn, run_id: str, now: datetime) -> dict:
++    brief_id = runs.base_week(run_id)       # the edition is stored under the bare week, whichever attempt made it
++
+     def work(attempt: int) -> dict:
+-        day = runs.load_artifact(conn, week, "gates")["day"]
++        day = runs.load_artifact(conn, run_id, "gates")["day"]
+         with conn.transaction():
+-            existing = briefs.get(conn, week)
++            refuse_second_edition(conn, run_id)
++            existing = briefs.get(conn, brief_id)
+             if existing is None:
+-                briefs.publish(conn, week, week, day, runs._at(now))
++                briefs.publish(conn, brief_id, run_id, day, runs._at(now))
+             elif existing[1] != day:
+                 # A different brief is already live for this week: never overwrite, never guess.
+-                raise RuntimeError(f"a different brief is already published for {week}")
+-            # else: a previous attempt published this exact brief and died before recording
+-            # the stage as done. Publishing is idempotent, so carry on to the citations.
++                raise RuntimeError(f"a different brief is already published for {brief_id}")
++            # else: a previous try of this same attempt published this exact brief and died before
++            # recording the stage as done. Publishing is idempotent, so carry on to the citations.
+             for item in day["items"]:
+                 # The excerpt behind every cited story is evidence: pinned, kept forever.
+                 row = conn.execute("SELECT excerpt_id FROM items WHERE id = %s", (item["id"],)).fetchone()
+                 if row and row[0]:
+-                    excerpts.cite(conn, row[0], week)
+-        return {"brief": week, "items": len(day["items"])}
+-    return runs.checkpointed(conn, week, "publish", now, work)
++                    excerpts.cite(conn, row[0], brief_id)
++        return {"brief": brief_id, "items": len(day["items"])}
++    return runs.checkpointed(conn, run_id, "publish", now, work)
+ 
+ 
+-def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None, clock=None) -> dict:
+-    """Run, or resume, one week. Returns each stage's output; stops early only when asked.
++def resolve_run(conn, week: str, *, new_attempt: bool = False) -> str:
++    """Which run a command about `week` means. `week` may be a week key or one attempt's id.
+ 
+-    `now` fixes the Reader's window; `clock` (a zero-argument callable) stamps each stage when
+-    it actually starts and ends. Without a clock every stamp is `now`, which is what tests want.
++    A bare week key means "carry on with this week": the latest attempt, if it is still
++    unfinished, else the first attempt of a week with none. A finished week is never reopened
++    by accident; a fresh attempt is asked for (new_attempt), and takes the next free number.
++    """
++    base, number = runs.parse_run_id(week)
++    if number > 1 or week != base:
++        return week                                      # an attempt named outright
++    existing = runs.attempts(conn, base)
++    if not existing:
++        return base
++    if new_attempt:
++        return runs.next_attempt_id(conn, base)
++    return existing[-1]
++
++
++def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None, clock=None,
++             reuse_reader: str | None = None) -> dict:
++    """Run, or resume, one attempt at a week. Returns each stage's output; stops early only when asked.
++
++    `week` is the run id: a week key, or one attempt's id (2026-W43-r2). `reuse_reader` names an
++    earlier attempt at the same week whose finished Reader output this one adopts (no fetch,
++    no cost), so a reframe sees exactly the evidence the failed attempt saw. `now` fixes the
++    Reader's window; `clock` (a zero-argument callable) stamps each stage when it actually
++    starts and ends. Without a clock every stamp is `now`, which is what tests want.
+     """
+     week = week or week_key(now)
+     stamp = clock or now
+     profile = framer.load_json(framer.PROFILE_PATH)
++    refuse_second_edition(conn, week)                    # before any paid call, not after
+     runs.open_run(conn, week, runs._at(stamp))
++    if reuse_reader:
++        if runs.next_stage(conn, week) != "reader":
++            raise runs.RunRefused(f"{week} has already finished its Reader; --reuse-reader is for a fresh attempt")
++        runs.adopt_stage(conn, week, "reader", reuse_reader, stamp)
+     outputs = {}
+     plan = [
+         ("reader", lambda: reader.run_stage(conn, client, now, week, stamp=stamp, profile=profile)),
+@@ -279,25 +329,40 @@ def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after
+ 
+ 
+ def status(conn, week: str) -> list[str]:
+-    """One line per attempt at each stage of a week, for a person to read."""
+-    rows = conn.execute(
+-        "SELECT stage, attempt, status, started_at, finished_at, coalesce(error, '') FROM run_stages WHERE run_id = %s "
+-        "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage), attempt", (week,)).fetchall()
+-    if not rows:
+-        return [f"{week}: no run yet"]
+-    run = conn.execute("SELECT status FROM runs WHERE id = %s", (week,)).fetchone()[0]
+-    lines = [f"{week}: run {run}"]
+-    for stage, attempt, state, started, finished, error in rows:
+-        took = f"{(finished - started).total_seconds():.0f}s" if finished else "-"
+-        lines.append(f"  {stage:<8} attempt {attempt}  {state:<8} {took:>5}  {error[:90]}")
++    """Every attempt at a week, one line per attempt at each stage, for a person to read.
++
++    An attempt that did not publish while a later one exists is marked superseded. Failed
++    attempts are kept as evidence; nothing here edits them.
++    """
++    base = runs.base_week(week)
++    ids = runs.attempts(conn, base)
++    if not ids:
++        return [f"{base}: no run yet"]
++    brief = conn.execute("SELECT run_id FROM briefs WHERE id = %s", (base,)).fetchone()
++    lines = []
++    for n, run_id in enumerate(ids):
++        state = conn.execute("SELECT status FROM runs WHERE id = %s", (run_id,)).fetchone()[0]
++        note = ("published the edition" if brief and brief[0] == run_id
++                else f"superseded by {ids[n + 1]}" if n + 1 < len(ids) else "")
++        lines.append(f"{run_id}: run {state}" + (f" ({note})" if note else ""))
++        rows = conn.execute(
++            "SELECT stage, attempt, status, started_at, finished_at, coalesce(error, ''), coalesce(output ->> 'reused_from', '') "
++            "FROM run_stages WHERE run_id = %s "
++            "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage), attempt", (run_id,)).fetchall()
++        for stage, attempt, st, started, finished, error, reused in rows:
++            took = f"{(finished - started).total_seconds():.0f}s" if finished else "-"
++            detail = f"reused from {reused}" if reused else error[:90]
++            lines.append(f"  {stage:<8} attempt {attempt}  {st:<8} {took:>5}  {detail}")
+     return lines
+ 
+ 
+ def main() -> int:
+     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+-    parser.add_argument("--week", help="ISO week key like 2026-W42 (default: this week)")
+-    parser.add_argument("--status", action="store_true", help="print the week's stages and exit; no model call")
++    parser.add_argument("--week", help="ISO week key like 2026-W42, or one attempt's id like 2026-W42-r2 (default: this week)")
++    parser.add_argument("--status", action="store_true", help="print every attempt at the week and exit; no model call")
+     parser.add_argument("--stop-after", choices=runs.STAGES, help="stop cleanly after this stage")
++    parser.add_argument("--new-attempt", action="store_true", help="start the week's next attempt (-r2, -r3...) from the Reader")
++    parser.add_argument("--reuse-reader", metavar="RUN_ID", help="start a new attempt from this attempt's finished Reader output (no re-fetch)")
+     args = parser.parse_args()
+     now = datetime.now(timezone.utc)
+     if args.status:
+@@ -307,11 +372,13 @@ def main() -> int:
+     try:
+         client = llm.build_client()
+         with budget.connect() as conn:
+-            week = args.week or week_key(now)
+-            before = runs.next_stage(conn, week) if conn.execute("SELECT 1 FROM runs WHERE id = %s", (week,)).fetchone() else "reader"
+-            print(f"week {week}: starting at {before or 'nothing (already complete)'}")
+-            out = run_week(conn, client, now, week, stop_after=args.stop_after, clock=lambda: datetime.now(timezone.utc))
+-    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, runs.StageBusy) as stop:
++            run_id = resolve_run(conn, args.week or week_key(now), new_attempt=args.new_attempt or bool(args.reuse_reader))
++            exists = conn.execute("SELECT 1 FROM runs WHERE id = %s", (run_id,)).fetchone()
++            before = "reader" if not exists or args.reuse_reader else runs.next_stage(conn, run_id)
++            print(f"run {run_id}: starting at {'reader (adopting ' + args.reuse_reader + chr(39) + 's)' if args.reuse_reader else before or 'nothing (already complete)'}")
++            out = run_week(conn, client, now, run_id, stop_after=args.stop_after, reuse_reader=args.reuse_reader,
++                           clock=lambda: datetime.now(timezone.utc))
++    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, AlreadyPublished, runs.StageBusy, runs.RunRefused) as stop:
+         print(f"stopped: {stop}", file=sys.stderr)
+         return 1
+     for stage, o in out.items():
+diff --git a/app.py b/app.py
+index 87c0ba9..a20402b 100644
+--- a/app.py
++++ b/app.py
+@@ -220,7 +220,8 @@ def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional
+         return _panel(request, "No such edition", "That is not a week this digest knows.", 404)
+     try:
+         with _connect() as conn:
+-            weeks = [r[0] for r in conn.execute("SELECT id FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
++            weeks = [{"id": r[0], "label": digest.edition_label(r[1], r[2]) or r[0]} for r in conn.execute(
++                "SELECT id, body, published_at FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
+             row = briefs.get(conn, week) if week else briefs.latest(conn)
+     except Exception as e:  # database down or unreachable: say so on the page, with the right status
+         print(f"weekly digest: database unavailable ({type(e).__name__})", file=sys.stderr)
+diff --git a/templates/digest.template.html b/templates/digest.template.html
+index a142689..24fd49d 100644
+--- a/templates/digest.template.html
++++ b/templates/digest.template.html
+@@ -113,7 +113,7 @@
+ {{ site_header("Weekly Digest") }}
+ <main>
+ <article class="page">
+-  <div class="kicker">AI/ML Signal &middot; {% if digest %}week {{ digest.week }}{% if digest.published_at %} &middot; published {{ digest.published_at.strftime('%b %d, %Y') }}{% endif %}{% else %}weekly{% endif %}</div>
++  <div class="kicker">AI/ML Signal &middot; {% if digest %}{{ digest.label or digest.week }}{% if digest.published_at %} &middot; published {{ digest.published_at.strftime('%b %d, %Y') }}{% endif %}{% else %}weekly{% endif %}</div>
+   <h1>Weekly Digest</h1>
+ 
+   {%- if notice and not notice_item %}<div class="notice {{ 'good' if notice.good else '' }}" role="status">{{ notice.text }}</div>{% endif %}
+@@ -149,7 +149,7 @@
+   {%- endif %}
+ 
+   {%- if weeks and weeks | length > 1 %}
+-  <p class="weeks">Earlier editions: {% for w in weeks %}{% if not digest or w != digest.week %}<a href="/weekly-digest?week={{ w }}">{{ w }}</a>{% endif %}{% endfor %}</p>
++  <p class="weeks">Earlier editions: {% for w in weeks %}{% if not digest or w.id != digest.week %}<a href="/weekly-digest?week={{ w.id }}">{{ w.label }}</a>{% endif %}{% endfor %}</p>
+   {%- endif %}
+ </article>
+ </main>
+diff --git a/tests/test_digest.py b/tests/test_digest.py
+index 95ff644..df1e98a 100644
+--- a/tests/test_digest.py
++++ b/tests/test_digest.py
+@@ -41,6 +41,19 @@ class View(unittest.TestCase):
+         self.assertEqual([label for label, _ in istar["ninety"]], ["Method", "Result", "Caveat"])
+         self.assertTrue(all(i["sources"] for i in v["learning"] + v["stories"]))
+ 
++    def test_the_edition_is_labelled_by_its_window_never_by_the_run_key(self):
++        body = json.loads(json.dumps(GOLDEN))
++        body["window"] = {"from": "2026-10-10T05:00:00+00:00", "to": "2026-10-18T05:00:00+00:00", "label": "Oct 10 \u2013 Oct 18, 2026"}
++        self.assertEqual(digest.view(WEEK, body)["label"], "Oct 10 \u2013 Oct 18, 2026")
++        for bad in ({"label": ""}, {"label": 5}, {"label": "x" * 100}, "text", None):      # a bad stored window falls back
++            body["window"] = bad
++            self.assertEqual(digest.view(WEEK, body, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))["label"],
++                             "Oct 10 \u2013 Oct 18, 2026", msg=repr(bad))
++        old = {k: v for k, v in GOLDEN.items() if k != "window"}                              # an older brief carries none: derived from publish date
++        self.assertEqual(digest.view("2026-W40", old, datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc))["label"],
++                         "Oct 10 \u2013 Oct 18, 2026")
++        self.assertIsNone(digest.view(WEEK, old)["label"])                                     # nothing to derive from
++
+     def test_unsafe_links_are_not_links(self):
+         body = json.loads(json.dumps(GOLDEN))
+         body["items"][0]["sources"] = [{"label": "x", "url": "javascript:alert(1)", "tier": "primary"},
+@@ -157,6 +170,13 @@ class Routes(unittest.TestCase):
+         self.assertEqual(r.text.count('action="/weekly-digest/vote"'), 2 * len(GOLDEN["items"]))   # an up form and a down form each
+         self.assertLess(r.text.index(">Method<"), r.text.index(">Caveat<"))   # reading order survives jsonb
+ 
++    def test_d2b_the_page_shows_the_window_not_the_week_key(self):
++        self.publish({**GOLDEN, "window": {"label": "Oct 10 \u2013 Oct 18, 2026"}})
++        text = self.client.get(f"/weekly-digest?week={WEEK}").text
++        kicker = text[text.index('class="kicker"'):][:300]
++        self.assertIn("Oct 10 \u2013 Oct 18, 2026", kicker)
++        self.assertNotIn(WEEK, kicker)
++
+     def test_d3_the_header_links_to_the_page_and_the_old_url_redirects(self):
+         self.assertIn('href="/weekly-digest"', self.client.get("/plan").text)
+         old = self.client.get("/application/Weekly-Digest.html", follow_redirects=False)
+diff --git a/tests/test_reader.py b/tests/test_reader.py
+index 802a148..ad5a114 100644
+--- a/tests/test_reader.py
++++ b/tests/test_reader.py
+@@ -112,6 +112,17 @@ class Parsing(unittest.TestCase):
+         self.assertFalse(reader.same_story("New model released", "New model released today"))  # too few distinctive words
+ 
+ 
++class WindowLabel(unittest.TestCase):
++    def test_the_label_names_the_dates_the_reader_read(self):
++        end = datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc)
++        self.assertEqual(reader.window_label(end - reader.WINDOW, end), "Oct 10 \u2013 Oct 18, 2026")
++        self.assertEqual(reader.window_label(datetime(2026, 12, 28, tzinfo=timezone.utc), datetime(2027, 1, 5, tzinfo=timezone.utc)),
++                         "Dec 28, 2026 \u2013 Jan 5, 2027")
++        got = reader.window_of(end)
++        self.assertEqual((got["from"], got["to"]), ((end - reader.WINDOW).isoformat(), end.isoformat()))
++        self.assertEqual(got["label"], "Oct 10 \u2013 Oct 18, 2026")
++
++
+ class FetchResult(unittest.TestCase):
+     def test_text_error_and_pdf(self):
+         self.assertEqual(reader.extract_fetch_result(fetch_result_message("hello")), ("hello", None))
+diff --git a/tests/test_runs.py b/tests/test_runs.py
+index 8bafbe3..44ee690 100644
+--- a/tests/test_runs.py
++++ b/tests/test_runs.py
+@@ -38,6 +38,18 @@ READER_OUT = {"items": ["item-01", "item-02"], "excerpts": ["6f1c0e6e-0b4e-4b0e-
+ DISABLED = os.environ.get("RUNS_TEST_DISABLE_TRIGGER", "").strip()
+ 
+ 
++class RunIds(unittest.TestCase):
++    def test_attempt_ids(self):
++        self.assertEqual(runs.parse_run_id("2026-W43"), ("2026-W43", 1))
++        self.assertEqual(runs.parse_run_id("2026-W43-r2"), ("2026-W43", 2))
++        self.assertEqual(runs.parse_run_id("2026-W43-r12"), ("2026-W43", 12))
++        self.assertEqual(runs.base_week("2026-W43-r3"), "2026-W43")
++        self.assertEqual((runs.attempt_id("2026-W43", 1), runs.attempt_id("2026-W43", 2)), ("2026-W43", "2026-W43-r2"))
++        for bad in ("2026-W43-r1", "2026-W43-r0", "2026-W43-r", "2026-W43-x2", "2026-43", "2026-W43-r2-r3", " 2026-W43", "2026-W43\n"):
++            with self.assertRaises(runs.RunRefused, msg=repr(bad)):
++                runs.parse_run_id(bad)
++
++
+ @needs_db
+ class Runs(unittest.TestCase):
+     def setUp(self):
+@@ -232,6 +244,50 @@ class Runs(unittest.TestCase):
+         self.conn.execute("UPDATE runs SET status = 'done', finished_at = %s WHERE id = %s", (NOW, RUN))  # allowed
+         self.assertEqual(runs.open_run(self.conn, RUN, NOW).status, "done")
+ 
++    # attempts ---------------------------------------------------------------------
++    def test_a1_a_week_takes_numbered_attempts(self):
++        self.assertEqual(runs.attempts(self.conn, RUN), [])
++        self.assertEqual(runs.next_attempt_id(self.conn, RUN), RUN)
++        runs.open_run(self.conn, RUN, NOW)
++        self.assertEqual(runs.next_attempt_id(self.conn, RUN), f"{RUN}-r2")
++        runs.open_run(self.conn, f"{RUN}-r2", NOW)
++        runs.open_run(self.conn, f"{RUN}-r3", NOW)
++        self.assertEqual(runs.attempts(self.conn, RUN), [RUN, f"{RUN}-r2", f"{RUN}-r3"])
++        self.assertEqual(runs.next_attempt_id(self.conn, RUN), f"{RUN}-r4")
++        self.assertEqual(runs.attempts(self.conn, "1999-W02"), [])          # another week's attempts are not this week's
++
++    def test_a2_the_database_refuses_a_malformed_run_id(self):
++        for bad in ("1999-W01-r", "1999-W01-x2", "1999-W01-r2-r3", "99-W01", "1999-W01 "):
++            self.assertRefusedByDatabase("INSERT INTO runs (id, started_at, status) VALUES (%s, %s, 'running')", (bad, NOW),
++                                         psycopg.errors.CheckViolation)
++        runs.open_run(self.conn, f"{RUN}-r2", NOW)                              # the wider form is accepted
++
++    def test_a3_a_new_attempt_adopts_the_readers_output_without_a_second_read(self):
++        runs.open_run(self.conn, RUN, NOW)
++        self.complete("reader", {**READER_OUT, "window": {"label": "Oct 10 \u2013 Oct 18, 2026"}})
++        second = f"{RUN}-r2"
++        runs.open_run(self.conn, second, NOW)
++        got = runs.adopt_stage(self.conn, second, "reader", RUN, NOW)
++        self.assertEqual(got["reused_from"], RUN)
++        self.assertEqual(got["items"], READER_OUT["items"])
++        self.assertEqual(runs.stage_output(self.conn, second, "reader"), got)
++        self.assertEqual(runs.next_stage(self.conn, second), "framer")           # carries on after the Reader
++        self.assertEqual(runs.stage_output(self.conn, RUN, "reader").get("reused_from"), None)   # the original is untouched
++
++    def test_a4_adoption_refuses_what_it_should(self):
++        runs.open_run(self.conn, RUN, NOW)
++        runs.open_run(self.conn, f"{RUN}-r2", NOW)
++        with self.assertRaises(runs.RunRefused):                                   # the earlier attempt never finished its Reader
++            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
++        self.complete("reader")
++        with self.assertRaises(runs.RunRefused):                                   # a different week's evidence
++            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", "1999-W02", NOW)
++        with self.assertRaises(runs.RunRefused):                                   # itself
++            runs.adopt_stage(self.conn, RUN, "reader", RUN, NOW)
++        runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
++        with self.assertRaises(runs.RunRefused):                                   # a done stage is never redone
++            runs.adopt_stage(self.conn, f"{RUN}-r2", "reader", RUN, NOW)
++
+ 
+ if __name__ == "__main__":
+     unittest.main(verbosity=2)
+diff --git a/tests/test_weekly.py b/tests/test_weekly.py
+index 7b53b28..61e2109 100644
+--- a/tests/test_weekly.py
++++ b/tests/test_weekly.py
+@@ -380,6 +380,92 @@ class WeeklyRun(Pipeline, unittest.TestCase):
+         self.assertRegex(lines[1], r"reader\s+attempt 1\s+done")
+         self.assertRegex(lines[2], r"framer\s+attempt 1\s+failed.*model returned no text")
+ 
++    def fail_gates_once(self):
++        bad = clean_verdict()
++        bad["unsupported_claims"] = ["Revenue doubled in the quarter."]
++
++        def check(client, raw_day, framing, *, user_id, phase):
++            return {i["id"]: bad for i in raw_day["items"]}, clean_verdict(), SimpleUsage()
++        with unittest.mock.patch.object(framer, "check_faithfulness", check):
++            with self.assertRaises(weekly.GateFailed):
++                self.run_week()
++
++    def test_w18_a_failed_week_is_reframed_as_a_new_attempt_that_reuses_the_reader(self):
++        self.fail_gates_once()
++        fetched, framed = len(self.client.requests), len(self.framer_calls)
++        second = f"{WEEK}-r2"
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), second)
++        out = weekly.run_week(self.conn, self.client, NOW, second, reuse_reader=WEEK)
++        self.assertEqual(len(self.client.requests), fetched)                         # nothing fetched again
++        self.assertEqual(out["reader"]["reused_from"], WEEK)
++        self.assertEqual(len(self.framer_calls), framed + 1)                         # the Framer ran again
++        self.assertEqual(self.framer_calls[0]["items"], self.framer_calls[-1]["items"])   # on the same evidence
++        brief_id, body, _ = briefs.get(self.conn, WEEK)                               # stored under the bare week...
++        self.assertEqual(brief_id, WEEK)
++        self.assertEqual(self.conn.execute("SELECT run_id FROM briefs WHERE id = %s", (WEEK,)).fetchone()[0], second)   # ...made by attempt 2
++        self.assertEqual(self.conn.execute("SELECT status FROM runs WHERE id = %s", (WEEK,)).fetchone()[0], "running")   # attempt 1 stays as evidence
++        self.assertEqual(self.conn.execute("SELECT count(*) FROM excerpt_citations WHERE brief_id = %s", (WEEK,)).fetchone()[0], len(body["items"]))
++        lines = weekly.status(self.conn, second)                                      # asking about either attempt shows both
++        self.assertEqual(lines, weekly.status(self.conn, WEEK))
++        self.assertIn(f"{WEEK}: run running (superseded by {second})", lines)
++        self.assertIn(f"{second}: run done (published the edition)", lines)
++        self.assertTrue(any("gates" in l and "failed" in l for l in lines))
++        self.assertTrue(any("reader" in l and f"reused from {WEEK}" in l for l in lines))
++
++    def test_w19_a_week_publishes_one_edition_and_a_second_attempt_is_refused_before_it_spends(self):
++        self.run_week()
++        framed, checked, fetched = len(self.framer_calls), len(self.check_calls), len(self.client.requests)
++        second = f"{WEEK}-r2"
++        with self.assertRaises(weekly.AlreadyPublished):
++            weekly.run_week(self.conn, self.client, NOW, second)
++        self.assertEqual((len(self.framer_calls), len(self.check_calls), len(self.client.requests)), (framed, checked, fetched))
++        self.assertEqual(runs.attempts(self.conn, WEEK), [WEEK])                      # not even a run row was opened
++        # ...and if it got that far, the database refuses: one edition per week, made by that week's own attempt.
++        day = briefs.get(self.conn, WEEK)[1]
++        runs.open_run(self.conn, second, NOW)
++        with self.assertRaises(Exception):
++            with self.conn.transaction():
++                self.conn.execute("INSERT INTO briefs (id, run_id, body, published_at) VALUES (%s, %s, %s, %s)",
++                                  (WEEK, second, '{}', NOW))
++        runs.open_run(self.conn, "1999-W11", NOW)
++        with self.assertRaises(Exception) as wrong_week:
++            with self.conn.transaction():
++                self.conn.execute("INSERT INTO briefs (id, run_id, body, published_at) VALUES (%s, %s, %s, %s)",
++                                  ("1999-W12", "1999-W11", '{}', NOW))
++        self.assertIn("briefs_run_is_this_week", str(wrong_week.exception))
++        self.assertIsNotNone(day)
++
++    def test_w20_the_edition_is_labelled_by_the_window_its_reader_read(self):
++        self.run_week()
++        window = runs.stage_output(self.conn, WEEK, "reader")["window"]
++        self.assertEqual(window["label"], "Oct 10 \u2013 Oct 18, 2026")            # NOW minus the Reader's eight days
++        body = briefs.get(self.conn, WEEK)[1]
++        self.assertEqual(body["window"], window)
++        from agents import digest
++        self.assertEqual(digest.view(WEEK, body)["label"], "Oct 10 \u2013 Oct 18, 2026")
++
++    def test_w21_a_bare_week_resumes_and_a_new_attempt_takes_the_next_number(self):
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK), WEEK)
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), WEEK)    # nothing to supersede yet
++        self.run_week(stop_after="reader")
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK), WEEK)
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), f"{WEEK}-r2")
++        runs.open_run(self.conn, f"{WEEK}-r2", NOW)
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")             # resume the latest
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK, new_attempt=True), f"{WEEK}-r3")
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")
++        self.assertEqual(weekly.resolve_run(self.conn, WEEK), f"{WEEK}-r2")
++        self.assertEqual(weekly.resolve_run(self.conn, f"{WEEK}-r2"), f"{WEEK}-r2")     # an attempt named outright
++        with self.assertRaises(runs.RunRefused):
++            weekly.resolve_run(self.conn, "not-a-week")
++
++    def test_w22_reuse_reader_is_only_for_a_fresh_attempt(self):
++        self.run_week(stop_after="reader")
++        with self.assertRaises(runs.RunRefused):                                      # this attempt's Reader is already done
++            weekly.run_week(self.conn, self.client, NOW, WEEK, reuse_reader=WEEK)
++        with self.assertRaises(runs.RunRefused):                                      # nothing finished to reuse
++            weekly.run_week(self.conn, self.client, NOW, f"{WEEK}-r2", reuse_reader="1999-W10-r9")
++
+     def test_w6_a_finished_week_does_nothing_when_run_again(self):
+         self.run_week()
+         asked, framed, checked = len(self.client.requests), len(self.framer_calls), len(self.check_calls)

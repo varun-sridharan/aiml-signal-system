@@ -220,7 +220,8 @@ def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional
         return _panel(request, "No such edition", "That is not a week this digest knows.", 404)
     try:
         with _connect() as conn:
-            weeks = [r[0] for r in conn.execute("SELECT id FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
+            weeks = [{"id": r[0], "label": digest.edition_label({"window": r[1]}, r[2]) or r[0]} for r in conn.execute(
+                "SELECT id, body -> 'window', published_at FROM briefs ORDER BY id DESC LIMIT 20").fetchall()]
             row = briefs.get(conn, week) if week else briefs.latest(conn)
     except Exception as e:  # database down or unreachable: say so on the page, with the right status
         print(f"weekly digest: database unavailable ({type(e).__name__})", file=sys.stderr)

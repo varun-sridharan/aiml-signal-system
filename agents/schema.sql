@@ -121,12 +121,23 @@ CREATE OR REPLACE TRIGGER excerpt_citations_append_only
 -- ======================================================================================
 
 CREATE TABLE IF NOT EXISTS runs (
-    id           text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),  -- the week key; a rerun reuses it
+    id           text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}(-r([2-9]|[1-9][0-9]+))?$'),  -- the week key; later attempts add -r2, -r3
     started_at   timestamptz  NOT NULL,
     finished_at  timestamptz  NULL,
     status       text         NOT NULL CHECK (status IN ('running', 'done')),
     CHECK ((status = 'done') = (finished_at IS NOT NULL))
 );
+
+-- A week can have numbered attempts: 2026-W43 is the first, 2026-W43-r2 the second. The CHECK was first
+-- written for the bare week key; widen it once. Existing rows all satisfy the wider pattern.
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'runs_id_check'
+                   AND conrelid = 'runs'::regclass AND pg_get_constraintdef(oid) LIKE '%[2-9]|[1-9]%') THEN
+        ALTER TABLE runs DROP CONSTRAINT IF EXISTS runs_id_check;
+        ALTER TABLE runs ADD CONSTRAINT runs_id_check CHECK (id ~ '^[0-9]{4}-W[0-9]{2}(-r([2-9]|[1-9][0-9]+))?$');
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS run_stages (
     run_id       text         NOT NULL REFERENCES runs (id) ON DELETE RESTRICT,
@@ -327,13 +338,24 @@ CREATE TABLE IF NOT EXISTS interest_terms (
     FOREIGN KEY (user_id, topic) REFERENCES interest_nodes (user_id, topic) ON DELETE CASCADE
 );
 
--- A published weekly brief: the Framer's output, as written. One per run, never edited.
+-- A published weekly brief: the Framer's output, as written. One per WEEK (the id is the bare week
+-- key, so a second attempt at a published week cannot publish), made by one of that week's attempts
+-- (2026-W43 or 2026-W43-r2), never edited.
 CREATE TABLE IF NOT EXISTS briefs (
     id            text         PRIMARY KEY CHECK (id ~ '^[0-9]{4}-W[0-9]{2}$'),
     run_id        text         NOT NULL UNIQUE REFERENCES runs (id) ON DELETE RESTRICT,
     body          jsonb        NOT NULL CHECK (octet_length(body::text) <= 1048576),
     published_at  timestamptz  NOT NULL
 );
+-- The run must be an attempt at this brief's own week. (Added separately: the table may predate it.)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'briefs_run_is_this_week'
+                   AND conrelid = 'briefs'::regclass) THEN
+        ALTER TABLE briefs ADD CONSTRAINT briefs_run_is_this_week
+            CHECK (run_id = id OR left(run_id, length(id) + 2) = id || '-r');
+    END IF;
+END $$;
 
 -- Thumbs and notes on a brief's items, from anyone (no login). client_hash is a salted
 -- hash of the voter's address, never the address. A changed mind is a new row; the

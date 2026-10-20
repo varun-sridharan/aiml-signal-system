@@ -15,9 +15,13 @@ from __future__ import annotations
 import hashlib
 import os
 import sys
+from datetime import timezone
 from urllib.parse import urlsplit
 
+from . import reader
+
 MAX_ITEMS = 30
+MAX_LABEL_CHARS = 60
 
 
 class DigestMalformed(ValueError):
@@ -86,6 +90,23 @@ def _item(raw) -> dict:
     }
 
 
+def edition_label(body, published_at=None) -> str | None:
+    """The dates an edition covers, like 'Oct 10 \u2013 Oct 18, 2026'. Never the run's week key.
+
+    Editions published since attempts were numbered carry the window their Reader actually read.
+    Briefs are append-only, so an older one has none stored: its Reader looked back reader.WINDOW
+    from the moment it ran, which is within moments of when it was published, so that is the label.
+    """
+    window = body.get("window") if isinstance(body, dict) else None
+    label = window.get("label") if isinstance(window, dict) else None
+    if isinstance(label, str) and 0 < len(label.strip()) <= MAX_LABEL_CHARS:
+        return label.strip()
+    if published_at is not None:
+        published_at = published_at.astimezone(timezone.utc)      # the database hands it back in the session's zone
+        return reader.window_label(published_at - reader.WINDOW, published_at)
+    return None
+
+
 def view(brief_id: str, body, published_at=None) -> dict:
     """The page's content for one brief. Raises DigestMalformed if it cannot be shown.
 
@@ -114,6 +135,7 @@ def _view(brief_id: str, body, published_at) -> dict:
     reading = body.get("readingTimeMin")
     return {
         "week": brief_id,
+        "label": edition_label(body, published_at),
         "published_at": published_at,
         "thread": _text(body.get("thread"), "thread"),
         "reading_time": reading if isinstance(reading, int) and not isinstance(reading, bool) and 0 < reading < 120 else None,

@@ -68,6 +68,39 @@ class Run(NamedTuple):
     status: str
 
 
+RUN_ID_RE = re.compile(r"(?P<week>[0-9]{4}-W[0-9]{2})(?:-r(?P<attempt>[2-9]|[1-9][0-9]+))?")
+
+
+def parse_run_id(run_id: str) -> tuple[str, int]:
+    """('2026-W43', 1) for '2026-W43' and ('2026-W43', 2) for '2026-W43-r2'."""
+    m = RUN_ID_RE.fullmatch(run_id)
+    if not m:
+        raise RunRefused(f"{run_id!r} is not a run id: expected 2026-W43, or 2026-W43-r2 and up for later attempts")
+    return m.group("week"), int(m.group("attempt") or 1)
+
+
+def base_week(run_id: str) -> str:
+    """The week an attempt belongs to: the key an edition is stored under."""
+    return parse_run_id(run_id)[0]
+
+
+def attempt_id(week: str, attempt: int) -> str:
+    return week if attempt == 1 else f"{week}-r{attempt}"
+
+
+def attempts(conn, week: str) -> list[str]:
+    """Every run of a week, first attempt first."""
+    rows = conn.execute("SELECT id FROM runs WHERE id = %s OR id LIKE %s", (week, week + "-r%")).fetchall()
+    return [attempt_id(week, n) for n in sorted(parse_run_id(r[0])[1] for r in rows)]
+
+
+def next_attempt_id(conn, week: str) -> str:
+    """The id a fresh attempt at this week would take."""
+    parse_run_id(week)
+    existing = attempts(conn, week)
+    return attempt_id(week, parse_run_id(existing[-1])[1] + 1) if existing else week
+
+
 def _aware(now: datetime) -> None:
     if now.tzinfo is None:
         raise RunRefused("now must be timezone-aware")
@@ -195,6 +228,36 @@ def fail_stage(conn, run_id: str, stage: str, attempt: int, error: str, now: dat
     _stage(stage)
     with conn.transaction():
         _end(conn, run_id, stage, attempt, "failed", now, error=scrub(error))
+
+
+def adopt_stage(conn, run_id: str, stage: str, from_run: str, now) -> dict:
+    """Start this run's stage as done, with the output an earlier attempt's done stage made.
+
+    A reframe of a failed week uses it for the Reader: the new attempt carries the same
+    pointers (items, excerpts, window), so nothing is fetched or paid for twice. The new
+    stage's output says where it came from. Only attempts at the same week may be adopted,
+    and a stage the earlier attempt did not finish cannot be.
+    """
+    output = adoptable_output(conn, run_id, from_run, stage)
+    with conn.transaction():          # both or neither: a death between them must not leave a 'running' stage behind
+        attempt = start_stage(conn, run_id, stage, _at(now))
+        finish_stage(conn, run_id, stage, attempt, output, _at(now))
+    return output
+
+
+def adoptable_output(conn, run_id: str, from_run: str, stage: str) -> dict:
+    """What `run_id` would adopt from `from_run`'s finished stage, or RunRefused. Opens nothing, so it
+    can be asked before a run row exists."""
+    if base_week(run_id) != base_week(from_run):
+        raise RunRefused(f"{from_run} is an attempt at {base_week(from_run)}, not {base_week(run_id)}")
+    if from_run == run_id:
+        raise RunRefused("a run cannot adopt its own stage")
+    try:
+        output = dict(stage_output(conn, from_run, stage))
+    except KeyError:
+        raise RunRefused(f"{from_run} has no finished {stage} stage to reuse") from None
+    output["reused_from"] = from_run
+    return output
 
 
 def stage_output(conn, run_id: str, stage: str):

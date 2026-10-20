@@ -1,12 +1,17 @@
 """The weekly run: Reader, then the Framer, then the gates, then publish.
 
-    python -m agents.weekly                    # this ISO week
+    python -m agents.weekly                    # this ISO week: start it, or resume its latest attempt
     python -m agents.weekly --week 2026-W42
     python -m agents.weekly --stop-after reader   # stop cleanly after a stage (resume demo)
+    python -m agents.weekly --week 2026-W43 --new-attempt                       # a fresh attempt, 2026-W43-r2, from the Reader
+    python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43             # ...reframing what that attempt's Reader found
+    python -m agents.weekly --week 2026-W43 --status                            # every attempt at the week
 
-Each stage is checkpointed in the `runs` tables (agents/runs.py). A rerun of a week loads
+Each stage is checkpointed in the `runs` tables (agents/runs.py). A rerun of an attempt loads
 every stage that already finished and continues at the first that did not, so a failed
-Framer does not re-fetch the sources or pay for the Reader again. The Framer and its gates
+Framer does not re-fetch the sources or pay for the Reader again. A finished stage is never
+redone, so a week whose gates failed is reframed as a NEW attempt (-r2, -r3), which may adopt
+the earlier attempt's Reader output. A week publishes at most one edition. The Framer and its gates
 are the ones that shipped (agents/framer.py), ported without change; this module only
 feeds them verified items from the database and stores what they produce.
 
@@ -49,6 +54,10 @@ PRACTICE_TOPICS = {"MCP architecture", "agentic coding", "harness engineering"}
 CORE_TOPICS_USER = "varun"
 
 
+class AlreadyPublished(RuntimeError):
+    """The week already has its edition; a second attempt may not publish another."""
+
+
 class GateFailed(RuntimeError):
     """The brief failed a hard gate and was not published."""
 
@@ -59,7 +68,7 @@ def week_key(now: datetime) -> str:
 
 
 def week_start(week: str) -> date:
-    year, number = re.fullmatch(r"(\d{4})-W(\d{2})", week).groups()
+    year, number = re.fullmatch(r"(\d{4})-W(\d{2})", runs.base_week(week)).groups()
     return date.fromisocalendar(int(year), int(number), 1)
 
 
@@ -225,6 +234,9 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
         day = framer.assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
         failures = (gates.completeness_failures(raw_day, framing, verdicts, thread_verdict)
                     + gates.structural_failures(profile, day, framing) + gates.faithfulness_failures(day))
+        window = (runs.stage_output(conn, week, "reader") or {}).get("window")
+        if window:
+            day["window"] = window       # what the edition covers, by what its Reader read; the page labels it with this
         runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
         if failures:
             raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
@@ -233,37 +245,79 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     return runs.checkpointed(conn, week, "gates", now, work)
 
 
-def publish_stage(conn, week: str, now: datetime) -> dict:
+def refuse_second_edition(conn, run_id: str) -> None:
+    """A week publishes at most one edition: another attempt's brief is final."""
+    held = conn.execute("SELECT run_id FROM briefs WHERE id = %s", (runs.base_week(run_id),)).fetchone()
+    if held is not None and held[0] != run_id:
+        raise AlreadyPublished(f"{runs.base_week(run_id)} was already published by {held[0]}; "
+                               f"{run_id} may not publish a second edition")
+
+
+def publish_stage(conn, run_id: str, now: datetime) -> dict:
+    brief_id = runs.base_week(run_id)       # the edition is stored under the bare week, whichever attempt made it
+
     def work(attempt: int) -> dict:
-        day = runs.load_artifact(conn, week, "gates")["day"]
+        day = runs.load_artifact(conn, run_id, "gates")["day"]
         with conn.transaction():
-            existing = briefs.get(conn, week)
+            refuse_second_edition(conn, run_id)
+            existing = briefs.get(conn, brief_id)
             if existing is None:
-                briefs.publish(conn, week, week, day, runs._at(now))
+                briefs.publish(conn, brief_id, run_id, day, runs._at(now))
             elif existing[1] != day:
                 # A different brief is already live for this week: never overwrite, never guess.
-                raise RuntimeError(f"a different brief is already published for {week}")
-            # else: a previous attempt published this exact brief and died before recording
-            # the stage as done. Publishing is idempotent, so carry on to the citations.
+                raise RuntimeError(f"a different brief is already published for {brief_id}")
+            # else: a previous try of this same attempt published this exact brief and died before
+            # recording the stage as done. Publishing is idempotent, so carry on to the citations.
             for item in day["items"]:
                 # The excerpt behind every cited story is evidence: pinned, kept forever.
                 row = conn.execute("SELECT excerpt_id FROM items WHERE id = %s", (item["id"],)).fetchone()
                 if row and row[0]:
-                    excerpts.cite(conn, row[0], week)
-        return {"brief": week, "items": len(day["items"])}
-    return runs.checkpointed(conn, week, "publish", now, work)
+                    excerpts.cite(conn, row[0], brief_id)
+        return {"brief": brief_id, "items": len(day["items"])}
+    return runs.checkpointed(conn, run_id, "publish", now, work)
 
 
-def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None, clock=None) -> dict:
-    """Run, or resume, one week. Returns each stage's output; stops early only when asked.
+def resolve_run(conn, week: str, *, new_attempt: bool = False) -> str:
+    """Which run a command about `week` means. `week` may be a week key or one attempt's id.
 
-    `now` fixes the Reader's window; `clock` (a zero-argument callable) stamps each stage when
-    it actually starts and ends. Without a clock every stamp is `now`, which is what tests want.
+    A bare week key means "carry on with this week": the latest attempt, if it is still
+    unfinished, else the first attempt of a week with none. A finished week is never reopened
+    by accident; a fresh attempt is asked for (new_attempt), and takes the next free number.
+    """
+    base, number = runs.parse_run_id(week)
+    existing = runs.attempts(conn, base)
+    if number > 1:                                       # an attempt named outright: it exists, or it is exactly the next
+        if week not in existing and week != runs.next_attempt_id(conn, base):
+            raise runs.RunRefused(f"{week} would leave a gap: the next attempt at {base} is {runs.next_attempt_id(conn, base)}")
+        return week
+    if not existing:
+        return base
+    if new_attempt:
+        return runs.next_attempt_id(conn, base)
+    return existing[-1]
+
+
+def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after: str | None = None, clock=None,
+             reuse_reader: str | None = None) -> dict:
+    """Run, or resume, one attempt at a week. Returns each stage's output; stops early only when asked.
+
+    `week` is the run id: a week key, or one attempt's id (2026-W43-r2). `reuse_reader` names an
+    earlier attempt at the same week whose finished Reader output this one adopts (no fetch,
+    no cost), so a reframe sees exactly the evidence the failed attempt saw. `now` fixes the
+    Reader's window; `clock` (a zero-argument callable) stamps each stage when it actually
+    starts and ends. Without a clock every stamp is `now`, which is what tests want.
     """
     week = week or week_key(now)
     stamp = clock or now
     profile = framer.load_json(framer.PROFILE_PATH)
+    refuse_second_edition(conn, week)                    # before any paid call, not after
+    if reuse_reader:                                     # validated before a run row exists: a typo must not leave an empty attempt
+        runs.adoptable_output(conn, week, reuse_reader, "reader")
     runs.open_run(conn, week, runs._at(stamp))
+    if reuse_reader:
+        if runs.next_stage(conn, week) != "reader":
+            raise runs.RunRefused(f"{week} has already finished its Reader; --reuse-reader is for a fresh attempt")
+        runs.adopt_stage(conn, week, "reader", reuse_reader, stamp)
     outputs = {}
     plan = [
         ("reader", lambda: reader.run_stage(conn, client, now, week, stamp=stamp, profile=profile)),
@@ -279,25 +333,40 @@ def run_week(conn, client, now: datetime, week: str | None = None, *, stop_after
 
 
 def status(conn, week: str) -> list[str]:
-    """One line per attempt at each stage of a week, for a person to read."""
-    rows = conn.execute(
-        "SELECT stage, attempt, status, started_at, finished_at, coalesce(error, '') FROM run_stages WHERE run_id = %s "
-        "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage), attempt", (week,)).fetchall()
-    if not rows:
-        return [f"{week}: no run yet"]
-    run = conn.execute("SELECT status FROM runs WHERE id = %s", (week,)).fetchone()[0]
-    lines = [f"{week}: run {run}"]
-    for stage, attempt, state, started, finished, error in rows:
-        took = f"{(finished - started).total_seconds():.0f}s" if finished else "-"
-        lines.append(f"  {stage:<8} attempt {attempt}  {state:<8} {took:>5}  {error[:90]}")
+    """Every attempt at a week, one line per attempt at each stage, for a person to read.
+
+    An attempt that did not publish while a later one exists is marked superseded. Failed
+    attempts are kept as evidence; nothing here edits them.
+    """
+    base = runs.base_week(week)
+    ids = runs.attempts(conn, base)
+    if not ids:
+        return [f"{base}: no run yet"]
+    brief = conn.execute("SELECT run_id FROM briefs WHERE id = %s", (base,)).fetchone()
+    lines = []
+    for n, run_id in enumerate(ids):
+        state = conn.execute("SELECT status FROM runs WHERE id = %s", (run_id,)).fetchone()[0]
+        note = ("published the edition" if brief and brief[0] == run_id
+                else f"superseded by {ids[n + 1]}" if n + 1 < len(ids) else "")
+        lines.append(f"{run_id}: run {state}" + (f" ({note})" if note else ""))
+        rows = conn.execute(
+            "SELECT stage, attempt, status, started_at, finished_at, coalesce(error, ''), coalesce(output ->> 'reused_from', '') "
+            "FROM run_stages WHERE run_id = %s "
+            "ORDER BY array_position(ARRAY['reader', 'framer', 'gates', 'publish'], stage), attempt", (run_id,)).fetchall()
+        for stage, attempt, st, started, finished, error, reused in rows:
+            took = f"{(finished - started).total_seconds():.0f}s" if finished else "-"
+            detail = f"reused from {reused}" if reused else error[:90]
+            lines.append(f"  {stage:<8} attempt {attempt}  {st:<8} {took:>5}  {detail}")
     return lines
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--week", help="ISO week key like 2026-W42 (default: this week)")
-    parser.add_argument("--status", action="store_true", help="print the week's stages and exit; no model call")
+    parser.add_argument("--week", help="ISO week key like 2026-W42, or one attempt's id like 2026-W42-r2 (default: this week)")
+    parser.add_argument("--status", action="store_true", help="print every attempt at the week and exit; no model call")
     parser.add_argument("--stop-after", choices=runs.STAGES, help="stop cleanly after this stage")
+    parser.add_argument("--new-attempt", action="store_true", help="start the week's next attempt (-r2, -r3...) from the Reader")
+    parser.add_argument("--reuse-reader", metavar="RUN_ID", help="start a new attempt from this attempt's finished Reader output (no re-fetch)")
     args = parser.parse_args()
     now = datetime.now(timezone.utc)
     if args.status:
@@ -307,11 +376,13 @@ def main() -> int:
     try:
         client = llm.build_client()
         with budget.connect() as conn:
-            week = args.week or week_key(now)
-            before = runs.next_stage(conn, week) if conn.execute("SELECT 1 FROM runs WHERE id = %s", (week,)).fetchone() else "reader"
-            print(f"week {week}: starting at {before or 'nothing (already complete)'}")
-            out = run_week(conn, client, now, week, stop_after=args.stop_after, clock=lambda: datetime.now(timezone.utc))
-    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, runs.StageBusy) as stop:
+            run_id = resolve_run(conn, args.week or week_key(now), new_attempt=args.new_attempt or bool(args.reuse_reader))
+            exists = conn.execute("SELECT 1 FROM runs WHERE id = %s", (run_id,)).fetchone()
+            before = "reader" if not exists or args.reuse_reader else runs.next_stage(conn, run_id)
+            print(f"run {run_id}: starting at {'reader (adopting ' + args.reuse_reader + chr(39) + 's)' if args.reuse_reader else before or 'nothing (already complete)'}")
+            out = run_week(conn, client, now, run_id, stop_after=args.stop_after, reuse_reader=args.reuse_reader,
+                           clock=lambda: datetime.now(timezone.utc))
+    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, AlreadyPublished, runs.StageBusy, runs.RunRefused) as stop:
         print(f"stopped: {stop}", file=sys.stderr)
         return 1
     for stage, o in out.items():
