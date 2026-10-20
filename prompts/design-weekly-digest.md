@@ -52,7 +52,8 @@ An editor's note that ties the whole week together before any single story.
 - **One short paragraph**, 80–120 words. Its first sentence names how the week shifted; then two or
   three stories are named as the evidence, each a link that jumps to its tile; and it ends on the
   harder question the week raises.
-- Under it, a thin **"10 signals worth your attention"** line with the story count.
+- Under it, a thin **"9 signals worth your attention"** line, where the number is the edition's story
+  count.
 
 ## NEWS · Learning for the Week
 
@@ -175,3 +176,59 @@ predictions also appear here, each with its reason.
    predictions with 1 scored miss, and 1 homework exercise.
 2. **A slot list:** every repeatable block and field, with its name, type, whether it is optional, and
    its empty state, so the pipeline can be built to fill exactly these slots.
+
+---
+
+## Revision 1 · 2026-10-20 · Varun's feedback on the first design (six changes)
+
+Paste everything below into the same Claude Design project, as a follow-up.
+
+---
+
+Good first version; keep everything not mentioned here exactly as it is. Six changes, then re-export
+the page and the slot list.
+
+**1. The four NEWS sections collapse.** "The week in one thread", "Learning for the week", "This
+week's stories" and "What are industry leaders talking?" each get a disclosure arrow before the
+heading (▸ collapsed, ▾ open), and **all four start collapsed**, showing only the heading, its count and
+a one-line preview. A section opens when the reader clicks the arrow or the heading, or picks it from
+the sticky sub-tab bar (which also scrolls to it). Add a small "Expand all / Collapse all" control at
+the right of the sub-tab bar. Each heading is a real button with `aria-expanded`. Opening and closing
+animate quickly (about 150 ms) and never shift the page above the section.
+
+**2. Each NEWS section has its own colour.** Give the four sections four distinct, muted hues that
+sit well with the warm off-white page, used for the section's arrow, kicker, heading underline, a
+3 px left rule down the open section, and its sub-tab marker. Keep burnt amber (#B5502A) for the first
+section, since it is the brand accent. Do not use green or red for any section: those mean "verified"
+and "miss / failed". All four must stay distinguishable for colour-blind readers and keep text
+contrast at 4.5:1 or better, and the colour is never the only cue: the label always shows.
+
+**3. Thumbs replace the text buttons.** Swap "▲ Useful / ▼ Not useful" for two icon buttons, thumbs
+up and thumbs down, outline by default and filled in the section colour when chosen, with
+`aria-label`s "Useful" and "Not useful" and a visible focus ring. The one-line reason box still
+appears only after thumbs down.
+
+**4. One pill, then hashtags.** Each story keeps exactly one pill beside its number: `DO THIS`, `KNOW`
+or `RADAR`. Replace the two-level category tag (`MODELS / COST`) with **hashtags** for the topics,
+for example `#Agents` `#Permissions` `#ModelContextProtocol` `#OpenWeights`: one to four per story, in
+small muted monospace, on one line under the headline. They are labels for skimming, not links.
+
+**5. Sources are real links.** The source line lists every source as a link to the exact article,
+labelled by publication: `Primary: GitHub Blog ↗ · Also: Hugging Face Papers ↗, The Decoder ↗`. The
+primary source comes first and is the only one under "Primary"; links open in a new tab. Keep the
+green "checked against source" mark after them.
+
+**6. Homework time is filled in from Claude Code.** The "How long did it really take?" box arrives
+**pre-filled with the time measured in Claude Code** for that exercise (for example `47`), with a
+small note under it: "Measured from your Claude Code sessions on this repo · 2 sessions, Oct 21–22.
+Edit if it's off." The reader can change the number; once changed, the note reads "Edited by you
+(measured: 47 min)" so both numbers stay visible, and Submit saves the edited one. If nothing was
+measured, the box is empty with the note "Not measured: no Claude Code session found for this
+exercise." Show all three states (measured, edited, not measured). In "Previous homework", each row
+shows the saved minutes with a small `measured` or `edited` marker.
+
+**Update the slot list to match:** `cat` becomes `hashtags[]` (1–4 strings); `sources` becomes
+`sources[]` of `{label, href, primary}` with exactly one `primary: true`; add `section.color` for each
+of the four NEWS sections; add `homework.measured` as `{minutes, sessions, from, to}` (optional; absent
+means not measured) and a `minutesSource` of `measured` or `edited` on each `previous[]` row; feedback
+and the reader's edit stay UI state, not slots.
