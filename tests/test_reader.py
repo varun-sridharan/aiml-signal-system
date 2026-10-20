@@ -82,14 +82,21 @@ def fetch_result_message(text="Article body about MCP.", error=None, media_type=
 class FakeClient:
     """Stands in for anthropic.Anthropic: records requests, returns canned fetch results."""
 
-    def __init__(self, **message_kwargs):
-        self.kwargs, self.requests = message_kwargs, []
+    def __init__(self, unique=False, **message_kwargs):
+        # unique: every page gets its own words after the canned text, as real pages do. Without it every
+        # address serves the same text, which the deduplication gate (rightly) folds into one story.
+        self.unique, self.kwargs, self.requests = unique, message_kwargs, []
         self.messages = self
 
     def create(self, **request):
         self.requests.append(request)
         asked = request["messages"][0]["content"].rsplit(": ", 1)[-1] if request.get("messages") else "https://x.test/"
-        return fetch_result_message(url=asked, **self.kwargs)   # the tool answers with the page it was asked for
+        kwargs = dict(self.kwargs)
+        if self.unique:
+            import hashlib
+            words = " ".join(hashlib.sha256(f"{asked}|{i}".encode()).hexdigest()[:8] for i in range(400))
+            kwargs["text"] = kwargs.get("text", "Article body about MCP.") + " " + words
+        return fetch_result_message(url=asked, **kwargs)   # the tool answers with the page it was asked for
 
 
 class Parsing(unittest.TestCase):
@@ -272,7 +279,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
             reader.FEEDS = original
 
     def test_r1_filters_by_window_and_relevance_then_fetches_what_may_surface(self):
-        client = FakeClient(text="MCP went stateless. " * 20)
+        client = FakeClient(unique=True, text="MCP went stateless. " * 20)
         out = self.run_reader(client)
         stats = out["stats"]
         self.assertEqual(stats["out_of_window"], 1)                # the June post
@@ -495,6 +502,22 @@ class ReaderAgainstDatabase(unittest.TestCase):
         self.assertFalse(sources.is_blocked("notreuters.com"))
         for sneaky in ("reuters.com:443", "user@reuters.com", "reuters.com.", "WWW.Reuters.com"):
             self.assertTrue(sources.is_blocked(sources.domain_of("https://" + sneaky + "/x") if "@" not in sneaky and ":" not in sneaky else sneaky), sneaky)
+
+    def test_r23_the_same_article_at_two_addresses_is_one_story_in_the_output_and_can_be_undone(self):
+        from agents import dedupe
+        client = FakeClient(text="MCP went stateless. " * 20)            # every address serves the same text
+        out = self.run_reader(client)
+        self.assertEqual(out["stats"]["fetched"], 2)
+        self.assertEqual((out["stats"]["merged"], len(out["items"]), len(out["dedup"]["merged"])), (1, 1, 1))
+        merged = out["dedup"]["merged"][0]
+        self.assertEqual(merged["layer"], "fingerprint")
+        self.assertNotIn(merged["dropped"], out["items"])
+        self.assertIn(merged["kept"], out["items"])
+        self.assertEqual(self.conn.execute("SELECT status FROM items WHERE id = %s", (merged["dropped"],)).fetchone()[0], "fetched")   # kept, not deleted
+        did = self.conn.execute("SELECT id FROM dedup_decisions WHERE other_id = %s", (merged["dropped"],)).fetchone()[0]
+        dedupe.undo_merge(self.conn, did, "test", NOW)
+        again = self.run_reader(client)
+        self.assertEqual((len(again["items"]), again["stats"]["merged"]), (2, 0))      # the undo holds across runs
 
     def test_r22_even_a_person_added_url_on_a_blocked_domain_is_not_fetched(self):
         client = FakeClient(text="should never be asked for")

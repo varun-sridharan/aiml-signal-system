@@ -1,0 +1,21 @@
+...........................F................................F..............................
+======================================================================
+FAIL: test_r1_filters_by_window_and_relevance_then_fetches_what_may_surface (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 285, in test_r1_filters_by_window_and_relevance_then_fetches_what_may_surface
+    self.assertEqual(len(out["items"]), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_w1_a_whole_week_publishes_and_pins_its_evidence (tests.test_weekly.WeeklyRun)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_weekly.py", line 236, in test_w1_a_whole_week_publishes_and_pins_its_evidence
+    self.assertGreaterEqual(len(body["items"]), 2)
+AssertionError: 1 not greater than or equal to 2
+
+----------------------------------------------------------------------
+Ran 91 tests in 593.276s
+
+FAILED (failures=2)

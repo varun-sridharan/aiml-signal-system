@@ -14,7 +14,6 @@
     {"id": "arxiv-version", "expect": "same", "a": "https://arxiv.org/abs/2610.00001v1", "b": "https://arxiv.org/abs/2610.00001v3", "why": "a new version of a paper is the same paper"},
     {"id": "arxiv-pdf", "expect": "same", "a": "https://arxiv.org/pdf/2610.00001v2.pdf", "b": "https://arxiv.org/abs/2610.00001", "why": "the PDF and the abstract page are one paper"},
     {"id": "arxiv-html", "expect": "same", "a": "https://www.arxiv.org/html/2610.00001v1/", "b": "http://arxiv.org/abs/2610.00001?context=cs", "why": "the HTML rendering, with listing context, is the same paper"},
-
     {"id": "PLANTED-near-duplicate-ids", "expect": "different", "planted": true, "a": "https://arxiv.org/abs/2610.00001", "b": "https://arxiv.org/abs/2610.00002", "why": "PLANTED: two papers whose addresses differ by one digit. Merging them loses a paper without a trace"},
     {"id": "PLANTED-near-duplicate-slugs", "expect": "different", "planted": true, "a": "https://github.blog/changelog/2026-10-16-copilot-agent-mode-generally-available", "b": "https://github.blog/changelog/2026-10-16-copilot-agent-mode-now-in-preview", "why": "PLANTED: same day, almost the same slug, opposite news (GA versus preview)"},
     {"id": "PLANTED-near-duplicate-query-id", "expect": "different", "planted": true, "a": "https://example.com/article?id=1041", "b": "https://example.com/article?id=1042", "why": "PLANTED: sites that name the article in the query. Dropping the whole query string would merge every article on the site"},
@@ -23,6 +22,9 @@
     {"id": "subdomain", "expect": "different", "a": "https://docs.example.com/guide", "b": "https://example.com/guide", "why": "only www. is stripped, not subdomains"},
     {"id": "syndicated-copy", "expect": "different", "a": "https://example.com/news/record-funding-round", "b": "https://syndicator.example/reprints/record-funding-round", "why": "one story at two addresses is corroboration, found by title, not a URL duplicate"},
     {"id": "query-meaning", "expect": "different", "a": "https://example.com/search?q=mcp", "b": "https://example.com/search?q=rlhf", "why": "a query that changes the content is part of the address"},
-    {"id": "arxiv-other-site", "expect": "different", "a": "https://example.com/pdf/2610.00001v1.pdf", "b": "https://example.com/abs/2610.00001", "why": "the arXiv rule applies to arxiv.org only"}
+    {"id": "arxiv-other-site", "expect": "different", "a": "https://example.com/pdf/2610.00001v1.pdf", "b": "https://example.com/abs/2610.00001", "why": "the arXiv rule applies to arxiv.org only"},
+    {"id": "amp-suffix", "expect": "same", "a": "https://example.com/news/story-one/amp", "b": "https://example.com/news/story-one", "why": "the AMP rendering of a page is the page", "added": "2026-10-20 run 3 (draft)"},
+    {"id": "mobile-subdomain", "expect": "same", "a": "https://m.example.com/news/story-one", "b": "https://example.com/news/story-one", "why": "m. is the mobile site of the same page", "added": "2026-10-20 run 3 (draft)"},
+    {"id": "substack-share-code", "expect": "same", "a": "https://newsletter.substack.com/p/post-title?r=2abcd&utm_campaign=post", "b": "https://newsletter.substack.com/p/post-title", "why": "?r= on Substack is the sharer's referral code", "added": "2026-10-20 run 3 (draft)"}
   ]
 }

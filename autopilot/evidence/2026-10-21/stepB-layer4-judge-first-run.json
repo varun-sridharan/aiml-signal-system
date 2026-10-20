@@ -1,0 +1,33 @@
+{
+ "rows": [
+  {
+   "id": "ga-post-from-preview-template",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two different announcements about the same product at different lifecycle stages: public preview versus general availability, with different capabilities and dates.",
+   "cost_usd": 0.001105
+  },
+  {
+   "id": "two-papers-one-lab-shared-boilerplate",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two distinct research papers from Cobalt on different topics: Sparse Probes addresses fact localization in language models, while Draft Reuse addresses speculative decoding optimization.",
+   "cost_usd": 0.001092
+  },
+  {
+   "id": "article-updated-with-a-corrected-figure",
+   "expect": "same",
+   "verdict": "different",
+   "reason": "The two articles report different funding amounts ($18 million vs. $21 million), indicating they are either from different sources or one contains corrected information that would constitute a significant factual discrepancy rather than a minor update.",
+   "cost_usd": 0.001002
+  },
+  {
+   "id": "two-releases-one-template",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two different release versions (2.1 vs 2.2) with distinct features, bug fixes, and pricing changes.",
+   "cost_usd": 0.000933
+  }
+ ],
+ "cost_usd": 0.004132
+}

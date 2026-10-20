@@ -1,0 +1,8 @@
+content-pairs gate [draft, awaiting Varun's review]: 13 pairs (6 by fingerprint, 2 by identity, 4 by model, 1 by url)
+  layers 1 to 3 behave as labelled
+  model: ga-post-from-preview-template: different (label different): These are two different announcements about the same product at different lifecycle stages: public preview versus general availability, with different capabilities and dates.
+  model: two-papers-one-lab-shared-boilerplate: different (label different): These are two distinct research papers from Cobalt on different topics: Sparse Probes addresses fact localization in language models, while Draft Reuse addresses speculative decoding optimization.
+  model: article-updated-with-a-corrected-figure: different (label same): The two articles report different funding amounts ($18 million vs. $21 million), indicating they are either from different sources or one contains corrected information that would constitute a significant factual discrepancy rather than a minor update.
+  model: two-releases-one-template: different (label different): These are two different release versions (2.1 vs 2.2) with distinct features, bug fixes, and pricing changes.
+  FAIL article-updated-with-a-corrected-figure: the model said different (The two articles report different funding amounts ($18 million vs. $21 million), indicating they are either from different sources or one contains corrected information that would constitute a significant factual discrepancy rather than a minor update.); the label is same
+  layer 4: 3/4 as labelled · $0.0041

@@ -440,3 +440,47 @@ CREATE TABLE IF NOT EXISTS run_artifacts (
 CREATE OR REPLACE TRIGGER run_artifacts_append_only
     BEFORE UPDATE OR DELETE ON run_artifacts
     FOR EACH ROW EXECUTE FUNCTION append_only();
+
+-- DEDUPLICATION DECISIONS (agents/dedupe.py). One row per pair of fetched items the gate decided
+-- on, by which layer and why. A 'same' row is a merge: the other item is folded into the kept one
+-- (its link is also recorded as a sighting in item_sources) and can be undone, once, with a reason.
+-- Nothing else about a decision ever changes and no row is deleted, so the record of why a story
+-- was merged away outlives the merge. 'different' rows exist only for model judgements, so a pair
+-- the model has seen is not paid for twice.
+CREATE TABLE IF NOT EXISTS dedup_decisions (
+    id             uuid         PRIMARY KEY,
+    kept_id        uuid         NOT NULL REFERENCES items (id) ON DELETE RESTRICT,
+    other_id       uuid         NOT NULL REFERENCES items (id) ON DELETE RESTRICT,
+    verdict        text         NOT NULL CHECK (verdict IN ('same', 'different')),
+    layer          text         NOT NULL CHECK (layer IN ('url', 'identity', 'fingerprint', 'model', 'default')),
+    reason         text         NOT NULL CHECK (length(reason) BETWEEN 1 AND 1000),
+    decided_at     timestamptz  NOT NULL,
+    undone_at      timestamptz  NULL,
+    undone_reason  text         NULL CHECK (undone_reason IS NULL OR length(undone_reason) BETWEEN 1 AND 1000),
+    CHECK (kept_id <> other_id),
+    CHECK ((undone_at IS NULL) = (undone_reason IS NULL)),
+    CHECK (verdict = 'same' OR undone_at IS NULL)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS dedup_decisions_pair_idx
+    ON dedup_decisions (LEAST(kept_id::text, other_id::text), GREATEST(kept_id::text, other_id::text));
+CREATE INDEX IF NOT EXISTS dedup_decisions_other_idx ON dedup_decisions (other_id) WHERE verdict = 'same' AND undone_at IS NULL;
+
+CREATE OR REPLACE FUNCTION dedup_decisions_guard() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION 'dedup decision % is never deleted', OLD.id USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF (NEW.id, NEW.kept_id, NEW.other_id, NEW.verdict, NEW.layer, NEW.reason, NEW.decided_at)
+       IS DISTINCT FROM (OLD.id, OLD.kept_id, OLD.other_id, OLD.verdict, OLD.layer, OLD.reason, OLD.decided_at) THEN
+        RAISE EXCEPTION 'dedup decision %: only an undo may change it', OLD.id USING ERRCODE = 'restrict_violation';
+    END IF;
+    IF OLD.undone_at IS NOT NULL THEN
+        RAISE EXCEPTION 'dedup decision %: an undo is final', OLD.id USING ERRCODE = 'restrict_violation';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE OR REPLACE TRIGGER dedup_decisions_guard
+    BEFORE UPDATE OR DELETE ON dedup_decisions
+    FOR EACH ROW EXECUTE FUNCTION dedup_decisions_guard();

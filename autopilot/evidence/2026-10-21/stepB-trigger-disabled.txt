@@ -1,0 +1,13 @@
+........F....
+======================================================================
+FAIL: test_decisions_are_append_only_except_the_undo (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 382, in test_decisions_are_append_only_except_the_undo
+    self.conn.execute(sql)
+AssertionError: Error not raised : DELETE FROM dedup_decisions
+
+----------------------------------------------------------------------
+Ran 13 tests in 71.446s
+
+FAILED (failures=1)

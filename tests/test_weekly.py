@@ -163,7 +163,7 @@ class Pipeline:
     """Mixin: the Framer and its grader replaced, the feeds replaced, the model client faked."""
 
     def start(self):
-        self.client = FakeClient(text=PAGE)
+        self.client = FakeClient(unique=True, text=PAGE)
         self.framer_calls, self.check_calls = [], []
         self.fail_framer = 0
 

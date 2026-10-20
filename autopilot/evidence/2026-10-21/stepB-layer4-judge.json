@@ -1,0 +1,61 @@
+{
+ "rows": [
+  {
+   "id": "ga-post-from-preview-template",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two different announcements about the same product at different lifecycle stages: public preview versus general availability, with different capabilities and dates.",
+   "cost_usd": 0.001105
+  },
+  {
+   "id": "two-papers-one-lab-shared-boilerplate",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two distinct research papers from Cobalt on different topics: Sparse Probes addresses fact localization in language models, while Draft Reuse addresses speculative decoding optimization.",
+   "cost_usd": 0.001092
+  },
+  {
+   "id": "article-with-a-different-headline-figure",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "The two articles report different funding amounts ($18 million vs. $21 million), indicating they are either from different sources or one contains corrected information that would constitute a significant factual discrepancy rather than a minor update.",
+   "cost_usd": 0.001002
+  },
+  {
+   "id": "article-reworded-after-publication",
+   "expect": "same",
+   "verdict": "same",
+   "reason": "Both pages report the identical announcement about Lakeside opening its shared cache to developers, with the same key details about pricing, scoping, and functionality, differing only in minor wording variations.",
+   "cost_usd": 0.000975
+  },
+  {
+   "id": "one-word-flip-no-digits",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "The two pages differ in their key factual claim about European region availability: page A states the newest model is not available there, while page B states it is now available.",
+   "cost_usd": 0.001013
+  },
+  {
+   "id": "template-entity-swap-no-digits",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two different partnership announcements by Harbor with different companies (Delta vs. Epsilon), despite using identical boilerplate language.",
+   "cost_usd": 0.00093
+  },
+  {
+   "id": "follow-up-quotes-an-earlier-statement",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "Page A is Sable's original statement, while Page B is a separate article from a trade press outlet reporting on reactions to that statement.",
+   "cost_usd": 0.001016
+  },
+  {
+   "id": "two-releases-one-template",
+   "expect": "different",
+   "verdict": "different",
+   "reason": "These are two different release versions (2.1 vs 2.2) with distinct features, bug fixes, and pricing changes.",
+   "cost_usd": 0.000933
+  }
+ ],
+ "cost_usd": 0.008066
+}

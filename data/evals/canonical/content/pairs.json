@@ -1,0 +1,278 @@
+{
+ "status": "draft, awaiting Varun's review",
+ "about": "Content pairs for Reader's layered deduplication gate (plan row 9). Every text is invented (fictional companies and figures), because the repository is public. Each pair says what it IS (expect: same|different) and which layer should decide it (layer: url, identity, fingerprint, or model). A pair marked 'model' must NOT be merged by the free layers (they may only pass it on or say different); the paid check asks the model about those and nothing else. Doubt always means different: a duplicate shown twice is visible and fixable, a story merged away is not. Written by the autopilot run of 2026-10-20/21; every pair is a judgement, which is why the set needs Varun's sign-off before row 9 is DONE.",
+ "pairs": [
+  {
+   "id": "same-article-fetched-twice",
+   "expect": "same",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://helio.example/blog/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "b": {
+    "url": "https://helio.example/news/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host. Subscribe to our newsletter for weekly updates. Share this post. Related stories: agent tooling roundup."
+   },
+   "why": "the same page fetched a second time; the second fetch picked up newsletter and share-button text"
+  },
+  {
+   "id": "ga-post-from-preview-template",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://northwind.example/blog/beacon-preview",
+    "title": "Beacon is in public preview",
+    "text": "Beacon is Northwind Labs' managed vector index for retrieval-augmented applications. It stores embeddings, filters them by metadata and returns the closest matches through one API call. The service is billed per query and per gigabyte stored, with no minimum commitment. Customers can export their data at any time in an open format, and deleting an index removes its backups within thirty days. Northwind publishes its security practices, its uptime history and the full list of regions on its trust page, and every release goes through the same review process before it reaches customers. Beacon entered public preview on 9 June 2026. During the preview the index supports up to 5 million vectors per customer and runs in two regions, and Northwind makes no uptime commitment. Early testers reported query latency of about 80 milliseconds at the 95th percentile on a 1 million vector index. Northwind expects the numbers to change before general availability."
+   },
+   "b": {
+    "url": "https://northwind.example/blog/beacon-ga",
+    "title": "Beacon is generally available",
+    "text": "Beacon is Northwind Labs' managed vector index for retrieval-augmented applications. It stores embeddings, filters them by metadata and returns the closest matches through one API call. The service is billed per query and per gigabyte stored, with no minimum commitment. Customers can export their data at any time in an open format, and deleting an index removes its backups within thirty days. Northwind publishes its security practices, its uptime history and the full list of regions on its trust page, and every release goes through the same review process before it reaches customers. Beacon became generally available on 21 October 2026. The index now supports up to 500 million vectors per customer, runs in seven regions and carries a 99.9 percent monthly uptime commitment. Northwind measured query latency of 35 milliseconds at the 95th percentile on a 10 million vector index and says the preview limits have been removed."
+   },
+   "why": "the GA post was written from the preview's template and shares its first three paragraphs, but it announces a different event with different limits and dates; the free layers must not merge it"
+  },
+  {
+   "id": "two-papers-one-lab-shared-boilerplate",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://cobalt.example/research/sparse-probes",
+    "title": "Sparse Probes",
+    "text": "Cobalt researchers propose Sparse Probes, a method for locating which layers of a language model store a given fact. Probes trained on 4,000 traces find the relevant layer for 83 percent of tested facts. The method needs no fine-tuning of the base model and adds under 1 percent to inference cost. It is evaluated on one model family at three sizes and on English text only. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "b": {
+    "url": "https://cobalt.example/research/draft-reuse",
+    "title": "Draft Reuse",
+    "text": "Cobalt researchers study Draft Reuse, a way to speed up speculative decoding by recycling rejected draft tokens. On a benchmark of 1,200 prompts the technique raises throughput by 1.4 times with no change in output quality. The gains shrink on prompts longer than 8,000 tokens, and the evaluation covers a single hardware configuration. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "why": "two papers from one lab whose acknowledgements and ethics statement are identical; no ID in either address"
+  },
+  {
+   "id": "two-papers-different-arxiv-ids",
+   "expect": "different",
+   "layer": "identity",
+   "a": {
+    "url": "https://arxiv.org/abs/2610.04417v1",
+    "title": "Sparse Probes",
+    "text": "Cobalt researchers propose Sparse Probes, a method for locating which layers of a language model store a given fact. Probes trained on 4,000 traces find the relevant layer for 83 percent of tested facts. The method needs no fine-tuning of the base model and adds under 1 percent to inference cost. It is evaluated on one model family at three sizes and on English text only. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "b": {
+    "url": "https://arxiv.org/abs/2610.04871",
+    "title": "Sparse Probes (copy of the text, different ID)",
+    "text": "Cobalt researchers propose Sparse Probes, a method for locating which layers of a language model store a given fact. Probes trained on 4,000 traces find the relevant layer for 83 percent of tested facts. The method needs no fine-tuning of the base model and adds under 1 percent to inference cost. It is evaluated on one model family at three sizes and on English text only. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "why": "two different arXiv IDs are two papers, whatever their text looks like"
+  },
+  {
+   "id": "same-paper-two-hosts",
+   "expect": "same",
+   "layer": "identity",
+   "a": {
+    "url": "https://arxiv.org/pdf/2610.04417v2.pdf",
+    "title": "Sparse Probes",
+    "text": "Cobalt researchers propose Sparse Probes, a method for locating which layers of a language model store a given fact. Probes trained on 4,000 traces find the relevant layer for 83 percent of tested facts. The method needs no fine-tuning of the base model and adds under 1 percent to inference cost. It is evaluated on one model family at three sizes and on English text only. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "b": {
+    "url": "https://www.alphaxiv.org/abs/2610.04417",
+    "title": "Sparse Probes, summary page",
+    "text": "Cobalt researchers study Draft Reuse, a way to speed up speculative decoding by recycling rejected draft tokens. On a benchmark of 1,200 prompts the technique raises throughput by 1.4 times with no change in output quality. The gains shrink on prompts longer than 8,000 tokens, and the evaluation covers a single hardware configuration. Acknowledgements. This work was supported by the Cobalt Institute for Machine Intelligence. We thank our colleagues in the evaluation group for discussions and the reviewers for their comments. All experiments were run on the institute's shared cluster. Ethics statement. The study uses only public datasets and involved no human participants. The authors declare no competing interests. Code and trained weights will be released under a permissive licence after review."
+   },
+   "why": "one arXiv ID at two hosts and two versions is one paper, even when the pages differ"
+  },
+  {
+   "id": "short-fetch-against-full",
+   "expect": "same",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://helio.example/blog/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK"
+   },
+   "b": {
+    "url": "https://news.example/helio-orbit",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "why": "a truncated fetch (the first 60 percent) of the same text; the shorter one is inside the longer"
+  },
+  {
+   "id": "article-updated-after-publication",
+   "expect": "same",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://helio.example/blog/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "b": {
+    "url": "https://helio.example/2026/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host. Update: Helio added a link to the migration guide and corrected the name of the third adapter."
+   },
+   "why": "the same article with a paragraph appended after publication; no figure changed"
+  },
+  {
+   "id": "article-with-a-different-headline-figure",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://fernhill.example/news/quillbase",
+    "title": "Quillbase raises 18 million dollars",
+    "text": "Quillbase, a startup building tools for auditing machine learning pipelines, raised 18 million dollars in a Series A round led by Fernhill Capital, the company said on Monday. The money will fund hiring and a second product for monitoring model drift. Quillbase was founded in 2024 and counts 40 customers, mostly in financial services. Chief executive Dana Whitfield said the company expects to triple its team of 25 within a year."
+   },
+   "b": {
+    "url": "https://fernhill.example/news/quillbase-raises",
+    "title": "Quillbase raises 21 million dollars",
+    "text": "Quillbase, a startup building tools for auditing machine learning pipelines, raised 21 million dollars in a Series A round led by Fernhill Capital, the company said on Monday. The money will fund hiring and a second product for monitoring model drift. Quillbase was founded in 2024 and counts 40 customers, mostly in financial services. Chief executive Dana Whitfield said the company expects to triple its team of 25 within a year."
+   },
+   "why": "the same text with a different headline figure at a different address. It may be a corrected version or a separate report; the evidence cannot say, so the answer is different (relabelled from 'same' after the first paid run and a reviewer's objection, see the debrief)"
+  },
+  {
+   "id": "article-reworded-after-publication",
+   "expect": "same",
+   "layer": "model",
+   "a": {
+    "url": "https://wire.example/2026/10/lakeside-cache",
+    "title": "Lakeside opens its cache",
+    "text": "Lakeside has opened its shared cache to outside developers after months of internal use. The cache stores the results of repeated model calls so that identical requests are answered without a second charge. Lakeside says the service will stay free for individual developers and billed by volume for companies. The company describes the cache as safe to share because every entry is scoped to the account that created it. Developers can turn it off for any single request, and Lakeside publishes the full scoping rules in its documentation."
+   },
+   "b": {
+    "url": "https://wire.example/news/lakeside-opens-cache",
+    "title": "Lakeside opens its cache",
+    "text": "Lakeside has made its shared cache available to outside developers following a long internal trial. The cache keeps the results of repeated model calls so that identical requests are answered without a second charge. Lakeside says the service will remain free for individual developers and be billed by volume for companies. According to the company the cache is safe to share because each entry is scoped to the account that created it. Developers can switch it off for any single request, and Lakeside publishes the complete scoping rules in its documentation."
+   },
+   "why": "one article whose lead and second paragraph were reworded after publication, same facts, moved to a new address; not flush, so only the model may say it is the same"
+  },
+  {
+   "id": "one-word-flip-no-digits",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://sable.example/blog/region-a",
+    "title": "Sable on regional availability",
+    "text": "Sable has published a long account of how its hosted models are rolled out to different parts of the world and what customers should expect when they plan a deployment. The company explains that each region has its own capacity, its own review process and its own list of supported features, and that a customer who needs a feature in one region should check the status page before committing to it. Sable also describes how it handles data that must stay within a region, how it separates customer accounts from one another, and how it informs customers when a region changes its terms. The newest model is not available in the European region and customers there should continue to use the previous model until further notice."
+   },
+   "b": {
+    "url": "https://sable.example/blog/region-b",
+    "title": "Sable on regional availability",
+    "text": "Sable has published a long account of how its hosted models are rolled out to different parts of the world and what customers should expect when they plan a deployment. The company explains that each region has its own capacity, its own review process and its own list of supported features, and that a customer who needs a feature in one region should check the status page before committing to it. Sable also describes how it handles data that must stay within a region, how it separates customer accounts from one another, and how it informs customers when a region changes its terms. The newest model is now available in the European region and customers there may switch from the previous model whenever they choose."
+   },
+   "why": "two long posts identical but for one word that reverses the story (not available / now available), with no digits for a number check to notice; resemblance alone must never merge them"
+  },
+  {
+   "id": "template-entity-swap-no-digits",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://pr.example/harbor-partnership",
+    "title": "Harbor partners with Delta",
+    "text": "Harbor and Delta today announced a strategic partnership to bring their products to customers who want a simpler way to manage their data. The agreement covers joint development, shared support and a common roadmap, and both companies say customers will see the first results soon. Delta described the partnership as a natural fit with its existing products and said the two teams had already begun working together. Harbor said it chose Delta because of its record with enterprise customers and its approach to security. Financial terms were not disclosed. The partnership is subject to the usual regulatory reviews, and the companies expect to say more at their next customer events."
+   },
+   "b": {
+    "url": "https://pr.example/harbor-partnership-2",
+    "title": "Harbor partners with Epsilon",
+    "text": "Harbor and Epsilon today announced a strategic partnership to bring their products to customers who want a simpler way to manage their data. The agreement covers joint development, shared support and a common roadmap, and both companies say customers will see the first results soon. Epsilon described the partnership as a natural fit with its existing products and said the two teams had already begun working together. Harbor said it chose Epsilon because of its record with enterprise customers and its approach to security. Financial terms were not disclosed. The partnership is subject to the usual regulatory reviews, and the companies expect to say more at their next customer events."
+   },
+   "why": "a press-release template reused with a different partner name and no digits; two announcements"
+  },
+  {
+   "id": "follow-up-quotes-an-earlier-statement",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://sable.example/statement",
+    "title": "Sable's statement",
+    "text": "Sable said in a statement that it takes the security of customer data seriously and that it has found no evidence that any customer data was accessed. The company said it had notified the affected customers directly, had closed the route that was used, and would publish a full report once its review was complete."
+   },
+   "b": {
+    "url": "https://tradepress.example/sable-reaction",
+    "title": "Reaction to Sable's statement",
+    "text": "Analysts reacted on Friday to the vendor's announcement. Security researchers said the vendor had moved quickly to contain the problem and that the speed of the response was a good sign. Several customers said they were waiting for the full report before deciding whether to change how they used the service, and one analyst said the wording of the vendor's account left room for follow-up questions about what exactly had been reviewed. Other vendors in the field declined to comment on the matter, though two said they had reviewed their own systems after hearing the news. Industry groups noted that disclosures of this kind had become more common over the past year and that customers should expect more of them. Sable said in a statement that it takes the security of customer data seriously and that it has found no evidence that any customer data was accessed. The company said it had notified the affected customers directly, had closed the route that was used, and would publish a full report once its review was complete. Analysts said the real test would be the report itself and whether it named the cause plainly. Until then customers would have to decide for themselves how much weight to give the vendor's early assurances, and many said they would keep using the service while asking for more detail."
+   },
+   "why": "a commentary that quotes the whole earlier statement in the middle of its own, much longer, text; the statement is inside it but is a different article"
+  },
+  {
+   "id": "syndicated-copy",
+   "expect": "same",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://wire.example/2026/10/quillbase-series-a",
+    "title": "Quillbase raises 18 million dollars",
+    "text": "Quillbase, a startup building tools for auditing machine learning pipelines, raised 18 million dollars in a Series A round led by Fernhill Capital, the company said on Monday. The money will fund hiring and a second product for monitoring model drift. Quillbase was founded in 2024 and counts 40 customers, mostly in financial services. Chief executive Dana Whitfield said the company expects to triple its team of 25 within a year."
+   },
+   "b": {
+    "url": "https://paper.example/business/quillbase-raises",
+    "title": "Quillbase raises 18 million dollars",
+    "text": "By staff reporter. Originally published by the wire service. Quillbase, a startup building tools for auditing machine learning pipelines, raised 18 million dollars in a Series A round led by Fernhill Capital, the company said on Monday. The money will fund hiring and a second product for monitoring model drift. Quillbase was founded in 2024 and counts 40 customers, mostly in financial services. Chief executive Dana Whitfield said the company expects to triple its team of 25 within a year. Copyright the wire service. Reprinted with permission."
+   },
+   "why": "a reprint on another site; it merges, and its address is kept as another sighting of the kept story, so the story is not lost"
+  },
+  {
+   "id": "two-outlets-cover-one-announcement",
+   "expect": "different",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://wire.example/crestline-jobs",
+    "title": "Crestline Bank to cut 1,800 jobs",
+    "text": "Crestline Bank said on Tuesday that it would cut 1,800 jobs, about 6 percent of its workforce, as it moves loan processing onto automated systems. The bank expects the changes to save 220 million dollars a year by 2028. Chief executive Maria Ostrowski told staff that most affected roles are in back-office operations and that the bank will offer retraining to 600 of them. Shares rose 2 percent after the announcement."
+   },
+   "b": {
+    "url": "https://tradepress.example/crestline-restructuring",
+    "title": "Crestline restructuring",
+    "text": "A restructuring announced this week will see Crestline Bank shed roughly one in sixteen employees. Analysts reached by the trade press described the plan as overdue, noting that rivals completed similar programmes two years ago. The lender's leadership framed the move as a technology upgrade rather than a cost exercise, though the savings figure it gave investors suggests both. Union representatives said they had not been consulted before the news broke."
+   },
+   "why": "two outlets' own writing about one announcement; separate pages, handled as corroboration elsewhere, never merged here"
+  },
+  {
+   "id": "two-releases-one-template",
+   "expect": "different",
+   "layer": "model",
+   "a": {
+    "url": "https://tessera.example/changelog/2-1",
+    "title": "Tessera 2.1",
+    "text": "Tessera 2.1 adds support for streaming inputs, a longer context window of 128,000 tokens and a new tool-calling format. The release fixes 14 bugs reported since version 2.0 and lowers the price of cached input by 25 percent. Existing integrations keep working without changes, and the previous tool-calling format remains available until the end of the year. Developers can read the migration notes on the documentation site and report problems through the issue tracker. The team publishes a changelog entry for every release."
+   },
+   "b": {
+    "url": "https://tessera.example/changelog/2-2",
+    "title": "Tessera 2.2",
+    "text": "Tessera 2.2 adds support for batch inputs, a longer context window of 256,000 tokens and a new tool-calling format. The release fixes 9 bugs reported since version 2.1 and lowers the price of cached input by 40 percent. Existing integrations keep working without changes, and the previous tool-calling format remains available until the end of the year. Developers can read the migration notes on the documentation site and report problems through the issue tracker. The team publishes a changelog entry for every release."
+   },
+   "why": "consecutive release notes from one product, identical but for the version, the figures and a feature; two events"
+  },
+  {
+   "id": "unrelated-articles-from-one-site",
+   "expect": "different",
+   "layer": "fingerprint",
+   "a": {
+    "url": "https://helio.example/blog/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "b": {
+    "url": "https://helio.example/blog/quillbase",
+    "title": "Another post",
+    "text": "Quillbase, a startup building tools for auditing machine learning pipelines, raised 18 million dollars in a Series A round led by Fernhill Capital, the company said on Monday. The money will fund hiring and a second product for monitoring model drift. Quillbase was founded in 2024 and counts 40 customers, mostly in financial services. Chief executive Dana Whitfield said the company expects to triple its team of 25 within a year."
+   },
+   "why": "two posts on one site that share nothing"
+  },
+  {
+   "id": "amp-copy-of-the-same-page",
+   "expect": "same",
+   "layer": "url",
+   "a": {
+    "url": "https://helio.example/blog/orbit-1-0",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "b": {
+    "url": "https://helio.example/blog/orbit-1-0/amp",
+    "title": "Helio Labs releases Orbit 1.0",
+    "text": "Helio Labs released Orbit 1.0 on 14 October 2026, an open-source SDK that lets developers run several coding agents against one repository without them overwriting each other's work. Orbit gives every agent its own working branch and merges the results through a review queue, so a human sees one combined change instead of five competing ones. In the company's internal trial across 212 repositories, the queue reduced merge conflicts from 31 percent of runs to 9 percent. The SDK is licensed under Apache 2.0 and ships with adapters for three agent frameworks. Helio says the trial measured only repositories under 2 million lines of code, and it has not tested monorepos. Pricing for the hosted queue starts at 40 dollars a month per team, while the SDK itself is free to self-host."
+   },
+   "why": "the AMP rendering of one page; decided by safe URL clean-up before any text is read"
+  }
+ ]
+}

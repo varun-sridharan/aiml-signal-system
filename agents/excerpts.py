@@ -60,6 +60,27 @@ def _is_tracking(name: str) -> bool:
     return name.startswith("utm_") or name in TRACKING_PARAMS
 
 
+# Mobile and AMP renderings of a page, and a Substack share code, name no different page.
+_AMP_TRUE = ("", "1", "true")
+# Hosts that serve many unrelated sites (or are only a public suffix): `m.` or `amp.` in front of one of
+# these names a tenant, not a mobile copy, so it is never stripped.
+_SHARED_HOSTS = frozenset({
+    "github.io", "gitlab.io", "substack.com", "medium.com", "blogspot.com", "wordpress.com", "vercel.app", "netlify.app",
+    "pages.dev", "herokuapp.com", "web.app", "firebaseapp.com", "notion.site", "ghost.io", "tumblr.com", "carrd.co", "webflow.io",
+    "co.uk", "org.uk", "ac.uk", "gov.uk", "com.au", "co.jp", "co.in", "co.nz", "co.za", "com.br", "media-amazon.com", "amazonaws.com",
+})
+
+
+def _is_share_param(host: str, name: str, value: str) -> bool:
+    name = name.lower()
+    if name == "amp" and value.lower() in _AMP_TRUE:
+        return True
+    if name == "outputtype" and value.lower() == "amp":
+        return True
+    # `r` is a referral code only on Substack; on any other site it may name the article.
+    return (host == "substack.com" or host.endswith(".substack.com")) and name in ("r", "triedredirect")
+
+
 def canonicalise(url: str) -> str:
     """One form per article, the way AGI-add-news canonicalises, with one deliberate difference.
 
@@ -78,6 +99,12 @@ def canonicalise(url: str) -> str:
     arXiv's /abs/, /pdf/ and /html/ pages, with or without a version suffix, are one
     paper, so they collapse to /abs/<id>. (A new version is a revision of the same
     paper, not a different article.)
+
+    Three more safe clean-ups (2026-10-20, layer 1 of the deduplication gate): a leading `m.` or
+    `amp.` host label, a trailing `/amp` path segment (never a page that is only `/amp`), an
+    `?amp=1` or `?outputType=amp` parameter, and a Substack share code (`?r=`). Each is the same
+    page by another route; anything less certain is left to the layers that read the text
+    (agents/dedupe.py).
     """
     parts = urlsplit(url.strip())
     if not parts.netloc:
@@ -85,13 +112,21 @@ def canonicalise(url: str) -> str:
     host = parts.netloc.lower()
     if host.startswith("www."):
         host = host[4:]
+    for prefix in ("m.", "amp."):
+        rest = host[len(prefix):]
+        if host.startswith(prefix) and rest.count(".") >= 1 and rest not in _SHARED_HOSTS:
+            host = rest
     path = parts.path.rstrip("/")
+    # `/amp` ends the path of an AMP copy, but a site may also have a section called amp: only a path that
+    # is already two segments deep (/news/story/amp) is read as an AMP copy of the page above it.
+    if path.endswith("/amp") and path[:-len("/amp")].count("/") >= 2:
+        path = path[:-len("/amp")]
     query = parts.query
     if host == "arxiv.org":
         m = re.match(r"^/(?:abs|pdf|html)/(?P<id>.+?)(?:v\d+)?(?:\.pdf)?$", path)
         if m:
             path, query = "/abs/" + m.group("id"), ""  # the path names the paper; the query only a listing context
-    kept = sorted((k, v) for k, v in parse_qsl(query, keep_blank_values=True) if not _is_tracking(k))
+    kept = sorted((k, v) for k, v in parse_qsl(query, keep_blank_values=True) if not _is_tracking(k) and not _is_share_param(host, k, v))
     return urlunsplit(("https", host, path, urlencode(kept), ""))
 
 

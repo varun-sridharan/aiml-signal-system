@@ -31,9 +31,10 @@ from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin, urlsplit
 
 try:
-    from . import budget, excerpts, graph, items, llm, runs, sources
+    from . import budget, dedupe, excerpts, graph, items, llm, runs, sources
 except ImportError:  # pragma: no cover
     import budget
+    import dedupe
     import excerpts
     import graph
     import items
@@ -166,6 +167,9 @@ class Stats:
     fetch_failed: int = 0
     left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
     dated_out: int = 0        # fetched, and the page's own date put it outside the window
+    merged: int = 0           # fetched, and the deduplication gate folded it into another item (agents/dedupe.py)
+    judged: int = 0           # pairs the gate's model judged (layer 4)
+    dedup_cost_usd: float = 0.0
     fetch_cost_usd: float = 0.0
 
     def as_dict(self) -> dict:
@@ -632,8 +636,15 @@ def prepare(conn, profile: dict | None = None) -> None:
     graph.sync(conn, profile)
 
 
+def window_fetched(conn, now: datetime) -> list[tuple]:
+    """(item id, excerpt id) of every fetched item first seen inside the window, best first."""
+    return conn.execute(
+        "SELECT i.id, i.excerpt_id FROM items i WHERE i.status = 'fetched' AND i.discovered_at > %s AND i.discovered_at <= %s "
+        "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (now - WINDOW, now)).fetchall()
+
+
 def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER_RUN,
-        profile: dict | None = None, user_id: str = USER_ID) -> dict:
+        profile: dict | None = None, user_id: str = USER_ID, judge_fn=dedupe.judge) -> dict:
     """One Reader pass. Returns the pointers-only output the run record keeps."""
     stats = Stats()
     prepare(conn, profile)
@@ -651,13 +662,17 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
             time.sleep(FETCH_PAUSE_SECONDS)
         last_domain = domain
         fetch_and_store(conn, client, iid, url, now, stats)
-    fetched = conn.execute(
-        "SELECT i.id, i.excerpt_id FROM items i WHERE i.status = 'fetched' AND i.discovered_at > %s AND i.discovered_at <= %s "
-        "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (now - WINDOW, now)).fetchall()
+    # Only what passed the relevance filter and was fetched is compared; a duplicate is folded into the
+    # earlier item and left out of the output, and the merge is recorded so it can be undone.
+    report = dedupe.dedupe_fetched(conn, client, [i for i, _ in window_fetched(conn, now)], now, judge_fn=judge_fn)
+    stats.merged, stats.judged, stats.dedup_cost_usd = len(report["merged"]), report["judged"], report["cost_usd"]
+    folded = dedupe.merged_away(conn, [i for i, _ in window_fetched(conn, now)])
+    fetched = [(i, e) for i, e in window_fetched(conn, now) if i not in folded]
     return {
         "items": [str(i) for i, _ in fetched],
         "excerpts": [str(e) for _, e in fetched],
         "stats": stats.as_dict(),
+        "dedup": report,
         "window": window_of(now),
     }
 
@@ -677,7 +692,14 @@ def add_url(conn, client, url: str, now: datetime, user_id: str = USER_ID) -> di
     if status == "fetched":
         return {"item": str(iid), "created": False, "fetched": True, "already_fetched": True, "cost_usd": 0.0}
     ok = fetch_and_store(conn, client, iid, url, now, stats, enforce_window=False)
-    return {"item": str(iid), "created": created, "fetched": ok, "cost_usd": round(stats.fetch_cost_usd, 6)}
+    out = {"item": str(iid), "created": created, "fetched": ok, "cost_usd": round(stats.fetch_cost_usd, 6)}
+    if ok:
+        # The same layers as the weekly run: a capture of an article already held is a sighting, not a second story.
+        report = dedupe.dedupe_fetched(conn, client, [i for i, _ in window_fetched(conn, now)] + [iid], now)
+        mine = next((m for m in report["merged"] if m["dropped"] == str(iid)), None)
+        out["merged_into"] = mine["kept"] if mine else None
+        out["dedup_cost_usd"] = report["cost_usd"]
+    return out
 
 
 def run_stage(conn, client, now: datetime, week: str, stamp=None, **kw) -> dict:

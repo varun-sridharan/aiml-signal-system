@@ -1,0 +1,4 @@
+no_share_params FAILURES: 1
+no_amp_path FAILURES: 1
+no_mobile_host FAILURES: 1
+no_dedupe_in_reader FAILURES: 1
