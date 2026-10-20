@@ -1,0 +1,182 @@
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("\"meta-article:published_time\", ","\"meta-article:published_time\", \"meta-article:modified_time\", ");open(p,"w").write(s) (agents/reader.py)
+.F
+======================================================================
+FAIL: test_the_pages_own_publication_date_not_its_modification_date (tests.test_reader.PageDates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 172, in test_the_pages_own_publication_date_not_its_modification_date
+    self.assertIsNone(reader.page_date("---\nmeta-article:modified_time: 2026-10-17T10:00:00+00:00\n---\n\nBody."))   # modified is not published
+AssertionError: datetime.datetime(2026, 10, 17, 10, 0, tzinfo=datetime.timezone.utc) is not None
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.003s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("if dated is not None and now - dated > WINDOW:","if False:");open(p,"w").write(s) (agents/reader.py)
+F
+======================================================================
+FAIL: test_r17_the_pages_own_date_outranks_the_feed_that_surfaced_it (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 436, in test_r17_the_pages_own_date_outranks_the_feed_that_surfaced_it
+    self.assertEqual(out["stats"]["dated_out"], 2)                       # both fetched pages say July
+AssertionError: 0 != 2
+
+----------------------------------------------------------------------
+Ran 1 test in 10.848s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("        if sources.is_blocked(domain, blocked):","        if False:");open(p,"w").write(s) (agents/reader.py)
+F
+======================================================================
+FAIL: test_r21_a_blocked_domain_is_never_fetched (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 467, in test_r21_a_blocked_domain_is_never_fetched
+    self.assertNotIn(iid, [i for i, _ in reader.select_for_fetch(self.conn, NOW)])               # ...it refuses fetchers
+AssertionError: UUID('60251c4d-cc41-4f5a-8d3a-aefb7d78e21d') unexpectedly found in [UUID('60251c4d-cc41-4f5a-8d3a-aefb7d78e21d')]
+
+----------------------------------------------------------------------
+Ran 1 test in 9.828s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("        if not pattern.fullmatch(url):
+            continue","        pass");open(p,"w").write(s) (agents/reader.py)
+F..FE
+======================================================================
+ERROR: test_no_url_is_ever_built_from_a_headline (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 153, in test_no_url_is_ever_built_from_a_headline
+    path = c.url.split("anthropic.com", 1)[1]
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_a_pattern_keeps_pages_that_are_not_posts_out (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 147, in test_a_pattern_keeps_pages_that_are_not_posts_out
+    self.assertEqual(research, {"https://www.anthropic.com/research/the-missing-map"})   # /research/team/... is a team page
+AssertionError: Items in the first set but not the second:
+'https://www.anthropic.com/news/no-date-here'
+'https://www.anthropic.com/news/cyber-verification-program'
+'https://www.anthropic.com/news/x'
+'https://elsewhere.example/news/offsite-post'
+'https://www.anthropic.com/research/team/economics'
+'https://www.anthropic.com/news/public-benefit-fund'
+
+======================================================================
+FAIL: test_links_titles_and_dates_come_from_the_page_and_only_from_the_page (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 133, in test_links_titles_and_dates_come_from_the_page_and_only_from_the_page
+    self.assertEqual(set(got), {"https://www.anthropic.com/news/cyber-verification-program",
+AssertionError: Items in the first set but not the second:
+'https://www.anthropic.com/research/the-missing-map'
+'https://elsewhere.example/news/offsite-post'
+'https://www.anthropic.com/research/team/economics'
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.009s
+
+FAILED (failures=2, errors=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("enforce_window=False)","enforce_window=True)");open(p,"w").write(s) (agents/reader.py)
+F
+======================================================================
+FAIL: test_r20_a_url_a_person_adds_is_not_held_to_the_window (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 461, in test_r20_a_url_a_person_adds_is_not_held_to_the_window
+    self.assertTrue(out["fetched"])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 9.878s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("        title = norm(card[\"title\"])","        title = \"\"");open(p,"w").write(s) (agents/reader.py)
+F...F..
+======================================================================
+FAIL: test_a_category_label_is_never_the_title (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 154, in test_a_category_label_is_never_the_title
+    self.assertEqual(research["https://www.anthropic.com/research/the-missing-map"].title, "The missing map of the sky")   # not 'Frontier Red Team'
+AssertionError: 'Frontier Red Team' != 'The missing map of the sky'
+- Frontier Red Team
++ The missing map of the sky
+
+
+======================================================================
+FAIL: test_links_titles_and_dates_come_from_the_page_and_only_from_the_page (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 142, in test_links_titles_and_dates_come_from_the_page_and_only_from_the_page
+    self.assertEqual((first.title, first.published), ("Expanding the Cyber Verification Program", datetime(2026, 10, 6, tzinfo=timezone.utc)))   # inline <em> does not split a title
+AssertionError: Tuples differ: ('Expanding the Cyber', datetime.datetime(2026, 10, 6, 0, 0, t[24 chars]utc)) != ('Expanding the Cyber Verification Program', datetime.datetime[45 chars]utc))
+
+First differing element 0:
+'Expanding the Cyber'
+'Expanding the Cyber Verification Program'
+
+- ('Expanding the Cyber',
++ ('Expanding the Cyber Verification Program',
+   datetime.datetime(2026, 10, 6, 0, 0, tzinfo=datetime.timezone.utc))
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.550s
+
+FAILED (failures=2)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("[:INDEX_UNDATED_MAX]","");open(p,"w").write(s) (agents/reader.py)
+..F....
+======================================================================
+FAIL: test_an_index_yields_a_bounded_number_of_candidates_dated_first (tests.test_reader.IndexPages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 177, in test_an_index_yields_a_bounded_number_of_candidates_dated_first
+    self.assertEqual(len(reader.parse(undated, ANTHROPIC_NEWS)), reader.INDEX_UNDATED_MAX)   # few unknowns let through
+AssertionError: 10 != 3
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.567s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("    if sources.is_blocked(sources.domain_of(url)):
+        items.mark","    if False:
+        items.mark");open(p,"w").write(s) (agents/reader.py)
+F
+======================================================================
+FAIL: test_r22_even_a_person_added_url_on_a_blocked_domain_is_not_fetched (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 502, in test_r22_even_a_person_added_url_on_a_blocked_domain_is_not_fetched
+    self.assertFalse(out["fetched"])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 10.312s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("domain = domain.lower().rsplit(\"@\", 1)[-1].split(\":\")[0].rstrip(\".\")","domain = domain.lower()");open(p,"w").write(s) (agents/sources.py)
+F
+======================================================================
+FAIL: test_r21_a_blocked_domain_is_never_fetched (tests.test_reader.ReaderAgainstDatabase)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_reader.py", line 497, in test_r21_a_blocked_domain_is_never_fetched
+    self.assertTrue(sources.is_blocked(sources.domain_of("https://" + sneaky + "/x") if "@" not in sneaky and ":" not in sneaky else sneaky), sneaky)
+AssertionError: False is not true : reuters.com:443
+
+----------------------------------------------------------------------
+Ran 1 test in 9.774s
+
+FAILED (failures=1)
+exit=1

@@ -1,0 +1,617 @@
+diff --git a/README.md b/README.md
+index 46b0423..6cc0e5f 100644
+--- a/README.md
++++ b/README.md
+@@ -151,11 +151,14 @@ REQUIRE_DB=1 .venv/bin/python -m unittest discover -s tests -t .
+ 
+ ```bash
+ python -m agents.weekly                      # this ISO week: Reader, Framer, gates, publish
+-python -m agents.weekly --week 2026-W42      # a run label: it names the run and its brief, it does not change what is read
++python -m agents.weekly --week 2026-W43      # carry on with that week's latest attempt (a run label: it does not change what is read)
+ python -m agents.weekly --stop-after reader  # stop cleanly after a stage; the next run resumes
++python -m agents.weekly --week 2026-W43 --status                       # every attempt at the week, and which published
++python -m agents.weekly --week 2026-W43 --new-attempt                  # a fresh attempt (2026-W43-r2) from the Reader
++python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43        # ...reframing what that attempt's Reader found, no re-fetch
+ ```
+ 
+-Each stage is checkpointed in the `runs` tables, so a rerun of the same week loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A week that fails a hard gate publishes nothing and stays failed until a person looks at it. What a run reads is always the last eight days up to the moment it starts, whatever its label. A typical run costs about $0.30 to $0.60, all booked in the ledger.
++Each stage is checkpointed in the `runs` tables, so a rerun of an attempt loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A finished stage is never redone, so a week whose gates failed is reframed as a new numbered attempt, and a week publishes at most one edition (a second attempt at a published week is refused before it spends). An edition is labelled on the page by the dates its Reader read, never by the run key. What a run reads is always the last eight days up to the moment it starts, whatever its label. The Reader reads nine feeds and APIs, three more feeds and five index pages (`reader.FEEDS`); `python scripts/reader_dry_run.py` shows what each yields, free. A typical run costs about $0.30 to $0.60, all booked in the ledger.
+ 
+ **It is not scheduled.** The scheduled Weekly Digest keeps running in parallel until the new one has earned the switch. To schedule it, create a Railway cron service from this repository with the start command `python -m agents.weekly` and a weekly schedule; it needs `ANTHROPIC_API_KEY` and `DATABASE_URL` and nothing else.
+ 
+diff --git a/agents/reader.py b/agents/reader.py
+index 990d506..5868e25 100644
+--- a/agents/reader.py
++++ b/agents/reader.py
+@@ -18,6 +18,8 @@ lives in the excerpt store.
+ 
+ from __future__ import annotations
+ 
++import html
++import html.parser
+ import json
+ import re
+ import time
+@@ -26,7 +28,7 @@ import xml.etree.ElementTree as ET
+ from dataclasses import dataclass, field
+ from datetime import datetime, timedelta, timezone
+ from email.utils import parsedate_to_datetime
+-from urllib.parse import urlsplit
++from urllib.parse import urljoin, urlsplit
+ 
+ try:
+     from . import budget, excerpts, graph, items, llm, runs, sources
+@@ -94,13 +96,14 @@ class Feed:
+     source_id: str      # the sources row this feed belongs to (config/scout-sources.md)
+     domain: str         # the address its articles live at, verified by fetching the feed
+     url: str
+-    kind: str           # 'rss' | 'atom' | 'hf-papers' | 'hn'
++    kind: str           # 'rss' | 'atom' | 'hf-papers' | 'hn' | 'index'
++    pattern: str = ""   # 'index' only: the article URLs on the page, as a regex the whole URL must match
+ 
+ 
+-# Verified reachable on 2026-10-18 (HTTP 200, expected content type). Publishers the list
+-# names that have no feed here (Anthropic, Meta AI, Mistral, Qwen, DeepSeek, Moonshot,
+-# NVIDIA, The Batch, the benchmarks, the agent frameworks, the two subreddits) are not
+-# discovered yet; see the debrief.
++# The first nine verified reachable on 2026-10-18 (HTTP 200, expected content type). Still not
++# discovered: Qwen, DeepSeek, Moonshot, xAI, Ai2, Z.ai, The Batch, the benchmarks, the agent
++# frameworks, the two subreddits, and the enterprise vendors (no address in the catalogue, and an
++# address is never guessed); see the debrief.
+ FEEDS = [
+     Feed("arxiv", "arxiv", "arxiv.org",
+          "http://export.arxiv.org/api/query?search_query=cat:cs.MA+OR+cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.LG"
+@@ -116,7 +119,27 @@ FEEDS = [
+     Feed("import-ai", "import-ai", "importai.substack.com", "https://importai.substack.com/feed", "rss"),
+     Feed("hacker-news", "hacker-news-front-page", "news.ycombinator.com",
+          "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=60", "hn"),
++    # Added 2026-10-20 from config/digest-sources.md. Each address below was fetched once and read: the
++    # three feeds are advertised by their own pages; the five indexes are server-rendered pages whose
++    # article links the pattern was checked against. Nothing here is a guessed address.
++    Feed("mistral", "mistral", "mistral.ai", "https://mistral.ai/news/rss", "rss"),
++    Feed("cio-dive", "cio-dive", "ciodive.com", "https://www.ciodive.com/feeds/news/", "rss"),
++    Feed("the-new-stack", "the-new-stack", "thenewstack.io", "https://thenewstack.io/blog/feed/", "rss"),
++    Feed("anthropic-news", "anthropic", "anthropic.com", "https://www.anthropic.com/news", "index",
++         r"https://www\.anthropic\.com/news/[a-z0-9][a-z0-9-]*"),
++    Feed("anthropic-research", "anthropic", "anthropic.com", "https://www.anthropic.com/research", "index",
++         r"https://www\.anthropic\.com/research/(?!team/)[a-z0-9][a-z0-9-]*"),
++    Feed("meta-ai", "meta-ai", "ai.meta.com", "https://ai.meta.com/blog/", "index",
++         r"https://ai\.meta\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/?"),
++    Feed("nvidia-developer", "nvidia-developer-blog", "developer.nvidia.com", "https://developer.nvidia.com/blog/", "index",
++         r"https://developer\.nvidia\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/"),
++    Feed("microsoft-ai", "microsoft-ai", "microsoft.ai", "https://microsoft.ai/news/", "index",
++         r"https://microsoft\.ai/news/[a-z0-9][a-z0-9-]*/"),
+ ]
++# Not discovered, and why. OpenAI's second index (openai.com/research) answers fetchers 403 and the catalogue
++# calls it curated and often months stale; real research posts appear in the /news feed above. The Gemini API
++# changelog is one page of dated entries, and the item store's identity is the canonical URL with the fragment
++# dropped (on purpose), so its entries cannot be separate items; it needs a decision (see the debrief).
+ 
+ 
+ @dataclass(frozen=True)
+@@ -142,6 +165,7 @@ class Stats:
+     fetched: int = 0
+     fetch_failed: int = 0
+     left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
++    dated_out: int = 0        # fetched, and the page's own date put it outside the window
+     fetch_cost_usd: float = 0.0
+ 
+     def as_dict(self) -> dict:
+@@ -232,7 +256,121 @@ def parse_hn(payload: bytes, feed: Feed) -> list[Candidate]:
+     return out
+ 
+ 
+-PARSERS = {"rss": parse_feed_xml, "atom": parse_feed_xml, "hf-papers": parse_hf_papers, "hn": parse_hn}
++# --- index pages: sites with no feed. Only links that are in the page, matching the feed's pattern, are
++# candidates: a URL is never built from a headline (slugs cannot be derived; the catalogue's rule).
++INDEX_MAX_LINKS = 12      # dated cards first, newest first, then undated ones in page order
++INDEX_UNDATED_MAX = 3     # an undated card cannot be judged old until its page is paid for, so few are let through
++_MONTH_DATE = re.compile(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2}), (20\d\d)\b")
++_MONTHS = {m: i for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(), 1)}
++_VOID = {"br", "img", "hr", "input", "meta", "link", "source", "wbr"}
++
++
++def _card_date(text: str, attr: str | None = None) -> datetime | None:
++    """A date shown on a card: a <time datetime> value, else a 'Oct 6, 2026' style text. Bad dates are None."""
++    for raw in (attr, text):
++        if not raw:
++            continue
++        try:
++            if raw is attr:
++                d = datetime.fromisoformat(raw.strip().replace("Z", "+00:00"))
++                return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
++            m = _MONTH_DATE.fullmatch(" ".join(raw.split()))
++            if m:
++                return datetime(int(m.group(3)), _MONTHS[m.group(1)], int(m.group(2)), tzinfo=timezone.utc)
++        except ValueError:      # "Feb 31, 2026" or a malformed attribute: no date, never a failed feed
++            continue
++    return None
++
++
++class _IndexParser(html.parser.HTMLParser):
++    """Collects each <a href> card: its date, its title and its summary, in one linear pass.
++
++    A title is, in order of trust: heading text (h1 to h6), an element whose class says 'title', the
++    anchor's own aria-label ('Read ...'), or all of the anchor's text. Short pieces on the card
++    ("Announcements", "Read now") are labels and never a title.
++    """
++
++    def __init__(self):
++        super().__init__(convert_charrefs=True)
++        self.cards: list[dict] = []
++        self.card: dict | None = None
++        self.stack: list[tuple[str, str]] = []     # (tag, role) inside the open anchor
++
++    def handle_starttag(self, tag, attrs):
++        a = dict(attrs)
++        if tag == "a" and a.get("href"):
++            if self.card is not None:
++                self.handle_endtag("a")
++            self.card = {"href": a["href"], "aria": a.get("aria-label", ""), "title": [], "time": [], "time_attr": None,
++                         "p": [], "text": []}
++            self.stack = []
++            return
++        if self.card is None or tag in _VOID:
++            return
++        role = ("title" if re.fullmatch(r"h[1-6]", tag) or "title" in (a.get("class") or "").lower()
++                else "time" if tag == "time" else "p" if tag == "p" else "")
++        if tag == "time" and a.get("datetime"):
++            self.card["time_attr"] = a["datetime"]
++        self.stack.append((tag, role))
++
++    def handle_endtag(self, tag):
++        if self.card is None:
++            return
++        if tag == "a":
++            self.cards.append(self.card)
++            self.card, self.stack = None, []
++        else:
++            for i in range(len(self.stack) - 1, -1, -1):
++                if self.stack[i][0] == tag:
++                    del self.stack[i:]
++                    break
++
++    def handle_data(self, data):
++        if self.card is None or not data.strip():
++            return
++        self.card["text"].append(data)
++        for _tag, role in self.stack:
++            if role:
++                self.card[role].append(data)
++
++
++def parse_index(payload: bytes, feed: Feed) -> list[Candidate]:
++    pattern = re.compile(feed.pattern)
++    parser = _IndexParser()
++    parser.feed(payload.decode("utf-8", "replace"))
++    parser.close()
++    if parser.card is not None:
++        parser.handle_endtag("a")
++    best: dict[str, tuple[str, str, datetime | None, bool]] = {}
++    for card in parser.cards:
++        url = urljoin(feed.url, card["href"]).split("#")[0].split("?")[0]
++        if not pattern.fullmatch(url):
++            continue
++        norm = lambda parts: " ".join(" ".join(parts).split())      # noqa: E731
++        published = _card_date(norm(card["time"]), card["time_attr"]) or next(
++            (d for d in (_card_date(piece) for piece in (norm([t]) for t in card["text"])) if d), None)
++        title = norm(card["title"])
++        trusted = bool(title)
++        if not title and card["aria"].startswith("Read "):
++            title, trusted = " ".join(card["aria"][5:].split()), True
++        if not title:
++            pieces = [p for p in (norm([t]) for t in card["text"]) if p and not _card_date(p)]
++            title = " ".join(pieces) if len(pieces) == 1 else next((p for p in pieces if len(p.split()) >= 3), "")
++        if len(title.split()) < 2 or len(title) > 300:
++            continue                                                  # "Read now", a label, or a wall of text
++        summary = norm(card["p"])[:600]
++        old = best.get(url)
++        if old is None or (trusted and not old[3]) or (trusted == old[3] and len(title) > len(old[0])):
++            best[url] = (title, summary or (old[1] if old else ""), published or (old[2] if old else None), trusted)
++        elif published and old[2] is None:
++            best[url] = (old[0], old[1], published, old[3])
++    cards = [Candidate(url, t, sm, d, feed) for url, (t, sm, d, _) in best.items()]
++    dated = sorted((c for c in cards if c.published), key=lambda c: c.published, reverse=True)
++    undated = [c for c in cards if not c.published][:INDEX_UNDATED_MAX]
++    return (dated + undated)[:INDEX_MAX_LINKS]
++
++
++PARSERS = {"rss": parse_feed_xml, "atom": parse_feed_xml, "hf-papers": parse_hf_papers, "hn": parse_hn, "index": parse_index}
+ 
+ 
+ def parse(payload: bytes, feed: Feed) -> list[Candidate]:
+@@ -391,14 +529,61 @@ def fetch_text(client, url: str, *, conn=None, phase: str = FETCH_PHASE, user_id
+     return Fetched(text, error, cost)
+ 
+ 
+-def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats) -> bool:
+-    """Fetch an item's body and attach it as its excerpt. Returns whether it worked."""
++# Publication-date fields a fetched page's own metadata may carry, best first. `article:modified_time` is
++# deliberately absent: a page edited today is not a story published today.
++PUBLISHED_FIELDS = ("meta-article:published_time", "meta-og:article:published_time", "meta-citation_date",
++                    "meta-citation_online_date", "meta-datepublished", "meta-date", "meta-pubdate")
++
++
++def page_date(text: str) -> datetime | None:
++    """The date the page itself says it was published, from its metadata, or None.
++
++    Only the front-matter fields above are trusted. A date found in the prose is not: a post written
++    today may be about a spec dated in July. A page that renders no date is not a dry source; it is
++    dated by whatever else is known.
++    """
++    m = re.match(r"---\n(.*?)\n---", text, re.S)
++    if not m:
++        return None
++    fields = {}
++    for line in m.group(1).splitlines():
++        k, sep, v = line.partition(": ")
++        if sep:
++            fields.setdefault(k.strip(), v.strip())
++    for key in PUBLISHED_FIELDS:
++        if key in fields:
++            raw = fields[key].replace("/", "-")
++            try:
++                d = datetime.fromisoformat(raw.replace("Z", "+00:00"))
++            except ValueError:
++                continue
++            return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
++    return None
++
++
++def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats, *, enforce_window: bool = True) -> bool:
++    """Fetch an item's body and attach it as its excerpt. Returns whether it worked.
++
++    The primary source's own date outranks the date of whoever pointed at it: a page that says it was
++    published before the window is skipped (after it was paid for, since only the page can say), even
++    though a feed or an aggregator surfaced it today. `enforce_window` is off for a URL a person added.
++    """
++    if sources.is_blocked(sources.domain_of(url)):
++        items.mark(conn, item_id, "skipped", error="this site refuses fetchers; use a syndicated copy and anchor to a primary document")
++        stats.fetch_failed += 1
++        return False
+     got = fetch_text(client, url, conn=conn)  # BudgetExceeded and LedgerUnavailable propagate
+     stats.fetch_cost_usd += got.cost_usd
+     if got.text is None:
+         items.mark(conn, item_id, "failed", error=got.error)
+         stats.fetch_failed += 1
+         return False
++    dated = page_date(got.text) if enforce_window else None
++    if dated is not None and now - dated > WINDOW:
++        items.mark(conn, item_id, "discovered")    # a retried item is 'failed', which may not go straight to 'skipped'
++        items.mark(conn, item_id, "skipped", error=f"its own page is dated {dated:%Y-%m-%d}: outside the window")
++        stats.dated_out += 1
++        return False
+     try:
+         eid = excerpts.store(conn, url, got.text.replace("\x00", ""), now)
+     except excerpts.ExcerptRefused as e:
+@@ -423,8 +608,11 @@ def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> l
+         "AND i.discovered_at > %s AND i.discovered_at <= %s ORDER BY i.relevance_score DESC, i.discovered_at DESC LIMIT 200",
+         (list(TRANSIENT_FETCH_ERRORS), now - WINDOW, now)).fetchall()
+     chosen, per_domain = [], {}
++    blocked = sources.blocked_domains()
+     for iid, url in rows:
+         domain = sources.domain_of(url)
++        if sources.is_blocked(domain, blocked):
++            continue                       # refuses fetchers: discovery and corroboration only
+         if per_domain.get(domain, 0) >= MAX_FETCHES_PER_DOMAIN:
+             continue
+         if items.surfaceable(conn, iid):
+@@ -438,6 +626,7 @@ def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> l
+ def prepare(conn, profile: dict | None = None) -> None:
+     """Seed the sources, attach the verified feeds' addresses, and load the interest graph."""
+     sources.seed(conn)
++    sources.seed_digest(conn)
+     for feed in FEEDS:
+         sources.set_feed(conn, feed.source_id, feed.domain, feed.url)
+     graph.sync(conn, profile)
+@@ -487,7 +676,7 @@ def add_url(conn, client, url: str, now: datetime, user_id: str = USER_ID) -> di
+     status = conn.execute("SELECT status FROM items WHERE id = %s", (iid,)).fetchone()[0]
+     if status == "fetched":
+         return {"item": str(iid), "created": False, "fetched": True, "already_fetched": True, "cost_usd": 0.0}
+-    ok = fetch_and_store(conn, client, iid, url, now, stats)
++    ok = fetch_and_store(conn, client, iid, url, now, stats, enforce_window=False)
+     return {"item": str(iid), "created": created, "fetched": ok, "cost_usd": round(stats.fetch_cost_usd, 6)}
+ 
+ 
+diff --git a/agents/sources.py b/agents/sources.py
+index c28ea39..620ede4 100644
+--- a/agents/sources.py
++++ b/agents/sources.py
+@@ -5,10 +5,12 @@ writes it to the `sources` table; it does not add publishers of its own. A domai
+ meets that the list does not name is recorded as 'unrated', and an unrated source cannot
+ make an item surface on its own (see items.surfaceable).
+ 
+-The plan speaks of 91 tiered domains. The file in this repo names 21
+-publishers, most without an address; those are seeded by name with a NULL domain, and
+-only addresses that appear in the file are taken from it. The rest of the 91 are not
+-here to seed.
++The plan speaks of 91 tiered domains. config/scout-sources.md names 21 publishers, most
++without an address; those are seeded by name with a NULL domain, and only addresses that
++appear in the file are taken from it. The rest of the catalogue is config/digest-sources.md,
++the old digest's own list (copied 2026-10-19), transcribed into config/digest-source-rows.json
++and seeded the same way by seed_digest(). It is prose, not a table of 91 domains: it names
++83 sources, of which 14 carry an address. Nothing is invented; a test pins that.
+ """
+ 
+ from __future__ import annotations
+@@ -21,6 +23,7 @@ from urllib.parse import urlsplit
+ 
+ REPO = Path(__file__).resolve().parent.parent
+ SOURCES_PATH = REPO / "config" / "scout-sources.md"
++DIGEST_ROWS_PATH = REPO / "config" / "digest-source-rows.json"   # config/digest-sources.md, transcribed; a test checks it
+ 
+ # WHAT: tier -> reputation prior, as the file defines them in its headings.
+ # CONCEPT: reputation prior. A prior is a starting trust, not a verdict: high may surface
+@@ -121,6 +124,40 @@ def seed(conn, path: Path = SOURCES_PATH) -> int:
+     return added
+ 
+ 
++def load_digest_rows(path: Path = DIGEST_ROWS_PATH) -> list[Source]:
++    """The old digest's catalogue as sources. A source the catalogue names without an address has none."""
++    import json
++    data = json.loads(path.read_text(encoding="utf-8"))
++    return [Source(slug(r["name"]), r["name"], r.get("domain"), r["tier"], PRIOR[r["tier"]],
++                   f'{r["section"]}: {r.get("note") or "named in config/digest-sources.md"}') for r in data["sources"]]
++
++
++def blocked_domains(path: Path = DIGEST_ROWS_PATH) -> dict:
++    """Domains that refuse fetchers, with why. A fetch of one is never attempted (use a syndicated copy)."""
++    import json
++    return {b["domain"]: b["why"] for b in json.loads(path.read_text(encoding="utf-8")).get("blocked_domains", [])}
++
++
++def is_blocked(domain: str, blocked: dict | None = None) -> bool:
++    blocked = blocked if blocked is not None else blocked_domains()
++    domain = domain.lower().rsplit("@", 1)[-1].split(":")[0].rstrip(".")      # no userinfo, port or trailing dot
++    return any(domain == b or domain.endswith("." + b) for b in blocked)
++
++
++def seed_digest(conn, path: Path = DIGEST_ROWS_PATH) -> int:
++    """Insert the old digest's sources that are not already there. Never overwrites a row, and a
++    row whose id or address a source already holds is left to that source."""
++    added = 0
++    with conn.transaction():
++        for s in load_digest_rows(path):
++            cur = conn.execute(
++                "INSERT INTO sources (id, name, domain, tier, reputation_prior, notes) "
++                "VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
++                (s.id, s.name, s.domain, s.tier, s.reputation_prior, s.notes[:500] or None))
++            added += cur.rowcount
++    return added
++
++
+ def for_domain(conn, domain: str) -> str:
+     """The source id for a domain, creating an 'unrated' one if the list does not know it.
+ 
+diff --git a/autopilot/debriefs/2026-10-20.md b/autopilot/debriefs/2026-10-20.md
+index 40e3bec..abde075 100644
+--- a/autopilot/debriefs/2026-10-20.md
++++ b/autopilot/debriefs/2026-10-20.md
+@@ -10,9 +10,9 @@
+ 
+ | Step | Status | Commit | Live |
+ |---|---|---|---|
+-| A · A failed week can be rerun | Done (reviewed) | see log | after push |
+-| B · Faithfulness gate catches the planted fabrication | Built and measured; **effect of the retry unproven** (row 10 stays IN PROGRESS) | see log | after push |
+-| C · Sources from the old digest's catalogue | Not started | | |
++| A · A failed week can be rerun | Done (reviewed) | `1a971f0` | yes |
++| B · Faithfulness gate catches the planted fabrication | Built and measured; **effect of the retry unproven** (row 10 stays IN PROGRESS) | `735b202` | yes |
++| C · Sources from the old digest's catalogue | Built; reviewed | see log | after push |
+ | D · One fresh edition | Not started | | |
+ | E · Final QA | Not started | | |
+ 
+@@ -47,10 +47,16 @@ Starting ledger month-to-date: **$1.027650**.
+ 
+ ## 10. Questions for Varun
+ 
++- **The 91-domain list** is `config/digest-sources.md`, which is prose: 83 sources, only 14 with an address. Is that the list you meant? (The enterprise vendors, funding sources and most labs carry no address in it, and I did not invent any.)
++- **The Gemini API changelog** is one URL with dated entries, and an item's identity is its canonical URL (fragments dropped on purpose), so its entries cannot be items. Options: give changelog entries a synthetic per-entry identity, or read it as one rolling item. Your call.
++- **OpenAI's research index** answers fetchers 403 and the catalogue calls it stale; I rely on the /news feed. OK?
++- **Sign off the three new negative cases** in `data/evals/negative/` (hand-built by the run).
++
+ ## 11. Progress log
+ 
+ - Step A · numbered attempts (`2026-W43`, `-r2`...), `runs.id` CHECK widened by an idempotent migration (leading zeros and `-r1` refused), `--new-attempt` and `--reuse-reader` (validated before a run row exists, adopted atomically), one edition per week (refused before any paid call, and by the briefs primary key and a `briefs_run_is_this_week` CHECK), Reader window stored in its output and in the brief, page kicker shows the window, status marks superseded attempts. Reviewer: no must-fix; five should-fix items fixed (weak adoption tests, id-format loopholes, attempt gaps, orphan run row, non-atomic adoption) plus UTC label and a lighter query. 187 tests green with REQUIRE_DB=1 (`autopilot/evidence/2026-10-20/stepA-suite.txt`); nine mutations each fail a test (`stepA-mutations.txt`).
+ 
+ - Setup · caffeinate on, tunnel up on 15432. Start: HEAD `e141051`, live `/health` sha `0458eae`, ledger month-to-date $1.027650.
+ - Step B · `bk-retry` in `framer.check_faithfulness` (any lifted claim retries that unit once, alone, with a note naming the lifted claims; booked as `<phase>-retry`; an unusable retry keeps the first verdict; recorded in the brief). Three new planted cases in `data/evals/negative/` (changed number, changed date, invented attribution), `run_evals.py` loads them (`--json-out` added), `data/evals/measure_retry.py` measures. Paid: 50 grader calls, $0.3015. Result: all four plants caught 5/5 with the retry off and on, 0 clean-day false positives; retry fired only on a clean unit; effective n=1 per cell; negative-01 still fails on a thread false positive (`data/evals/runs/2026-10-20-bk-retry/`). Reviewer: no rule bugs; said do not mark Done, which I did not; fixed the unguarded malformed-retry path (and a retry that returns no claims no longer erases a verdict) and a weak test. A full-suite run found `test_ledger` was picking up the new smaller cases in its golden-only bound; fixed with `load_cases(..., include_negative=False)`.
++- Step C · `config/digest-sources.md` transcribed into `config/digest-source-rows.json` (83 sources, 14 with an address; a test checks every name and address is literally in the catalogue, and the tier judgements where the catalogue gives one label to a mixed heading are recorded in the file), seeded by `sources.seed_digest` without overwriting anything. Eight more places read for free: feeds for Mistral, CIO Dive and The New Stack (each advertised by its own page, fetched once), and index pages for Anthropic news and research, Meta AI, NVIDIA and Microsoft AI, read with a plain HTTP GET instead of Claude's web fetch (free; **a deviation from the runbook's wording**, recorded in plan.md; a JS-rendered index would show as zero candidates in the dry run). Not discovered: OpenAI's research index (403 to fetchers; the catalogue calls it stale; its research posts are in the /news feed) and the Gemini API changelog (entries share one URL; question 2). Rules as code: known-blocked domains never fetched (even for `/add-news`), no URL built from a headline (a test pins it), and the fetched page's own `published_time`/`citation_date` (never modified, never prose) outranks the date of whoever pointed at it. Free dry run (`stepC-dryrun.txt`): 17 of 17 feeds ok, 1,913 candidates, 352 in window, 10 undated, 172 relevant; the 8 new places account for 158 candidates, 46 dated inside the window, 10 undated and 22 relevant. Reviewer: no invention; fixed a quadratic anchor regex (now a linear HTML parse; 60,000 unclosed anchors parse in under 5 s), wrong card titles (a category label became a title), an impossible date killing a feed, undated cards taking fetch slots (3 per index, dated first), and the blocked-domain check's gaps. Nine mutations each fail a test (`stepC-mutations.txt`).
+ 
+diff --git a/plan/plan.md b/plan/plan.md
+index aba247c..b7cd905 100644
+--- a/plan/plan.md
++++ b/plan/plan.md
+@@ -40,7 +40,7 @@ Everything this milestone rests on, complete and outstanding in one table. The f
+ | Deploy the skeleton on Railway | App, Postgres and scheduler live at `aiml-signal-system-production.up.railway.app`; all five pages serve from it with no local dependency; `/health` reports the deployed commit | Everything else assumes a host. It also dissolves the constraint the old digest was built around — that a scheduled run cannot write to its own page. | DONE |
+ | Extract the shared plumbing | `agents/budget.py` and `agents/llm.py`, with the breaker upgraded to stop-*before* | Reader is the breaker's second caller. Extract at the second use — not the first, which is premature, and not the third, by which point there are copies. | DONE |
+ | Storage layer, with the excerpt rule | Postgres for sources, items, the interest graph, runs, briefs and feedback, beside the spend ledger and the excerpt store. Article text is **written once at fetch time and never re-fetched**, with the database refusing any rewrite; kept forever once a published brief cites it, expired after 56 days otherwise. Items are never deleted and their identity is fixed, and their excerpt is attached once and cleared only when its text expires; provenance, briefs and feedback are append-only; `runs` records each stage's status and a pointer to its output, so a failed run resumes from its last finished stage rather than starting over | The faithfulness gate compares a span against the stored excerpt — re-fetch later and a publisher's edit turns the gate red for no reason. **And it had to land before the first hosted run that spends money.** The cost breaker read `usage.json`, a file rebuilt from the repository on every deploy, so on Railway its memory of the month's spend silently reverted to whatever was last committed. Every rule a later caller could forget is a database trigger, and every trigger test has been run once with its trigger disabled and seen to fail. Volume decides the shape: about 900 articles a week would fill the 5 GB volume within a year as fetched pages, and stays under 100 MB a year as compressed text with a retention rule. | DONE
+-| Reader — Scout and Gatekeeper merged | Discovers from nine feeds and APIs, canonicalises, dedups, filters against the interest graph, and fetches the bodies of the few that may surface through Claude's web fetch, booked in the ledger at about half a cent a page; provenance and corroboration are recorded per item; `/add-news` fetches on arrival (off until `ADD_NEWS_TOKEN` is set). It has run for real: about 1,750 candidates in, 17 stories fetched over three runs, one week's brief out. **Not DONE because** the plan's 91 tiered domains are not in the repository (it is seeded from the 21 publishers `config/scout-sources.md` names) and some labs have no verified feed. **Fetching is delegated, not reimplemented.** | Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing `fetch()` would mean re-earning a result that already exists. | IN PROGRESS
++| Reader — Scout and Gatekeeper merged | Discovers from seventeen feeds, APIs and index pages, canonicalises, dedups, filters against the interest graph, and fetches the bodies of the few that may surface through Claude's web fetch, booked in the ledger at about half a cent a page; provenance and corroboration are recorded per item; `/add-news` fetches on arrival (off until `ADD_NEWS_TOKEN` is set). It has run for real: about 1,750 candidates in, 17 stories fetched over three runs, one week's brief out. **Not DONE because** the plan's 91 tiered domains turned out to be a prose catalogue (`config/digest-sources.md`, 83 sources, 14 with an address) rather than a table; it is now seeded, with Anthropic's two indexes, Meta AI, Mistral, NVIDIA, Microsoft AI, CIO Dive and The New Stack added, but OpenAI's research index, the Gemini API changelog and several labs still have no discovery, and the first run on the wider sources has not yet been judged. **Fetching is delegated, not reimplemented.** | Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing `fetch()` would mean re-earning a result that already exists. | IN PROGRESS
+ | Reader's canonicalisation gate | 21 URL pairs that must and must not collapse, three of them planted near-duplicates, in `data/evals/canonical/`. Free, deterministic, no model. **Draft, awaiting Varun's review:** every pair is a judgement about what counts as the same article, so this row is DONE only after he signs the set off | Dedup silently merging two *different* articles is Reader's only invisible failure. Everything else it gets wrong, you see in the edition. | IN PROGRESS
+ | Port the Framer and its gate | `agents/weekly.py` feeds the shipped Framer verified items from the database and records the work as the `framer` and `gates` stages of a run, so a failed stage resumes without re-fetching. The Framer's writing code is unchanged (its grader gained a bounded retry on 2026-10-20, after the port was verified); the hard gates are now functions in `agents/gates.py` that the eval harness and the weekly run both call, and a story the grader skipped or never checked fails the gate rather than passing as clean. **One hard gate is red: `negative-01` fails because the grader flags a clean thread claim while quoting its supporting span. The planted $965B fabrication, which the grader missed on 2026-09-15 and 2026-10-18, was caught on 2026-10-20, and so were three newly added plants; a bounded retry on a lifted claim is built, but has never fired on a missed plant, so it is unproven.** Structural gates pass on both golden cases and faithfulness passes on the clean day with no false positives, so this row is not DONE. It has now run end to end on real pages and published a brief on its third attempt: the first two were stopped by the gates, correctly, on faults found in how pages were turned into excerpts | **Port it, do not extend it.** Moving a component and changing it at once means a red run cannot be attributed to either. | IN PROGRESS
+ | The Weekly Digest surface | `/weekly-digest` renders the newest published brief from the database at request time, with the site header and nav, two subsections (Learning for the Week, This Week's Stories) and a sticky sub-nav. Every story takes a thumbs up, or a thumbs down with an optional note, from anyone with no login; the database keeps only a salted hash of the voter's address, and a client is rate-limited. The old `/application/Weekly-Digest.html` redirects here, and a brief that cannot be shown becomes an error panel rather than a 500. A real week's brief, seven stories, renders on it | The first real label this system has had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against. | DONE
+@@ -55,6 +55,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
+ 
+ # Decision log
+ 
++### 2026-10-20 · The old digest's catalogue is seeded, and its fetch rules became code
++
++The "91 domains" the plan cites are the old digest's prose catalogue, now copied into `config/digest-sources.md` and transcribed into `config/digest-source-rows.json`, where a test checks that every name and address is literally in the catalogue. Eight more places are read for free: Mistral, CIO Dive and The New Stack from feeds their own pages advertise, and Anthropic's news and research, Meta AI, NVIDIA and Microsoft AI from their index pages, read with a plain HTTP request (which costs nothing) rather than through Claude's web fetch as the runbook suggested. Three of the catalogue's rules are now code: domains that refuse fetchers (Reuters, Ars Technica) are never fetched, no address is built from a headline, and a fetched page's own publication date (never its modification date, and never a date in its prose) outranks the date of whoever pointed at it. OpenAI's research index is skipped because it refuses fetchers and the catalogue calls it stale, and the Gemini changelog is skipped because its entries share one URL and an item's identity is its URL.
++
+ ### 2026-10-20 · The grader's retry is built, but nothing yet shows it fixes a miss
+ 
+ Any lift on a unit now retries that unit once, alone, with a note naming the lifted claims; a retry that comes back unusable keeps the first verdict, and the retry is booked and recorded in the brief. Three planted-fabrication cases were added (a changed number, a changed date, an invented attribution), all hand-built and awaiting Varun's review, and five runs per case caught every plant with the retry off and on, with no false positive on the clean day. That does not show the retry works: the grader caught the plants without it, the retry fired only on a clean control unit, and at temperature 0 the five runs were one result repeated. The same grader missed the `$965B` plant on 2026-10-18 and catches it today, and `negative-01` still fails its gate on a different unit: a thread claim it flags unsupported while quoting the supporting span.
+diff --git a/tests/test_reader.py b/tests/test_reader.py
+index ad5a114..6e5807f 100644
+--- a/tests/test_reader.py
++++ b/tests/test_reader.py
+@@ -20,7 +20,7 @@ from types import SimpleNamespace
+ REPO = Path(__file__).resolve().parent.parent
+ sys.path.insert(0, str(REPO))
+ 
+-from agents import budget, excerpts, items, llm, reader, runs  # noqa: E402
++from agents import budget, excerpts, items, llm, reader, runs, sources  # noqa: E402
+ from tests._db import needs_db  # noqa: E402
+ 
+ # Earlier on 2026-10-18 than the first real run, so that run's items (all discovered later) are outside this window.
+@@ -45,6 +45,23 @@ HN = json.dumps({"hits": [
+      "created_at": "2026-10-17T12:00:00Z"},
+     {"title": "Ask HN: anything", "url": None, "objectID": "43", "created_at": "2026-10-17T12:00:00Z"}]}).encode()
+ 
++ANTHROPIC_INDEX = b"""<html><body><nav><a href="/news">News</a><a href="/research">Research</a><a href="/research/team/alignment">Alignment team</a></nav>
++<a href="/news/cyber-verification-program" class="card"><div><time>Oct 6, 2026</time><span>Announcements</span></div><span class="x-title">Expanding the Cyber <em>Verification</em> Program</span><p>We are launching a new, expanded version.</p></a>
++<a href="/news/public-benefit-fund"><div><span>Announcements</span><time datetime="2026-10-18T00:00:00Z">Oct 18, 2026</time></div><h4>Investing in the public benefit</h4></a>
++<a href="/news/public-benefit-fund"><span>Read now</span></a>
++<a href="/news/no-date-here"><h3>A post whose card shows no date</h3></a>
++<a href="/news/x?utm_source=y#frag"><h3>Query and fragment are dropped from the link</h3></a>
++<a href="/news/bad-date"><time>Feb 31, 2026</time><h3>A card with an impossible date</h3></a>
++<a href="/research/team/economics"><h3>Economics team page is not a post</h3></a>
++<a href="/research/the-missing-map"><div><span>Frontier Red Team</span><time>Oct 8, 2026</time></div><h4>The missing map of the sky</h4></a>
++<a href="https://elsewhere.example/news/offsite-post"><h3>An off-site link with a news path</h3></a>
++<a href="/news/two-words"><h3>Introducing Claude</h3></a>
++</body></html>"""
++ANTHROPIC_NEWS = reader.Feed("anthropic-news", "anthropic", "anthropic.com", "https://www.anthropic.com/news", "index",
++                             r"https://www\.anthropic\.com/news/[a-z0-9][a-z0-9-]*")
++ANTHROPIC_RESEARCH = reader.Feed("anthropic-research", "anthropic", "anthropic.com", "https://www.anthropic.com/research", "index",
++                                 r"https://www\.anthropic\.com/research/(?!team/)[a-z0-9][a-z0-9-]*")
++
+ 
+ def fetch_result_message(text="Article body about MCP.", error=None, media_type="text/plain", input_tokens=2500,
+                          url="https://x.test/"):
+@@ -112,6 +129,82 @@ class Parsing(unittest.TestCase):
+         self.assertFalse(reader.same_story("New model released", "New model released today"))  # too few distinctive words
+ 
+ 
++class IndexPages(unittest.TestCase):
++    def test_links_titles_and_dates_come_from_the_page_and_only_from_the_page(self):
++        with unittest.mock.patch.object(reader, "INDEX_UNDATED_MAX", 10):      # the cap has its own test
++            got = {c.url: c for c in reader.parse(ANTHROPIC_INDEX, ANTHROPIC_NEWS)}
++        self.assertEqual(set(got), {"https://www.anthropic.com/news/cyber-verification-program",
++                                    "https://www.anthropic.com/news/public-benefit-fund",
++                                    "https://www.anthropic.com/news/no-date-here",
++                                    "https://www.anthropic.com/news/x", "https://www.anthropic.com/news/bad-date",
++                                    "https://www.anthropic.com/news/two-words"})   # nav, team pages, off-site links, 'Read now' are not posts
++        first = got["https://www.anthropic.com/news/cyber-verification-program"]
++        self.assertEqual((first.title, first.published), ("Expanding the Cyber Verification Program", datetime(2026, 10, 6, tzinfo=timezone.utc)))   # inline <em> does not split a title
++        self.assertIn("expanded version", first.summary)
++        fund = got["https://www.anthropic.com/news/public-benefit-fund"]
++        self.assertEqual((fund.title, fund.published), ("Investing in the public benefit", datetime(2026, 10, 18, tzinfo=timezone.utc)))
++        self.assertIsNone(got["https://www.anthropic.com/news/no-date-here"].published)      # undated stays undated
++        self.assertIsNone(got["https://www.anthropic.com/news/bad-date"].published)          # an impossible date is no date, not a failed feed
++        self.assertEqual(got["https://www.anthropic.com/news/two-words"].title, "Introducing Claude")   # a two-word title is a title
++        self.assertEqual(got["https://www.anthropic.com/news/x"].url, "https://www.anthropic.com/news/x")   # query and fragment dropped
++
++    def test_a_category_label_is_never_the_title(self):
++        research = {c.url: c for c in reader.parse(ANTHROPIC_INDEX, ANTHROPIC_RESEARCH)}
++        self.assertEqual(set(research), {"https://www.anthropic.com/research/the-missing-map"})   # /research/team/... is a team page
++        self.assertEqual(research["https://www.anthropic.com/research/the-missing-map"].title, "The missing map of the sky")   # not 'Frontier Red Team'
++
++    def test_titles_from_an_aria_label_or_the_anchors_own_text(self):
++        page = (b'<a aria-label="Read How Meta&#x2019;s models help" href="https://ai.meta.com/blog/one/">FEATURED</a>'
++                b'<a href="https://ai.meta.com/blog/two/"> A card that is only text in the anchor </a>')
++        feed = reader.Feed("meta-ai", "meta-ai", "ai.meta.com", "https://ai.meta.com/blog/", "index", r"https://ai\.meta\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/?")
++        got = {c.url: c.title for c in reader.parse(page, feed)}
++        self.assertEqual(got, {"https://ai.meta.com/blog/one/": "How Meta\u2019s models help", "https://ai.meta.com/blog/two/": "A card that is only text in the anchor"})
++
++    def test_no_url_is_ever_built_from_a_headline(self):
++        html_text = ANTHROPIC_INDEX.decode()
++        for feed in (ANTHROPIC_NEWS, ANTHROPIC_RESEARCH):
++            for c in reader.parse(ANTHROPIC_INDEX, feed):
++                path = c.url.split("anthropic.com", 1)[1]
++                self.assertIn(f'href="{path}', html_text, c.url)       # the address is literally in the page
++
++    def test_an_index_yields_a_bounded_number_of_candidates_dated_first(self):
++        many = "".join(f'<a href="/news/post-{i}"><time>Oct {i + 1}, 2026</time><h3>A long enough post title number {i}</h3></a>'
++                       for i in range(20)).encode()
++        got = reader.parse(many, ANTHROPIC_NEWS)
++        self.assertEqual(len(got), reader.INDEX_MAX_LINKS)
++        self.assertEqual(got[0].url, "https://www.anthropic.com/news/post-19")              # newest first, whatever the page order
++        undated = "".join(f'<a href="/news/u-{i}"><h3>An undated post number {i}</h3></a>' for i in range(10)).encode()
++        self.assertEqual(len(reader.parse(undated, ANTHROPIC_NEWS)), reader.INDEX_UNDATED_MAX)   # few unknowns let through
++
++    def test_a_hostile_or_truncated_page_is_parsed_in_linear_time(self):
++        import time
++        started = time.monotonic()
++        reader.parse(b"<a href='/news/x'>" * 60_000, ANTHROPIC_NEWS)                         # no closing tags at all
++        reader.parse(b"<a href='/news/y'><div>" * 5_000, ANTHROPIC_NEWS)
++        self.assertLess(time.monotonic() - started, 5)
++
++    def test_an_unreadable_index_is_a_recorded_feed_error_not_a_crash(self):
++        def refuse(url):
++            raise OSError("403")
++        stats = reader.Stats()
++        self.assertEqual(reader.discover(stats, refuse, [ANTHROPIC_NEWS]), [])
++        self.assertEqual(stats.feed_errors, ["anthropic-news: OSError"])
++
++
++class PageDates(unittest.TestCase):
++    def test_the_pages_own_publication_date_not_its_modification_date(self):
++        page = "---\nmeta-article:published_time: 2026-09-01T10:00:00+00:00\nmeta-article:modified_time: 2026-10-17T10:00:00+00:00\n---\n\nBody."
++        self.assertEqual(reader.page_date(page), datetime(2026, 9, 1, 10, 0, tzinfo=timezone.utc))
++        self.assertIsNone(reader.page_date("---\nmeta-article:modified_time: 2026-10-17T10:00:00+00:00\n---\n\nBody."))   # modified is not published
++        self.assertEqual(reader.page_date("---\nmeta-citation_date: 2026/10/15\n---\nBody."), datetime(2026, 10, 15, tzinfo=timezone.utc))
++        self.assertEqual(reader.page_date("---\nmeta-article:published_time: 2026-09-01T10:00:00Z\n---\n"), datetime(2026, 9, 1, 10, 0, tzinfo=timezone.utc))
++
++    def test_a_date_in_the_prose_is_not_a_publication_date(self):
++        self.assertIsNone(reader.page_date("---\ncanonical: x\n---\n\nOn July 28, 2026 the specification changed."))
++        self.assertIsNone(reader.page_date("No front matter. Published Oct 6, 2026."))
++        self.assertIsNone(reader.page_date("---\nmeta-article:published_time: not a date\n---\nBody."))
++
++
+ class WindowLabel(unittest.TestCase):
+     def test_the_label_names_the_dates_the_reader_read(self):
+         end = datetime(2026, 10, 18, 5, 56, tzinfo=timezone.utc)
+@@ -362,6 +455,53 @@ class ReaderAgainstDatabase(unittest.TestCase):
+                 reader.FEEDS = original
+         self.assertEqual(slept, [7])        # two fetches from one site: one pause between them, none before the first
+ 
++    def test_r17_the_pages_own_date_outranks_the_feed_that_surfaced_it(self):
++        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nMCP went stateless. " * 3
++        client = FakeClient(text=old)
++        out = self.run_reader(client)
++        self.assertEqual(out["stats"]["dated_out"], 2)                       # both fetched pages say July
++        self.assertEqual(out["stats"]["fetched"], 0)
++        row = self.conn.execute("SELECT status, fetch_error FROM items WHERE canonical_url = 'https://openai.com/index/mcp-stateless'").fetchone()
++        self.assertEqual(row[0], "skipped")
++        self.assertIn("2026-07-01", row[1])
++        again = FakeClient(text=old)
++        self.run_reader(again)
++        self.assertEqual(again.requests, [])                                  # a skipped item is not paid for twice
++
++    def test_r18_an_undated_page_is_not_a_dry_source(self):
++        out = self.run_reader(FakeClient(text="MCP went stateless. " * 20))
++        self.assertEqual((out["stats"]["fetched"], out["stats"]["dated_out"]), (2, 0))
++
++    def test_r19_a_retried_item_found_to_be_old_can_still_be_skipped(self):
++        reader.prepare(self.conn)
++        iid, _ = items.upsert(self.conn, "https://openai.com/index/was-busy", "Was busy", NOW, relevance=(3, ["x"]))
++        items.mark(self.conn, iid, "failed", error="too_many_requests")
++        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nBody text."
++        stats = reader.Stats()
++        self.assertFalse(reader.fetch_and_store(self.conn, FakeClient(text=old), iid, "https://openai.com/index/was-busy", NOW, stats))
++        self.assertEqual(self.conn.execute("SELECT status FROM items WHERE id = %s", (iid,)).fetchone()[0], "skipped")
++
++    def test_r20_a_url_a_person_adds_is_not_held_to_the_window(self):
++        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nAn old post the owner wants anyway."
++        out = reader.add_url(self.conn, FakeClient(text=old), "https://example.org/old-post", NOW)
++        self.assertTrue(out["fetched"])
++
++    def test_r21_a_blocked_domain_is_never_fetched(self):
++        reader.prepare(self.conn)
++        iid, _ = items.upsert(self.conn, "https://www.reuters.com/technology/ai-story", "Agents raise money", NOW, relevance=(9, ["agents"]))
++        items.add_provenance(self.conn, iid, "https://openai.com/index/x", NOW, role="corroboration")   # even surfaceable...
++        self.assertNotIn(iid, [i for i, _ in reader.select_for_fetch(self.conn, NOW)])               # ...it refuses fetchers
++        self.assertTrue(sources.is_blocked("www.reuters.com") and sources.is_blocked("arstechnica.com"))
++        self.assertFalse(sources.is_blocked("notreuters.com"))
++        for sneaky in ("reuters.com:443", "user@reuters.com", "reuters.com.", "WWW.Reuters.com"):
++            self.assertTrue(sources.is_blocked(sources.domain_of("https://" + sneaky + "/x") if "@" not in sneaky and ":" not in sneaky else sneaky), sneaky)
++
++    def test_r22_even_a_person_added_url_on_a_blocked_domain_is_not_fetched(self):
++        client = FakeClient(text="should never be asked for")
++        out = reader.add_url(self.conn, client, "https://www.reuters.com/technology/some-story", NOW)
++        self.assertFalse(out["fetched"])
++        self.assertEqual(client.requests, [])                                                 # no paid attempt that is known to fail
++
+     def test_r8_call_message_books_like_call(self):
+         before = self.counts()[2]
+         message, usage, cost = llm.call_message(FakeClient(), model="claude-haiku-4-5", max_tokens=200, user_id="test",

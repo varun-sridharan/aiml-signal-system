@@ -1,0 +1,14 @@
+.add-news failed: RuntimeError
+...add-news failed: RuntimeError
+..................weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+.............................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 197 tests in 471.179s
+
+OK
+To https://github.com/varun-sridharan/aiml-signal-system.git
+   1a971f0..735b202  main -> main
+exit=0

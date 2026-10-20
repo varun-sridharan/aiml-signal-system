@@ -151,11 +151,14 @@ REQUIRE_DB=1 .venv/bin/python -m unittest discover -s tests -t .
 
 ```bash
 python -m agents.weekly                      # this ISO week: Reader, Framer, gates, publish
-python -m agents.weekly --week 2026-W42      # a run label: it names the run and its brief, it does not change what is read
+python -m agents.weekly --week 2026-W43      # carry on with that week's latest attempt (a run label: it does not change what is read)
 python -m agents.weekly --stop-after reader  # stop cleanly after a stage; the next run resumes
+python -m agents.weekly --week 2026-W43 --status                       # every attempt at the week, and which published
+python -m agents.weekly --week 2026-W43 --new-attempt                  # a fresh attempt (2026-W43-r2) from the Reader
+python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43        # ...reframing what that attempt's Reader found, no re-fetch
 ```
 
-Each stage is checkpointed in the `runs` tables, so a rerun of the same week loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A week that fails a hard gate publishes nothing and stays failed until a person looks at it. What a run reads is always the last eight days up to the moment it starts, whatever its label. A typical run costs about $0.30 to $0.60, all booked in the ledger.
+Each stage is checkpointed in the `runs` tables, so a rerun of an attempt loads what finished and continues at the first stage that did not: a failed Framer does not re-fetch the sources. A finished stage is never redone, so a week whose gates failed is reframed as a new numbered attempt, and a week publishes at most one edition (a second attempt at a published week is refused before it spends). An edition is labelled on the page by the dates its Reader read, never by the run key. What a run reads is always the last eight days up to the moment it starts, whatever its label. The Reader reads nine feeds and APIs, three more feeds and five index pages (`reader.FEEDS`); `python scripts/reader_dry_run.py` shows what each yields, free. A typical run costs about $0.30 to $0.60, all booked in the ledger.
 
 **It is not scheduled.** The scheduled Weekly Digest keeps running in parallel until the new one has earned the switch. To schedule it, create a Railway cron service from this repository with the start command `python -m agents.weekly` and a weekly schedule; it needs `ANTHROPIC_API_KEY` and `DATABASE_URL` and nothing else.
 

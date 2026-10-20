@@ -1,0 +1,21 @@
+Reader dry run at 2026-10-20 02:00 UTC · window 8 days · 17 of 17 feeds and indexes ok · no model call, nothing stored
+
+feed                  candidates   in window     undated    relevant     blocked
+arxiv                        200         200           0         105           0
+hf-papers                     50          38           0          21           0
+github-changelog              10          10           0           3           0
+mcp-blog                      26           0           0           0           0
+openai                      1300          13           0           7           0
+deepmind                     100           5           0           3           0
+latent-space                  20           9           0           7           0
+import-ai                     20           2           0           1           0
+hacker-news                   29          29           0           3           0
+mistral                       90           1           0           0           0
+cio-dive                      10          10           0           4           0
+the-new-stack                 26          26           0          14           0
+anthropic-news                11           4           1           0           0
+anthropic-research            12           5           0           2           0
+meta-ai                        3           0           3           0           0
+nvidia-developer               3           0           3           2           0
+microsoft-ai                   3           0           3           0           0
+TOTAL                       1913         352          10         172           0

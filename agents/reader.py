@@ -18,6 +18,8 @@ lives in the excerpt store.
 
 from __future__ import annotations
 
+import html
+import html.parser
 import json
 import re
 import time
@@ -26,7 +28,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 
 try:
     from . import budget, excerpts, graph, items, llm, runs, sources
@@ -94,13 +96,14 @@ class Feed:
     source_id: str      # the sources row this feed belongs to (config/scout-sources.md)
     domain: str         # the address its articles live at, verified by fetching the feed
     url: str
-    kind: str           # 'rss' | 'atom' | 'hf-papers' | 'hn'
+    kind: str           # 'rss' | 'atom' | 'hf-papers' | 'hn' | 'index'
+    pattern: str = ""   # 'index' only: the article URLs on the page, as a regex the whole URL must match
 
 
-# Verified reachable on 2026-10-18 (HTTP 200, expected content type). Publishers the list
-# names that have no feed here (Anthropic, Meta AI, Mistral, Qwen, DeepSeek, Moonshot,
-# NVIDIA, The Batch, the benchmarks, the agent frameworks, the two subreddits) are not
-# discovered yet; see the debrief.
+# The first nine verified reachable on 2026-10-18 (HTTP 200, expected content type). Still not
+# discovered: Qwen, DeepSeek, Moonshot, xAI, Ai2, Z.ai, The Batch, the benchmarks, the agent
+# frameworks, the two subreddits, and the enterprise vendors (no address in the catalogue, and an
+# address is never guessed); see the debrief.
 FEEDS = [
     Feed("arxiv", "arxiv", "arxiv.org",
          "http://export.arxiv.org/api/query?search_query=cat:cs.MA+OR+cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.LG"
@@ -116,7 +119,27 @@ FEEDS = [
     Feed("import-ai", "import-ai", "importai.substack.com", "https://importai.substack.com/feed", "rss"),
     Feed("hacker-news", "hacker-news-front-page", "news.ycombinator.com",
          "https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=60", "hn"),
+    # Added 2026-10-20 from config/digest-sources.md. Each address below was fetched once and read: the
+    # three feeds are advertised by their own pages; the five indexes are server-rendered pages whose
+    # article links the pattern was checked against. Nothing here is a guessed address.
+    Feed("mistral", "mistral", "mistral.ai", "https://mistral.ai/news/rss", "rss"),
+    Feed("cio-dive", "cio-dive", "ciodive.com", "https://www.ciodive.com/feeds/news/", "rss"),
+    Feed("the-new-stack", "the-new-stack", "thenewstack.io", "https://thenewstack.io/blog/feed/", "rss"),
+    Feed("anthropic-news", "anthropic", "anthropic.com", "https://www.anthropic.com/news", "index",
+         r"https://www\.anthropic\.com/news/[a-z0-9][a-z0-9-]*"),
+    Feed("anthropic-research", "anthropic", "anthropic.com", "https://www.anthropic.com/research", "index",
+         r"https://www\.anthropic\.com/research/(?!team/)[a-z0-9][a-z0-9-]*"),
+    Feed("meta-ai", "meta-ai", "ai.meta.com", "https://ai.meta.com/blog/", "index",
+         r"https://ai\.meta\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/?"),
+    Feed("nvidia-developer", "nvidia-developer-blog", "developer.nvidia.com", "https://developer.nvidia.com/blog/", "index",
+         r"https://developer\.nvidia\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/"),
+    Feed("microsoft-ai", "microsoft-ai", "microsoft.ai", "https://microsoft.ai/news/", "index",
+         r"https://microsoft\.ai/news/[a-z0-9][a-z0-9-]*/"),
 ]
+# Not discovered, and why. OpenAI's second index (openai.com/research) answers fetchers 403 and the catalogue
+# calls it curated and often months stale; real research posts appear in the /news feed above. The Gemini API
+# changelog is one page of dated entries, and the item store's identity is the canonical URL with the fragment
+# dropped (on purpose), so its entries cannot be separate items; it needs a decision (see the debrief).
 
 
 @dataclass(frozen=True)
@@ -142,6 +165,7 @@ class Stats:
     fetched: int = 0
     fetch_failed: int = 0
     left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
+    dated_out: int = 0        # fetched, and the page's own date put it outside the window
     fetch_cost_usd: float = 0.0
 
     def as_dict(self) -> dict:
@@ -232,7 +256,121 @@ def parse_hn(payload: bytes, feed: Feed) -> list[Candidate]:
     return out
 
 
-PARSERS = {"rss": parse_feed_xml, "atom": parse_feed_xml, "hf-papers": parse_hf_papers, "hn": parse_hn}
+# --- index pages: sites with no feed. Only links that are in the page, matching the feed's pattern, are
+# candidates: a URL is never built from a headline (slugs cannot be derived; the catalogue's rule).
+INDEX_MAX_LINKS = 12      # dated cards first, newest first, then undated ones in page order
+INDEX_UNDATED_MAX = 3     # an undated card cannot be judged old until its page is paid for, so few are let through
+_MONTH_DATE = re.compile(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2}), (20\d\d)\b")
+_MONTHS = {m: i for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(), 1)}
+_VOID = {"br", "img", "hr", "input", "meta", "link", "source", "wbr"}
+
+
+def _card_date(text: str, attr: str | None = None) -> datetime | None:
+    """A date shown on a card: a <time datetime> value, else a 'Oct 6, 2026' style text. Bad dates are None."""
+    for raw in (attr, text):
+        if not raw:
+            continue
+        try:
+            if raw is attr:
+                d = datetime.fromisoformat(raw.strip().replace("Z", "+00:00"))
+                return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
+            m = _MONTH_DATE.fullmatch(" ".join(raw.split()))
+            if m:
+                return datetime(int(m.group(3)), _MONTHS[m.group(1)], int(m.group(2)), tzinfo=timezone.utc)
+        except ValueError:      # "Feb 31, 2026" or a malformed attribute: no date, never a failed feed
+            continue
+    return None
+
+
+class _IndexParser(html.parser.HTMLParser):
+    """Collects each <a href> card: its date, its title and its summary, in one linear pass.
+
+    A title is, in order of trust: heading text (h1 to h6), an element whose class says 'title', the
+    anchor's own aria-label ('Read ...'), or all of the anchor's text. Short pieces on the card
+    ("Announcements", "Read now") are labels and never a title.
+    """
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.cards: list[dict] = []
+        self.card: dict | None = None
+        self.stack: list[tuple[str, str]] = []     # (tag, role) inside the open anchor
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == "a" and a.get("href"):
+            if self.card is not None:
+                self.handle_endtag("a")
+            self.card = {"href": a["href"], "aria": a.get("aria-label", ""), "title": [], "time": [], "time_attr": None,
+                         "p": [], "text": []}
+            self.stack = []
+            return
+        if self.card is None or tag in _VOID:
+            return
+        role = ("title" if re.fullmatch(r"h[1-6]", tag) or "title" in (a.get("class") or "").lower()
+                else "time" if tag == "time" else "p" if tag == "p" else "")
+        if tag == "time" and a.get("datetime"):
+            self.card["time_attr"] = a["datetime"]
+        self.stack.append((tag, role))
+
+    def handle_endtag(self, tag):
+        if self.card is None:
+            return
+        if tag == "a":
+            self.cards.append(self.card)
+            self.card, self.stack = None, []
+        else:
+            for i in range(len(self.stack) - 1, -1, -1):
+                if self.stack[i][0] == tag:
+                    del self.stack[i:]
+                    break
+
+    def handle_data(self, data):
+        if self.card is None or not data.strip():
+            return
+        self.card["text"].append(data)
+        for _tag, role in self.stack:
+            if role:
+                self.card[role].append(data)
+
+
+def parse_index(payload: bytes, feed: Feed) -> list[Candidate]:
+    pattern = re.compile(feed.pattern)
+    parser = _IndexParser()
+    parser.feed(payload.decode("utf-8", "replace"))
+    parser.close()
+    if parser.card is not None:
+        parser.handle_endtag("a")
+    best: dict[str, tuple[str, str, datetime | None, bool]] = {}
+    for card in parser.cards:
+        url = urljoin(feed.url, card["href"]).split("#")[0].split("?")[0]
+        if not pattern.fullmatch(url):
+            continue
+        norm = lambda parts: " ".join(" ".join(parts).split())      # noqa: E731
+        published = _card_date(norm(card["time"]), card["time_attr"]) or next(
+            (d for d in (_card_date(piece) for piece in (norm([t]) for t in card["text"])) if d), None)
+        title = norm(card["title"])
+        trusted = bool(title)
+        if not title and card["aria"].startswith("Read "):
+            title, trusted = " ".join(card["aria"][5:].split()), True
+        if not title:
+            pieces = [p for p in (norm([t]) for t in card["text"]) if p and not _card_date(p)]
+            title = " ".join(pieces) if len(pieces) == 1 else next((p for p in pieces if len(p.split()) >= 3), "")
+        if len(title.split()) < 2 or len(title) > 300:
+            continue                                                  # "Read now", a label, or a wall of text
+        summary = norm(card["p"])[:600]
+        old = best.get(url)
+        if old is None or (trusted and not old[3]) or (trusted == old[3] and len(title) > len(old[0])):
+            best[url] = (title, summary or (old[1] if old else ""), published or (old[2] if old else None), trusted)
+        elif published and old[2] is None:
+            best[url] = (old[0], old[1], published, old[3])
+    cards = [Candidate(url, t, sm, d, feed) for url, (t, sm, d, _) in best.items()]
+    dated = sorted((c for c in cards if c.published), key=lambda c: c.published, reverse=True)
+    undated = [c for c in cards if not c.published][:INDEX_UNDATED_MAX]
+    return (dated + undated)[:INDEX_MAX_LINKS]
+
+
+PARSERS = {"rss": parse_feed_xml, "atom": parse_feed_xml, "hf-papers": parse_hf_papers, "hn": parse_hn, "index": parse_index}
 
 
 def parse(payload: bytes, feed: Feed) -> list[Candidate]:
@@ -391,13 +529,60 @@ def fetch_text(client, url: str, *, conn=None, phase: str = FETCH_PHASE, user_id
     return Fetched(text, error, cost)
 
 
-def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats) -> bool:
-    """Fetch an item's body and attach it as its excerpt. Returns whether it worked."""
+# Publication-date fields a fetched page's own metadata may carry, best first. `article:modified_time` is
+# deliberately absent: a page edited today is not a story published today.
+PUBLISHED_FIELDS = ("meta-article:published_time", "meta-og:article:published_time", "meta-citation_date",
+                    "meta-citation_online_date", "meta-datepublished", "meta-date", "meta-pubdate")
+
+
+def page_date(text: str) -> datetime | None:
+    """The date the page itself says it was published, from its metadata, or None.
+
+    Only the front-matter fields above are trusted. A date found in the prose is not: a post written
+    today may be about a spec dated in July. A page that renders no date is not a dry source; it is
+    dated by whatever else is known.
+    """
+    m = re.match(r"---\n(.*?)\n---", text, re.S)
+    if not m:
+        return None
+    fields = {}
+    for line in m.group(1).splitlines():
+        k, sep, v = line.partition(": ")
+        if sep:
+            fields.setdefault(k.strip(), v.strip())
+    for key in PUBLISHED_FIELDS:
+        if key in fields:
+            raw = fields[key].replace("/", "-")
+            try:
+                d = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            except ValueError:
+                continue
+            return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
+    return None
+
+
+def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats, *, enforce_window: bool = True) -> bool:
+    """Fetch an item's body and attach it as its excerpt. Returns whether it worked.
+
+    The primary source's own date outranks the date of whoever pointed at it: a page that says it was
+    published before the window is skipped (after it was paid for, since only the page can say), even
+    though a feed or an aggregator surfaced it today. `enforce_window` is off for a URL a person added.
+    """
+    if sources.is_blocked(sources.domain_of(url)):
+        items.mark(conn, item_id, "skipped", error="this site refuses fetchers; use a syndicated copy and anchor to a primary document")
+        stats.fetch_failed += 1
+        return False
     got = fetch_text(client, url, conn=conn)  # BudgetExceeded and LedgerUnavailable propagate
     stats.fetch_cost_usd += got.cost_usd
     if got.text is None:
         items.mark(conn, item_id, "failed", error=got.error)
         stats.fetch_failed += 1
+        return False
+    dated = page_date(got.text) if enforce_window else None
+    if dated is not None and now - dated > WINDOW:
+        items.mark(conn, item_id, "discovered")    # a retried item is 'failed', which may not go straight to 'skipped'
+        items.mark(conn, item_id, "skipped", error=f"its own page is dated {dated:%Y-%m-%d}: outside the window")
+        stats.dated_out += 1
         return False
     try:
         eid = excerpts.store(conn, url, got.text.replace("\x00", ""), now)
@@ -423,8 +608,11 @@ def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> l
         "AND i.discovered_at > %s AND i.discovered_at <= %s ORDER BY i.relevance_score DESC, i.discovered_at DESC LIMIT 200",
         (list(TRANSIENT_FETCH_ERRORS), now - WINDOW, now)).fetchall()
     chosen, per_domain = [], {}
+    blocked = sources.blocked_domains()
     for iid, url in rows:
         domain = sources.domain_of(url)
+        if sources.is_blocked(domain, blocked):
+            continue                       # refuses fetchers: discovery and corroboration only
         if per_domain.get(domain, 0) >= MAX_FETCHES_PER_DOMAIN:
             continue
         if items.surfaceable(conn, iid):
@@ -438,6 +626,7 @@ def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> l
 def prepare(conn, profile: dict | None = None) -> None:
     """Seed the sources, attach the verified feeds' addresses, and load the interest graph."""
     sources.seed(conn)
+    sources.seed_digest(conn)
     for feed in FEEDS:
         sources.set_feed(conn, feed.source_id, feed.domain, feed.url)
     graph.sync(conn, profile)
@@ -487,7 +676,7 @@ def add_url(conn, client, url: str, now: datetime, user_id: str = USER_ID) -> di
     status = conn.execute("SELECT status FROM items WHERE id = %s", (iid,)).fetchone()[0]
     if status == "fetched":
         return {"item": str(iid), "created": False, "fetched": True, "already_fetched": True, "cost_usd": 0.0}
-    ok = fetch_and_store(conn, client, iid, url, now, stats)
+    ok = fetch_and_store(conn, client, iid, url, now, stats, enforce_window=False)
     return {"item": str(iid), "created": created, "fetched": ok, "cost_usd": round(stats.fetch_cost_usd, 6)}
 
 

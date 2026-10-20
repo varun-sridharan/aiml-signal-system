@@ -5,10 +5,12 @@ writes it to the `sources` table; it does not add publishers of its own. A domai
 meets that the list does not name is recorded as 'unrated', and an unrated source cannot
 make an item surface on its own (see items.surfaceable).
 
-The plan speaks of 91 tiered domains. The file in this repo names 21
-publishers, most without an address; those are seeded by name with a NULL domain, and
-only addresses that appear in the file are taken from it. The rest of the 91 are not
-here to seed.
+The plan speaks of 91 tiered domains. config/scout-sources.md names 21 publishers, most
+without an address; those are seeded by name with a NULL domain, and only addresses that
+appear in the file are taken from it. The rest of the catalogue is config/digest-sources.md,
+the old digest's own list (copied 2026-10-19), transcribed into config/digest-source-rows.json
+and seeded the same way by seed_digest(). It is prose, not a table of 91 domains: it names
+83 sources, of which 14 carry an address. Nothing is invented; a test pins that.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ from urllib.parse import urlsplit
 
 REPO = Path(__file__).resolve().parent.parent
 SOURCES_PATH = REPO / "config" / "scout-sources.md"
+DIGEST_ROWS_PATH = REPO / "config" / "digest-source-rows.json"   # config/digest-sources.md, transcribed; a test checks it
 
 # WHAT: tier -> reputation prior, as the file defines them in its headings.
 # CONCEPT: reputation prior. A prior is a starting trust, not a verdict: high may surface
@@ -117,6 +120,40 @@ def seed(conn, path: Path = SOURCES_PATH) -> int:
                 "VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
                 (s.id, s.name, s.domain, s.tier, s.reputation_prior, s.notes[:500] or None),
             )
+            added += cur.rowcount
+    return added
+
+
+def load_digest_rows(path: Path = DIGEST_ROWS_PATH) -> list[Source]:
+    """The old digest's catalogue as sources. A source the catalogue names without an address has none."""
+    import json
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [Source(slug(r["name"]), r["name"], r.get("domain"), r["tier"], PRIOR[r["tier"]],
+                   f'{r["section"]}: {r.get("note") or "named in config/digest-sources.md"}') for r in data["sources"]]
+
+
+def blocked_domains(path: Path = DIGEST_ROWS_PATH) -> dict:
+    """Domains that refuse fetchers, with why. A fetch of one is never attempted (use a syndicated copy)."""
+    import json
+    return {b["domain"]: b["why"] for b in json.loads(path.read_text(encoding="utf-8")).get("blocked_domains", [])}
+
+
+def is_blocked(domain: str, blocked: dict | None = None) -> bool:
+    blocked = blocked if blocked is not None else blocked_domains()
+    domain = domain.lower().rsplit("@", 1)[-1].split(":")[0].rstrip(".")      # no userinfo, port or trailing dot
+    return any(domain == b or domain.endswith("." + b) for b in blocked)
+
+
+def seed_digest(conn, path: Path = DIGEST_ROWS_PATH) -> int:
+    """Insert the old digest's sources that are not already there. Never overwrites a row, and a
+    row whose id or address a source already holds is left to that source."""
+    added = 0
+    with conn.transaction():
+        for s in load_digest_rows(path):
+            cur = conn.execute(
+                "INSERT INTO sources (id, name, domain, tier, reputation_prior, notes) "
+                "VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
+                (s.id, s.name, s.domain, s.tier, s.reputation_prior, s.notes[:500] or None))
             added += cur.rowcount
     return added
 

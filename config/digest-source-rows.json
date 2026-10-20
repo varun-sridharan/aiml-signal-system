@@ -1,0 +1,494 @@
+{
+ "_note": "Transcribed by hand from config/digest-sources.md on 2026-10-20. Every name and domain here appears in that file (tests/test_digest_sources.py checks it); a source the file names without an address has no domain.",
+ "blocked_domains": [
+  {
+   "domain": "reuters.com",
+   "why": "refuses fetchers; use a syndicated copy and anchor to a primary document"
+  },
+  {
+   "domain": "arstechnica.com",
+   "why": "refuses fetchers; use a syndicated copy and anchor to a primary document"
+  }
+ ],
+ "sources": [
+  {
+   "name": "The New Stack",
+   "tier": "C",
+   "section": "Varun's own additions",
+   "domain": "thenewstack.io",
+   "note": "original reporting; follow through to the vendor's own release notes as primary"
+  },
+  {
+   "name": "CIO Dive",
+   "tier": "C",
+   "section": "Varun's own additions",
+   "domain": "ciodive.com",
+   "note": "buyer-side enterprise reporting; its front page carries no dates in a fetch extract"
+  },
+  {
+   "name": "NPCI circulars",
+   "tier": "A",
+   "section": "Varun's own additions",
+   "domain": "npci.org.in",
+   "note": "public, dateable PDFs"
+  },
+  {
+   "name": "RBI",
+   "tier": "A",
+   "section": "Varun's own additions"
+  },
+  {
+   "name": "Global Fintech Fest",
+   "tier": "A",
+   "section": "Varun's own additions"
+  },
+  {
+   "name": "reciprocalresearch.org",
+   "tier": "C",
+   "section": "Varun's own additions",
+   "domain": "reciprocalresearch.org",
+   "note": "anchor claims to the researcher's own arXiv paper or organisation site"
+  },
+  {
+   "name": "ai-frontiers.org",
+   "tier": "C",
+   "section": "Varun's own additions",
+   "domain": "ai-frontiers.org",
+   "note": "anchor claims to the researcher's own arXiv paper or organisation site"
+  },
+  {
+   "name": "Ollama",
+   "tier": "B",
+   "section": "Varun's own additions",
+   "note": "release notes and GitHub releases"
+  },
+  {
+   "name": "Anthropic",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "anthropic.com",
+   "note": "two indexes, news and research; slugs cannot be derived from headlines"
+  },
+  {
+   "name": "OpenAI",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "openai.com",
+   "note": "two indexes; the research index is curated and often months stale, real research posts appear on /news"
+  },
+  {
+   "name": "Gemini API changelog",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "ai.google.dev",
+   "note": "the dateable Google source"
+  },
+  {
+   "name": "deepmind.google",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "deepmind.google",
+   "note": "month-only dates; discovery only (already seeded as google-deepmind from config/scout-sources.md)"
+  },
+  {
+   "name": "blog.google",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "blog.google",
+   "note": "no dates in a fetch extract; discovery only"
+  },
+  {
+   "name": "Microsoft AI",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "microsoft.ai",
+   "note": "primary for the MAI series; the index renders no dates"
+  },
+  {
+   "name": "Meta AI",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "Mistral",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "DeepSeek",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "Qwen",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "xAI",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "Ai2",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "Z.ai",
+   "tier": "A",
+   "section": "Frontier labs"
+  },
+  {
+   "name": "arXiv",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "cs.AI, cs.LG, cs.CL; the index lags about five days"
+  },
+  {
+   "name": "LMArena",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "benchmarks"
+  },
+  {
+   "name": "Epoch AI",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "benchmarks"
+  },
+  {
+   "name": "ARC Prize",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "benchmarks"
+  },
+  {
+   "name": "SWE-bench",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "benchmarks"
+  },
+  {
+   "name": "Terminal-Bench",
+   "tier": "A",
+   "section": "Frontier labs",
+   "note": "benchmarks"
+  },
+  {
+   "name": "Model Context Protocol",
+   "tier": "A",
+   "section": "Tooling",
+   "domain": "blog.modelcontextprotocol.io",
+   "note": "lands spec news before the GitHub releases page"
+  },
+  {
+   "name": "GitHub Blog and Changelog",
+   "tier": "A",
+   "section": "Tooling",
+   "domain": "github.blog",
+   "note": "primary, with cost and quality figures"
+  },
+  {
+   "name": "NVIDIA Developer Blog",
+   "tier": "A",
+   "section": "Tooling",
+   "domain": "developer.nvidia.com",
+   "note": "primary and dateable for Nvidia software"
+  },
+  {
+   "name": "OpenAI Agents SDK",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "Anthropic Agent SDK",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "Claude Code releases",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "LangChain",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "LangGraph",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "LlamaIndex",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "CrewAI",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "AutoGen",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "LangSmith",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "Braintrust",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "W&B Weave",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "Arize Phoenix",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "OpenTelemetry GenAI semantic conventions",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "Prime Intellect",
+   "tier": "B",
+   "section": "Tooling"
+  },
+  {
+   "name": "SAP",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Oracle",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Workday",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Infor",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Microsoft Copilot",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Azure AI",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Salesforce Agentforce",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "ServiceNow",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Snowflake",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Databricks",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "UiPath",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Sierra",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Glean",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Palantir",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Decagon",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Harvey",
+   "tier": "A",
+   "section": "Enterprise",
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+  },
+  {
+   "name": "Gartner newsroom",
+   "tier": "C",
+   "section": "Enterprise",
+   "note": "buyer-side reporting"
+  },
+  {
+   "name": "Linux Foundation press",
+   "tier": "C",
+   "section": "Enterprise",
+   "note": "buyer-side reporting"
+  },
+  {
+   "name": "Crunchbase News",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "TechCrunch AI",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Axios Pro Rata",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "SEC Form D filings",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "a16z",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Sequoia",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Index",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Accel",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Lightspeed",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Peak XV",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "Y Combinator",
+   "tier": "C",
+   "section": "Funding"
+  },
+  {
+   "name": "VentureBeat",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "The Decoder",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Hacker News",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Import AI",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "The Batch",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Interconnects",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Latent Space",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Simon Willison",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "Ahead of AI",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "TLDR AI",
+   "tier": "D",
+   "section": "Discovery",
+   "note": "discovery only, never cited as primary"
+  }
+ ],
+ "_judgements": "Where the catalogue gives one label to a heading of mixed sources, tiers here are a reading, not a quote: Tooling is headed (A/B) and MCP, GitHub and NVIDIA are called primary in the text, so they are A and the SDKs, frameworks and evals are B; Enterprise is headed A for vendors' own statements and C for coverage, so vendors are A and the buyer-side outlets C; VentureBeat is listed both as buyer-side coverage (C) and as discovery (D) and is D here, the safer prior; TechCrunch AI is C under Funding and the category appears again under Discovery, and is C here."
+}

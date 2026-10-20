@@ -20,7 +20,7 @@ from types import SimpleNamespace
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from agents import budget, excerpts, items, llm, reader, runs  # noqa: E402
+from agents import budget, excerpts, items, llm, reader, runs, sources  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 
 # Earlier on 2026-10-18 than the first real run, so that run's items (all discovered later) are outside this window.
@@ -44,6 +44,23 @@ HN = json.dumps({"hits": [
     {"title": "Show HN: a multi-agent MCP thing", "url": "https://small-blog.example/post", "objectID": "42",
      "created_at": "2026-10-17T12:00:00Z"},
     {"title": "Ask HN: anything", "url": None, "objectID": "43", "created_at": "2026-10-17T12:00:00Z"}]}).encode()
+
+ANTHROPIC_INDEX = b"""<html><body><nav><a href="/news">News</a><a href="/research">Research</a><a href="/research/team/alignment">Alignment team</a></nav>
+<a href="/news/cyber-verification-program" class="card"><div><time>Oct 6, 2026</time><span>Announcements</span></div><span class="x-title">Expanding the Cyber <em>Verification</em> Program</span><p>We are launching a new, expanded version.</p></a>
+<a href="/news/public-benefit-fund"><div><span>Announcements</span><time datetime="2026-10-18T00:00:00Z">Oct 18, 2026</time></div><h4>Investing in the public benefit</h4></a>
+<a href="/news/public-benefit-fund"><span>Read now</span></a>
+<a href="/news/no-date-here"><h3>A post whose card shows no date</h3></a>
+<a href="/news/x?utm_source=y#frag"><h3>Query and fragment are dropped from the link</h3></a>
+<a href="/news/bad-date"><time>Feb 31, 2026</time><h3>A card with an impossible date</h3></a>
+<a href="/research/team/economics"><h3>Economics team page is not a post</h3></a>
+<a href="/research/the-missing-map"><div><span>Frontier Red Team</span><time>Oct 8, 2026</time></div><h4>The missing map of the sky</h4></a>
+<a href="https://elsewhere.example/news/offsite-post"><h3>An off-site link with a news path</h3></a>
+<a href="/news/two-words"><h3>Introducing Claude</h3></a>
+</body></html>"""
+ANTHROPIC_NEWS = reader.Feed("anthropic-news", "anthropic", "anthropic.com", "https://www.anthropic.com/news", "index",
+                             r"https://www\.anthropic\.com/news/[a-z0-9][a-z0-9-]*")
+ANTHROPIC_RESEARCH = reader.Feed("anthropic-research", "anthropic", "anthropic.com", "https://www.anthropic.com/research", "index",
+                                 r"https://www\.anthropic\.com/research/(?!team/)[a-z0-9][a-z0-9-]*")
 
 
 def fetch_result_message(text="Article body about MCP.", error=None, media_type="text/plain", input_tokens=2500,
@@ -110,6 +127,82 @@ class Parsing(unittest.TestCase):
                                                   "OpenAI closes record funding round at $852B valuation, Reuters"), same)
         self.assertFalse(reader.same_story("MCP spec goes stateless", "Kimi K3 released with agentic benchmarks"))
         self.assertFalse(reader.same_story("New model released", "New model released today"))  # too few distinctive words
+
+
+class IndexPages(unittest.TestCase):
+    def test_links_titles_and_dates_come_from_the_page_and_only_from_the_page(self):
+        with unittest.mock.patch.object(reader, "INDEX_UNDATED_MAX", 10):      # the cap has its own test
+            got = {c.url: c for c in reader.parse(ANTHROPIC_INDEX, ANTHROPIC_NEWS)}
+        self.assertEqual(set(got), {"https://www.anthropic.com/news/cyber-verification-program",
+                                    "https://www.anthropic.com/news/public-benefit-fund",
+                                    "https://www.anthropic.com/news/no-date-here",
+                                    "https://www.anthropic.com/news/x", "https://www.anthropic.com/news/bad-date",
+                                    "https://www.anthropic.com/news/two-words"})   # nav, team pages, off-site links, 'Read now' are not posts
+        first = got["https://www.anthropic.com/news/cyber-verification-program"]
+        self.assertEqual((first.title, first.published), ("Expanding the Cyber Verification Program", datetime(2026, 10, 6, tzinfo=timezone.utc)))   # inline <em> does not split a title
+        self.assertIn("expanded version", first.summary)
+        fund = got["https://www.anthropic.com/news/public-benefit-fund"]
+        self.assertEqual((fund.title, fund.published), ("Investing in the public benefit", datetime(2026, 10, 18, tzinfo=timezone.utc)))
+        self.assertIsNone(got["https://www.anthropic.com/news/no-date-here"].published)      # undated stays undated
+        self.assertIsNone(got["https://www.anthropic.com/news/bad-date"].published)          # an impossible date is no date, not a failed feed
+        self.assertEqual(got["https://www.anthropic.com/news/two-words"].title, "Introducing Claude")   # a two-word title is a title
+        self.assertEqual(got["https://www.anthropic.com/news/x"].url, "https://www.anthropic.com/news/x")   # query and fragment dropped
+
+    def test_a_category_label_is_never_the_title(self):
+        research = {c.url: c for c in reader.parse(ANTHROPIC_INDEX, ANTHROPIC_RESEARCH)}
+        self.assertEqual(set(research), {"https://www.anthropic.com/research/the-missing-map"})   # /research/team/... is a team page
+        self.assertEqual(research["https://www.anthropic.com/research/the-missing-map"].title, "The missing map of the sky")   # not 'Frontier Red Team'
+
+    def test_titles_from_an_aria_label_or_the_anchors_own_text(self):
+        page = (b'<a aria-label="Read How Meta&#x2019;s models help" href="https://ai.meta.com/blog/one/">FEATURED</a>'
+                b'<a href="https://ai.meta.com/blog/two/"> A card that is only text in the anchor </a>')
+        feed = reader.Feed("meta-ai", "meta-ai", "ai.meta.com", "https://ai.meta.com/blog/", "index", r"https://ai\.meta\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/?")
+        got = {c.url: c.title for c in reader.parse(page, feed)}
+        self.assertEqual(got, {"https://ai.meta.com/blog/one/": "How Meta\u2019s models help", "https://ai.meta.com/blog/two/": "A card that is only text in the anchor"})
+
+    def test_no_url_is_ever_built_from_a_headline(self):
+        html_text = ANTHROPIC_INDEX.decode()
+        for feed in (ANTHROPIC_NEWS, ANTHROPIC_RESEARCH):
+            for c in reader.parse(ANTHROPIC_INDEX, feed):
+                path = c.url.split("anthropic.com", 1)[1]
+                self.assertIn(f'href="{path}', html_text, c.url)       # the address is literally in the page
+
+    def test_an_index_yields_a_bounded_number_of_candidates_dated_first(self):
+        many = "".join(f'<a href="/news/post-{i}"><time>Oct {i + 1}, 2026</time><h3>A long enough post title number {i}</h3></a>'
+                       for i in range(20)).encode()
+        got = reader.parse(many, ANTHROPIC_NEWS)
+        self.assertEqual(len(got), reader.INDEX_MAX_LINKS)
+        self.assertEqual(got[0].url, "https://www.anthropic.com/news/post-19")              # newest first, whatever the page order
+        undated = "".join(f'<a href="/news/u-{i}"><h3>An undated post number {i}</h3></a>' for i in range(10)).encode()
+        self.assertEqual(len(reader.parse(undated, ANTHROPIC_NEWS)), reader.INDEX_UNDATED_MAX)   # few unknowns let through
+
+    def test_a_hostile_or_truncated_page_is_parsed_in_linear_time(self):
+        import time
+        started = time.monotonic()
+        reader.parse(b"<a href='/news/x'>" * 60_000, ANTHROPIC_NEWS)                         # no closing tags at all
+        reader.parse(b"<a href='/news/y'><div>" * 5_000, ANTHROPIC_NEWS)
+        self.assertLess(time.monotonic() - started, 5)
+
+    def test_an_unreadable_index_is_a_recorded_feed_error_not_a_crash(self):
+        def refuse(url):
+            raise OSError("403")
+        stats = reader.Stats()
+        self.assertEqual(reader.discover(stats, refuse, [ANTHROPIC_NEWS]), [])
+        self.assertEqual(stats.feed_errors, ["anthropic-news: OSError"])
+
+
+class PageDates(unittest.TestCase):
+    def test_the_pages_own_publication_date_not_its_modification_date(self):
+        page = "---\nmeta-article:published_time: 2026-09-01T10:00:00+00:00\nmeta-article:modified_time: 2026-10-17T10:00:00+00:00\n---\n\nBody."
+        self.assertEqual(reader.page_date(page), datetime(2026, 9, 1, 10, 0, tzinfo=timezone.utc))
+        self.assertIsNone(reader.page_date("---\nmeta-article:modified_time: 2026-10-17T10:00:00+00:00\n---\n\nBody."))   # modified is not published
+        self.assertEqual(reader.page_date("---\nmeta-citation_date: 2026/10/15\n---\nBody."), datetime(2026, 10, 15, tzinfo=timezone.utc))
+        self.assertEqual(reader.page_date("---\nmeta-article:published_time: 2026-09-01T10:00:00Z\n---\n"), datetime(2026, 9, 1, 10, 0, tzinfo=timezone.utc))
+
+    def test_a_date_in_the_prose_is_not_a_publication_date(self):
+        self.assertIsNone(reader.page_date("---\ncanonical: x\n---\n\nOn July 28, 2026 the specification changed."))
+        self.assertIsNone(reader.page_date("No front matter. Published Oct 6, 2026."))
+        self.assertIsNone(reader.page_date("---\nmeta-article:published_time: not a date\n---\nBody."))
 
 
 class WindowLabel(unittest.TestCase):
@@ -361,6 +454,53 @@ class ReaderAgainstDatabase(unittest.TestCase):
             finally:
                 reader.FEEDS = original
         self.assertEqual(slept, [7])        # two fetches from one site: one pause between them, none before the first
+
+    def test_r17_the_pages_own_date_outranks_the_feed_that_surfaced_it(self):
+        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nMCP went stateless. " * 3
+        client = FakeClient(text=old)
+        out = self.run_reader(client)
+        self.assertEqual(out["stats"]["dated_out"], 2)                       # both fetched pages say July
+        self.assertEqual(out["stats"]["fetched"], 0)
+        row = self.conn.execute("SELECT status, fetch_error FROM items WHERE canonical_url = 'https://openai.com/index/mcp-stateless'").fetchone()
+        self.assertEqual(row[0], "skipped")
+        self.assertIn("2026-07-01", row[1])
+        again = FakeClient(text=old)
+        self.run_reader(again)
+        self.assertEqual(again.requests, [])                                  # a skipped item is not paid for twice
+
+    def test_r18_an_undated_page_is_not_a_dry_source(self):
+        out = self.run_reader(FakeClient(text="MCP went stateless. " * 20))
+        self.assertEqual((out["stats"]["fetched"], out["stats"]["dated_out"]), (2, 0))
+
+    def test_r19_a_retried_item_found_to_be_old_can_still_be_skipped(self):
+        reader.prepare(self.conn)
+        iid, _ = items.upsert(self.conn, "https://openai.com/index/was-busy", "Was busy", NOW, relevance=(3, ["x"]))
+        items.mark(self.conn, iid, "failed", error="too_many_requests")
+        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nBody text."
+        stats = reader.Stats()
+        self.assertFalse(reader.fetch_and_store(self.conn, FakeClient(text=old), iid, "https://openai.com/index/was-busy", NOW, stats))
+        self.assertEqual(self.conn.execute("SELECT status FROM items WHERE id = %s", (iid,)).fetchone()[0], "skipped")
+
+    def test_r20_a_url_a_person_adds_is_not_held_to_the_window(self):
+        old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nAn old post the owner wants anyway."
+        out = reader.add_url(self.conn, FakeClient(text=old), "https://example.org/old-post", NOW)
+        self.assertTrue(out["fetched"])
+
+    def test_r21_a_blocked_domain_is_never_fetched(self):
+        reader.prepare(self.conn)
+        iid, _ = items.upsert(self.conn, "https://www.reuters.com/technology/ai-story", "Agents raise money", NOW, relevance=(9, ["agents"]))
+        items.add_provenance(self.conn, iid, "https://openai.com/index/x", NOW, role="corroboration")   # even surfaceable...
+        self.assertNotIn(iid, [i for i, _ in reader.select_for_fetch(self.conn, NOW)])               # ...it refuses fetchers
+        self.assertTrue(sources.is_blocked("www.reuters.com") and sources.is_blocked("arstechnica.com"))
+        self.assertFalse(sources.is_blocked("notreuters.com"))
+        for sneaky in ("reuters.com:443", "user@reuters.com", "reuters.com.", "WWW.Reuters.com"):
+            self.assertTrue(sources.is_blocked(sources.domain_of("https://" + sneaky + "/x") if "@" not in sneaky and ":" not in sneaky else sneaky), sneaky)
+
+    def test_r22_even_a_person_added_url_on_a_blocked_domain_is_not_fetched(self):
+        client = FakeClient(text="should never be asked for")
+        out = reader.add_url(self.conn, client, "https://www.reuters.com/technology/some-story", NOW)
+        self.assertFalse(out["fetched"])
+        self.assertEqual(client.requests, [])                                                 # no paid attempt that is known to fail
 
     def test_r8_call_message_books_like_call(self):
         before = self.counts()[2]
