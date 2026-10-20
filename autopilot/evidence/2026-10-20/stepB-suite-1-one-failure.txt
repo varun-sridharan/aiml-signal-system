@@ -1,0 +1,21 @@
+.add-news failed: RuntimeError
+...add-news failed: RuntimeError
+..................weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+...................................F........................................................................................................................................
+======================================================================
+FAIL: test_estimated_input_covers_recorded_input_tokens (tests.test_ledger.EstimateIsAnUpperBound)
+The stricter half: the output allowance alone would hide a low input guess.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_ledger.py", line 381, in test_estimated_input_covers_recorded_input_tokens
+    self.assertGreaterEqual(est, recorded, f"{phase}: {est} < {recorded} input tokens")
+AssertionError: 1190 not greater than or equal to 1287 : eval-usefulness: 1190 < 1287 input tokens
+
+----------------------------------------------------------------------
+Ran 196 tests in 457.549s
+
+FAILED (failures=1)
+exit=1

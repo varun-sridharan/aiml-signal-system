@@ -1,0 +1,236 @@
+{
+ "arm": "off",
+ "case": "2026-08-04",
+ "run": 2,
+ "plant_unit": null,
+ "caught": null,
+ "false_positives": [],
+ "retried_units": [],
+ "lifted": {},
+ "failures": [],
+ "cost_usd": 0.01034,
+ "verdicts": {
+  "2026-08-04-mcp": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "stateless servers can be scaled horizontally behind a plain load balancer, with no sticky sessions and no shared session store",
+     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store.",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "cross-version compatibility breaks",
+     "supporting_span": "The change breaks cross-version compatibility",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock",
+     "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-kimi-k3": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "2.8T open weights at 1M context",
+     "supporting_span": "at 2.8T parameters with a 1M-token context window",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "per-call cost compounds across many calls per task",
+     "supporting_span": "where per-call cost compounds across many calls per task",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-istar": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "iStar scores each intermediate action instead of only on the final outcome in multi-turn agentic RL",
+     "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions rather than only on the final outcome.",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "+6.3% success improvement on WebShop and VisualSokoban",
+     "supporting_span": "It reports a +6.3% success improvement on WebShop and VisualSokoban.",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Results are benchmark-only, and the authors concede the difficulty concentrates in step-reward design",
+     "supporting_span": "Results are benchmark-only, and the paper notes that step-reward design is where the difficulty concentrates.",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-terminal-bench": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "GPT-5.6 Sol at 89.5%",
+     "supporting_span": "GPT-5.6 Sol scores 89.5%",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Opus 5 at 89.1%",
+     "supporting_span": "Opus 5 scores 89.1%",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "0.4-point spread between GPT-5.6 Sol and Opus 5",
+     "supporting_span": "a 0.4-point gap at the top of the coding-agent leaderboard",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-mega-rounds": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "OpenAI's $122B round at $852B post",
+     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Anthropic at $965B",
+     "supporting_span": "Anthropic is valued at $965B",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-vc-record": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "$510B in H1",
+     "supporting_span": "Global venture funding reached a record $510B in H1 2026",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "AI taking ~80% of Q1 dollars",
+     "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "2026-08-04-export-controls": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "Blackwell-class exports banned",
+     "supporting_span": "which bans export of Blackwell-class chips",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "H200 moved to case-by-case licensing",
+     "supporting_span": "moves H200 exports to case-by-case licensing",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "thread": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1",
+     "supporting_span": "On Terminal-Bench 2.1, GPT-5.6 Sol scores 89.5% and Opus 5 scores 89.1% — a 0.4-point gap",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "OpenAI prices at $852B",
+     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Anthropic prices at $965B",
+     "supporting_span": "Anthropic is valued at $965B",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "AI absorbs ~80% of Q1 venture dollars",
+     "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "trading stateful sessions for stateless horizontal scale",
+     "supporting_span": "The 2026-07-28 MCP specification changes the core transport from stateful sessions to stateless request/response. Stateless servers can be scaled horizontally behind an ordinary load balancer",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Kimi K3's 2.8T open weights",
+     "supporting_span": "at 2.8T parameters",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "iStar's step-reward credit assignment",
+     "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "the AI OVERWATCH Act's Blackwell ban",
+     "supporting_span": "The House advanced the AI OVERWATCH Act, which bans export of Blackwell-class chips",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  }
+ }
+}

@@ -1,0 +1,100 @@
+{
+  "user_id": "varun",
+  "date": "2026-10-20",
+  "generatedBy": {
+    "agent": "hand-constructed (not a Framer run)",
+    "model": "none",
+    "checkModel": "claude-haiku-4-5"
+  },
+  "tunerStateVersion": "v0-seed",
+  "thread": "The model got bigger and the harness got sturdier in the same week. Atlas-3 ships a 400K-token context window, and Parcel 2.0 resumes crashed runs from their last completed step. Both lower the cost of a long task failing late.",
+  "items": [
+    {
+      "id": "negative-02-atlas",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "Atlas-3 posts new SWE-Verify and Terminal-Ops scores",
+      "why": "Atlas-3 scores 58.4% on SWE-Verify and ships with a 400K-token context window, available from today in the API.",
+      "connection": "Read with the Parcel change: the model can hold more, and the harness can survive more.",
+      "sources": [
+        {
+          "label": "Atlas release notes",
+          "url": "https://example.com/atlas-3",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "Atlas-3 scores 58.4% on SWE-Verify and ships with a 400K-token context window, available from today in the API.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "Read with the Parcel change: the model can hold more, and the harness can survive more.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 1
+    },
+    {
+      "id": "negative-02-parcel",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "Parcel 2.0 adds durable execution",
+      "why": "Parcel 2.0 adds durable execution, so a crashed run resumes from its last completed step. Steps are checkpointed to a Postgres table, and retries use exponential backoff capped at five attempts.",
+      "connection": "If your agent loop restarts from zero today, this is the cheapest reliability win on the list.",
+      "sources": [
+        {
+          "label": "Parcel blog",
+          "url": "https://example.com/parcel-2",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "Parcel 2.0 adds durable execution, so a crashed run resumes from its last completed step. Steps are checkpointed to a Postgres table, and retries use exponential backoff capped at five attempts.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "If your agent loop restarts from zero today, this is the cheapest reliability win on the list.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 2
+    }
+  ],
+  "_enforcements": [],
+  "threadSplit": [
+    {
+      "text": "The model got bigger and the harness got sturdier in the same week. ",
+      "class": "interpretation"
+    },
+    {
+      "text": "Atlas-3 ships a 400K-token context window, and Parcel 2.0 resumes crashed runs from their last completed step. ",
+      "class": "fact"
+    },
+    {
+      "text": "Both lower the cost of a long task failing late.",
+      "class": "interpretation"
+    }
+  ],
+  "readingTimeMin": 1,
+  "counts": {
+    "items": 2,
+    "doThis": 0,
+    "byCategory": {
+      "AI": 2
+    }
+  }
+}

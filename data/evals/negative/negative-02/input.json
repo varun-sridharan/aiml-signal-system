@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20",
+  "_note": "CONSTRUCTED, not a Reader or Framer run. A changed number: two figures the excerpt really contains, attached to the wrong benchmark. Hand-written 2026-10-20 to back the negative-02 eval case.",
+  "items": [
+    {
+      "id": "negative-02-atlas",
+      "category": "AI",
+      "headline": "Atlas-3 posts new SWE-Verify and Terminal-Ops scores",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "Atlas-3 scores 71.2% on the SWE-Verify benchmark and 58.4% on the Terminal-Ops benchmark, up from 64.0% and 49.9% for Atlas-2. It was trained on 14T tokens and ships with a 400K-token context window, available from today in the API.",
+      "sources": [
+        {
+          "label": "Atlas release notes",
+          "url": "https://example.com/atlas-3",
+          "tier": "primary"
+        }
+      ]
+    },
+    {
+      "id": "negative-02-parcel",
+      "category": "AI",
+      "headline": "Parcel 2.0 adds durable execution",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "The Parcel agent framework 2.0 adds durable execution: a run that crashes resumes from its last completed step instead of starting over. Steps are checkpointed to a Postgres table, and retries use exponential backoff capped at five attempts.",
+      "sources": [
+        {
+          "label": "Parcel blog",
+          "url": "https://example.com/parcel-2",
+          "tier": "primary"
+        }
+      ]
+    }
+  ]
+}

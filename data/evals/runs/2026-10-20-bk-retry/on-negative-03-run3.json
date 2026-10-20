@@ -1,0 +1,99 @@
+{
+ "arm": "on",
+ "case": "negative-03",
+ "run": 3,
+ "plant_unit": "negative-03-v1",
+ "caught": true,
+ "false_positives": [],
+ "retried_units": [],
+ "lifted": {},
+ "failures": [],
+ "cost_usd": 0.0042,
+ "verdicts": {
+  "negative-03-v1": {
+   "confidence": 0.67,
+   "claims": [
+    {
+     "claim": "The v1 completions endpoint stops accepting requests on 2026-12-01",
+     "supporting_span": null,
+     "supported": false,
+     "span_verified": false
+    },
+    {
+     "claim": "existing keys migrate to v2 in 2027-01",
+     "supporting_span": "existing keys migrate to v2 in 2027-01",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "streaming responses are unchanged between the two versions",
+     "supporting_span": "Streaming responses are unchanged between the two versions",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [
+    "The v1 completions endpoint stops accepting requests on 2026-12-01"
+   ],
+   "grader_errors": [],
+   "possible_false_alarms": [
+    "'The v1 completions endpoint stops accepting requests on 2026-12-01' — but 2026 appears in the excerpt"
+   ],
+   "lifted_claims": []
+  },
+  "negative-03-beacon": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "Beacon now supports hybrid search, combining keyword and embedding scores in one query",
+     "supporting_span": "The Beacon vector store now supports hybrid search, combining keyword and embedding scores in one query",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "It is available on all paid plans",
+     "supporting_span": "Hybrid search is available on all paid plans",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "adds no per-query charge",
+     "supporting_span": "adds no per-query charge",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "existing indexes are upgraded in place without a rebuild",
+     "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "thread": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "Beacon upgrades existing indexes in place without a rebuild",
+     "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "existing API keys migrate to v2 in 2027-01",
+     "supporting_span": "existing keys migrate to v2 in 2027-01",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  }
+ }
+}

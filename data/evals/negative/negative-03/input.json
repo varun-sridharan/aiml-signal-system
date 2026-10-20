@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20",
+  "_note": "CONSTRUCTED, not a Reader or Framer run. A changed date: a real date from the excerpt, moved onto the wrong event. Hand-written 2026-10-20 to back the negative-03 eval case.",
+  "items": [
+    {
+      "id": "negative-03-v1",
+      "category": "AI",
+      "headline": "v1 completions endpoint gets a shutdown date",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "The v1 completions endpoint stops accepting requests on 2027-03-01. The v2 endpoint becomes the default for new API keys on 2026-12-01, and existing keys migrate to v2 in 2027-01. Streaming responses are unchanged between the two versions.",
+      "sources": [
+        {
+          "label": "Provider changelog",
+          "url": "https://example.com/v1-sunset",
+          "tier": "primary"
+        }
+      ]
+    },
+    {
+      "id": "negative-03-beacon",
+      "category": "AI",
+      "headline": "Beacon adds hybrid search",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "The Beacon vector store now supports hybrid search, combining keyword and embedding scores in one query. Hybrid search is available on all paid plans and adds no per-query charge. Existing indexes are upgraded in place without a rebuild.",
+      "sources": [
+        {
+          "label": "Beacon docs",
+          "url": "https://example.com/beacon-hybrid",
+          "tier": "primary"
+        }
+      ]
+    }
+  ]
+}

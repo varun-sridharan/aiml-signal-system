@@ -1,0 +1,410 @@
+{
+ "runs": 5,
+ "spent_usd": 0.3015,
+ "results": {
+  "off": {
+   "negative-01": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [],
+     "cost_usd": 0.00529
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [],
+     "cost_usd": 0.00529
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [],
+     "cost_usd": 0.00529
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [],
+     "cost_usd": 0.00529
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [],
+     "cost_usd": 0.00529
+    }
+   ],
+   "negative-02": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    }
+   ],
+   "negative-03": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    }
+   ],
+   "negative-04": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    }
+   ],
+   "2026-08-04": [
+    {
+     "run": 1,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 2,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 3,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 4,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 5,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    }
+   ]
+  },
+  "on": {
+   "negative-01": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [
+      "negative-01-mcp"
+     ],
+     "cost_usd": 0.00843
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [
+      "negative-01-mcp"
+     ],
+     "cost_usd": 0.00843
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [
+      "negative-01-mcp"
+     ],
+     "cost_usd": 0.00843
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [
+      "negative-01-mcp"
+     ],
+     "cost_usd": 0.00843
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [
+      "thread: false positive \u2014 Anthropic's $965B valuation"
+     ],
+     "retried_units": [
+      "negative-01-mcp"
+     ],
+     "cost_usd": 0.00843
+    }
+   ],
+   "negative-02": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.00444
+    }
+   ],
+   "negative-03": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0042
+    }
+   ],
+   "negative-04": [
+    {
+     "run": 1,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 2,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 3,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 4,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    },
+    {
+     "run": 5,
+     "caught": true,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.0043
+    }
+   ],
+   "2026-08-04": [
+    {
+     "run": 1,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 2,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 3,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 4,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    },
+    {
+     "run": 5,
+     "caught": null,
+     "false_positives": [],
+     "retried_units": [],
+     "cost_usd": 0.01034
+    }
+   ]
+  }
+ }
+}

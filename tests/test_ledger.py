@@ -320,7 +320,7 @@ class EstimateIsAnUpperBound(unittest.TestCase):
         import run_evals  # noqa: F401  (data/evals is put on the path below)
 
         profile = framer.load_json(framer.PROFILE_PATH)
-        cases = run_evals.load_cases(None)
+        cases = run_evals.load_cases(None, include_negative=False)   # the golden cases the recorded calls were made on
         system_prompt = framer.load_framer_system_prompt()
         raw = framer.load_json(framer.DEFAULT_RAW_PATH)
         checks = [framer.check_request(framer.build_check_payload(c["input"], run_evals.framing_from_framed_day(c["output"])))

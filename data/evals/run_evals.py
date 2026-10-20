@@ -33,6 +33,7 @@ from dotenv import load_dotenv
 
 REPO = Path(__file__).resolve().parent.parent.parent
 GOLDEN_DIR = REPO / "data" / "evals" / "golden"
+NEGATIVE_DIR = REPO / "data" / "evals" / "negative"     # constructed planted-fabrication cases; same shape as a golden case
 
 # WHAT: import the Framer module itself rather than reimplementing any of it.
 # CONCEPT: eval — test the artifact, not a copy of it. If the eval had its own
@@ -245,6 +246,10 @@ def run_faithfulness(client, profile, case, show_claims: bool) -> dict:
         "false_positives": total_fp,
         "false_negatives": total_fn,
         "cost": cost,
+        "retried_units": [u for u, v in graded.items() if v.get("retried")],
+        "lifted": {u: v.get("lifted_claims", []) for u, v in graded.items() if v.get("lifted_claims")},
+        "unsupported": {u: v.get("unsupported_claims", []) for u, v in graded.items() if v.get("unsupported_claims")},
+        "verdicts": graded,
     }
 
 
@@ -351,13 +356,14 @@ def run_usefulness(client, profile, case) -> dict:
 # ---------------------------------------------------------------- main
 
 
-def load_cases(selected: str | None) -> list:
+def load_cases(selected: str | None, include_negative: bool = True) -> list:
     """Every golden case is a directory; adding a day needs no change here."""
     # WHAT: discover cases by globbing directories that contain labels.json.
     # CONCEPT: harness — the runner is data-driven. A new golden day is a new folder,
     # never a code edit, which is what keeps the set cheap to grow.
     cases = []
-    for case_dir in sorted(p for p in GOLDEN_DIR.iterdir() if p.is_dir()):
+    case_dirs = sorted((p for d in ((GOLDEN_DIR, NEGATIVE_DIR) if include_negative else (GOLDEN_DIR,)) if d.is_dir() for p in d.iterdir() if p.is_dir()), key=lambda p: p.name)
+    for case_dir in case_dirs:
         if selected and case_dir.name != selected:
             continue
         labels_path = case_dir / "labels.json"
@@ -380,6 +386,7 @@ def main() -> None:
     parser.add_argument("--case", help="run one golden case by directory name, e.g. 2026-08-04")
     parser.add_argument("--no-api", action="store_true", help="structural checks only; makes no API call")
     parser.add_argument("--show-claims", action="store_true", help="print the grader's full claim ledger")
+    parser.add_argument("--json-out", help="write each case's faithfulness result (claim ledgers included) to this file")
     parser.add_argument("--skip-usefulness", action="store_true",
                         help="skip the soft judge; halves the spend while iterating on the grader")
     args = parser.parse_args()
@@ -439,6 +446,11 @@ def main() -> None:
 
         summaries.append({"case": case["name"], "structural": structural,
                           "faithfulness": faithfulness, "usefulness": usefulness})
+
+    if args.json_out:
+        Path(args.json_out).write_text(json.dumps(
+            [{"case": x["case"], "faithfulness": x["faithfulness"]} for x in summaries if x["faithfulness"]],
+            indent=1, ensure_ascii=False, default=str) + "\n")
 
     print(f"\n{'=' * 72}\nSUMMARY")
     for summary in summaries:

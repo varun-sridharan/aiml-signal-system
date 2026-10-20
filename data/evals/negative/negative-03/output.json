@@ -1,0 +1,100 @@
+{
+  "user_id": "varun",
+  "date": "2026-10-20",
+  "generatedBy": {
+    "agent": "hand-constructed (not a Framer run)",
+    "model": "none",
+    "checkModel": "claude-haiku-4-5"
+  },
+  "tunerStateVersion": "v0-seed",
+  "thread": "Two infrastructure changes landed that reward teams who read changelogs. Beacon upgrades existing indexes in place without a rebuild, and existing API keys migrate to v2 in 2027-01. The second has a date attached to it, so it will not wait.",
+  "items": [
+    {
+      "id": "negative-03-v1",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "v1 completions endpoint gets a shutdown date",
+      "why": "The v1 completions endpoint stops accepting requests on 2026-12-01. Existing keys migrate to v2 in 2027-01, and streaming responses are unchanged between the two versions.",
+      "connection": "If anything you run still calls v1, the migration is a calendar problem before it is an engineering one.",
+      "sources": [
+        {
+          "label": "Provider changelog",
+          "url": "https://example.com/v1-sunset",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "The v1 completions endpoint stops accepting requests on 2026-12-01. Existing keys migrate to v2 in 2027-01, and streaming responses are unchanged between the two versions.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "If anything you run still calls v1, the migration is a calendar problem before it is an engineering one.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 1
+    },
+    {
+      "id": "negative-03-beacon",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "Beacon adds hybrid search",
+      "why": "Beacon now supports hybrid search, combining keyword and embedding scores in one query. It is available on all paid plans and adds no per-query charge, and existing indexes are upgraded in place without a rebuild.",
+      "connection": "Hybrid retrieval removes one of the two systems many teams run side by side.",
+      "sources": [
+        {
+          "label": "Beacon docs",
+          "url": "https://example.com/beacon-hybrid",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "Beacon now supports hybrid search, combining keyword and embedding scores in one query. It is available on all paid plans and adds no per-query charge, and existing indexes are upgraded in place without a rebuild.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "Hybrid retrieval removes one of the two systems many teams run side by side.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 2
+    }
+  ],
+  "_enforcements": [],
+  "threadSplit": [
+    {
+      "text": "Two infrastructure changes landed that reward teams who read changelogs. ",
+      "class": "interpretation"
+    },
+    {
+      "text": "Beacon upgrades existing indexes in place without a rebuild, and existing API keys migrate to v2 in 2027-01. ",
+      "class": "fact"
+    },
+    {
+      "text": "The second has a date attached to it, so it will not wait.",
+      "class": "interpretation"
+    }
+  ],
+  "readingTimeMin": 1,
+  "counts": {
+    "items": 2,
+    "doThis": 0,
+    "byCategory": {
+      "AI": 2
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20",
+  "_note": "CONSTRUCTED, not a Reader or Framer run. An invented attribution: a statement the excerpt gives to one company, credited to the other. Hand-written 2026-10-20 to back the negative-04 eval case.",
+  "items": [
+    {
+      "id": "negative-04-launch",
+      "category": "AI",
+      "headline": "Open-weight model announced with a day-one NVIDIA container",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "In a statement, Mistral said the new model will be open-weight under an Apache 2.0 licence. NVIDIA said it will ship as an optimised container in NIM on launch day. Neither company gave a price for hosted access.",
+      "sources": [
+        {
+          "label": "Joint announcement",
+          "url": "https://example.com/open-weight-launch",
+          "tier": "primary"
+        }
+      ]
+    },
+    {
+      "id": "negative-04-saferoute",
+      "category": "AI",
+      "headline": "ETH Zurich releases SafeRoute",
+      "tags": [
+        "KNOW"
+      ],
+      "source_excerpt": "Researchers at ETH Zurich released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions. The dataset is released under CC-BY-4.0, and the annotation work took eleven weeks.",
+      "sources": [
+        {
+          "label": "ETH Zurich",
+          "url": "https://example.com/saferoute",
+          "tier": "primary"
+        }
+      ]
+    }
+  ]
+}

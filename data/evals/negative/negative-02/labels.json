@@ -1,0 +1,28 @@
+{
+  "case": "negative-02",
+  "input": "input.json",
+  "output": "output.json",
+  "_note": "CONSTRUCTED NEGATIVE CASE — not a frozen real day. A changed number: two figures the excerpt really contains, attached to the wrong benchmark. One planted fabrication, in negative-02-atlas. Like negative-01, the plant is built from words and figures the excerpt really contains, so a span the grader quotes passes the substring check and only reading comprehension rejects it. DO NOT swap in a fault whose figure, name or date is absent from the excerpt: the case would then test Python, not the grader.",
+  "_labelledBy": "autopilot run 2 (hand-constructed, awaiting Varun's review)",
+  "_labelledOn": "2026-10-20",
+  "_heldOut": "Measurement only. Nothing adapts on this file.",
+  "units": {
+    "negative-02-atlas": {
+      "expected_unsupported": [
+        "58.4%"
+      ],
+      "tolerated": [],
+      "_why": "The excerpt gives Atlas-3 71.2% on SWE-Verify and 58.4% on Terminal-Ops; the why gives 58.4% to SWE-Verify. Both figures are in the excerpt, so a quoted span exists; only reading which benchmark each belongs to separates them."
+    },
+    "negative-02-parcel": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Clean control: every claim traces to its excerpt."
+    },
+    "thread": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Graded against the union of both excerpts. It restates only facts that trace, and never the planted one."
+    }
+  }
+}

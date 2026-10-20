@@ -1,0 +1,100 @@
+{
+  "user_id": "varun",
+  "date": "2026-10-20",
+  "generatedBy": {
+    "agent": "hand-constructed (not a Framer run)",
+    "model": "none",
+    "checkModel": "claude-haiku-4-5"
+  },
+  "tunerStateVersion": "v0-seed",
+  "thread": "Release engineering and evaluation data both improved this week. SafeRoute gives agent safety evals 40,000 labelled tool-call traces, and the new open-weight model ships as an optimised container on launch day. Between them, the cost of checking an agent shrank.",
+  "items": [
+    {
+      "id": "negative-04-launch",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "Open-weight model announced with a day-one NVIDIA container",
+      "why": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence, and that it will ship as an optimised container in NIM on launch day. Neither company gave a price for hosted access.",
+      "connection": "Licence and packaging arriving together is what makes a model usable the day it is announced.",
+      "sources": [
+        {
+          "label": "Joint announcement",
+          "url": "https://example.com/open-weight-launch",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence, and that it will ship as an optimised container in NIM on launch day. Neither company gave a price for hosted access.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "Licence and packaging arriving together is what makes a model usable the day it is announced.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 1
+    },
+    {
+      "id": "negative-04-saferoute",
+      "category": "AI",
+      "tags": [
+        "KNOW"
+      ],
+      "headline": "ETH Zurich releases SafeRoute",
+      "why": "ETH Zurich researchers released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions. It is released under CC-BY-4.0, and the annotation work took eleven weeks.",
+      "connection": "A labelled set of unsafe tool calls is the missing half of most agent safety evals.",
+      "sources": [
+        {
+          "label": "ETH Zurich",
+          "url": "https://example.com/saferoute",
+          "tier": "primary"
+        }
+      ],
+      "split": {
+        "why": [
+          {
+            "text": "ETH Zurich researchers released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions. It is released under CC-BY-4.0, and the annotation work took eleven weeks.",
+            "class": "fact"
+          }
+        ],
+        "connection": [
+          {
+            "text": "A labelled set of unsafe tool calls is the missing half of most agent safety evals.",
+            "class": "interpretation"
+          }
+        ]
+      },
+      "rank": 2
+    }
+  ],
+  "_enforcements": [],
+  "threadSplit": [
+    {
+      "text": "Release engineering and evaluation data both improved this week. ",
+      "class": "interpretation"
+    },
+    {
+      "text": "SafeRoute gives agent safety evals 40,000 labelled tool-call traces, and the new open-weight model ships as an optimised container on launch day. ",
+      "class": "fact"
+    },
+    {
+      "text": "Between them, the cost of checking an agent shrank.",
+      "class": "interpretation"
+    }
+  ],
+  "readingTimeMin": 1,
+  "counts": {
+    "items": 2,
+    "doThis": 0,
+    "byCategory": {
+      "AI": 2
+    }
+  }
+}

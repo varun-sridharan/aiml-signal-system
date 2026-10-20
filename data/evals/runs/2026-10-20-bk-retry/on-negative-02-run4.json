@@ -1,0 +1,99 @@
+{
+ "arm": "on",
+ "case": "negative-02",
+ "run": 4,
+ "plant_unit": "negative-02-atlas",
+ "caught": true,
+ "false_positives": [],
+ "retried_units": [],
+ "lifted": {},
+ "failures": [],
+ "cost_usd": 0.00444,
+ "verdicts": {
+  "negative-02-atlas": {
+   "confidence": 0.33,
+   "claims": [
+    {
+     "claim": "Atlas-3 scores 58.4% on SWE-Verify",
+     "supporting_span": "Atlas-3 scores 71.2% on the SWE-Verify benchmark and 58.4% on the Terminal-Ops benchmark",
+     "supported": false,
+     "span_verified": true
+    },
+    {
+     "claim": "Atlas-3 ships with a 400K-token context window",
+     "supporting_span": "ships with a 400K-token context window",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "available from today in the API",
+     "supporting_span": "available from today in the API",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [
+    "Atlas-3 scores 58.4% on SWE-Verify"
+   ],
+   "grader_errors": [],
+   "possible_false_alarms": [
+    "'Atlas-3 scores 58.4% on SWE-Verify' — but 58.4% appears in the excerpt"
+   ],
+   "lifted_claims": []
+  },
+  "negative-02-parcel": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "Parcel 2.0 adds durable execution",
+     "supporting_span": "The Parcel agent framework 2.0 adds durable execution",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "a crashed run resumes from its last completed step",
+     "supporting_span": "a run that crashes resumes from its last completed step",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Steps are checkpointed to a Postgres table",
+     "supporting_span": "Steps are checkpointed to a Postgres table",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "retries use exponential backoff capped at five attempts",
+     "supporting_span": "retries use exponential backoff capped at five attempts",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "thread": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "Atlas-3 ships a 400K-token context window",
+     "supporting_span": "ships with a 400K-token context window",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Parcel 2.0 resumes crashed runs from their last completed step",
+     "supporting_span": "a run that crashes resumes from its last completed step",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  }
+ }
+}

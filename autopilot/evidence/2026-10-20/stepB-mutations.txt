@@ -1,0 +1,116 @@
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("RETRY_ON_LIFT = True","RETRY_ON_LIFT = False");open(p,"w").write(s) (agents/framer.py)
+FFFF.E
+======================================================================
+ERROR: test_the_retry_is_recorded_in_the_stored_brief (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 119, in test_the_retry_is_recorded_in_the_stored_brief
+    self.assertEqual(day["items"][0]["faithfulness"]["retried"]["lifted_before"], ["Anthropic is valued at $965B"])
+KeyError: 'retried'
+
+======================================================================
+FAIL: test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 80, in test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict
+    self.assertEqual(len(script.requests), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_a_lift_on_the_thread_retries_the_thread_against_every_excerpt (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 103, in test_a_lift_on_the_thread_retries_the_thread_against_every_excerpt
+    self.assertEqual(len(script.requests), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_a_retry_that_returns_no_verdict_for_the_unit_keeps_the_first (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 111, in test_a_retry_that_returns_no_verdict_for_the_unit_keeps_the_first
+    self.assertEqual(len(script.requests), 2)
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_a_unit_is_retried_once_however_the_retry_turns_out (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 95, in test_a_unit_is_retried_once_however_the_retry_turns_out
+    self.assertEqual(len(script.requests), 2)                                           # no third call
+AssertionError: 1 != 2
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+FAILED (failures=4, errors=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("payload[\"_retry\"] = RETRY_NOTE + json.dumps(lifted, ensure_ascii=False)","payload[\"_retry\"] = RETRY_NOTE");open(p,"w").write(s) (agents/framer.py)
+F.....
+======================================================================
+FAIL: test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 85, in test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict
+    self.assertIn("Anthropic is valued at $965B", second["_retry"])                    # names what gave it away
+AssertionError: 'Anthropic is valued at $965B' not found in 'RETRY. Your previous verdict for this unit listed claims that appear word for word in the excerpt but are not what `writing_under_test` says, so they were read off the excerpt and not off the writing. Do it again from the writing only. Read `writing_under_test` sentence by sentence; for each checkable statement it makes, phrase the claim the way the WRITING words it (its verbs, its subjects, its figures), then look for a span of the excerpt that says the same thing, and mark it unsupported if the excerpt says something different about that subject, even when the same figure or name appears there. Claims copied from your previous verdict, which must not be repeated: '
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("        usage = _add_usage(usage, retry_usage)
+","");open(p,"w").write(s) (agents/framer.py)
+F.....
+======================================================================
+FAIL: test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 91, in test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict
+    self.assertEqual(usage.input_tokens, 2000)                                           # the retry is in the cost
+AssertionError: 1000 != 2000
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+FAILED (failures=1)
+exit=1
+## mutation: import sys;p=sys.argv[1];s=open(p).read();s=s.replace("verdicts[unit_id] = again","pass");open(p,"w").write(s) (agents/framer.py)
+F..F.E
+======================================================================
+ERROR: test_the_retry_is_recorded_in_the_stored_brief (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 119, in test_the_retry_is_recorded_in_the_stored_brief
+    self.assertEqual(day["items"][0]["faithfulness"]["retried"]["lifted_before"], ["Anthropic is valued at $965B"])
+KeyError: 'retried'
+
+======================================================================
+FAIL: test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 88, in test_a_lift_on_an_item_retries_that_item_alone_and_the_retry_replaces_the_verdict
+    self.assertEqual(verdicts["a"]["unsupported_claims"], ["Anthropic raised $965B"])  # the retry's verdict
+AssertionError: Lists differ: [] != ['Anthropic raised $965B']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'Anthropic raised $965B'
+
+- []
++ ['Anthropic raised $965B']
+
+======================================================================
+FAIL: test_a_unit_is_retried_once_however_the_retry_turns_out (tests.test_retry.BoundedRetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_retry.py", line 97, in test_a_unit_is_retried_once_however_the_retry_turns_out
+    self.assertIn("retried", verdicts["a"])
+AssertionError: 'retried' not found in {'confidence': 0.9, 'claims': [{'claim': 'Anthropic is valued at $965B', 'supported': True, 'supporting_span': 'Anthropic is valued at $965B', 'span_verified': True}], 'unsupported_claims': [], 'grader_errors': [], 'possible_false_alarms': [], 'lifted_claims': ['Anthropic is valued at $965B']}
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+FAILED (failures=2, errors=1)
+exit=1

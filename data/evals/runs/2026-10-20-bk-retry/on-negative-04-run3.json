@@ -1,0 +1,93 @@
+{
+ "arm": "on",
+ "case": "negative-04",
+ "run": 3,
+ "plant_unit": "negative-04-launch",
+ "caught": true,
+ "false_positives": [],
+ "retried_units": [],
+ "lifted": {},
+ "failures": [],
+ "cost_usd": 0.0043,
+ "verdicts": {
+  "negative-04-launch": {
+   "confidence": 0.67,
+   "claims": [
+    {
+     "claim": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence",
+     "supporting_span": null,
+     "supported": false,
+     "span_verified": false
+    },
+    {
+     "claim": "it will ship as an optimised container in NIM on launch day",
+     "supporting_span": "NVIDIA said it will ship as an optimised container in NIM on launch day",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Neither company gave a price for hosted access",
+     "supporting_span": "Neither company gave a price for hosted access",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [
+    "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+   ],
+   "grader_errors": [],
+   "possible_false_alarms": [
+    "'NVIDIA said the new model will be open-weight under an Apache 2.0 licence' — but 2.0 appears in the excerpt"
+   ],
+   "lifted_claims": []
+  },
+  "negative-04-saferoute": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "ETH Zurich researchers released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
+     "supporting_span": "Researchers at ETH Zurich released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "It is released under CC-BY-4.0",
+     "supporting_span": "The dataset is released under CC-BY-4.0",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "the annotation work took eleven weeks",
+     "supporting_span": "the annotation work took eleven weeks",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  },
+  "thread": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "SafeRoute gives agent safety evals 40,000 labelled tool-call traces",
+     "supporting_span": "a dataset of 40,000 tool-call traces labelled for unsafe actions",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "the new open-weight model ships as an optimised container on launch day",
+     "supporting_span": "it will ship as an optimised container in NIM on launch day",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": []
+  }
+ }
+}

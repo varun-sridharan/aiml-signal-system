@@ -1,0 +1,28 @@
+{
+  "case": "negative-03",
+  "input": "input.json",
+  "output": "output.json",
+  "_note": "CONSTRUCTED NEGATIVE CASE — not a frozen real day. A changed date: a real date from the excerpt, moved onto the wrong event. One planted fabrication, in negative-03-v1. Like negative-01, the plant is built from words and figures the excerpt really contains, so a span the grader quotes passes the substring check and only reading comprehension rejects it. DO NOT swap in a fault whose figure, name or date is absent from the excerpt: the case would then test Python, not the grader.",
+  "_labelledBy": "autopilot run 2 (hand-constructed, awaiting Varun's review)",
+  "_labelledOn": "2026-10-20",
+  "_heldOut": "Measurement only. Nothing adapts on this file.",
+  "units": {
+    "negative-03-v1": {
+      "expected_unsupported": [
+        "2026-12-01"
+      ],
+      "tolerated": [],
+      "_why": "The excerpt says v1 stops on 2027-03-01 and that v2 becomes the default on 2026-12-01; the why gives v1 the 2026-12-01 date. Both dates are in the excerpt, so a quoted span exists; only reading which event each belongs to separates them."
+    },
+    "negative-03-beacon": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Clean control: every claim traces to its excerpt."
+    },
+    "thread": {
+      "expected_unsupported": [],
+      "tolerated": [],
+      "_why": "Graded against the union of both excerpts. It restates only facts that trace, and never the planted one."
+    }
+  }
+}

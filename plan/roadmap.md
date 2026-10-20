@@ -145,7 +145,7 @@ A non-numeric fact parked in `interpretation`, where the numeric detector cannot
 - **Size:** S
 - **Origin:** Sep-15-2026 — trigger identified, deliberately not threshold-fitted
 
-`lifted_claims` fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. **Rule: any lift on a unit retries that unit, once.** Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them.
+`lifted_claims` fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. **Rule: any lift on a unit retries that unit, once.** Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them. **Built 2026-10-20** with three more negative cases (`data/evals/negative/`); it has not yet fired on a missed plant, so its effect is unproven (`data/evals/runs/2026-10-20-bk-retry/README.md`).
 
 ### bk-usefulness · Calibrate the usefulness rubric against real thumbs
 

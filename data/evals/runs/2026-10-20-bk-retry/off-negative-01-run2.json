@@ -1,0 +1,131 @@
+{
+ "arm": "off",
+ "case": "negative-01",
+ "run": 2,
+ "plant_unit": "negative-01-mega-rounds",
+ "caught": true,
+ "false_positives": [
+  "thread: false positive — Anthropic's $965B valuation"
+ ],
+ "retried_units": [],
+ "lifted": {
+  "negative-01-mcp": [
+   "The change breaks cross-version compatibility"
+  ]
+ },
+ "failures": [
+  "thread: false positive — Anthropic's $965B valuation"
+ ],
+ "cost_usd": 0.00529,
+ "verdicts": {
+  "negative-01-mcp": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "The change breaks cross-version compatibility",
+     "supporting_span": "The change breaks cross-version compatibility",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock",
+     "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store",
+     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": [],
+   "possible_false_alarms": [],
+   "lifted_claims": [
+    "The change breaks cross-version compatibility"
+   ]
+  },
+  "negative-01-mega-rounds": {
+   "confidence": 0.75,
+   "claims": [
+    {
+     "claim": "Anthropic raised $965B",
+     "supporting_span": "Anthropic is valued at $965B",
+     "supported": false,
+     "span_verified": true
+    },
+    {
+     "claim": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under",
+     "supporting_span": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "they move both API pricing and what you pay for talent",
+     "supporting_span": "moving both API pricing and talent costs",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [
+    "Anthropic raised $965B"
+   ],
+   "grader_errors": [],
+   "possible_false_alarms": [
+    "'Anthropic raised $965B' — but $965B appears in the excerpt"
+   ],
+   "lifted_claims": []
+  },
+  "thread": {
+   "confidence": 0.8,
+   "claims": [
+    {
+     "claim": "OpenAI's record $122B round at $852B post",
+     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Anthropic's $965B valuation",
+     "supporting_span": "Anthropic is valued at $965B",
+     "supported": false,
+     "span_verified": true
+    },
+    {
+     "claim": "set the pricing umbrella over API pricing and talent costs",
+     "supporting_span": "set the pricing umbrella that downstream builders operate under, moving both API pricing and talent costs",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "stateless request/response scales horizontally behind an ordinary load balancer",
+     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "at the price of broken cross-version compatibility and four deprecations on a 12-month runway",
+     "supporting_span": "The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [
+    "Anthropic's $965B valuation"
+   ],
+   "grader_errors": [],
+   "possible_false_alarms": [
+    "\"Anthropic's $965B valuation\" — but $965B appears in the excerpt"
+   ],
+   "lifted_claims": []
+  }
+ }
+}

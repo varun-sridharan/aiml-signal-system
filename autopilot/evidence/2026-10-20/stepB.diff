@@ -1,0 +1,265 @@
+diff --git a/agents/framer.py b/agents/framer.py
+index 4cf1260..9cc9038 100644
+--- a/agents/framer.py
++++ b/agents/framer.py
+@@ -19,6 +19,7 @@ import json
+ import re
+ import sys
+ from pathlib import Path
++from types import SimpleNamespace
+ 
+ # WHAT: the shared plumbing now lives in two sibling modules.
+ # CONCEPT: harness — extracted at M1, when Reader became the second caller of both.
+@@ -573,12 +574,57 @@ def check_request(payload: dict) -> dict:
+     )
+ 
+ 
++# WHAT: the note a retried unit carries, and nothing else changes in the grader's instructions.
++# CONCEPT: eval — bounded retry (bk-retry). A verdict whose claims were copied out of the SOURCE
++# rather than read off the WRITING was derived from the wrong document, and is the one signature
++# the 2026-09-15 baseline found on the unit carrying a missed plant. The note names the claims
++# that gave it away and restates the one rule the system prompt already has, so the retry is a
++# fresh derivation and not the same answer twice. The system prompt is not edited: the first
++# pass of every run, and the clean-day baseline, are exactly what they were.
++RETRY_NOTE = (
++    "RETRY. Your previous verdict for this unit listed claims that appear word for word in the excerpt "
++    "but are not what `writing_under_test` says, so they were read off the excerpt and not off the writing. "
++    "Do it again from the writing only. Read `writing_under_test` sentence by sentence; for each checkable "
++    "statement it makes, phrase the claim the way the WRITING words it (its verbs, its subjects, its figures), "
++    "then look for a span of the excerpt that says the same thing, and mark it unsupported if the excerpt says "
++    "something different about that subject, even when the same figure or name appears there. "
++    "Claims copied from your previous verdict, which must not be repeated: "
++)
++
++
++# Off only for the measurement that compares the grader with and without the retry (data/evals/measure_retry.py).
++RETRY_ON_LIFT = True
++
++
++def _unit_payload(raw_day: dict, framing: dict, unit_id: str, lifted: list) -> dict:
++    """The grader's payload for ONE unit: the item alone, or the thread alone, plus the retry note."""
++    if unit_id == "thread":
++        # The thread is graded against every excerpt, so all of them go; no item's writing does.
++        payload = build_check_payload(raw_day, {**framing, "items": []})
++    else:
++        one = {**raw_day, "items": [i for i in raw_day["items"] if i["id"] == unit_id]}
++        payload = build_check_payload(one, {"items": [f for f in framing["items"] if f["id"] == unit_id],
++                                            "thread": "", "threadSplit": None})
++    payload["_retry"] = RETRY_NOTE + json.dumps(lifted, ensure_ascii=False)
++    return payload
++
++
++def _add_usage(a, b):
++    """Token counts of two calls, summed, in the shape estimate_cost_usd reads."""
++    fields = ("input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")
++    return SimpleNamespace(**{f: (getattr(a, f, 0) or 0) + (getattr(b, f, 0) or 0) for f in fields})
++
++
+ def check_faithfulness(client, raw_day: dict, framing: dict, *, user_id: str, phase: str):
+     """Grade each item against its own excerpt and the thread against all of them, in one cheap call.
+ 
+     `phase` is the caller's label for the booking: "faithfulness" when the Framer grades
+     its own run, "eval-faithfulness" when data/evals/run_evals.py regrades a golden case.
+     The call is booked once, by llm.call(), under whichever the caller passes.
++
++    Any unit whose verdict lifted a claim from its source is graded once more, alone (bk-retry,
++    plan/roadmap.md): booked under `<phase>-retry`, and its retry verdict replaces the first.
++    A unit is retried at most once, however its second verdict turns out.
+     """
+     # WHAT: re-read our own output against the sources before emitting it, on a
+     # cheaper model than the one that wrote it. Items and thread in a single request.
+@@ -597,7 +643,38 @@ def check_faithfulness(client, raw_day: dict, framing: dict, *, user_id: str, ph
+         for v in graded["items"]
+     }
+     thread_seen = payload["thread"]["writing_under_test"]
+-    return verdicts, normalise_verdict(graded["thread"], union_truth, thread_seen), usage
++    thread_verdict = normalise_verdict(graded["thread"], union_truth, thread_seen)
++
++    # bk-retry: any lift on a unit retries that unit, once.
++    for unit_id in ([i["id"] for i in raw_day["items"] if verdicts.get(i["id"], {}).get("lifted_claims")] + (
++            ["thread"] if thread_verdict["lifted_claims"] else [])) if RETRY_ON_LIFT else []:
++        first = thread_verdict if unit_id == "thread" else verdicts[unit_id]
++        retry_payload = _unit_payload(raw_day, framing, unit_id, first["lifted_claims"])
++        retry_text, retry_usage, _ = llm.call(client, user_id=user_id, phase=f"{phase}-retry", **check_request(retry_payload))
++        usage = _add_usage(usage, retry_usage)
++        # A retry that comes back unusable must not throw away a first pass that was paid for and valid.
++        try:
++            retried = json.loads(retry_text)
++            # A retry that enumerated nothing for a unit that had claims is not a clean bill: it would erase the first verdict.
++            if not (retried["thread"] if unit_id == "thread" else next((v for v in retried["items"] if v["id"] == unit_id), {})).get("claims"):
++                raise LookupError("no claims returned for the unit")
++            if unit_id == "thread":
++                again = normalise_verdict(retried["thread"], union_truth, retry_payload["thread"]["writing_under_test"])
++            else:
++                entry = next((v for v in retried["items"] if v["id"] == unit_id), None)
++                if entry is None:
++                    raise LookupError("no verdict returned for the unit")
++                again = normalise_verdict(entry, per_item_truth[unit_id], json.dumps(
++                    retry_payload["items"][0]["writing_under_test"], ensure_ascii=False))
++        except (ValueError, KeyError, LookupError, TypeError) as e:
++            first["retried"] = {"lifted_before": first["lifted_claims"], "result": f"retry unusable ({type(e).__name__}); first kept"}
++            continue
++        again["retried"] = {"lifted_before": first["lifted_claims"], "unsupported_before": first["unsupported_claims"]}
++        if unit_id == "thread":
++            thread_verdict = again
++        else:
++            verdicts[unit_id] = again
++    return verdicts, thread_verdict, usage
+ 
+ 
+ # ---------------------------------------------------------------- local compute
+@@ -686,6 +763,8 @@ def assemble_day(
+             # of a drifting grader becomes impossible after the fact.
+             "claims": verdict.get("claims", []),
+         }
++        if verdict.get("retried"):
++            item["faithfulness"]["retried"] = verdict["retried"]     # bk-retry fired on this unit
+         items.append(item)
+ 
+     return {
+@@ -707,6 +786,7 @@ def assemble_day(
+             # what the grader enumerated — only what it rejected — and cross-run analysis
+             # of a drifting grader becomes impossible after the fact.
+             "claims": thread_verdict.get("claims", []),
++            **({"retried": thread_verdict["retried"]} if thread_verdict.get("retried") else {}),
+         },
+         "items": items,
+         "_enforcements": enforcements,
+diff --git a/autopilot/debriefs/2026-10-20.md b/autopilot/debriefs/2026-10-20.md
+index d6fa037..40e3bec 100644
+--- a/autopilot/debriefs/2026-10-20.md
++++ b/autopilot/debriefs/2026-10-20.md
+@@ -11,7 +11,7 @@
+ | Step | Status | Commit | Live |
+ |---|---|---|---|
+ | A · A failed week can be rerun | Done (reviewed) | see log | after push |
+-| B · Faithfulness gate catches the planted fabrication | Not started | | |
++| B · Faithfulness gate catches the planted fabrication | Built and measured; **effect of the retry unproven** (row 10 stays IN PROGRESS) | see log | after push |
+ | C · Sources from the old digest's catalogue | Not started | | |
+ | D · One fresh edition | Not started | | |
+ | E · Final QA | Not started | | |
+@@ -35,6 +35,8 @@ Starting ledger month-to-date: **$1.027650**.
+ 
+ ## 6. Blocked
+ 
++- **Row 10's exit criterion, strictly read.** The runbook's Step B bar is met (4 plants caught 5/5, 0 clean-day false positives), but (1) the retry did not cause any of those catches and has never fired on a missed plant, (2) the five runs per cell are one result repeated at temperature 0, (3) `negative-01` still fails its gate on a thread false positive, (4) the grader missed the `$965B` plant on 2026-10-18 and catches it today. See `data/evals/runs/2026-10-20-bk-retry/README.md`. What I would try next: construct a case that provokes the lifted-claim behaviour (a plant in a sentence whose wording is very close to the excerpt's), and decide your policy on a zero-tolerance gate when the grader flags a clean thread claim.
++
+ ## 7. Open review findings
+ 
+ ## 8. QA verdicts
+@@ -50,3 +52,5 @@ Starting ledger month-to-date: **$1.027650**.
+ - Step A · numbered attempts (`2026-W43`, `-r2`...), `runs.id` CHECK widened by an idempotent migration (leading zeros and `-r1` refused), `--new-attempt` and `--reuse-reader` (validated before a run row exists, adopted atomically), one edition per week (refused before any paid call, and by the briefs primary key and a `briefs_run_is_this_week` CHECK), Reader window stored in its output and in the brief, page kicker shows the window, status marks superseded attempts. Reviewer: no must-fix; five should-fix items fixed (weak adoption tests, id-format loopholes, attempt gaps, orphan run row, non-atomic adoption) plus UTC label and a lighter query. 187 tests green with REQUIRE_DB=1 (`autopilot/evidence/2026-10-20/stepA-suite.txt`); nine mutations each fail a test (`stepA-mutations.txt`).
+ 
+ - Setup · caffeinate on, tunnel up on 15432. Start: HEAD `e141051`, live `/health` sha `0458eae`, ledger month-to-date $1.027650.
++- Step B · `bk-retry` in `framer.check_faithfulness` (any lifted claim retries that unit once, alone, with a note naming the lifted claims; booked as `<phase>-retry`; an unusable retry keeps the first verdict; recorded in the brief). Three new planted cases in `data/evals/negative/` (changed number, changed date, invented attribution), `run_evals.py` loads them (`--json-out` added), `data/evals/measure_retry.py` measures. Paid: 50 grader calls, $0.3015. Result: all four plants caught 5/5 with the retry off and on, 0 clean-day false positives; retry fired only on a clean unit; effective n=1 per cell; negative-01 still fails on a thread false positive (`data/evals/runs/2026-10-20-bk-retry/`). Reviewer: no rule bugs; said do not mark Done, which I did not; fixed the unguarded malformed-retry path (and a retry that returns no claims no longer erases a verdict) and a weak test. A full-suite run found `test_ledger` was picking up the new smaller cases in its golden-only bound; fixed with `load_cases(..., include_negative=False)`.
++
+diff --git a/data/evals/run_evals.py b/data/evals/run_evals.py
+index fd3aaac..1c8ab41 100644
+--- a/data/evals/run_evals.py
++++ b/data/evals/run_evals.py
+@@ -33,6 +33,7 @@ from dotenv import load_dotenv
+ 
+ REPO = Path(__file__).resolve().parent.parent.parent
+ GOLDEN_DIR = REPO / "data" / "evals" / "golden"
++NEGATIVE_DIR = REPO / "data" / "evals" / "negative"     # constructed planted-fabrication cases; same shape as a golden case
+ 
+ # WHAT: import the Framer module itself rather than reimplementing any of it.
+ # CONCEPT: eval — test the artifact, not a copy of it. If the eval had its own
+@@ -245,6 +246,10 @@ def run_faithfulness(client, profile, case, show_claims: bool) -> dict:
+         "false_positives": total_fp,
+         "false_negatives": total_fn,
+         "cost": cost,
++        "retried_units": [u for u, v in graded.items() if v.get("retried")],
++        "lifted": {u: v.get("lifted_claims", []) for u, v in graded.items() if v.get("lifted_claims")},
++        "unsupported": {u: v.get("unsupported_claims", []) for u, v in graded.items() if v.get("unsupported_claims")},
++        "verdicts": graded,
+     }
+ 
+ 
+@@ -351,13 +356,14 @@ def run_usefulness(client, profile, case) -> dict:
+ # ---------------------------------------------------------------- main
+ 
+ 
+-def load_cases(selected: str | None) -> list:
++def load_cases(selected: str | None, include_negative: bool = True) -> list:
+     """Every golden case is a directory; adding a day needs no change here."""
+     # WHAT: discover cases by globbing directories that contain labels.json.
+     # CONCEPT: harness — the runner is data-driven. A new golden day is a new folder,
+     # never a code edit, which is what keeps the set cheap to grow.
+     cases = []
+-    for case_dir in sorted(p for p in GOLDEN_DIR.iterdir() if p.is_dir()):
++    case_dirs = sorted((p for d in ((GOLDEN_DIR, NEGATIVE_DIR) if include_negative else (GOLDEN_DIR,)) if d.is_dir() for p in d.iterdir() if p.is_dir()), key=lambda p: p.name)
++    for case_dir in case_dirs:
+         if selected and case_dir.name != selected:
+             continue
+         labels_path = case_dir / "labels.json"
+@@ -380,6 +386,7 @@ def main() -> None:
+     parser.add_argument("--case", help="run one golden case by directory name, e.g. 2026-08-04")
+     parser.add_argument("--no-api", action="store_true", help="structural checks only; makes no API call")
+     parser.add_argument("--show-claims", action="store_true", help="print the grader's full claim ledger")
++    parser.add_argument("--json-out", help="write each case's faithfulness result (claim ledgers included) to this file")
+     parser.add_argument("--skip-usefulness", action="store_true",
+                         help="skip the soft judge; halves the spend while iterating on the grader")
+     args = parser.parse_args()
+@@ -440,6 +447,11 @@ def main() -> None:
+         summaries.append({"case": case["name"], "structural": structural,
+                           "faithfulness": faithfulness, "usefulness": usefulness})
+ 
++    if args.json_out:
++        Path(args.json_out).write_text(json.dumps(
++            [{"case": x["case"], "faithfulness": x["faithfulness"]} for x in summaries if x["faithfulness"]],
++            indent=1, ensure_ascii=False, default=str) + "\n")
++
+     print(f"\n{'=' * 72}\nSUMMARY")
+     for summary in summaries:
+         line = [f"  {summary['case']}:", f"structural {'PASS' if summary['structural']['passed'] else 'FAIL'}"]
+diff --git a/plan/plan.md b/plan/plan.md
+index ec36174..aba247c 100644
+--- a/plan/plan.md
++++ b/plan/plan.md
+@@ -42,7 +42,7 @@ Everything this milestone rests on, complete and outstanding in one table. The f
+ | Storage layer, with the excerpt rule | Postgres for sources, items, the interest graph, runs, briefs and feedback, beside the spend ledger and the excerpt store. Article text is **written once at fetch time and never re-fetched**, with the database refusing any rewrite; kept forever once a published brief cites it, expired after 56 days otherwise. Items are never deleted and their identity is fixed, and their excerpt is attached once and cleared only when its text expires; provenance, briefs and feedback are append-only; `runs` records each stage's status and a pointer to its output, so a failed run resumes from its last finished stage rather than starting over | The faithfulness gate compares a span against the stored excerpt — re-fetch later and a publisher's edit turns the gate red for no reason. **And it had to land before the first hosted run that spends money.** The cost breaker read `usage.json`, a file rebuilt from the repository on every deploy, so on Railway its memory of the month's spend silently reverted to whatever was last committed. Every rule a later caller could forget is a database trigger, and every trigger test has been run once with its trigger disabled and seen to fail. Volume decides the shape: about 900 articles a week would fill the 5 GB volume within a year as fetched pages, and stays under 100 MB a year as compressed text with a retention rule. | DONE
+ | Reader — Scout and Gatekeeper merged | Discovers from nine feeds and APIs, canonicalises, dedups, filters against the interest graph, and fetches the bodies of the few that may surface through Claude's web fetch, booked in the ledger at about half a cent a page; provenance and corroboration are recorded per item; `/add-news` fetches on arrival (off until `ADD_NEWS_TOKEN` is set). It has run for real: about 1,750 candidates in, 17 stories fetched over three runs, one week's brief out. **Not DONE because** the plan's 91 tiered domains are not in the repository (it is seeded from the 21 publishers `config/scout-sources.md` names) and some labs have no verified feed. **Fetching is delegated, not reimplemented.** | Those 91 rows were tested through a hosted fetcher with its own addresses and rendering. Reimplementing `fetch()` would mean re-earning a result that already exists. | IN PROGRESS
+ | Reader's canonicalisation gate | 21 URL pairs that must and must not collapse, three of them planted near-duplicates, in `data/evals/canonical/`. Free, deterministic, no model. **Draft, awaiting Varun's review:** every pair is a judgement about what counts as the same article, so this row is DONE only after he signs the set off | Dedup silently merging two *different* articles is Reader's only invisible failure. Everything else it gets wrong, you see in the edition. | IN PROGRESS
+-| Port the Framer and its gate | `agents/weekly.py` feeds the shipped Framer verified items from the database and records the work as the `framer` and `gates` stages of a run, so a failed stage resumes without re-fetching. The Framer's code is unchanged; the hard gates are now functions in `agents/gates.py` that the eval harness and the weekly run both call, and a story the grader skipped or never checked fails the gate rather than passing as clean. **One hard gate is red: the grader misses the planted $965B fabrication in `negative-01`, the failure the 2026-09-15 baseline already recorded as open.** Structural gates pass on both golden cases and faithfulness passes on the clean day with no false positives, so this row is not DONE. It has now run end to end on real pages and published a brief on its third attempt: the first two were stopped by the gates, correctly, on faults found in how pages were turned into excerpts | **Port it, do not extend it.** Moving a component and changing it at once means a red run cannot be attributed to either. | IN PROGRESS
++| Port the Framer and its gate | `agents/weekly.py` feeds the shipped Framer verified items from the database and records the work as the `framer` and `gates` stages of a run, so a failed stage resumes without re-fetching. The Framer's writing code is unchanged (its grader gained a bounded retry on 2026-10-20, after the port was verified); the hard gates are now functions in `agents/gates.py` that the eval harness and the weekly run both call, and a story the grader skipped or never checked fails the gate rather than passing as clean. **One hard gate is red: `negative-01` fails because the grader flags a clean thread claim while quoting its supporting span. The planted $965B fabrication, which the grader missed on 2026-09-15 and 2026-10-18, was caught on 2026-10-20, and so were three newly added plants; a bounded retry on a lifted claim is built, but has never fired on a missed plant, so it is unproven.** Structural gates pass on both golden cases and faithfulness passes on the clean day with no false positives, so this row is not DONE. It has now run end to end on real pages and published a brief on its third attempt: the first two were stopped by the gates, correctly, on faults found in how pages were turned into excerpts | **Port it, do not extend it.** Moving a component and changing it at once means a red run cannot be attributed to either. | IN PROGRESS
+ | The Weekly Digest surface | `/weekly-digest` renders the newest published brief from the database at request time, with the site header and nav, two subsections (Learning for the Week, This Week's Stories) and a sticky sub-nav. Every story takes a thumbs up, or a thumbs down with an optional note, from anyone with no login; the database keeps only a salted hash of the voter's address, and a client is rate-limited. The old `/application/Weekly-Digest.html` redirects here, and a brief that cannot be shown becomes an error panel rather than a 500. A real week's brief, seven stories, renders on it | The first real label this system has had. The usefulness rubric has been reported and never gated because there was nothing to calibrate it against. | DONE
+ | Go live: move both capture inboxes into the repo | The Signal System runs every week alongside the scheduled Weekly Digest, which **keeps running until Varun decides to turn it off**. `news-backlog.md` and `style-guide-backlog.md` stay in project memory as the inbox; each weekly run copies that week's captures into the repo and leaves the inbox untouched while the old digest still reads it, and clears it only once the old digest is off | Capture has to keep working from a phone with the Mac closed, which project memory gives today; the system of record has to be versioned and readable by the hosted run, which only the repo gives. **Running both in parallel turns the switch-over into a comparison:** the same week, the same fetcher, two briefs side by side, and the old one is retired on evidence rather than on a date. | TO DO |
+ | The Framer writes in Varun's style | The Framer reads the repo copy of `style-guide-backlog.md` in its cached system prompt, stopping at its Sources used table; the usefulness judge scores against the same rules; a leakage check confirms no line from a style source reaches a brief; the golden case is run before and after | His style references only count if the brief measurably improves while faithfulness stays green. **After the port and after go-live, never during them:** changing the writer while moving it would leave a worse run unattributable. Until go-live the guide lives in project memory, where `/AGI-add-news-style` and `/AGI-add-news-style-email` keep it. | TO DO |
+@@ -55,6 +55,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
+ 
+ # Decision log
+ 
++### 2026-10-20 · The grader's retry is built, but nothing yet shows it fixes a miss
++
++Any lift on a unit now retries that unit once, alone, with a note naming the lifted claims; a retry that comes back unusable keeps the first verdict, and the retry is booked and recorded in the brief. Three planted-fabrication cases were added (a changed number, a changed date, an invented attribution), all hand-built and awaiting Varun's review, and five runs per case caught every plant with the retry off and on, with no false positive on the clean day. That does not show the retry works: the grader caught the plants without it, the retry fired only on a clean control unit, and at temperature 0 the five runs were one result repeated. The same grader missed the `$965B` plant on 2026-10-18 and catches it today, and `negative-01` still fails its gate on a different unit: a thread claim it flags unsupported while quoting the supporting span.
++
+ ### 2026-10-20 · A failed week is reframed as a numbered attempt, and an edition is named by what its Reader read
+ 
+ A finished stage can never be redone, so a week whose gates failed used to be unrecoverable under its own key, and run 1 published under an older key to get round it. A week now takes numbered attempts (`2026-W43`, then `-r2`, `-r3`), a new one starts at the Reader, and `--reuse-reader` adopts an earlier attempt's finished Reader output so a reframe fetches nothing. The edition is still stored under the bare week, which the database limits to one brief, and a second attempt at a published week is refused before it spends. The page now labels an edition by the dates its Reader read, stored with the brief, or for the append-only W40 brief derived from its publish date, and never by the run key. Failed attempts stay as evidence and the status view marks the ones a later attempt superseded.
+diff --git a/plan/roadmap.md b/plan/roadmap.md
+index eb3b1de..3d7a590 100644
+--- a/plan/roadmap.md
++++ b/plan/roadmap.md
+@@ -145,7 +145,7 @@ A non-numeric fact parked in `interpretation`, where the numeric detector cannot
+ - **Size:** S
+ - **Origin:** Sep-15-2026 — trigger identified, deliberately not threshold-fitted
+ 
+-`lifted_claims` fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. **Rule: any lift on a unit retries that unit, once.** Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them.
++`lifted_claims` fired zero times in 75 claims on the clean day and fired on the unit carrying the plant exactly when the plant was missed. It detects the behaviour reliably but does not predict the outcome — a lifted verdict can still be correct, and one was. That earns a retry, not a gate: re-deriving a verdict read off the wrong document costs $0.008, while failing a build on it would fail correct runs. **Rule: any lift on a unit retries that unit, once.** Rests on n=1 for the event it fires on, so it ships with more negative cases, not before them. **Built 2026-10-20** with three more negative cases (`data/evals/negative/`); it has not yet fired on a missed plant, so its effect is unproven (`data/evals/runs/2026-10-20-bk-retry/README.md`).
+ 
+ ### bk-usefulness · Calibrate the usefulness rubric against real thumbs
+ 
+diff --git a/tests/test_ledger.py b/tests/test_ledger.py
+index 55b7bb4..982456e 100644
+--- a/tests/test_ledger.py
++++ b/tests/test_ledger.py
+@@ -320,7 +320,7 @@ class EstimateIsAnUpperBound(unittest.TestCase):
+         import run_evals  # noqa: F401  (data/evals is put on the path below)
+ 
+         profile = framer.load_json(framer.PROFILE_PATH)
+-        cases = run_evals.load_cases(None)
++        cases = run_evals.load_cases(None, include_negative=False)   # the golden cases the recorded calls were made on
+         system_prompt = framer.load_framer_system_prompt()
+         raw = framer.load_json(framer.DEFAULT_RAW_PATH)
+         checks = [framer.check_request(framer.build_check_payload(c["input"], run_evals.framing_from_framed_day(c["output"])))
