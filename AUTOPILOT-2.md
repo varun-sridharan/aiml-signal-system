@@ -5,6 +5,17 @@ permissions and prohibitions, setup, push command, review after every step, stop
 "if the session stops" procedure, and the debrief format. This file adds the work list and the lessons
 from run 1. Where the two disagree, this file wins.
 
+## Starting this run (Varun, one paste)
+
+Claude Code cannot type its own slash commands, so the goal is set by the start command itself. Run it
+in auto mode:
+
+```
+/goal AUTOPILOT-2.md steps A to E have been executed under AUTOPILOT.md's rules (read AUTOPILOT.md, AUTOPILOT-2.md, DEBRIEF-2026-10-18.md and the plan/plan.md decision log first; Varun is away, never ask him anything), and DEBRIEF-2026-10-20.md contains the Step E QA verdicts filled in by the QA subagent, or states that every remaining step is Blocked or out of scope under those rules. Stop after 10 hours.
+```
+
+**Every future runbook starts with this section.** A runbook without its `/goal` line is incomplete.
+
 The debrief is `DEBRIEF-2026-10-20.md`. Read `DEBRIEF-2026-10-18.md` once at the start: sections 5–8
 and 12 are the context for every step below.
 
