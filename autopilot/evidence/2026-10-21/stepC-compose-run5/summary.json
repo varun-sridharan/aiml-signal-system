@@ -1,0 +1,46 @@
+{
+ "run": "2026-W43-r3",
+ "stories": 7,
+ "composer_model": "claude-opus-5",
+ "composer_cost_usd": 0.8398,
+ "grader_cost_usd": 0.045,
+ "revised_fields": [
+  "learning.para.2",
+  "learning.para.6",
+  "learning.para.7",
+  "learning.para.8",
+  "story.s01.tryIt",
+  "story.s01.feature.3",
+  "story.s05.tryIt"
+ ],
+ "problems_before_revision": {
+  "learning.para.2": 1,
+  "learning.para.6": 1,
+  "learning.para.7": 3,
+  "learning.para.8": 3,
+  "story.s01.tryIt": 1,
+  "story.s01.feature.3": 1,
+  "story.s05.tryIt": 1
+ },
+ "ledger_before_after_usd": [
+  5.2965,
+  6.1813
+ ],
+ "over_cost_note": false,
+ "failures": [
+  "learning.para.1: split does not reconstruct the field",
+  "s06: unsupported (composed) — OpenAI published a customer story on Amp",
+  "s06: unsupported (composed) — Amp's own 20-person team uses agents for marketing work, including documentation and design pages",
+  "s06: unsupported (composed) — The stated reason for model selection is transparency about safeguards",
+  "essay: unsupported (composed) — No action is required to remove the deprecated models, but Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings",
+  "week: unsupported (composed) — CodeQL closure is this feature's acceptance test"
+ ],
+ "words": {
+  "thread_body": 100,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 357,
+   "s02": 365
+  }
+ }
+}

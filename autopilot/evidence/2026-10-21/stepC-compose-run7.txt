@@ -1,0 +1,26 @@
+{
+ "stories": 7,
+ "composer_cost_usd": 0.6431,
+ "grader_cost_usd": 0.0377,
+ "revised_fields": [
+  "story.s07.tryIt",
+  "learning.para.2",
+  "learning.para.8"
+ ],
+ "problems_before_revision": {
+  "story.s07.tryIt": 1,
+  "learning.para.2": 1,
+  "learning.para.8": 1
+ },
+ "words": {
+  "thread_body": 94,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 342,
+   "s02": 338
+  }
+ }
+}
+2 gate failure(s)
+  - story.s07.tryIt: no split
+  - essay: unsupported (composed) — Family Dense Reward that calibrates semantic progress across 1 set of task families

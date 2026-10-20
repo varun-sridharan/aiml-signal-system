@@ -1,0 +1,34 @@
+{
+ "run": "2026-W43-r3",
+ "stories": 7,
+ "composer_model": "claude-opus-5",
+ "composer_cost_usd": 0.6431,
+ "grader_cost_usd": 0.0377,
+ "revised_fields": [
+  "story.s07.tryIt",
+  "learning.para.2",
+  "learning.para.8"
+ ],
+ "problems_before_revision": {
+  "story.s07.tryIt": 1,
+  "learning.para.2": 1,
+  "learning.para.8": 1
+ },
+ "ledger_before_after_usd": [
+  7.0013,
+  7.6821
+ ],
+ "over_cost_note": false,
+ "failures": [
+  "story.s07.tryIt: no split",
+  "essay: unsupported (composed) — Family Dense Reward that calibrates semantic progress across 1 set of task families"
+ ],
+ "words": {
+  "thread_body": 94,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 342,
+   "s02": 338
+  }
+ }
+}

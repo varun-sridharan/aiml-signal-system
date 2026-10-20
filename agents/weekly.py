@@ -27,10 +27,11 @@ import sys
 from datetime import date, datetime, timezone
 
 try:
-    from . import briefs, budget, excerpts, framer, gates, items, llm, reader, runs
+    from . import briefs, budget, composer, excerpts, framer, gates, items, llm, reader, runs, style_check
 except ImportError:  # pragma: no cover
     import briefs
     import budget
+    import composer
     import excerpts
     import framer
     import gates
@@ -38,6 +39,7 @@ except ImportError:  # pragma: no cover
     import llm
     import reader
     import runs
+    import style_check
 
 MAX_BRIEF_ITEMS = 7        # the golden week's size: about five minutes of reading
 MAX_PER_DOMAIN = 3         # one publisher cannot be the whole edition
@@ -45,6 +47,10 @@ MAX_DO_THIS = 2
 LEAD_MAX_CHARS = 700       # what the Framer is shown of an article: its opening sentences, not the page
 LEAD_MAX_SENTENCES = 4     # the contract says 1-3 factual sentences; the golden excerpts run 248-393 characters
 LEAD_MIN_PARAGRAPH_CHARS = 80
+# The composing pass writes features of 300 to 500 words, which a 700-character opening cannot support. It is shown more of
+# each page, and its faithfulness gate is graded against exactly that text.
+COMPOSER_EXCERPT_CHARS = 6000
+COMPOSER_EXCERPT_SENTENCES = 60
 
 # Where a practitioner can act on what they read; items from these on a core topic are DO THIS.
 PRACTICE_DOMAINS = {"github.blog", "blog.modelcontextprotocol.io"}
@@ -87,7 +93,7 @@ _BOILERPLATE = ("arxivlabs", "cookie", "subscribe", "newsletter", "sign up", "al
                 "skip to content", "opens in a new window", "authors:", "share this", "follow us")
 
 
-def lead(text: str, max_chars: int = LEAD_MAX_CHARS, prefer_meta: bool = False) -> str:
+def lead(text: str, max_chars: int = LEAD_MAX_CHARS, prefer_meta: bool = False, max_sentences: int = LEAD_MAX_SENTENCES) -> str:
     """The opening of an article as plain sentences: the Framer's `source_excerpt`.
 
     The fetch returns a whole page (metadata, menus, the article, a footer). The Framer's
@@ -122,7 +128,7 @@ def lead(text: str, max_chars: int = LEAD_MAX_CHARS, prefer_meta: bool = False) 
     # counts as "supported" well beyond the golden cases.
     sentences = re.split(r"(?<=[.!?])\s+", chosen)
     kept, size = [], 0
-    for sentence in sentences[:LEAD_MAX_SENTENCES]:
+    for sentence in sentences[:max_sentences]:
         if size + len(sentence) > max_chars and kept:
             break
         kept.append(sentence)
@@ -210,6 +216,37 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
 # The stages
 # --------------------------------------------------------------------------------------
 
+# Curly quotes and apostrophes, and the hyphen look-alikes U+2010 to U+2012, shown as the plain marks, and no-break spaces as spaces. The
+# graders quote with plain marks (one turned a non-breaking hyphen into a line break), and the span check (rightly) compares literally, so a
+# correct quote of "repository’s" or "GPT‑6" failed for the mark alone. The composing pass is shown this rendering of
+# the page and is graded against the same text; the stored excerpt is untouched. Decision log, 2026-10-20 (Run 3).
+_STRAIGHT = {0x2018: "'", 0x2019: "'", 0x201A: "'", 0x201B: "'", 0x201C: '"', 0x201D: '"', 0x201E: '"', 0x201F: '"',
+             0x2010: "-", 0x2011: "-", 0x2012: "-", 0x00A0: " "}
+
+
+def straight_quotes(text: str) -> str:
+    return text.translate(_STRAIGHT)
+
+
+def composer_day(conn, raw_day: dict) -> tuple[dict, dict, int]:
+    """The day as the composing pass sees it: each story's fuller excerpt, the dates its pages gave, and the source minutes.
+
+    The first pass keeps its short opening (it is the one that shipped and was calibrated). The composing pass writes
+    features and an essay, so it is shown up to COMPOSER_EXCERPT_CHARS of each page, and is graded against that same text.
+    """
+    wide, published, words = [], {}, 0
+    for item in raw_day["items"]:
+        eid, domain = conn.execute("SELECT excerpt_id, domain FROM items WHERE id = %s", (item["id"],)).fetchone()
+        text = excerpts.get(conn, eid)
+        words += len(text.split())
+        dated = reader.page_date(text)
+        if dated is not None:
+            published[item["id"]] = dated.date().isoformat()
+        longer = lead(text, COMPOSER_EXCERPT_CHARS, prefer_meta=(domain == "arxiv.org"), max_sentences=COMPOSER_EXCERPT_SENTENCES)
+        wide.append({**item, "source_excerpt": straight_quotes(longer if len(longer) >= len(item["source_excerpt"]) else item["source_excerpt"])})
+    return {**raw_day, "items": wide}, published, round(words / framer.WORDS_PER_MINUTE)
+
+
 def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     def work(attempt: int) -> dict:
         reader_out = runs.stage_output(conn, week, "reader")
@@ -220,8 +257,25 @@ def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
         if not raw_day["items"]:
             raise RuntimeError("no verified, readable items this week; nothing to frame")
         framing, _usage, cost = framer.frame_day(client, framer.load_framer_system_prompt(), profile, raw_day)
-        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing}, runs._at(now))
-        return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped), "cost_usd": round(cost, 4)}
+        # The second pass writes the template's fields (thread, essay, stories, features, closing); see agents/composer.py.
+        wide_day, published, minutes = composer_day(conn, raw_day)
+        label = (reader_out.get("window") or {}).get("label", "")
+        # A failure of the composing pass (a truncated answer, say) must not throw away the first pass that was paid for: the
+        # artifact records it, and the gates stage fails closed on it, so no edition publishes without its template fields.
+        composed, revision, composer_cost, composer_error = None, None, 0.0, None
+        try:
+            composed, revision, composer_cost = composer.compose_with_revision(
+                client, composer.load_system_prompt(), profile, wide_day, framing, label, published)
+        except (budget.BudgetExceeded, budget.LedgerUnavailable):
+            raise
+        except Exception as e:     # noqa: BLE001
+            composer_error = f"{type(e).__name__}: {str(e)[:200]}"
+        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing, "composing": "on", "composed": composed,
+                                                            "composer_error": composer_error, "wide_day": wide_day, "published": published,
+                                                            "source_minutes": minutes, "revision": revision}, runs._at(now))
+        return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped),
+                "cost_usd": round(cost + composer_cost, 4), "composer_cost_usd": round(composer_cost, 4),
+                "revised_fields": len(revision["replaced"]) if revision else 0, "composer_error": composer_error}
     return runs.checkpointed(conn, week, "framer", now, work)
 
 
@@ -234,14 +288,27 @@ def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
         day = framer.assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
         failures = (gates.completeness_failures(raw_day, framing, verdicts, thread_verdict)
                     + gates.structural_failures(profile, day, framing) + gates.faithfulness_failures(day))
-        window = (runs.stage_output(conn, week, "reader") or {}).get("window")
+        reader_out = runs.stage_output(conn, week, "reader") or {}
+        composer_check_cost = 0.0
+        if art.get("composing") == "on" and not art.get("composed"):
+            failures.append(f"the composing pass produced nothing ({art.get('composer_error') or 'no output'}), so there are no template fields to publish")
+        if art.get("composed"):          # attempts framed before the composing pass have no edition fields
+            wide_day, published = art["wide_day"], art.get("published") or {}
+            cverdicts, cweek, cusage, cpayload = composer.check_faithfulness(
+                client, art["composed"], wide_day, published, user_id=profile["user_id"])
+            failures += composer.edition_failures(art["composed"], wide_day, cpayload, cverdicts, cweek)
+            day["edition"] = composer.assemble_edition(
+                art["composed"], wide_day, framing, cverdicts, cweek, stats=reader_out.get("stats") or {},
+                source_minutes=art.get("source_minutes", 0), style=style_check.edition_style_failures(art["composed"]), published=published)
+            composer_check_cost = budget.estimate_cost_usd(llm.CHECK_MODEL, cusage)
+        window = reader_out.get("window")
         if window:
             day["window"] = window       # what the edition covers, by what its Reader read; the page labels it with this
         runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
         if failures:
             raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
         return {"artifact": "gates", "items": len(day["items"]),
-                "check_cost_usd": round(budget.estimate_cost_usd(llm.CHECK_MODEL, usage), 4)}
+                "check_cost_usd": round(budget.estimate_cost_usd(llm.CHECK_MODEL, usage) + composer_check_cost, 4)}
     return runs.checkpointed(conn, week, "gates", now, work)
 
 

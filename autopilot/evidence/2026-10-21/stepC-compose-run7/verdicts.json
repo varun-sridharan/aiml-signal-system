@@ -1,0 +1,599 @@
+{
+ "units": {
+  "units": {
+   "s01": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "arXiv authors published the method on 2026-10-11",
+      "supporting_span": "Published 2026-10-11 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supporting_span": "It first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "then runs a hacker-fixer loop to find and repair remaining vulnerabilities",
+      "supporting_span": "then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Applied to Terminal Bench, KernelBench, and SETA, it substantially reduced attack success",
+      "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA, substantially reducing attack success across these agent environments.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "it scales with the hardening budget as loop iterations increase",
+      "supporting_span": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [
+     "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task"
+    ],
+    "grader_errors": []
+   },
+   "s02": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "MAI-Gym was published on 2026-10-14",
+      "supporting_span": "Published 2026-10-14 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "an open platform unifying GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
+      "supporting_span": "an open all-in-one platform that unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "It supports ten established benchmarks",
+      "supporting_span": "supports ten established benchmarks",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "scales to 20,000 parallel environment instances",
+      "supporting_span": "scales to 20,000 parallel environment instances",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "uses a shared rollout pipeline so agent behavior stays consistent between evaluation and training",
+      "supporting_span": "Through a shared rollout pipeline, MAI-Gym ensures consistent agent behavior across evaluation and training",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The trained MAI-Gym-9B reports 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
+      "supporting_span": "achieving state-of-the-art performance among open GUI agents under 10B parameters: 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "state of the art among open GUI agents under 10B parameters",
+      "supporting_span": "state-of-the-art performance among open GUI agents under 10B parameters",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The release includes the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint",
+      "supporting_span": "We release the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "RL in a mocked train-ticketing app lifted real-phone task success from 28.8% to 48.1%",
+      "supporting_span": "RL in a mocked train-ticketing app transfers to its real-world counterpart, improving task success on a phys- ical phone from 28.8% to 48.1%",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "s03": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "GitHub deprecated a set of models across most Copilot experiences on October 19, 2026",
+      "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "covering Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "supporting_span": "including Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Workflows and integrations have to be updated to use supported models",
+      "supporting_span": "Please update your workflows and integrations to use supported models.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "no action is required to remove the deprecated models themselves",
+      "supporting_span": "No action is required to remove the deprecated models.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings before users see them in the model selector in VS Code and on github.com",
+      "supporting_span": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings. As an administrator, you can verify availability by checking your individual Copilot settings and confirming that the policy is enabled for the specific model. Once enabled, you'll see the model in the Copilot Chat model selector in VS Code and on github.com.",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "s04": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "Terminal-RSI was published on 2026-10-15",
+      "supporting_span": "Published 2026-10-15 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "alternating Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine",
+      "supporting_span": "alternates Recursive Self-Rewrite (RSR) of verified trajectories with critic-inheriting Recursive Policy-Refine (RPR)",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The five-stage sequence runs from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2 to yield Terminal-RSI-27B",
+      "supporting_span": "The five-stage sequence from Qwen3.8-27B base model through RSR-1, RPR-1, RSR-2, and RPR-2 yields Terminal-RSI-27B",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "which reports 19.84% on Terminal-Bench 4.0",
+      "supporting_span": "19.84% on Terminal-Bench 4.0",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "86.52% on Terminal-Bench 2.1",
+      "supporting_span": "86.52% on Terminal-Bench 2.1",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "16.95% on Terminal-Bench 3.0",
+      "supporting_span": "16.95% on Terminal-Bench 3.0",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "79.00% on Terminal-Bench Hard",
+      "supporting_span": "79.00% on Terminal-Bench Hard",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supporting_span": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "SWR100 success doubles from 3.00% to 6.00%",
+      "supporting_span": "SWR100 success doubles from 3.00% to 6.00%",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Success-Prioritized Reward separates strict success from bounded partial credit",
+      "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "s05": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "Agentic autofix for code scanning alerts is now generally available for GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including with data residency",
+      "supporting_span": "Agentic autofix for code scanning alerts is now generally available. It remediates alerts by working across your codebase the way a developer would: it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request for your review. Agentic autofix is available to GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including GitHub Enterprise Cloud with data residency.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "It explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+      "supporting_span": "it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "that includes a summary of the fix, why it closes the alert, and the validation steps taken",
+      "supporting_span": "The pull request includes a summary of the fix, why it closes the alert, and the validation steps Copilot took to confirm that it works.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "It only supports alerts on the repository's default branch — alerts detected only on pull requests or other branches cannot be assigned to Copilot",
+      "supporting_span": "Agentic autofix supports code scanning alerts on the repository's default branch. Alerts detected only on pull requests or other branches cannot be assigned to Copilot.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "An enterprise administrator must enable the new \"Agentic autofix\" policy",
+      "supporting_span": "Agentic autofix requires an enterprise administrator to enable access to it via the new \"Agentic autofix\" policy in Advanced Security policies.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "each run consumes AI Credits from the Code Security budget plus GitHub Actions minutes",
+      "supporting_span": "Agentic autofix for code scanning alerts consumes AI Credits from your Code Security budget and GitHub Actions minutes.",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "s06": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "Amp chooses and recommends models based on what works best for its users",
+      "supporting_span": "Amp chooses and recommends models based on what works best for its users",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "OpenAI models account for the majority of tokens used in Amp",
+      "supporting_span": "OpenAI models account for the majority of tokens used in Amp",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Quinn describes some Amp users consuming 10 billion tokens a week",
+      "supporting_span": "Quinn describes some Amp users consuming 10 billion tokens a week.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Amp launched Sign in with ChatGPT to give users access to more tokens and OpenAI models including GPT-6 Astra",
+      "supporting_span": "Amp launched its Sign in with ChatGPT integration. Quinn says it gives Amp users access to more tokens and OpenAI models, including GPT-6 Astra",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Amp also announced Puck, a conversational assistant that helps users launch and manage other agents",
+      "supporting_span": "Amp recently announced Puck, a conversational AI assistant built into Amp that helps users launch and manage other agents.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "with Calling Puck powered by GPT-Live-1 for real-time voice",
+      "supporting_span": "With Calling Puck, powered by GPT-Live-1, users can talk to Puck in real time",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "has been testing Ultrafast mode with GPT-6 Astra",
+      "supporting_span": "Amp has been testing Ultrafast mode with GPT-6 Astra",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Amp's own team is 20 people",
+      "supporting_span": "Its own 20-person team uses them that way",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "s07": {
+    "confidence": 1.0,
+    "claims": [
+     {
+      "claim": "GitHub exposed REST endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations",
+      "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
+      "supporting_span": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Together the endpoints make model availability manageable",
+      "supporting_span": "Together, these endpoints make it easier to manage Copilot model availability across your enterprise.",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   },
+   "essay": {
+    "confidence": 0.96,
+    "claims": [
+     {
+      "claim": "arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11",
+      "supporting_span": "Published 2026-10-11 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "a hacker-fixer loop to three agent environments: Terminal Bench, KernelBench, and SETA",
+      "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Agent environments use programmatic verifiers to turn complex outcomes into rewards",
+      "supporting_span": "They use programmatic verifiers to turn complex outcomes into rewards.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supporting_span": "It first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "uses the loop to find and repair remaining verifier vulnerabilities",
+      "supporting_span": "then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline",
+      "supporting_span": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases and outperforming the static, non-iterative baseline.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "MAI-Gym's authors released their platform on 2026-10-14",
+      "supporting_span": "Published 2026-10-14 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "support for ten established benchmarks and scaling to 20,000 parallel environment instances",
+      "supporting_span": "supports ten established benchmarks, and scales to 20,000 parallel environment instances.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "The platform unifies GUI agent evaluation, data collection, and online reinforcement learning",
+      "supporting_span": "unifies GUI agent evaluation, data collection, and online RL training",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "training across mobile, computer, and web environments, through a shared rollout pipeline that keeps agent behavior consistent between evaluation and training",
+      "supporting_span": "Through a shared rollout pipeline, MAI-Gym ensures consistent agent behavior across evaluation and training",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "MAI-Gym-9B, a unified 9B agent",
+      "supporting_span": "we train MAI-Gym-9B, a unified 9B agent",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "reporting 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
+      "supporting_span": "achieving state-of-the-art performance among open GUI agents under 10B parameters: 78.4% on MobileWorld and 76.2% on OSWorld-Verified.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "RL in a mocked train-ticketing app moved task success on a physical phone from 28.8% to 48.1%",
+      "supporting_span": "RL in a mocked train-ticketing app transfers to its real-world counterpart, improving task success on a phys- ical phone from 28.8% to 48.1%.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Terminal-RSI's authors posted their five-stage training sequence on 2026-10-15",
+      "supporting_span": "Published 2026-10-15 by arXiv.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "86.52% on Terminal-Bench 2.1 and 19.84% on Terminal-Bench 4.0",
+      "supporting_span": "19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "the same model reports 16.95% on Terminal-Bench 3.0 and 79.00% on Terminal-Bench Hard",
+      "supporting_span": "16.95% on Terminal-Bench 3.0, and 79.00% on Terminal-Bench Hard.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supporting_span": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Terminal-RSI's authors separated strict success from bounded partial credit with Success-Prioritized Reward",
+      "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Family Dense Reward that calibrates semantic progress across 1 set of task families",
+      "supporting_span": "Family Dense Reward (FDR) calibrates semantic progress across task families",
+      "supported": false,
+      "span_verified": true
+     },
+     {
+      "claim": "GitHub deprecated models across most Copilot experiences on October 19, 2026",
+      "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Copilot Chat, inline edits, ask mode, agent mode, and code completions",
+      "supporting_span": "including Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "No action is required to remove the deprecated models",
+      "supporting_span": "No action is required to remove the deprecated models.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "workflows and integrations have to be updated to use supported models",
+      "supporting_span": "Please update your workflows and integrations to use supported models.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings",
+      "supporting_span": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "it exposed Copilot model policies through the REST API for enterprises, enterprise teams, enterprise apps, and organizations",
+      "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+      "supported": true,
+      "span_verified": true
+     },
+     {
+      "claim": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
+      "supporting_span": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode.",
+      "supported": true,
+      "span_verified": true
+     }
+    ],
+    "unsupported_claims": [
+     "Family Dense Reward that calibrates semantic progress across 1 set of task families"
+    ],
+    "possible_false_alarms": [],
+    "lifted_claims": [],
+    "grader_errors": []
+   }
+  },
+  "week": {
+   "confidence": 1.0,
+   "claims": [
+    {
+     "claim": "deprecated models across most Copilot experiences on October 19, 2026",
+     "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "REST endpoints to retrieve and update model policies for enterprises and organizations",
+     "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "hacker-fixer loop repaired exploitable verifiers on Terminal Bench, KernelBench, and SETA",
+     "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA, substantially reducing attack success across these agent environments.",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "trained a 9B GUI agent",
+     "supporting_span": "we train MAI-Gym-9B, a unified 9B agent for mobile and computer use",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "real-phone task success from 28.8% to 48.1%",
+     "supporting_span": "improving task success on a phys- ical phone from 28.8% to 48.1%",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "a verifier can be attacked into awarding full credit to a cheating agent",
+     "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Execution-validated task verifiers",
+     "supporting_span": "coherent cross-app worlds with execution-validated task verifiers",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "verifiers that can be attacked into awarding full credit to a cheating agent",
+     "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "rewards that separate strict success from bounded partial credit",
+     "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "unsupported_claims": [],
+   "possible_false_alarms": [],
+   "lifted_claims": [],
+   "grader_errors": []
+  }
+ },
+ "payload_units": [
+  "s01",
+  "s02",
+  "s03",
+  "s04",
+  "s05",
+  "s06",
+  "s07",
+  "essay"
+ ]
+}

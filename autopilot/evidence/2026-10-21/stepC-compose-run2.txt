@@ -1,0 +1,38 @@
+{
+ "stories": 7,
+ "composer_cost_usd": 0.446,
+ "grader_cost_usd": 0.0294,
+ "composer_tokens": {
+  "input": 6096,
+  "output": 15102,
+  "cache_read": 0,
+  "cache_write": 6083
+ },
+ "words": {
+  "thread_body": 101,
+  "essay_paragraphs": 10,
+  "feature_words": {
+   "s01": 335,
+   "s02": 342
+  }
+ }
+}
+18 gate failure(s)
+  - style — essay paragraph 2: rule 1: the opening sentence carries no number
+  - style — essay paragraph 2: rule 1: the opening sentence carries no date
+  - style — essay paragraph 2: rule 1: the opening sentence names no company or person
+  - style — essay paragraph 2: rule 1: a paragraph of argument with no number in it
+  - style — essay paragraph 3: rule 1: the opening sentence names no company or person
+  - style — essay paragraph 4: rule 1: the opening sentence carries no number
+  - style — essay paragraph 4: rule 1: the opening sentence carries no date
+  - style — essay paragraph 6: rule 1: the opening sentence carries no number
+  - style — essay paragraph 6: rule 1: the opening sentence carries no date
+  - style — essay paragraph 8: rule 1: the opening sentence carries no date
+  - style — essay paragraph 9: rule 1: the opening sentence carries no number
+  - style — essay paragraph 10: rule 1: the opening sentence carries no number
+  - style — essay paragraph 10: rule 1: the opening sentence carries no date
+  - style — essay paragraph 10: rule 1: a paragraph of argument with no number in it
+  - essay: the grader returned no verdict for the composed prose
+  - s03: unsupported (composed) — once enabled, the model appears in the Copilot Chat model selector in VS Code and on github.com
+  - s05: unsupported (composed) — it supports alerts on the repository's default branch only
+  - s05: unsupported (composed) — an enterprise administrator must enable the new Agentic autofix policy in Advanced Security policies before org or repo admins can turn it on

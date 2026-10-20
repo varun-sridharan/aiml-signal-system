@@ -1,0 +1,36 @@
+{
+ "stories": 7,
+ "composer_cost_usd": 0.4858,
+ "grader_cost_usd": 0.0401,
+ "composer_tokens": {
+  "input": 6095,
+  "output": 16552,
+  "cache_read": 0,
+  "cache_write": 6639
+ },
+ "words": {
+  "thread_body": 104,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 358,
+   "s02": 356
+  }
+ }
+}
+16 gate failure(s)
+  - style — thread body sentence 5: rule 3: the sentence restates its subject as its predicate
+  - style — essay paragraph 2: rule 1: the opening sentence carries no number
+  - style — essay paragraph 2: rule 1: the opening sentence carries no date
+  - style — essay paragraph 2: rule 1: the opening sentence names no company or person
+  - style — essay paragraph 2: rule 1: a paragraph of argument with no number in it
+  - style — essay paragraph 4: rule 1: the opening sentence carries no date
+  - style — essay paragraph 6: rule 1: the opening sentence carries no date
+  - style — essay paragraph 7: rule 1: the opening sentence carries no number
+  - style — essay paragraph 7: rule 1: the opening sentence carries no date
+  - style — essay paragraph 7: rule 1: a paragraph of argument with no number in it
+  - style — essay paragraph 8: rule 1: the opening sentence carries no number
+  - style — s01 feature paragraph 2 sentence 1: rule 2: the subject is the abstract noun 'mechanism', not a named company or person
+  - s06: unsupported (composed) — OpenAI published a customer story on Amp
+  - essay: unsupported (composed) — Terminal-RSI's authors published on 2026-10-15 a five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2, yielding 19.84% on Terminal-Bench 4.0 and 86.52% on Terminal-Bench 2.1
+  - essay: unsupported (composed) — Their Success-Prioritized Reward separates strict success from bounded partial credit, and Family Dense Reward calibrates semantic progress across task families
+  - week: unsupported (composed) — CodeQL rerun to close an alert, bounded partial credit for semantic progress, execution-validated task verifiers in synthesised apps

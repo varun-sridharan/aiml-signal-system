@@ -1,0 +1,1473 @@
+{
+ "first_draft": {
+  "thread": {
+   "lines": [
+    "Three GitHub changes moved model choice and security fixes into policy settings.",
+    "[[hl|Three papers]] attacked the verifier: hardening it, scaling it, and learning from it."
+   ],
+   "body": "The week moved control of agents away from the person typing and into infrastructure. GitHub deprecated a set of Copilot models on October 19, 2026 and [[#s07|shipped REST endpoints that retrieve and update model policies]], while agentic autofix reached general availability and [[#s05|reruns CodeQL before opening a pull request]]. On the research side, [[#s01|a hacker-fixer loop repaired exploitable verifiers]] across Terminal Bench, KernelBench, and SETA, and MAI-Gym trained a 9B agent in mocked apps that transferred to a physical phone. If the verifier decides the reward and the policy decides the model, what is left for the practitioner to decide?"
+  },
+  "learning": {
+   "headline": "One paper raised phone task success from 28.8% to 48.1%. Another found verifiers that pay full credit for cheating.",
+   "paras": [
+    "arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11, applying a single hacker-fixer loop to three agent environments: Terminal Bench, KernelBench, and SETA. Their framing is blunt: programmatic verifiers[[fn:verifier|Programmatic verifier]] turn complex outcomes into rewards, and those verifiers can be attacked into awarding full credit to cheating agents without completing the intended task. The failure is doubled, because the same bad signal corrupts evaluation and training at once.",
+    "The same arXiv team reported on 2026-10-11 that their iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline. They first set up an isolated verifier sandbox that agents cannot directly modify, then hunt remaining vulnerabilities inside it. An earlier version of the loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments, which is the rare case of a method landing in the benchmark it tested against.",
+    "MAI-Gym's authors released their platform on 2026-10-14 with support for ten established benchmarks and scaling to 20,000 parallel environment instances. They name two blockers for GUI agent reinforcement learning[[fn:rl|Online reinforcement learning with verifiable rewards]]: the high cost of interactive environments and the scarcity of realistic training tasks. Parallelism answers the first; the mocked apps and 2,000 verified tasks are the attempt at the second.",
+    "MAI-Gym's team trained MAI-Gym-9B, reporting 78.4% on MobileWorld and 76.2% on OSWorld-Verified on 2026-10-14, state of the art among open GUI agents under 10B parameters. The more interesting number sits lower in the abstract: RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1%. That is a gain of 19.3 points, and it is evidence that a synthetic environment can teach something a real device honours.",
+    "Terminal-RSI's authors published on 2026-10-15 a five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2, and RPR-2. They report 19.84% on Terminal-Bench 4.0 and 86.52% on Terminal-Bench 2.1, and on LHTB strict completion moves from 0/46 to 5/46 while SWR100 success goes from 3.00% to 6.00%. Their Success-Prioritized Reward separates strict success from bounded partial credit, which is an admission that partial credit is exactly where a policy learns to farm.",
+    "GitHub deprecated a set of models across most Copilot experiences on October 19, 2026, covering Copilot Chat, inline edits, ask and agent modes, and code completions — five surfaces at once. No action is required to remove the deprecated models, but Copilot Enterprise administrators may need to enable access to alternative models through their model policies. A pinned model name in an integration therefore breaks rather than degrades.",
+    "GitHub also shipped REST endpoints that retrieve and update Copilot model policies across four scopes: enterprises, enterprise teams, enterprise apps, and organizations. Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode. Model choice stops being a user preference and becomes reviewable configuration, with the cost that the answer to which model a team runs now lives at more than one level.",
+    "GitHub made agentic autofix generally available for Code Security and Advanced Security customers on GitHub Enterprise Cloud, with one acceptance test in the loop: it reruns CodeQL to confirm the fix closes the alert before opening a pull request. The pull request carries a summary of the fix, why it closes the alert, and the validation steps Copilot took. A verifier that decides when a security fix is done is the same object the hardening paper showed can be attacked, now sitting in production review."
+   ],
+   "notes": [
+    {
+     "key": "verifier",
+     "term": "Programmatic verifier",
+     "definition": "A program in an agent environment that turns complex outcomes into rewards."
+    },
+    {
+     "key": "rl",
+     "term": "Online reinforcement learning with verifiable rewards",
+     "definition": "Training that has driven rapid progress in mathematics, coding, and tool use, but scales poorly to GUI agents because interactive environments are costly and realistic training tasks are scarce."
+    }
+   ],
+   "drawnFrom": [
+    "s01",
+    "s02",
+    "s03",
+    "s04",
+    "s05",
+    "s07"
+   ],
+   "doDifferently": "Before Monday, list every place a program decides your agent succeeded — your CI gate, your eval harness, your autofix acceptance check — and try to make one of them award full credit for a trajectory that did not do the task. If you succeed in under an hour, that is the verifier to harden first."
+  },
+  "storiesTitle": "Three papers attacked the reward signal. Three GitHub changes moved model choice into policy.",
+  "stories": [
+   {
+    "id": "s01",
+    "headline": "A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA",
+    "hashtags": [
+     "#Evals",
+     "#Agents",
+     "#RL",
+     "#RewardHacking"
+    ],
+    "body": "arXiv authors published on 2026-10-11 a fully automatic approach to weak-to-strong verifier hardening, asking whether today's model with scaled compute can harden agent environments against stronger future models. The method first sets up an isolated verifier sandbox that agents cannot directly modify, then runs a hacker-fixer loop to find and repair remaining verifier vulnerabilities. Applied to Terminal Bench, KernelBench, and SETA, it substantially reduced attack success, and the iterative design outperformed the static, non-iterative baseline. An earlier version of the loop has been adopted by the official Terminal Bench repository to audit exploits. The excerpt gives no attack-success figures, so the size of the reduction stays unquantified.",
+    "featureParas": [
+     "arXiv authors published this work on 2026-10-11, and its premise is one sentence long: agent environments use programmatic verifiers to turn complex outcomes into rewards, and verifiers can be attacked into awarding full credit to cheating agents without completing the intended task. Two things break when that happens. Evaluation reports a score that did not happen, and training rewards the behaviour that produced it. The same defect lands in both places, which is why a leaderboard and a policy can drift together without either looking wrong on its own.",
+     "The scaling argument is what makes this more than a bug report. As agent environments scale in numbers and difficulty, the authors write, so must the repairing of exploitable verifiers. Every environment added to a suite is a new surface. The question they pose is whether a model available now, given scaled compute, can harden environments well enough to hold against potentially stronger future models — weak-to-strong, in their phrase.",
+     "The mechanism has two parts. First, an isolated verifier sandbox that agents cannot directly modify, which rules out the crudest exploit of editing the thing that grades you. Second, a hacker-fixer loop: one side hunts remaining verifier vulnerabilities, the other repairs them. Applied to Terminal Bench, KernelBench, and SETA, the loop substantially reduced attack success across all three.",
+     "The twist sits in how the defense scales. The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline. Hardening is not a one-time pass you run before release; it is a dial you spend compute on, and the comparison that matters is iterative loop versus static baseline rather than hardened versus unhardened. The strongest external signal is adoption rather than a number: an earlier version of the hacker-fixer loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments. A benchmark accepting an exploit-finder into its own repository is an admission that its verifiers were exploitable, and the excerpt reports no attack-success percentages before or after, so how much of the gap closed remains unstated."
+    ],
+    "tryIt": "Pick the eval harness you trust most and try to pass one of its tasks without doing the task — write to the output path directly, stub the function the checker calls, exit zero early. Anything that earns full credit is a verifier vulnerability of exactly the kind the loop hunts. Fix it in a sandbox the agent cannot modify, then repeat.",
+    "tie": {
+     "to": "s05",
+     "text": "GitHub's agentic autofix reruns CodeQL to confirm a fix closes an alert — a verifier in the acceptance path, of the kind this paper shows can be attacked."
+    }
+   },
+   {
+    "id": "s02",
+    "headline": "RL in a mocked train-ticketing app lifted real-phone success from 28.8% to 48.1%",
+    "hashtags": [
+     "#Agents",
+     "#RL",
+     "#Evals",
+     "#OpenWeights"
+    ],
+    "body": "MAI-Gym's authors released the platform on 2026-10-14 as an open all-in-one system unifying GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments. A shared rollout pipeline keeps agent behavior consistent between evaluation and training, ten established benchmarks are supported, and the platform scales to 20,000 parallel environment instances. The trained model, MAI-Gym-9B, reaches 78.4% on MobileWorld and 76.2% on OSWorld-Verified, state of the art among open GUI agents under 10B parameters. They also release the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint. The excerpt names two blockers — environment cost and task scarcity — and parallelism only addresses the first.",
+    "featureParas": [
+     "MAI-Gym's authors released the platform on 2026-10-14, framing the problem precisely: online reinforcement learning with verifiable rewards has driven rapid progress in mathematics, coding, and tool use, but scaling that success to GUI agents remains challenging because interactive environments cost too much and realistic training tasks are scarce. Those are two different problems wearing one label. The first is an infrastructure bill. The second is a content shortage, and no amount of parallelism manufactures tasks worth training on.",
+     "The infrastructure answer is specific. MAI-Gym unifies evaluation, data collection, and online RL training across mobile, computer, and web environments, routes all of it through a shared rollout pipeline so agent behavior stays consistent between evaluation and training, supports ten established benchmarks, and scales to 20,000 parallel environment instances. The shared pipeline is the underrated piece: when the training environment and the eval environment diverge, a score improvement can be an artifact of the harness rather than the policy.",
+     "The content answer is automated synthesis of diverse GUI applications and challenging tasks, including resettable mocked apps and coherent cross-app worlds with execution-validated task verifiers. Resettable matters for RL rollouts, which need a clean state thousands of times. Execution-validated matters because a task is only trainable if a program can say whether it was completed.",
+     "The headline scores are 78.4% on MobileWorld and 76.2% on OSWorld-Verified for MAI-Gym-9B, state of the art among open GUI agents under 10B parameters. The number that carries more weight is smaller and messier: RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1% — a gain of 19.3 points. Set those two results side by side and the comparison is awkward. A unified 9B agent clears 78.4% on a benchmark while the same lineage clears under half of tasks on an actual handset after training. The mocked-app transfer result is the honest measurement of where GUI agents are; the benchmark figure measures how well the benchmark is understood. The release of the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the checkpoint means both numbers are reproducible, which is the part that makes the gap useful rather than embarrassing."
+    ],
+    "tryIt": "If you are building a GUI or tool-use agent, mirror the mocked-app trick before buying device time: build a resettable mock of the one app your agent most often fails on, attach an execution-validated verifier, and train there. The paper's own transfer result — 28.8% to 48.1% on a physical phone — is the yardstick to beat on your own task.",
+    "tie": {
+     "to": "s01",
+     "text": "MAI-Gym's tasks are checked by execution-validated verifiers, the same component the hardening paper shows can be attacked into awarding full credit."
+    }
+   },
+   {
+    "id": "s03",
+    "headline": "Pinned Copilot model names stopped working across chat, inline edits, agent mode and completions",
+    "hashtags": [
+     "#AgenticCoding",
+     "#Tooling",
+     "#Enterprise"
+    ],
+    "body": "GitHub announced on October 19, 2026 that it had deprecated a set of models across most Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions. Workflows and integrations need updating to supported models, and no action is required to remove the deprecated ones. Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings, then confirm the policy is enabled for the specific model. Once enabled, the model appears in the Copilot Chat model selector in VS Code and on github.com. The excerpt does not name which models were deprecated.",
+    "featureParas": null,
+    "tryIt": "Grep your repos and CI config for hardcoded Copilot model identifiers today, since the deprecation covers chat, inline edits, ask and agent modes, and completions alike. If you are on Enterprise, check individual Copilot settings to confirm the policy is enabled for the replacement model before you switch any integration over.",
+    "tie": {
+     "to": "s07",
+     "text": "The new REST endpoints for Copilot model policies are how this kind of migration gets scripted rather than clicked."
+    }
+   },
+   {
+    "id": "s04",
+    "headline": "A 27B terminal agent reached 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0",
+    "hashtags": [
+     "#RL",
+     "#Agents",
+     "#AgenticCoding",
+     "#Evals"
+    ],
+    "body": "Terminal-RSI's authors published on 2026-10-15 a method that alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine. A five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2 yields Terminal-RSI-27B, scoring 19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1, 16.95% on Terminal-Bench 3.0, and 79.00% on Terminal-Bench Hard. On LHTB, process reward rises from 0.21 to 0.37, strict completion from 0/46 to 5/46, and SWR100 success from 3.00% to 6.00%. The spread between 86.52% on 2.1 and 19.84% on 4.0 shows how much the benchmark version decides the story. Family Dense Reward calibrates semantic progress across task families, and bounded partial credit is the softest part of that target.",
+    "featureParas": null,
+    "tryIt": null,
+    "tie": {
+     "to": "s01",
+     "text": "Terminal-RSI trains on verified trajectories from the same Terminal-Bench family whose verifiers the hardening loop was built to audit."
+    }
+   },
+   {
+    "id": "s05",
+    "headline": "Copilot now opens security-fix pull requests only after CodeQL confirms the alert closed",
+    "hashtags": [
+     "#Agents",
+     "#Security",
+     "#AgenticCoding"
+    ],
+    "body": "GitHub made agentic autofix for code scanning alerts generally available for Code Security and Advanced Security customers on GitHub Enterprise Cloud, including data residency. The agent explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request that includes a summary, why it closes the alert, and the validation steps taken. It supports alerts on the repository's default branch only; alerts detected solely on pull requests or other branches cannot be assigned to Copilot. An enterprise administrator must enable the new Agentic autofix policy before an org or repo admin can turn it on. It consumes AI Credits from the Code Security budget plus GitHub Actions minutes.",
+    "featureParas": null,
+    "tryIt": "Turn it on for one repository first, since the policy chain runs enterprise admin, then org or repo admin, and watch what the AI usage section of enterprise billing reports under Advanced Security. Set a SKU level budget for Code Security AI credits before you widen it. When a PR lands, read the validation steps rather than the summary — CodeQL closure is the only thing the agent confirmed.",
+    "tie": {
+     "to": "s01",
+     "text": "CodeQL closure is this feature's acceptance test, and the verifier-hardening paper is about acceptance tests that can be made to pass without the work."
+    }
+   },
+   {
+    "id": "s06",
+    "headline": "Some Amp users burn 10 billion tokens a week, and the harness picks the model",
+    "hashtags": [
+     "#Agents",
+     "#AgenticCoding",
+     "#Tooling"
+    ],
+    "body": "OpenAI published a customer story on Amp, which chooses and recommends models based on what works best for its users, with OpenAI models accounting for the majority of tokens used in Amp. Quinn describes some Amp users consuming 10 billion tokens a week, and argues that watching every increment of usage holds people back from finding out what an agent can do; Amp's Sign in with ChatGPT integration gives users access to more tokens and models including GPT-6 Astra. Amp also announced Puck, a conversational assistant that launches and coordinates other agents, with Calling Puck powered by GPT-Live-1 for real-time voice, including from a watch. Amp's own 20-person team uses agents for marketing work, including documentation and design pages. The stated reason for model selection is transparency about safeguards rather than a benchmark result, so the selection logic is a product judgment users inherit.",
+    "featureParas": null,
+    "tryIt": null,
+    "tie": {
+     "to": "s07",
+     "text": "Amp's harness picks the model for the user; GitHub's new policy API has the enterprise pick it for the team."
+    }
+   },
+   {
+    "id": "s07",
+    "headline": "Copilot model availability is now scriptable across enterprises, teams, apps and orgs",
+    "hashtags": [
+     "#Tooling",
+     "#Enterprise",
+     "#AgenticCoding"
+    ],
+    "body": "GitHub shipped REST API endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations. Together the endpoints make it easier to manage Copilot model availability across an enterprise. Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode. Delegation is the catch: with control spread across modes and scopes, the answer to which model a given team is using lives at more than one level.",
+    "featureParas": null,
+    "tryIt": "Write a small script that reads model policy for every organization you own and prints the effective model list, since the endpoints cover enterprises, enterprise teams, enterprise apps, and organizations. Run it before and after any deprecation so you have a diff rather than a support ticket.",
+    "tie": {
+     "to": "s03",
+     "text": "The October 19, 2026 deprecation is the first migration these endpoints make auditable."
+    }
+   }
+  ],
+  "dividers": [
+   {
+    "before": "s01",
+    "label": "The reward signal under attack"
+   },
+   {
+    "before": "s03",
+    "label": "Model choice becomes configuration"
+   }
+  ],
+  "closing": {
+   "lines": [
+    "A mocked app taught a phone agent to go from 28.8% to 48.1%.",
+    "A verifier can be attacked into awarding full credit for nothing."
+   ],
+   "summary": "The week's research and the week's shipping converged on the same component: the program that decides an agent succeeded. MAI-Gym and Terminal-RSI train against verifiers, GitHub's agentic autofix ships one into production review, and the hardening paper shows all of them can be made to pass without the work.",
+   "oneThing": "Spend one hour trying to cheat your own eval harness. Whatever earns full credit without doing the task is the first thing to move into a sandbox the agent cannot modify."
+  },
+  "splits": [
+   {
+    "path": "thread.line.1",
+    "runs": [
+     {
+      "text": "Three GitHub changes moved model choice and security fixes into policy settings.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "thread.line.2",
+    "runs": [
+     {
+      "text": "[[hl|Three papers]] attacked the verifier: hardening it, scaling it, and learning from it.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "thread.body",
+    "runs": [
+     {
+      "text": "The week moved control of agents away from the person typing and into infrastructure. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "GitHub deprecated a set of Copilot models on October 19, 2026",
+      "class": "fact"
+     },
+     {
+      "text": " and ",
+      "class": "interpretation"
+     },
+     {
+      "text": "[[#s07|shipped REST endpoints that retrieve and update model policies]]",
+      "class": "fact"
+     },
+     {
+      "text": ", while ",
+      "class": "interpretation"
+     },
+     {
+      "text": "agentic autofix reached general availability",
+      "class": "fact"
+     },
+     {
+      "text": " and ",
+      "class": "interpretation"
+     },
+     {
+      "text": "[[#s05|reruns CodeQL before opening a pull request]]",
+      "class": "fact"
+     },
+     {
+      "text": ". On the research side, ",
+      "class": "interpretation"
+     },
+     {
+      "text": "[[#s01|a hacker-fixer loop repaired exploitable verifiers]]",
+      "class": "fact"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "across Terminal Bench, KernelBench, and SETA",
+      "class": "fact"
+     },
+     {
+      "text": ", and ",
+      "class": "interpretation"
+     },
+     {
+      "text": "MAI-Gym trained a 9B agent in mocked apps that transferred to a physical phone",
+      "class": "fact"
+     },
+     {
+      "text": ". If the verifier decides the reward and the policy decides the model, what is left for the practitioner to decide?",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.headline",
+    "runs": [
+     {
+      "text": "One paper raised phone task success from 28.8% to 48.1%.",
+      "class": "fact"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Another found verifiers that pay full credit for cheating.",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.1",
+    "runs": [
+     {
+      "text": "arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11",
+      "class": "fact"
+     },
+     {
+      "text": ", ",
+      "class": "interpretation"
+     },
+     {
+      "text": "applying a single hacker-fixer loop to three agent environments: Terminal Bench, KernelBench, and SETA",
+      "class": "fact"
+     },
+     {
+      "text": ". Their framing is blunt: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "programmatic verifiers",
+      "class": "fact"
+     },
+     {
+      "text": "[[fn:verifier|Programmatic verifier]]",
+      "class": "interpretation"
+     },
+     {
+      "text": " turn complex outcomes into rewards, and those verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "class": "fact"
+     },
+     {
+      "text": ". The failure is doubled, because ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the same bad signal corrupts evaluation and training at once",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.2",
+    "runs": [
+     {
+      "text": "The same arXiv team reported on 2026-10-11",
+      "class": "fact"
+     },
+     {
+      "text": " that ",
+      "class": "interpretation"
+     },
+     {
+      "text": "their iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "They first set up an isolated verifier sandbox that agents cannot directly modify, then hunt remaining vulnerabilities inside it",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "An earlier version of the loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments",
+      "class": "fact"
+     },
+     {
+      "text": ", which is the rare case of a method landing in the benchmark it tested against.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.3",
+    "runs": [
+     {
+      "text": "MAI-Gym's authors released their platform on 2026-10-14",
+      "class": "fact"
+     },
+     {
+      "text": " with ",
+      "class": "interpretation"
+     },
+     {
+      "text": "support for ten established benchmarks and scaling to 20,000 parallel environment instances",
+      "class": "fact"
+     },
+     {
+      "text": ". They name two blockers for GUI agent ",
+      "class": "interpretation"
+     },
+     {
+      "text": "reinforcement learning",
+      "class": "fact"
+     },
+     {
+      "text": "[[fn:rl|Online reinforcement learning with verifiable rewards]]",
+      "class": "interpretation"
+     },
+     {
+      "text": ": the high cost of interactive environments and the scarcity of realistic training tasks",
+      "class": "fact"
+     },
+     {
+      "text": ". Parallelism answers the first; ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the mocked apps and 2,000 verified tasks",
+      "class": "fact"
+     },
+     {
+      "text": " are the attempt at the second.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.4",
+    "runs": [
+     {
+      "text": "MAI-Gym's team trained MAI-Gym-9B, reporting 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
+      "class": "fact"
+     },
+     {
+      "text": " on ",
+      "class": "interpretation"
+     },
+     {
+      "text": "2026-10-14",
+      "class": "fact"
+     },
+     {
+      "text": ", ",
+      "class": "interpretation"
+     },
+     {
+      "text": "state of the art among open GUI agents under 10B parameters",
+      "class": "fact"
+     },
+     {
+      "text": ". The more interesting number sits lower in the abstract: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1%",
+      "class": "fact"
+     },
+     {
+      "text": ". That is a gain of 19.3 points, and it is evidence that a synthetic environment can teach something a real device honours.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.5",
+    "runs": [
+     {
+      "text": "Terminal-RSI's authors published on 2026-10-15",
+      "class": "fact"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "a five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2, and RPR-2",
+      "class": "fact"
+     },
+     {
+      "text": ". They report ",
+      "class": "interpretation"
+     },
+     {
+      "text": "19.84% on Terminal-Bench 4.0 and 86.52% on Terminal-Bench 2.1, and on LHTB strict completion moves from 0/46 to 5/46 while SWR100 success goes from 3.00% to 6.00%",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Their Success-Prioritized Reward separates strict success from bounded partial credit",
+      "class": "fact"
+     },
+     {
+      "text": ", which is an admission that partial credit is exactly where a policy learns to farm.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.6",
+    "runs": [
+     {
+      "text": "GitHub deprecated a set of models across most Copilot experiences on October 19, 2026, covering Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "class": "fact"
+     },
+     {
+      "text": " — five surfaces at once. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "No action is required to remove the deprecated models, but Copilot Enterprise administrators may need to enable access to alternative models through their model policies",
+      "class": "fact"
+     },
+     {
+      "text": ". A pinned model name in an integration therefore breaks rather than degrades.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.7",
+    "runs": [
+     {
+      "text": "GitHub also shipped REST endpoints that retrieve and update Copilot model policies across four scopes: enterprises, enterprise teams, enterprise apps, and organizations",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
+      "class": "fact"
+     },
+     {
+      "text": ". Model choice stops being a user preference and becomes reviewable configuration, with the cost that the answer to which model a team runs now lives at more than one level.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.para.8",
+    "runs": [
+     {
+      "text": "GitHub made agentic autofix generally available for Code Security and Advanced Security customers on GitHub Enterprise Cloud",
+      "class": "fact"
+     },
+     {
+      "text": ", with one acceptance test in the loop: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "it reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The pull request carries a summary of the fix, why it closes the alert, and the validation steps Copilot took",
+      "class": "fact"
+     },
+     {
+      "text": ". A verifier that decides when a security fix is done is the same object the hardening paper showed can be attacked, now sitting in production review.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "learning.note.verifier",
+    "runs": [
+     {
+      "text": "A program in an agent environment that turns complex outcomes into rewards.",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "learning.note.rl",
+    "runs": [
+     {
+      "text": "Training that has driven rapid progress in mathematics, coding, and tool use, but scales poorly to GUI agents because interactive environments are costly and realistic training tasks are scarce.",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "learning.doDifferently",
+    "runs": [
+     {
+      "text": "Before Monday, list every place a program decides your agent succeeded — your CI gate, your eval harness, your autofix acceptance check — and try to make one of them award full credit for a trajectory that did not do the task. If you succeed in under an hour, that is the verifier to harden first.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "stories.title",
+    "runs": [
+     {
+      "text": "Three papers attacked the reward signal.",
+      "class": "interpretation"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Three GitHub changes moved model choice into policy.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.headline",
+    "runs": [
+     {
+      "text": "A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.body",
+    "runs": [
+     {
+      "text": "arXiv authors published on 2026-10-11",
+      "class": "fact"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "a fully automatic approach to weak-to-strong verifier hardening, asking whether today's model with scaled compute can harden agent environments against stronger future models",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The method first sets up an isolated verifier sandbox that agents cannot directly modify, then runs a hacker-fixer loop to find and repair remaining verifier vulnerabilities",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Applied to Terminal Bench, KernelBench, and SETA, it substantially reduced attack success, and the iterative design outperformed the static, non-iterative baseline",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "An earlier version of the loop has been adopted by the official Terminal Bench repository to audit exploits",
+      "class": "fact"
+     },
+     {
+      "text": ". The excerpt gives no attack-success figures, so the size of the reduction stays unquantified.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.feature.1",
+    "runs": [
+     {
+      "text": "arXiv authors published this work on 2026-10-11",
+      "class": "fact"
+     },
+     {
+      "text": ", and its premise is one sentence long: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "agent environments use programmatic verifiers to turn complex outcomes into rewards, and verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "class": "fact"
+     },
+     {
+      "text": ". Two things break when that happens. Evaluation reports a score that did not happen, and training rewards the behaviour that produced it. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The same defect lands in both places",
+      "class": "fact"
+     },
+     {
+      "text": ", which is why a leaderboard and a policy can drift together without either looking wrong on its own.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.feature.2",
+    "runs": [
+     {
+      "text": "The scaling argument is what makes this more than a bug report. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "As agent environments scale in numbers and difficulty, the authors write, so must the repairing of exploitable verifiers",
+      "class": "fact"
+     },
+     {
+      "text": ". Every environment added to a suite is a new surface. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The question they pose is whether a model available now, given scaled compute, can harden environments well enough to hold against potentially stronger future models",
+      "class": "fact"
+     },
+     {
+      "text": " — weak-to-strong, in their phrase.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.feature.3",
+    "runs": [
+     {
+      "text": "The mechanism has two parts. First, ",
+      "class": "interpretation"
+     },
+     {
+      "text": "an isolated verifier sandbox that agents cannot directly modify",
+      "class": "fact"
+     },
+     {
+      "text": ", which rules out the crudest exploit of editing the thing that grades you. Second, ",
+      "class": "interpretation"
+     },
+     {
+      "text": "a hacker-fixer loop: one side hunts remaining verifier vulnerabilities, the other repairs them",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Applied to Terminal Bench, KernelBench, and SETA, the loop substantially reduced attack success across all three",
+      "class": "fact"
+     },
+     {
+      "text": ".",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.feature.4",
+    "runs": [
+     {
+      "text": "The twist sits in how the defense scales. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline",
+      "class": "fact"
+     },
+     {
+      "text": ". Hardening is not a one-time pass you run before release; it is a dial you spend compute on, and the comparison that matters is iterative loop versus static baseline rather than hardened versus unhardened. The strongest external signal is adoption rather than a number: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "an earlier version of the hacker-fixer loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments",
+      "class": "fact"
+     },
+     {
+      "text": ". A benchmark accepting an exploit-finder into its own repository is an admission that its verifiers were exploitable, and the excerpt reports no attack-success percentages before or after, so how much of the gap closed remains unstated.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.tryIt",
+    "runs": [
+     {
+      "text": "Pick the eval harness you trust most and try to pass one of its tasks without doing the task — write to the output path directly, stub the function the checker calls, exit zero early. Anything that earns full credit is a verifier vulnerability of exactly the kind the loop hunts. Fix it in a sandbox the agent cannot modify, then repeat.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s01.tie",
+    "runs": [
+     {
+      "text": "GitHub's agentic autofix reruns CodeQL to confirm a fix closes an alert",
+      "class": "fact"
+     },
+     {
+      "text": " — a verifier in the acceptance path, of the kind this paper shows can be attacked.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.headline",
+    "runs": [
+     {
+      "text": "RL in a mocked train-ticketing app lifted real-phone success from 28.8% to 48.1%",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.body",
+    "runs": [
+     {
+      "text": "MAI-Gym's authors released the platform on 2026-10-14",
+      "class": "fact"
+     },
+     {
+      "text": " as ",
+      "class": "interpretation"
+     },
+     {
+      "text": "an open all-in-one system unifying GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "A shared rollout pipeline keeps agent behavior consistent between evaluation and training, ten established benchmarks are supported, and the platform scales to 20,000 parallel environment instances",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The trained model, MAI-Gym-9B, reaches 78.4% on MobileWorld and 76.2% on OSWorld-Verified, state of the art among open GUI agents under 10B parameters",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "They also release the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The excerpt names two blockers — environment cost and task scarcity",
+      "class": "fact"
+     },
+     {
+      "text": " — and parallelism only addresses the first.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.feature.1",
+    "runs": [
+     {
+      "text": "MAI-Gym's authors released the platform on 2026-10-14",
+      "class": "fact"
+     },
+     {
+      "text": ", framing the problem precisely: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "online reinforcement learning with verifiable rewards has driven rapid progress in mathematics, coding, and tool use, but scaling that success to GUI agents remains challenging because interactive environments cost too much and realistic training tasks are scarce",
+      "class": "fact"
+     },
+     {
+      "text": ". Those are two different problems wearing one label. The first is an infrastructure bill. The second is a content shortage, and no amount of parallelism manufactures tasks worth training on.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.feature.2",
+    "runs": [
+     {
+      "text": "The infrastructure answer is specific. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "MAI-Gym unifies evaluation, data collection, and online RL training across mobile, computer, and web environments, routes all of it through a shared rollout pipeline so agent behavior stays consistent between evaluation and training, supports ten established benchmarks, and scales to 20,000 parallel environment instances",
+      "class": "fact"
+     },
+     {
+      "text": ". The shared pipeline is the underrated piece: when the training environment and the eval environment diverge, a score improvement can be an artifact of the harness rather than the policy.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.feature.3",
+    "runs": [
+     {
+      "text": "The content answer is ",
+      "class": "interpretation"
+     },
+     {
+      "text": "automated synthesis of diverse GUI applications and challenging tasks, including resettable mocked apps and coherent cross-app worlds with execution-validated task verifiers",
+      "class": "fact"
+     },
+     {
+      "text": ". Resettable matters for RL rollouts, which need a clean state thousands of times. Execution-validated matters because a task is only trainable if a program can say whether it was completed.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.feature.4",
+    "runs": [
+     {
+      "text": "The headline scores are ",
+      "class": "interpretation"
+     },
+     {
+      "text": "78.4% on MobileWorld and 76.2% on OSWorld-Verified for MAI-Gym-9B, state of the art among open GUI agents under 10B parameters",
+      "class": "fact"
+     },
+     {
+      "text": ". The number that carries more weight is smaller and messier: ",
+      "class": "interpretation"
+     },
+     {
+      "text": "RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1%",
+      "class": "fact"
+     },
+     {
+      "text": " — a gain of 19.3 points. Set those two results side by side and the comparison is awkward. A unified 9B agent clears 78.4% on a benchmark while the same lineage clears under half of tasks on an actual handset after training. The mocked-app transfer result is the honest measurement of where GUI agents are; the benchmark figure measures how well the benchmark is understood. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The release of the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the checkpoint",
+      "class": "fact"
+     },
+     {
+      "text": " means both numbers are reproducible, which is the part that makes the gap useful rather than embarrassing.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.tryIt",
+    "runs": [
+     {
+      "text": "If you are building a GUI or tool-use agent, mirror the mocked-app trick before buying device time: build a resettable mock of the one app your agent most often fails on, attach an execution-validated verifier, and train there. The paper's own transfer result — ",
+      "class": "interpretation"
+     },
+     {
+      "text": "28.8% to 48.1% on a physical phone",
+      "class": "fact"
+     },
+     {
+      "text": " — is the yardstick to beat on your own task.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s02.tie",
+    "runs": [
+     {
+      "text": "MAI-Gym's tasks are checked by execution-validated verifiers",
+      "class": "fact"
+     },
+     {
+      "text": ", the same component the hardening paper shows can be attacked into awarding full credit.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s03.headline",
+    "runs": [
+     {
+      "text": "Pinned Copilot model names stopped working across chat, inline edits, agent mode and completions",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s03.body",
+    "runs": [
+     {
+      "text": "GitHub announced on October 19, 2026 that it had deprecated a set of models across most Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Workflows and integrations need updating to supported models, and no action is required to remove the deprecated ones",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings, then confirm the policy is enabled for the specific model",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Once enabled, the model appears in the Copilot Chat model selector in VS Code and on github.com",
+      "class": "fact"
+     },
+     {
+      "text": ". The excerpt does not name which models were deprecated.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s03.tryIt",
+    "runs": [
+     {
+      "text": "Grep your repos and CI config for hardcoded Copilot model identifiers today, since ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the deprecation covers chat, inline edits, ask and agent modes, and completions alike",
+      "class": "fact"
+     },
+     {
+      "text": ". If you are on Enterprise, ",
+      "class": "interpretation"
+     },
+     {
+      "text": "check individual Copilot settings to confirm the policy is enabled",
+      "class": "fact"
+     },
+     {
+      "text": " for the replacement model before you switch any integration over.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s03.tie",
+    "runs": [
+     {
+      "text": "The new REST endpoints for Copilot model policies",
+      "class": "fact"
+     },
+     {
+      "text": " are how this kind of migration gets scripted rather than clicked.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s04.headline",
+    "runs": [
+     {
+      "text": "A 27B terminal agent reached 86.52% on Terminal-Bench 2.1 and 19.84% on 4.0",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s04.body",
+    "runs": [
+     {
+      "text": "Terminal-RSI's authors published on 2026-10-15",
+      "class": "fact"
+     },
+     {
+      "text": " ",
+      "class": "interpretation"
+     },
+     {
+      "text": "a method that alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "A five-stage sequence from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2 yields Terminal-RSI-27B, scoring 19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1, 16.95% on Terminal-Bench 3.0, and 79.00% on Terminal-Bench Hard",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "On LHTB, process reward rises from 0.21 to 0.37, strict completion from 0/46 to 5/46, and SWR100 success from 3.00% to 6.00%",
+      "class": "fact"
+     },
+     {
+      "text": ". The spread between 86.52% on 2.1 and 19.84% on 4.0 shows how much the benchmark version decides the story. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Family Dense Reward calibrates semantic progress across task families",
+      "class": "fact"
+     },
+     {
+      "text": ", and bounded partial credit is the softest part of that target.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s04.tie",
+    "runs": [
+     {
+      "text": "Terminal-RSI trains on verified trajectories",
+      "class": "fact"
+     },
+     {
+      "text": " from the same Terminal-Bench family whose verifiers the hardening loop was built to audit.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s05.headline",
+    "runs": [
+     {
+      "text": "Copilot now opens security-fix pull requests only after CodeQL confirms the alert closed",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s05.body",
+    "runs": [
+     {
+      "text": "GitHub made agentic autofix for code scanning alerts generally available for Code Security and Advanced Security customers on GitHub Enterprise Cloud, including data residency",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The agent explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request that includes a summary, why it closes the alert, and the validation steps taken",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "It supports alerts on the repository's default branch only; alerts detected solely on pull requests or other branches cannot be assigned to Copilot",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "An enterprise administrator must enable the new Agentic autofix policy before an org or repo admin can turn it on",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "It consumes AI Credits from the Code Security budget plus GitHub Actions minutes",
+      "class": "fact"
+     },
+     {
+      "text": ".",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s05.tryIt",
+    "runs": [
+     {
+      "text": "Turn it on for one repository first, since ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the policy chain runs enterprise admin, then org or repo admin",
+      "class": "fact"
+     },
+     {
+      "text": ", and watch what ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the AI usage section of enterprise billing reports under Advanced Security",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Set a SKU level budget for Code Security AI credits",
+      "class": "fact"
+     },
+     {
+      "text": " before you widen it. When a PR lands, read the validation steps rather than the summary — ",
+      "class": "interpretation"
+     },
+     {
+      "text": "CodeQL closure is the only thing the agent confirmed",
+      "class": "fact"
+     },
+     {
+      "text": ".",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s05.tie",
+    "runs": [
+     {
+      "text": "CodeQL closure is this feature's acceptance test",
+      "class": "fact"
+     },
+     {
+      "text": ", and the verifier-hardening paper is about acceptance tests that can be made to pass without the work.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s06.headline",
+    "runs": [
+     {
+      "text": "Some Amp users burn 10 billion tokens a week",
+      "class": "fact"
+     },
+     {
+      "text": ", and ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the harness picks the model",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s06.body",
+    "runs": [
+     {
+      "text": "OpenAI published a customer story on Amp, which chooses and recommends models based on what works best for its users, with OpenAI models accounting for the majority of tokens used in Amp",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Quinn describes some Amp users consuming 10 billion tokens a week, and argues that watching every increment of usage holds people back from finding out what an agent can do; Amp's Sign in with ChatGPT integration gives users access to more tokens and models including GPT-6 Astra",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Amp also announced Puck, a conversational assistant that launches and coordinates other agents, with Calling Puck powered by GPT-Live-1 for real-time voice, including from a watch",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Amp's own 20-person team uses agents for marketing work, including documentation and design pages",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "The stated reason for model selection is transparency about safeguards",
+      "class": "fact"
+     },
+     {
+      "text": " rather than a benchmark result, so the selection logic is a product judgment users inherit.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s06.tie",
+    "runs": [
+     {
+      "text": "Amp's harness picks the model for the user",
+      "class": "fact"
+     },
+     {
+      "text": "; GitHub's new policy API has the enterprise pick it for the team.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s07.headline",
+    "runs": [
+     {
+      "text": "Copilot model availability is now scriptable across enterprises, teams, apps and orgs",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "story.s07.body",
+    "runs": [
+     {
+      "text": "GitHub shipped REST API endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Together the endpoints make it easier to manage Copilot model availability across an enterprise",
+      "class": "fact"
+     },
+     {
+      "text": ". ",
+      "class": "interpretation"
+     },
+     {
+      "text": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
+      "class": "fact"
+     },
+     {
+      "text": ". Delegation is the catch: with control spread across modes and scopes, the answer to which model a given team is using lives at more than one level.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s07.tryIt",
+    "runs": [
+     {
+      "text": "Write a small script that reads model policy for every organization you own and prints the effective model list, since ",
+      "class": "interpretation"
+     },
+     {
+      "text": "the endpoints cover enterprises, enterprise teams, enterprise apps, and organizations",
+      "class": "fact"
+     },
+     {
+      "text": ". Run it before and after any deprecation so you have a diff rather than a support ticket.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "story.s07.tie",
+    "runs": [
+     {
+      "text": "The October 19, 2026 deprecation",
+      "class": "fact"
+     },
+     {
+      "text": " is the first migration these endpoints make auditable.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "divider.s01",
+    "runs": [
+     {
+      "text": "The reward signal under attack",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "divider.s03",
+    "runs": [
+     {
+      "text": "Model choice becomes configuration",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "closing.line.1",
+    "runs": [
+     {
+      "text": "A mocked app taught a phone agent to go from 28.8% to 48.1%.",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "closing.line.2",
+    "runs": [
+     {
+      "text": "A verifier can be attacked into awarding full credit for nothing.",
+      "class": "fact"
+     }
+    ]
+   },
+   {
+    "path": "closing.summary",
+    "runs": [
+     {
+      "text": "The week's research and the week's shipping converged on the same component: the program that decides an agent succeeded. ",
+      "class": "interpretation"
+     },
+     {
+      "text": "MAI-Gym and Terminal-RSI train against verifiers, GitHub's agentic autofix ships one into production review",
+      "class": "fact"
+     },
+     {
+      "text": ", and the hardening paper shows all of them can be made to pass without the work.",
+      "class": "interpretation"
+     }
+    ]
+   },
+   {
+    "path": "closing.oneThing",
+    "runs": [
+     {
+      "text": "Spend one hour trying to cheat your own eval harness. Whatever earns full credit without doing the task is the first thing to move into a sandbox the agent cannot modify.",
+      "class": "interpretation"
+     }
+    ]
+   }
+  ]
+ },
+ "problems": {
+  "learning.para.2": [
+   "essay paragraph 2: rule 1: the opening sentence names no company or person"
+  ],
+  "learning.para.6": [
+   "essay paragraph 6: rule 1: the opening sentence carries no number"
+  ],
+  "learning.para.7": [
+   "essay paragraph 7: rule 1: the opening sentence carries no number",
+   "essay paragraph 7: rule 1: the opening sentence carries no date",
+   "essay paragraph 7: rule 1: a paragraph of argument with no number in it"
+  ],
+  "learning.para.8": [
+   "essay paragraph 8: rule 1: the opening sentence carries no number",
+   "essay paragraph 8: rule 1: the opening sentence carries no date",
+   "essay paragraph 8: rule 1: a paragraph of argument with no number in it"
+  ],
+  "story.s01.tryIt": [
+   "s01 tryIt sentence 2: rule 2: the subject is the abstract noun 'anything', not a named company or person"
+  ],
+  "story.s01.feature.3": [
+   "s01 feature paragraph 3 sentence 1: rule 2: the subject is the abstract noun 'mechanism', not a named company or person"
+  ],
+  "story.s05.tryIt": [
+   "s05 tryIt sentence 1: rule 5: a stage direction tells the reader how to read the next sentence: 'watch what'"
+  ]
+ },
+ "replaced": [
+  "learning.para.2",
+  "learning.para.6",
+  "learning.para.7",
+  "learning.para.8",
+  "story.s01.tryIt",
+  "story.s01.feature.3",
+  "story.s05.tryIt"
+ ]
+}

@@ -1,0 +1,31 @@
+{
+ "run": "2026-W43-r3",
+ "stories": 7,
+ "composer_model": "claude-opus-5",
+ "composer_cost_usd": 0.6745,
+ "grader_cost_usd": 0.0413,
+ "revised_fields": [
+  "learning.para.2",
+  "learning.para.7"
+ ],
+ "problems_before_revision": {
+  "learning.para.2": 1,
+  "learning.para.7": 1
+ },
+ "ledger_before_after_usd": [
+  7.6821,
+  8.398
+ ],
+ "over_cost_note": false,
+ "failures": [
+  "learning.para.6: the opening clause is classed as interpretation, but an essay paragraph opens on a dated, attributed fact"
+ ],
+ "words": {
+  "thread_body": 100,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 358,
+   "s02": 391
+  }
+ }
+}

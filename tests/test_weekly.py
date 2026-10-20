@@ -20,7 +20,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from agents import briefs, budget, excerpts, framer, items, reader, runs, weekly  # noqa: E402
+from agents import composer, briefs, budget, excerpts, framer, items, reader, runs, weekly  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 from tests.test_reader import ATOM, ATOM_FEED, HF, HF_FEED, HN, HN_FEED, RSS, RSS_FEED, FakeClient  # noqa: E402
 
@@ -153,6 +153,22 @@ def canned_framing(raw_day):
     return {"thread": thread, "threadSplit": thread_split, "items": out_items}
 
 
+REAL_EDITION_FAILURES = composer.edition_failures
+
+
+def canned_composed(wide_day):
+    ids = list(composer.story_ids(wide_day))
+    return {
+        "thread": {"lines": ["Line one.", "Line two."], "body": "A thread body."},
+        "learning": {"headline": "An essay headline", "paras": ["On October 1, 2026, Acme did 1 thing."], "notes": [],
+                     "drawnFrom": ids[:2], "doDifferently": "Do it differently."},
+        "storiesTitle": "The stories",
+        "stories": [{"id": sid, "headline": f"Story {sid}", "hashtags": ["#Agents"], "body": f"Body of {sid}.", "featureParas": None, "tryIt": None, "tie": None}
+                    for sid in ids],
+        "dividers": [], "closing": {"lines": ["One.", "Two."], "summary": "A summary.", "oneThing": "Try one thing."}, "splits": [],
+    }
+
+
 def clean_verdict():
     claim = {"claim": "A factual claim.", "supported": True, "supporting_span": "a span", "span_verified": True}
     return {"confidence": 0.95, "claims": [claim], "unsupported_claims": [], "grader_errors": [],
@@ -164,8 +180,9 @@ class Pipeline:
 
     def start(self):
         self.client = FakeClient(unique=True, text=PAGE)
-        self.framer_calls, self.check_calls = [], []
+        self.framer_calls, self.check_calls, self.compose_calls = [], [], []
         self.fail_framer = 0
+        self.edition_problems = []
 
         def frame_day(client, system_prompt, profile, raw_day):
             self.framer_calls.append(raw_day)
@@ -179,7 +196,21 @@ class Pipeline:
             verdicts = {i["id"]: clean_verdict() for i in raw_day["items"]}
             return verdicts, clean_verdict(), SimpleUsage()
 
+        def compose(client, system_prompt, profile, wide_day, framing, label, published=None, *, conn=None):
+            self.compose_calls.append((wide_day, label, published))
+            composed = canned_composed(wide_day)
+            return composed, {"first_draft": composed, "problems": {}, "replaced": []}, 0.2
+
+        def check_composed(client, composed, wide_day, published, *, user_id, conn=None):
+            payload = composer.grading_units(composed, wide_day, published)
+            return {u["id"]: clean_verdict() for u in payload["items"]}, clean_verdict(), SimpleUsage(), payload
+
         self.patches = [
+            unittest.mock.patch.object(composer, "compose_with_revision", compose),
+            unittest.mock.patch.object(composer, "check_faithfulness", check_composed),
+            # The composer's own gates are proved in tests/test_composer.py; here only the wiring is under test.
+            unittest.mock.patch.object(composer, "edition_failures",
+                                       lambda *a, **k: list(self.edition_problems) if self.edition_problems is not None else REAL_EDITION_FAILURES(*a, **k)),
             unittest.mock.patch.object(framer, "frame_day", frame_day),
             unittest.mock.patch.object(framer, "check_faithfulness", check),
             unittest.mock.patch.object(reader, "FEEDS", [RSS_FEED, ATOM_FEED, HF_FEED, HN_FEED]),
@@ -247,6 +278,48 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         self.assertEqual(set(shown), {"id", "category", "headline", "tags", "source_excerpt", "sources"})   # the golden shape
         # Run outputs hold pointers; the writing is in artifacts.
         self.assertEqual(runs.stage_output(self.conn, WEEK, "framer")["artifact"], "framer")
+
+    def test_w1b_the_composed_edition_is_stored_with_the_brief_and_was_shown_the_fuller_excerpts(self):
+        self.run_week()
+        _id, body, _at = briefs.get(self.conn, WEEK)
+        edition = body["edition"]
+        self.assertEqual([s["itemId"] for s in edition["stories"]], [i["id"] for i in body["items"]])
+        self.assertEqual([s["id"] for s in edition["stories"]], [f"s{n:02d}" for n in range(1, len(body["items"]) + 1)])
+        for story in edition["stories"]:
+            self.assertEqual(sum(s["primary"] for s in story["sources"]), 1)
+        self.assertEqual(len(edition["learning"]["numbers"]), 3)
+        self.assertIn("units", edition["faithfulness"])
+        wide_day, label, _published = self.compose_calls[0]
+        self.assertTrue(label)                                                           # the Reader's window label reached the composer
+        short = self.framer_calls[0]["items"][0]["source_excerpt"]
+        self.assertGreaterEqual(len(wide_day["items"][0]["source_excerpt"]), len(short))   # never less than the first pass saw
+        self.assertEqual(self.framer_calls[0]["items"][0]["source_excerpt"], short)         # the first pass is untouched
+
+    def test_w1c_a_composer_failure_blocks_publishing(self):
+        self.edition_problems = ["style — thread line 1 sentence 1: rule 5: a stage direction"]
+        with self.assertRaises(weekly.GateFailed):
+            self.run_week()
+        self.assertIsNone(briefs.get(self.conn, WEEK))
+        self.assertEqual([r[2] for r in self.stages()], ["done", "done", "failed"])
+
+    def test_w1d_the_real_composer_gates_run_in_the_gates_stage(self):
+        self.edition_problems = None                      # no stand-in: composer.edition_failures runs on the canned prose, which has no splits
+        with self.assertRaises(weekly.GateFailed) as failed:
+            self.run_week()
+        self.assertIn("no split", str(failed.exception))
+        self.assertIsNone(briefs.get(self.conn, WEEK))
+
+    def test_w1e_a_failed_composing_pass_keeps_the_paid_first_pass_and_blocks_the_edition(self):
+        def boom(*a, **k):
+            raise RuntimeError("Response hit max_tokens and the JSON is truncated.")
+        with unittest.mock.patch.object(composer, "compose_with_revision", boom):
+            with self.assertRaises(weekly.GateFailed) as failed:
+                self.run_week()
+        self.assertIn("composing pass produced nothing", str(failed.exception))
+        self.assertIn("max_tokens", str(failed.exception))
+        self.assertEqual(len(self.framer_calls), 1)                                   # the first pass ran once and its artifact exists
+        self.assertEqual([r[2] for r in self.stages()], ["done", "done", "failed"])
+        self.assertIsNone(briefs.get(self.conn, WEEK))
 
     def test_w2_a_failed_framer_resumes_without_refetching_or_repaying_the_reader(self):
         self.fail_framer = 1

@@ -1,0 +1,39 @@
+{
+ "run": "2026-W43-r3",
+ "stories": 7,
+ "composer_model": "claude-opus-5",
+ "composer_cost_usd": 0.7747,
+ "grader_cost_usd": 0.0453,
+ "revised_fields": [
+  "story.s03.tryIt",
+  "learning.para.2",
+  "learning.para.4",
+  "learning.para.6",
+  "learning.para.7",
+  "learning.para.8"
+ ],
+ "problems_before_revision": {
+  "story.s03.tryIt": 1,
+  "learning.para.2": 1,
+  "learning.para.4": 1,
+  "learning.para.6": 1,
+  "learning.para.7": 1,
+  "learning.para.8": 1
+ },
+ "ledger_before_after_usd": [
+  6.1813,
+  7.0013
+ ],
+ "over_cost_note": false,
+ "failures": [
+  "week: unsupported (composed) — Two papers hardened the verifiers that score agents"
+ ],
+ "words": {
+  "thread_body": 99,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 400,
+   "s02": 350
+  }
+ }
+}

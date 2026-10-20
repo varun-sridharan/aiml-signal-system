@@ -1,0 +1,17 @@
+rule1 FAILURES: 6
+rule2 FAILURES: 3
+rule3 FAILURES: 2
+rule4 FAILURES: 3
+rule5 FAILURES: 3
+edition_skips_closing FAILURES: 1
+slots_off FAILURES: 15
+coverage_off FAILURES: 2
+faithfulness_off FAILURES: 1
+completeness_off FAILURES: 1
+essay_sees_everything FAILURES: 1
+revision_off FAILURES: 7
+revision_unbounded FAILURES: 1
+revision_accepts_unlisted FAILURES: 2
+fact_floor_off FAILURES: 4
+arithmetic_off FAILURES: 1
+headline_fields_unchecked FAILURES: 2

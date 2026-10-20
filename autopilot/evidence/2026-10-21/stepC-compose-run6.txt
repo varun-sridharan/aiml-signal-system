@@ -1,0 +1,31 @@
+{
+ "stories": 7,
+ "composer_cost_usd": 0.7747,
+ "grader_cost_usd": 0.0453,
+ "revised_fields": [
+  "story.s03.tryIt",
+  "learning.para.2",
+  "learning.para.4",
+  "learning.para.6",
+  "learning.para.7",
+  "learning.para.8"
+ ],
+ "problems_before_revision": {
+  "story.s03.tryIt": 1,
+  "learning.para.2": 1,
+  "learning.para.4": 1,
+  "learning.para.6": 1,
+  "learning.para.7": 1,
+  "learning.para.8": 1
+ },
+ "words": {
+  "thread_body": 99,
+  "essay_paragraphs": 8,
+  "feature_words": {
+   "s01": 400,
+   "s02": 350
+  }
+ }
+}
+1 gate failure(s)
+  - week: unsupported (composed) — Two papers hardened the verifiers that score agents
