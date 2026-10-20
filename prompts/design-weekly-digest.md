@@ -232,3 +232,36 @@ shows the saved minutes with a small `measured` or `edited` marker.
 of the four NEWS sections; add `homework.measured` as `{minutes, sessions, from, to}` (optional; absent
 means not measured) and a `minutesSource` of `measured` or `edited` on each `previous[]` row; feedback
 and the reader's edit stay UI state, not slots.
+
+---
+
+## Revision 2 · 2026-10-20 · headline highlights in each section's colour
+
+Paste everything below into the same Claude Design project, as a follow-up.
+
+---
+
+One change; keep everything else exactly as it is.
+
+**Each NEWS section's headline highlights its key phrase in that section's colour**, the way "The week
+in one thread" already does with *Judgment didn't.* in burnt amber. Apply the same treatment to the
+other three:
+
+- **Learning for the week** (blue): highlight the turn of the headline, for example
+  "Inference fell 80% in a quarter. The cost of checking an answer **did not move.**"
+- **This week's stories** (purple): for example "What happened, **in order of consequence**".
+- **What are industry leaders talking?** (olive): for example "Five voices on **the same week**".
+
+Rules for the highlight:
+
+- **One phrase per headline**, at most about five words, and the rest of the headline stays in the
+  body ink colour. It marks the turn or the consequence, never a whole sentence.
+- The highlight is **the same hue as its section's kicker, arrow and rule**, so a section reads as one
+  colour family. Check every highlight colour at 4.5:1 or better against the page at headline size;
+  darken a hue slightly for headline text if needed, keeping the family recognisable.
+- It is visible when the section is collapsed (in the collapsed header) and when it is open.
+- A headline may have no highlight; it then renders entirely in ink, never with a forced highlight.
+
+**Slot list:** a headline carries its highlight as an inline token, `[[hl|phrase]]`, for
+`thread.lines`, `learning.headline`, `stories.title` and `leaders.title`. At most one token per headline.
+Re-export the page and the slot list.
