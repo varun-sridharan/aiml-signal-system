@@ -488,8 +488,15 @@ def ground_truth_for(raw_day: dict) -> tuple[dict, str]:
     return per_item, "\n".join(per_item.values())
 
 
+# WHAT: the Unicode hyphens and dashes, folded to a plain hyphen before any text is compared.
+# CONCEPT: a correct quote must not fail because a page used a non-breaking hyphen (U+2011) where
+# the grader typed U+2010. Applied to the excerpt and to the quote alike, so it can only make two
+# spellings of one dash equal; it adds no way to match different words. Nothing else is folded.
+_DASHES = dict.fromkeys(map(ord, "‐‑‒–—―−﹘﹣－"), "-")
+
+
 def _normalise_text(text: str) -> str:
-    return " ".join((text or "").split()).lower()
+    return " ".join((text or "").translate(_DASHES).split()).lower()
 
 
 # WHAT: distinctive, checkable tokens inside a claim — numbers, dates, versions, names.
@@ -592,8 +599,10 @@ RETRY_NOTE = (
 )
 
 
-# Off only for the measurement that compares the grader with and without the retry (data/evals/measure_retry.py).
-RETRY_ON_LIFT = True
+# Off since 2026-10-20 (decision log, "Three gate decisions"): in its one real firing it turned a
+# correct verdict wrong, and every planted fabrication was caught without it. The code and its tests
+# stay; data/evals/measure_retry.py flips this to compare the grader with and without it.
+RETRY_ON_LIFT = False
 
 
 def _unit_payload(raw_day: dict, framing: dict, unit_id: str, lifted: list) -> dict:

@@ -1,0 +1,682 @@
+[
+ {
+  "case": "2026-08-04",
+  "faithfulness": {
+   "passed": true,
+   "failures": [],
+   "false_positives": 0,
+   "false_negatives": 0,
+   "cost": 0.010342,
+   "retried_units": [],
+   "lifted": {},
+   "unsupported": {},
+   "verdicts": {
+    "2026-08-04-mcp": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "stateless servers can be scaled horizontally behind a plain load balancer, with no sticky sessions and no shared session store",
+       "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store.",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "cross-version compatibility breaks",
+       "supporting_span": "The change breaks cross-version compatibility",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock",
+       "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-kimi-k3": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "2.8T open weights at 1M context",
+       "supporting_span": "at 2.8T parameters with a 1M-token context window",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "per-call cost compounds across many calls per task",
+       "supporting_span": "where per-call cost compounds across many calls per task",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-istar": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "iStar scores each intermediate action instead of only on the final outcome in multi-turn agentic RL",
+       "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions rather than only on the final outcome.",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "+6.3% success improvement on WebShop and VisualSokoban",
+       "supporting_span": "It reports a +6.3% success improvement on WebShop and VisualSokoban.",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Results are benchmark-only, and the authors concede the difficulty concentrates in step-reward design",
+       "supporting_span": "Results are benchmark-only, and the paper notes that step-reward design is where the difficulty concentrates.",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-terminal-bench": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "GPT-5.6 Sol at 89.5%",
+       "supporting_span": "GPT-5.6 Sol scores 89.5%",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Opus 5 at 89.1%",
+       "supporting_span": "Opus 5 scores 89.1%",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "0.4-point spread between GPT-5.6 Sol and Opus 5",
+       "supporting_span": "a 0.4-point gap at the top of the coding-agent leaderboard",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-mega-rounds": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "OpenAI's $122B round at $852B post",
+       "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Anthropic at $965B",
+       "supporting_span": "Anthropic is valued at $965B",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-vc-record": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "$510B in H1",
+       "supporting_span": "Global venture funding reached a record $510B in H1 2026",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "AI taking ~80% of Q1 dollars",
+       "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "2026-08-04-export-controls": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "Blackwell-class exports banned",
+       "supporting_span": "which bans export of Blackwell-class chips",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "H200 moved to case-by-case licensing",
+       "supporting_span": "moves H200 exports to case-by-case licensing",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "thread": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1",
+       "supporting_span": "On Terminal-Bench 2.1, GPT-5.6 Sol scores 89.5% and Opus 5 scores 89.1% — a 0.4-point gap",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "OpenAI prices at $852B",
+       "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Anthropic prices at $965B",
+       "supporting_span": "Anthropic is valued at $965B",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "AI absorbs ~80% of Q1 venture dollars",
+       "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "trading stateful sessions for stateless horizontal scale",
+       "supporting_span": "The 2026-07-28 MCP specification changes the core transport from stateful sessions to stateless request/response. Stateless servers can be scaled horizontally behind an ordinary load balancer",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Kimi K3's 2.8T open weights",
+       "supporting_span": "at 2.8T parameters",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "iStar's step-reward credit assignment",
+       "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "the AI OVERWATCH Act's Blackwell ban",
+       "supporting_span": "The House advanced the AI OVERWATCH Act, which bans export of Blackwell-class chips",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    }
+   }
+  }
+ },
+ {
+  "case": "negative-01",
+  "faithfulness": {
+   "passed": false,
+   "failures": [
+    "thread: false positive — Anthropic's $965B valuation"
+   ],
+   "false_positives": 1,
+   "false_negatives": 0,
+   "cost": 0.005293,
+   "retried_units": [],
+   "lifted": {
+    "negative-01-mcp": [
+     "The change breaks cross-version compatibility"
+    ]
+   },
+   "unsupported": {
+    "negative-01-mega-rounds": [
+     "Anthropic raised $965B"
+    ],
+    "thread": [
+     "Anthropic's $965B valuation"
+    ]
+   },
+   "verdicts": {
+    "negative-01-mcp": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "The change breaks cross-version compatibility",
+       "supporting_span": "The change breaks cross-version compatibility",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock",
+       "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "horizontal scale behind a plain load balancer, no sticky sessions, no shared session store",
+       "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": [
+      "The change breaks cross-version compatibility"
+     ]
+    },
+    "negative-01-mega-rounds": {
+     "confidence": 0.75,
+     "claims": [
+      {
+       "claim": "Anthropic raised $965B",
+       "supporting_span": "Anthropic is valued at $965B",
+       "supported": false,
+       "span_verified": true
+      },
+      {
+       "claim": "OpenAI closed a record $122B round at an $852B post-money valuation",
+       "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under",
+       "supporting_span": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "they move both API pricing and what you pay for talent",
+       "supporting_span": "moving both API pricing and talent costs",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [
+      "Anthropic raised $965B"
+     ],
+     "grader_errors": [],
+     "possible_false_alarms": [
+      "'Anthropic raised $965B' — but $965B appears in the excerpt"
+     ],
+     "lifted_claims": []
+    },
+    "thread": {
+     "confidence": 0.8,
+     "claims": [
+      {
+       "claim": "OpenAI's record $122B round at $852B post",
+       "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Anthropic's $965B valuation",
+       "supporting_span": "Anthropic is valued at $965B",
+       "supported": false,
+       "span_verified": true
+      },
+      {
+       "claim": "set the pricing umbrella over API pricing and talent costs",
+       "supporting_span": "set the pricing umbrella that downstream builders operate under, moving both API pricing and talent costs",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "stateless request/response scales horizontally behind an ordinary load balancer",
+       "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "at the price of broken cross-version compatibility and four deprecations on a 12-month runway",
+       "supporting_span": "The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [
+      "Anthropic's $965B valuation"
+     ],
+     "grader_errors": [],
+     "possible_false_alarms": [
+      "\"Anthropic's $965B valuation\" — but $965B appears in the excerpt"
+     ],
+     "lifted_claims": []
+    }
+   }
+  }
+ },
+ {
+  "case": "negative-02",
+  "faithfulness": {
+   "passed": true,
+   "failures": [],
+   "false_positives": 0,
+   "false_negatives": 0,
+   "cost": 0.004444,
+   "retried_units": [],
+   "lifted": {},
+   "unsupported": {
+    "negative-02-atlas": [
+     "Atlas-3 scores 58.4% on SWE-Verify"
+    ]
+   },
+   "verdicts": {
+    "negative-02-atlas": {
+     "confidence": 0.33,
+     "claims": [
+      {
+       "claim": "Atlas-3 scores 58.4% on SWE-Verify",
+       "supporting_span": "Atlas-3 scores 71.2% on the SWE-Verify benchmark and 58.4% on the Terminal-Ops benchmark",
+       "supported": false,
+       "span_verified": true
+      },
+      {
+       "claim": "Atlas-3 ships with a 400K-token context window",
+       "supporting_span": "ships with a 400K-token context window",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "available from today in the API",
+       "supporting_span": "available from today in the API",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [
+      "Atlas-3 scores 58.4% on SWE-Verify"
+     ],
+     "grader_errors": [],
+     "possible_false_alarms": [
+      "'Atlas-3 scores 58.4% on SWE-Verify' — but 58.4% appears in the excerpt"
+     ],
+     "lifted_claims": []
+    },
+    "negative-02-parcel": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "Parcel 2.0 adds durable execution",
+       "supporting_span": "The Parcel agent framework 2.0 adds durable execution",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "a crashed run resumes from its last completed step",
+       "supporting_span": "a run that crashes resumes from its last completed step",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Steps are checkpointed to a Postgres table",
+       "supporting_span": "Steps are checkpointed to a Postgres table",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "retries use exponential backoff capped at five attempts",
+       "supporting_span": "retries use exponential backoff capped at five attempts",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "thread": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "Atlas-3 ships a 400K-token context window",
+       "supporting_span": "ships with a 400K-token context window",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Parcel 2.0 resumes crashed runs from their last completed step",
+       "supporting_span": "a run that crashes resumes from its last completed step",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    }
+   }
+  }
+ },
+ {
+  "case": "negative-03",
+  "faithfulness": {
+   "passed": true,
+   "failures": [],
+   "false_positives": 0,
+   "false_negatives": 0,
+   "cost": 0.004198,
+   "retried_units": [],
+   "lifted": {},
+   "unsupported": {
+    "negative-03-v1": [
+     "The v1 completions endpoint stops accepting requests on 2026-12-01"
+    ]
+   },
+   "verdicts": {
+    "negative-03-v1": {
+     "confidence": 0.67,
+     "claims": [
+      {
+       "claim": "The v1 completions endpoint stops accepting requests on 2026-12-01",
+       "supporting_span": null,
+       "supported": false,
+       "span_verified": false
+      },
+      {
+       "claim": "existing keys migrate to v2 in 2027-01",
+       "supporting_span": "existing keys migrate to v2 in 2027-01",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "streaming responses are unchanged between the two versions",
+       "supporting_span": "Streaming responses are unchanged between the two versions",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [
+      "The v1 completions endpoint stops accepting requests on 2026-12-01"
+     ],
+     "grader_errors": [],
+     "possible_false_alarms": [
+      "'The v1 completions endpoint stops accepting requests on 2026-12-01' — but 2026 appears in the excerpt"
+     ],
+     "lifted_claims": []
+    },
+    "negative-03-beacon": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "Beacon now supports hybrid search, combining keyword and embedding scores in one query",
+       "supporting_span": "The Beacon vector store now supports hybrid search, combining keyword and embedding scores in one query",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "It is available on all paid plans",
+       "supporting_span": "Hybrid search is available on all paid plans",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "adds no per-query charge",
+       "supporting_span": "adds no per-query charge",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "existing indexes are upgraded in place without a rebuild",
+       "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "thread": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "Beacon upgrades existing indexes in place without a rebuild",
+       "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "existing API keys migrate to v2 in 2027-01",
+       "supporting_span": "existing keys migrate to v2 in 2027-01",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    }
+   }
+  }
+ },
+ {
+  "case": "negative-04",
+  "faithfulness": {
+   "passed": true,
+   "failures": [],
+   "false_positives": 0,
+   "false_negatives": 0,
+   "cost": 0.004305,
+   "retried_units": [],
+   "lifted": {},
+   "unsupported": {
+    "negative-04-launch": [
+     "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+    ]
+   },
+   "verdicts": {
+    "negative-04-launch": {
+     "confidence": 0.67,
+     "claims": [
+      {
+       "claim": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence",
+       "supporting_span": null,
+       "supported": false,
+       "span_verified": false
+      },
+      {
+       "claim": "it will ship as an optimised container in NIM on launch day",
+       "supporting_span": "NVIDIA said it will ship as an optimised container in NIM on launch day",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Neither company gave a price for hosted access",
+       "supporting_span": "Neither company gave a price for hosted access",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [
+      "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+     ],
+     "grader_errors": [],
+     "possible_false_alarms": [
+      "'NVIDIA said the new model will be open-weight under an Apache 2.0 licence' — but 2.0 appears in the excerpt"
+     ],
+     "lifted_claims": []
+    },
+    "negative-04-saferoute": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "ETH Zurich researchers released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
+       "supporting_span": "Researchers at ETH Zurich released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "It is released under CC-BY-4.0",
+       "supporting_span": "The dataset is released under CC-BY-4.0",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "the annotation work took eleven weeks",
+       "supporting_span": "the annotation work took eleven weeks",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    },
+    "thread": {
+     "confidence": 1.0,
+     "claims": [
+      {
+       "claim": "SafeRoute gives agent safety evals 40,000 labelled tool-call traces",
+       "supporting_span": "a dataset of 40,000 tool-call traces labelled for unsafe actions",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "the new open-weight model ships as an optimised container on launch day",
+       "supporting_span": "it will ship as an optimised container in NIM on launch day",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "grader_errors": [],
+     "possible_false_alarms": [],
+     "lifted_claims": []
+    }
+   }
+  }
+ }
+]

@@ -63,6 +63,18 @@ def structural_failures(profile: dict, day: dict, framing: dict | None = None) -
     return failures
 
 
+NINETY_PARTS = ("method", "result", "caveat")
+
+
+def _is_radar(item: dict) -> bool:
+    return "RADAR" in (item.get("tags") or [])
+
+
+def _full_ninety(ninety) -> bool:
+    """A 90-second summary with all three parts written; a part left empty is not a summary."""
+    return isinstance(ninety, dict) and all(isinstance(ninety.get(part), str) and ninety[part].strip() for part in NINETY_PARTS)
+
+
 def completeness_failures(raw_day: dict, framing: dict, verdicts: dict, thread_verdict: dict | None) -> list[str]:
     """Anything that would reach publication UNGRADED. Empty means every story was graded.
 
@@ -76,9 +88,12 @@ def completeness_failures(raw_day: dict, framing: dict, verdicts: dict, thread_v
     for item in raw_day["items"]:
         ident = item["id"]
         # A story is written as a `why`, or as an example together with a 90-second summary (the
-        # golden iStar item has no `why`); a lone connection or a lone example is not a story.
+        # golden iStar item has no `why`), or, since 2026-10-20, as a RADAR story whose complete
+        # Method / Result / Caveat summary is the whole write-up; a lone connection or a lone
+        # example is not a story, and every other story still needs its `why`.
         entry = written.get(ident) or {}
-        if not (entry.get("why") or (entry.get("example") and entry.get("ninety"))):
+        if not (entry.get("why") or (entry.get("example") and entry.get("ninety"))
+                or (_is_radar(item) and _full_ninety(entry.get("ninety")))):
             failures.append(f"{ident}: the Framer wrote nothing for this story")
         verdict = verdicts.get(ident)
         if not verdict:

@@ -62,7 +62,25 @@ LIFTED = claim("Anthropic is valued at $965B", True, "Anthropic is valued at $96
 HONEST = claim("Anthropic raised $965B", False, None)
 
 
+class RetryIsOffByDefault(unittest.TestCase):
+    def test_a_lift_does_not_retry_unless_the_switch_is_on(self):
+        self.assertFalse(framer.RETRY_ON_LIFT)                                       # the 2026-10-20 decision
+        script = Script(verdict_json([LIFTED]))
+        with unittest.mock.patch.object(framer.llm, "call", script):
+            verdicts, _, _ = framer.check_faithfulness(object(), RAW, FRAMING, user_id="t", phase="p")
+        self.assertEqual(len(script.requests), 1)                                    # one call: no second pass
+        self.assertEqual(verdicts["a"]["lifted_claims"], ["Anthropic is valued at $965B"])   # still reported
+        self.assertNotIn("retried", verdicts["a"])
+
+
 class BoundedRetry(unittest.TestCase):
+    """With the switch on (it is off by default), a lifted claim retries that unit once."""
+
+    def setUp(self):
+        patch = unittest.mock.patch.object(framer, "RETRY_ON_LIFT", True)
+        patch.start()
+        self.addCleanup(patch.stop)
+
     def grade(self, *answers):
         script = Script(*answers)
         with unittest.mock.patch.object(framer.llm, "call", script):

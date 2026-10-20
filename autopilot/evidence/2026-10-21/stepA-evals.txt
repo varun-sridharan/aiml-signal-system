@@ -1,0 +1,113 @@
+Framer evals — 5 golden case(s), 5 API call(s) (claude-haiku-4-5)
+
+========================================================================
+CASE 2026-08-04  (7 items)
+
+  STRUCTURAL (hard gate, no API)
+    ok    DO THIS only on AI items
+    ok    worked examples only on ['AI']
+    ok    every item has sources
+    ok    thread present and non-empty
+    ok    every fact/interpretation split reconstructs its field
+    ok    reading time and counts match the items
+
+  FAITHFULNESS (hard gate)
+    ok    2026-08-04-mcp  (3 claims, confidence 1.00)
+    ok    2026-08-04-kimi-k3  (2 claims, confidence 1.00)
+    ok    2026-08-04-istar  (3 claims, confidence 1.00)
+    ok    2026-08-04-terminal-bench  (3 claims, confidence 1.00)
+    ok    2026-08-04-mega-rounds  (2 claims, confidence 1.00)
+            regression 965b-is-supported: PASS — 'Anthropic at $965B' → 'Anthropic is valued at $965B'
+    ok    2026-08-04-vc-record  (2 claims, confidence 1.00)
+            regression 80pct-q1-is-supported: PASS — 'AI taking ~80% of Q1 dollars' → 'with AI companies taking roughly 80% of Q1 dollars'
+    ok    2026-08-04-export-controls  (2 claims, confidence 1.00)
+    ok    thread  (8 claims, confidence 1.00)
+            regression thread-graded-against-union: PASS — 'GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1' → 'On Terminal-Bench 2.1, GPT-5.6 Sol scores 89.5% and Opus 5 scores 89.1'
+    all units match their labels
+    false positives: 0 · false negatives: 0
+
+========================================================================
+CASE negative-01  (2 items)
+
+  STRUCTURAL (hard gate, no API)
+    ok    DO THIS only on AI items
+    ok    worked examples only on ['AI']
+    ok    every item has sources
+    ok    thread present and non-empty
+    ok    every fact/interpretation split reconstructs its field
+    ok    reading time and counts match the items
+
+  FAITHFULNESS (hard gate)
+    ok    negative-01-mcp  (3 claims, confidence 1.00)
+    ok    negative-01-mega-rounds  (4 claims, confidence 0.75)
+            regression raised-965b-is-unsupported: PASS — 'Anthropic raised $965B' → 'Anthropic is valued at $965B'
+    FAIL  thread  (5 claims, confidence 0.80)
+            FALSE POSITIVE  Anthropic's $965B valuation
+    false positives: 1 · false negatives: 0
+
+========================================================================
+CASE negative-02  (2 items)
+
+  STRUCTURAL (hard gate, no API)
+    ok    DO THIS only on AI items
+    ok    worked examples only on ['AI']
+    ok    every item has sources
+    ok    thread present and non-empty
+    ok    every fact/interpretation split reconstructs its field
+    ok    reading time and counts match the items
+
+  FAITHFULNESS (hard gate)
+    ok    negative-02-atlas  (3 claims, confidence 0.33)
+    ok    negative-02-parcel  (4 claims, confidence 1.00)
+    ok    thread  (2 claims, confidence 1.00)
+    all units match their labels
+    false positives: 0 · false negatives: 0
+
+========================================================================
+CASE negative-03  (2 items)
+
+  STRUCTURAL (hard gate, no API)
+    ok    DO THIS only on AI items
+    ok    worked examples only on ['AI']
+    ok    every item has sources
+    ok    thread present and non-empty
+    ok    every fact/interpretation split reconstructs its field
+    ok    reading time and counts match the items
+
+  FAITHFULNESS (hard gate)
+    ok    negative-03-v1  (3 claims, confidence 0.67)
+    ok    negative-03-beacon  (4 claims, confidence 1.00)
+    ok    thread  (2 claims, confidence 1.00)
+    all units match their labels
+    false positives: 0 · false negatives: 0
+
+========================================================================
+CASE negative-04  (2 items)
+
+  STRUCTURAL (hard gate, no API)
+    ok    DO THIS only on AI items
+    ok    worked examples only on ['AI']
+    ok    every item has sources
+    ok    thread present and non-empty
+    ok    every fact/interpretation split reconstructs its field
+    ok    reading time and counts match the items
+
+  FAITHFULNESS (hard gate)
+    ok    negative-04-launch  (3 claims, confidence 0.67)
+    ok    negative-04-saferoute  (3 claims, confidence 1.00)
+    ok    thread  (2 claims, confidence 1.00)
+    all units match their labels
+    false positives: 0 · false negatives: 0
+
+========================================================================
+SUMMARY
+  2026-08-04: structural PASS · faithfulness PASS (FP 0, FN 0)
+  negative-01: structural PASS · faithfulness FAIL (FP 1, FN 0)
+  negative-02: structural PASS · faithfulness PASS (FP 0, FN 0)
+  negative-03: structural PASS · faithfulness PASS (FP 0, FN 0)
+  negative-04: structural PASS · faithfulness PASS (FP 0, FN 0)
+
+  cost: $0.0286 this run · $2.72 month-to-date of $40.00
+
+  1 hard-gate failure(s):
+    ✗ negative-01 faithfulness: thread: false positive — Anthropic's $965B valuation
