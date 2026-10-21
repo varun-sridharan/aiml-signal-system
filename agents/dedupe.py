@@ -143,10 +143,12 @@ def _inside(short: Fingerprint, long_: Fingerprint) -> tuple[int, int] | None:
 
 
 def compare_fingerprints(a: Fingerprint, b: Fingerprint) -> Decision:
-    if a.norm == b.norm and a.words >= 1:
-        return Decision("same", "fingerprint", "identical text", {"words": a.words})
     if min(a.words, b.words) < MIN_WORDS:
+        # Checked BEFORE identity of text: two different addresses that return the same few words ("Please enable JavaScript",
+        # a cookie wall) are not the same article, and when in doubt the answer is different.
         return Decision("different", "default", f"a text under {MIN_WORDS} words is too short to compare")
+    if a.norm == b.norm:
+        return Decision("same", "fingerprint", "identical text", {"words": a.words})
     short, long_ = (a, b) if a.words <= b.words else (b, a)
     shared = len(a.shingles & b.shingles)
     resemblance = shared / max(1, len(a.shingles | b.shingles))

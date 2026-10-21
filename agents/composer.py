@@ -492,8 +492,8 @@ def how_made(considered: int, fetched: int, stories: int, merged: int, minutes: 
     """The 'how this edition was made' paragraph, from counts alone: no model writes about its own process."""
     dup = f", folded {merged} duplicate{'s' if merged != 1 else ''} into the story they repeated" if merged else ""
     return (f"The Reader looked at {considered} candidate links from {hosts} places, fetched {fetched} pages in full{dup}, and kept {stories} stories. "
-            f"About {minutes} minutes of reading stand behind them. Every factual clause in the edition was checked by a second model against the page it "
-            f"came from, and a story marked checked passed with no unsupported claim.")
+            f"About {minutes} minutes of reading stand behind them. Every clause the writer marked as a fact was checked by a second model against the page "
+            f"it came from; a count across stories and a figure the writer computed are its own and are not. A story marked checked had no unsupported claim.")
 
 
 def assemble_edition(composed: dict, raw_day: dict, framing: dict, verdicts: dict, week: dict, *, stats: dict, source_minutes: int,

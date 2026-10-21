@@ -180,8 +180,12 @@ class FingerprintEdges(unittest.TestCase):
     def test_no_text_and_short_text_are_different_unless_identical(self):
         self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", None), dedupe.Doc("https://b.example/x", "text")).verdict, "different")
         short = "A short note of nine words, nothing more here."
-        self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", short), dedupe.Doc("https://b.example/y", short)).verdict, "same")
-        self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", short), dedupe.Doc("https://b.example/y", short + " Plus one.")).verdict, "different")
+        for other in (short, short + " Plus one."):          # identical or not: too little text to say two addresses are one article
+            self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", short), dedupe.Doc("https://b.example/y", other)).verdict, "different")
+        wall = "Please enable JavaScript and cookies to continue."
+        self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/story-one", wall), dedupe.Doc("https://b.example/story-two", wall)).verdict, "different")
+        long_ = " ".join(["The same long article text repeated for forty words or more so that it is a real page."] * 5)
+        self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", long_), dedupe.Doc("https://b.example/y", long_)).verdict, "same")
 
     def test_page_furniture_and_case_and_whitespace_do_not_matter(self):
         a, b = docs("same-article-fetched-twice")

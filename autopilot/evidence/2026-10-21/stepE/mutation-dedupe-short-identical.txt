@@ -1,0 +1,16 @@
+======================================================================
+FAIL: test_no_text_and_short_text_are_different_unless_identical (tests.test_dedupe.FingerprintEdges)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/./tests/test_dedupe.py", line 184, in test_no_text_and_short_text_are_different_unless_identical
+    self.assertEqual(dedupe.decide(dedupe.Doc("https://a.example/x", short), dedupe.Doc("https://b.example/y", other)).verdict, "different")
+AssertionError: 'same' != 'different'
+- same
++ different
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.005s
+
+FAILED (failures=1)
+old ordering (identical short text merges): FAILURES: 1

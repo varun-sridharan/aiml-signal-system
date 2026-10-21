@@ -352,6 +352,9 @@ class Assembly(unittest.TestCase):
         self.assertEqual(edition["learning"]["numbers"], [["Candidate links considered", 1700], ["Stories synthesised", 5], ["Minutes of source reading", 34]])
         self.assertIn("1700 candidate links from 17 places", edition["learning"]["howMade"])
         self.assertIn("folded 2 duplicates", edition["learning"]["howMade"])
+        self.assertIn("marked as a fact was checked", edition["learning"]["howMade"])               # says what is checked...
+        self.assertIn("a count across stories and a figure the writer computed are its own and are not", edition["learning"]["howMade"])   # ...and what is not
+        self.assertNotIn("Every factual clause in the edition", edition["learning"]["howMade"])
         self.assertEqual(edition["learning"]["notes"], {"queue": ["review queue", "A review queue merges each agent's branch into one change."]})
 
     def test_checked_is_false_for_a_story_with_an_unsupported_claim(self):
