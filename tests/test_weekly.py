@@ -430,6 +430,21 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         raw = weekly.build_raw_day(self.conn, WEEK, ids, framer.load_json(framer.PROFILE_PATH))
         self.assertEqual([i["headline"] for i in raw["items"]], ["Grounded story with no figures"])
 
+    def test_w16b_the_first_pass_is_shown_the_page_with_plain_hyphens_and_quotes_and_the_stored_text_is_untouched(self):
+        reader.prepare(self.conn)
+        text = ("Amp builds on GPT\u20116 Astra and GPT\u2011Live\u20111, and the team\u2019s \u201cSign in with ChatGPT\u201d option gives users more tokens "
+                "to spend on larger tasks than before.")
+        url = "https://openai.com/index/amp-customer"
+        iid, _ = items.upsert(self.conn, url, "Amp story with no figures in the headline", NOW, relevance=(5, ["x"]))
+        eid = excerpts.store(self.conn, url, text, NOW)
+        items.attach_excerpt(self.conn, iid, eid)
+        raw = weekly.build_raw_day(self.conn, WEEK, [str(iid)], framer.load_json(framer.PROFILE_PATH))
+        shown = raw["items"][0]["source_excerpt"]
+        self.assertIn("GPT-6 Astra and GPT-Live-1", shown)
+        self.assertIn("team's \"Sign in with ChatGPT\" option", shown)
+        self.assertNotRegex(shown, "[\u2010-\u2012\u2018-\u201f]")
+        self.assertEqual(excerpts.get(self.conn, eid), text)                                   # write-once evidence is exactly what was fetched
+
     def test_w17_stages_are_stamped_when_they_run_and_the_edition_is_dated_when_it_was_made(self):
         ticks = iter(NOW + timedelta(minutes=m) for m in range(1, 200))
         self.run_week(clock=lambda: next(ticks))

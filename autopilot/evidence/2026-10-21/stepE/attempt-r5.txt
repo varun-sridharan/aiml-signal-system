@@ -1,0 +1,7 @@
+  not framed — Voxtral 3: 3 not in the excerpt
+  not framed — Scale Agentic Coding Workflows with Meta’s Muse Spark Open o: 300, 72 not in the excerpt
+  not framed — Upcoming deprecation of selected GitHub Copilot models in mi: November not in the excerpt
+  not framed — NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with : 3.5 not in the excerpt
+stopped: 3 hard-gate failure(s): coverage — ca75ed70-32c6-43fe-9db2-8c30fda2f7f5/why: split does not reconstruct the field; ab5c373b-fe19-466e-96cc-56ddf145f28b: unsupported — GPT-16 Astra, Ultrafast, GPT-Live-1 are models used in Amp; essay: unsupported (composed) — supports ten established benchmarks across mobile, computer, and web environments
+run 2026-W43-r5: starting at reader (adopting 2026-W43-r4's)
+exit=1

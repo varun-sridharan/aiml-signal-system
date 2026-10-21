@@ -188,7 +188,10 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
     for iid, url, domain, title, _score, topics, eid in rows:
         if per_domain.get(domain, 0) >= MAX_PER_DOMAIN or not items.surfaceable(conn, iid):
             continue
-        excerpt = lead(excerpts.get(conn, eid), prefer_meta=(domain == "arxiv.org"))
+        # The first pass is shown, and graded against, the same plain rendering of the page the composing pass is (straight_quotes):
+        # on 2026-10-20 the grader read the non-breaking hyphens of "GPT\u20116 Astra" as "GPT\u201016" in two attempts, and a correct story
+        # failed the literal span check for it. The stored excerpt is untouched; only what is shown and graded against is made plain.
+        excerpt = straight_quotes(lead(excerpts.get(conn, eid), prefer_meta=(domain == "arxiv.org")))
         if not excerpt:
             continue  # nothing readable on the page: not a story we can ground
         missing = headline_facts_missing(title, excerpt)

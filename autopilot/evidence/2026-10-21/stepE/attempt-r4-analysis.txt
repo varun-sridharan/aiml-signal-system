@@ -1,0 +1,11 @@
+Attempt 2026-W43-r4 (fresh Reader): stopped at the gates with ONE hard-gate failure, on a first-pass story.
+
+  failure : ab5c373b...: unsupported - "Amp builds on GPT-16 Astra, Ultrafast, GPT-Live-1, and Sign in with ChatGPT"
+  excerpt : "...agents can do with GPT‑6 Astra, Ultrafast, GPT‑Live‑1, and Sign in with ChatGPT."   (U+2011 non-breaking hyphens)
+  writing : the first pass wrote "GPT‑6 Astra, ..." -- correct to the source.
+  grader  : phrased its claim as "GPT-16" and quoted a span "GPT‐16 Astra" (a digit it invented while reading the U+2011 token), so the
+            literal span check (rightly) found the span absent from the excerpt.
+  verdict : a grader artefact on a typographic character, not a fabrication. The composing pass is immune (it is shown pages with these
+            characters made plain, weekly.straight_quotes); the first pass is unchanged and is not. No gate was loosened.
+  composing pass in this attempt: no error; 8 fields rewritten (stepE attempt output); its own gates passed (the only failure was the first pass's).
+  next    : a reframe, 2026-W43-r5, with --reuse-reader 2026-W43-r4 (no re-fetch), as the run instructs.

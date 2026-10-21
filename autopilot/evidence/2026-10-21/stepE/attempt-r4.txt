@@ -1,0 +1,7 @@
+  not framed — Voxtral 3: 3 not in the excerpt
+  not framed — Scale Agentic Coding Workflows with Meta’s Muse Spark Open o: 300, 72 not in the excerpt
+  not framed — Upcoming deprecation of selected GitHub Copilot models in mi: November not in the excerpt
+  not framed — NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with : 3.5 not in the excerpt
+stopped: 1 hard-gate failure(s): ab5c373b-fe19-466e-96cc-56ddf145f28b: unsupported — Amp builds on GPT-16 Astra, Ultrafast, GPT-Live-1, and Sign in with ChatGPT
+run 2026-W43-r4: starting at reader
+exit=1
