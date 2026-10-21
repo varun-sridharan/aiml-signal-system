@@ -1,0 +1,138 @@
+.add-news failed: RuntimeError
+...add-news failed: RuntimeError
+.........................................................................EF..F.E.FF........................weekly digest: brief 1999-W22 cannot be shown (DigestMalformed)
+...weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+............................................................................................................................................................................................................................................................
+======================================================================
+ERROR: test_a_merge_can_be_undone_and_is_not_made_again (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 280, in test_a_merge_can_be_undone_and_is_not_made_again
+    dedupe.undo_merge(self.conn, did, "these are two different stories after all", NOW)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/dedupe.py", line 280, in undo_merge
+    raise ValueError("no active merge with that id")
+ValueError: no active merge with that id
+
+======================================================================
+ERROR: test_decisions_are_append_only_except_the_undo (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 384, in test_decisions_are_append_only_except_the_undo
+    dedupe.undo_merge(self.conn, did, "mistake", NOW)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/dedupe.py", line 280, in undo_merge
+    raise ValueError("no active merge with that id")
+ValueError: no active merge with that id
+
+======================================================================
+FAIL: test_a_merge_keeps_the_dropped_link_as_a_sighting_and_the_earlier_item (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 274, in test_a_merge_keeps_the_dropped_link_as_a_sighting_and_the_earlier_item
+    self.assertEqual(self.decisions(), [("same", "fingerprint", None)])
+AssertionError: Lists differ: [('sa[20 chars]None), ('different', 'model', None), ('differe[255 chars]one)] != [('sa[20 chars]None)]
+
+First list contains 10 additional elements.
+First extra element 1:
+('different', 'model', None)
+
+- [('same', 'fingerprint', None),
+?                               ^
+
++ [('same', 'fingerprint', None)]
+?                               ^
+
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None)]
+
+======================================================================
+FAIL: test_an_unreadable_answer_is_not_recorded_so_the_pair_is_asked_again (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 324, in test_an_unreadable_answer_is_not_recorded_so_the_pair_is_asked_again
+    self.assertEqual(self.decisions(), [])
+AssertionError: Lists differ: [('different', 'model', None), ('different[253 chars]one)] != []
+
+First list contains 10 additional elements.
+First extra element 0:
+('different', 'model', None)
+
++ []
+- [('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None)]
+
+======================================================================
+FAIL: test_doubt_means_different (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 363, in test_doubt_means_different
+    self.assertEqual(self.decisions(), [])                                               # a failure is not recorded as a decision: it is asked again next run
+AssertionError: Lists differ: [('different', 'model', None), ('different[253 chars]one)] != []
+
+First list contains 10 additional elements.
+First extra element 0:
+('different', 'model', None)
+
++ []
+- [('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None)]
+
+======================================================================
+FAIL: test_the_model_sees_only_the_unsure_pairs_and_its_reason_is_recorded (tests.test_dedupe.Decisions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 306, in test_the_model_sees_only_the_unsure_pairs_and_its_reason_is_recorded
+    self.assertEqual(self.decisions(), [("different", "model", None)])
+AssertionError: Lists differ: [('di[19 chars]None), ('different', 'model', None), ('differe[255 chars]one)] != [('di[19 chars]None)]
+
+First list contains 10 additional elements.
+First extra element 1:
+('different', 'model', None)
+
+- [('different', 'model', None),
+?                              ^
+
++ [('different', 'model', None)]
+?                              ^
+
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None),
+-  ('different', 'model', None)]
+
+----------------------------------------------------------------------
+Ran 368 tests in 876.279s
+
+FAILED (failures=4, errors=2)

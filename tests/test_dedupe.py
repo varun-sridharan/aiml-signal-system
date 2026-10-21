@@ -232,6 +232,7 @@ class Decisions(unittest.TestCase):
             self.conn.execute(f"ALTER TABLE dedup_decisions DISABLE TRIGGER {DISABLED}")
         sources.seed(self.conn)
         self.n = 0
+        self.created = []                  # the live table holds real decisions from real runs: every query below is about these items only
 
     def tearDown(self):
         self.conn.rollback()
@@ -248,7 +249,11 @@ class Decisions(unittest.TestCase):
         iid = items.upsert(self.conn, url, f"Title {self.n}", NOW + timedelta(minutes=minutes))[0]
         eid = excerpts.store(self.conn, url, text, NOW)
         items.attach_excerpt(self.conn, iid, eid)
+        self.created.append(iid)
         return iid
+
+    def mine(self):
+        return [str(i) for i in self.created]
 
     def pair(self, pair_id):
         p = PAIRS[pair_id]
@@ -262,7 +267,12 @@ class Decisions(unittest.TestCase):
         raise AssertionError("the model must not be asked here")
 
     def decisions(self):
-        return self.conn.execute("SELECT verdict, layer, undone_at FROM dedup_decisions ORDER BY decided_at").fetchall()
+        return self.conn.execute("SELECT verdict, layer, undone_at FROM dedup_decisions WHERE kept_id = ANY(%s::uuid[]) OR other_id = ANY(%s::uuid[]) "
+                                 "ORDER BY decided_at", (self.mine(), self.mine())).fetchall()
+
+    def decision_row(self, columns):
+        return self.conn.execute(f"SELECT {columns} FROM dedup_decisions WHERE kept_id = ANY(%s::uuid[]) OR other_id = ANY(%s::uuid[])",
+                                 (self.mine(), self.mine())).fetchone()
 
     def test_a_merge_keeps_the_dropped_link_as_a_sighting_and_the_earlier_item(self):
         a, b = self.pair("syndicated-copy")
@@ -276,7 +286,7 @@ class Decisions(unittest.TestCase):
     def test_a_merge_can_be_undone_and_is_not_made_again(self):
         a, b = self.pair("syndicated-copy")
         self.run_dedupe([a, b])
-        did = self.conn.execute("SELECT id FROM dedup_decisions").fetchone()[0]
+        did = self.decision_row("id")[0]
         dedupe.undo_merge(self.conn, did, "these are two different stories after all", NOW)
         self.assertEqual(dedupe.merged_away(self.conn, [a, b]), set())
         again = self.run_dedupe([a, b])
@@ -304,7 +314,7 @@ class Decisions(unittest.TestCase):
         self.assertEqual(len(asked), 1)
         self.assertEqual((report["judged"], report["merged"], report["cost_usd"]), (1, [], 0.002))
         self.assertEqual(self.decisions(), [("different", "model", None)])
-        self.assertEqual(self.conn.execute("SELECT reason FROM dedup_decisions").fetchone()[0], "A preview and a release are two events.")
+        self.assertEqual(self.decision_row("reason")[0], "A preview and a release are two events.")
         self.assertEqual(self.run_dedupe([a, b], says_different)["judged"], 0)               # decided once; not asked again
         self.assertEqual(len(asked), 1)
 
@@ -375,12 +385,13 @@ class Decisions(unittest.TestCase):
     def test_decisions_are_append_only_except_the_undo(self):
         a, b = self.pair("syndicated-copy")
         self.run_dedupe([a, b])
-        for sql in ("DELETE FROM dedup_decisions", "UPDATE dedup_decisions SET reason = 'edited'", "UPDATE dedup_decisions SET verdict = 'different'",
-                    "UPDATE dedup_decisions SET kept_id = other_id"):
+        scope = "WHERE kept_id = ANY(%s::uuid[])"
+        for sql in (f"DELETE FROM dedup_decisions {scope}", f"UPDATE dedup_decisions SET reason = 'edited' {scope}",
+                    f"UPDATE dedup_decisions SET verdict = 'different' {scope}", f"UPDATE dedup_decisions SET kept_id = other_id {scope}"):
             with self.assertRaises(psycopg.Error, msg=sql):
                 with self.conn.transaction():
-                    self.conn.execute(sql)
-        did = self.conn.execute("SELECT id FROM dedup_decisions").fetchone()[0]
+                    self.conn.execute(sql, (self.mine(),))
+        did = self.decision_row("id")[0]
         dedupe.undo_merge(self.conn, did, "mistake", NOW)
         with self.assertRaises(psycopg.Error):
             with self.conn.transaction():
