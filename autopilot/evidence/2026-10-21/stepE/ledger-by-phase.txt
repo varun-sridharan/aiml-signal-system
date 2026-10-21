@@ -1,0 +1,13 @@
+ledger rows since 2026-10-20 20:50 UTC (the start of Run 3), by phase and state: phase, state, rows, usd
+('composing', 'settled', 10, Decimal('5.1904'))
+('composing-revise', 'settled', 7, Decimal('1.3584'))
+('framing', 'reserved', 1, Decimal('0.6309'))
+('framing', 'settled', 2, Decimal('0.4854'))
+('composing-faithfulness', 'settled', 17, Decimal('0.3627'))
+('reader-dedup-judge', 'reserved', 40, Decimal('0.2711'))
+('reader-fetch', 'settled', 8, Decimal('0.0541'))
+('reader-dedup-judge', 'settled', 10, Decimal('0.0329'))
+('eval-faithfulness', 'settled', 5, Decimal('0.0286'))
+('faithfulness', 'settled', 2, Decimal('0.0266'))
+('dedup-eval-judge', 'settled', 12, Decimal('0.0122'))
+month to date: 11.1479

@@ -1,0 +1,38 @@
+  not framed — Voxtral 3: 3 not in the excerpt
+  not framed — Scale Agentic Coding Workflows with Meta’s Muse Spark Open o: 300, 72 not in the excerpt
+  not framed — Upcoming deprecation of selected GitHub Copilot models in mi: November not in the excerpt
+  not framed — NVIDIA Nemotron 3.5 Super VL Powers Specialized Agents with : 3.5 not in the excerpt
+Traceback (most recent call last):
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 465, in <module>
+    sys.exit(main())
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 453, in main
+    out = run_week(conn, client, now, run_id, stop_after=args.stop_after, reuse_reader=args.reuse_reader,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 399, in run_week
+    outputs[stage] = go()
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 394, in <lambda>
+    ("framer", lambda: framer_stage(conn, client, week, stamp, profile)),
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 282, in framer_stage
+    return runs.checkpointed(conn, week, "framer", now, work)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/runs.py", line 292, in checkpointed
+    output = work(attempt)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/weekly.py", line 262, in work
+    framing, _usage, cost = framer.frame_day(client, framer.load_framer_system_prompt(), profile, raw_day)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/framer.py", line 360, in frame_day
+    text, usage, cost = llm.call(
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 124, in call
+    message, usage, cost = call_message(client, model=model, max_tokens=max_tokens, user_id=user_id,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 103, in call_message
+    with client.messages.stream(model=model, max_tokens=max_tokens, **request) as s:
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/.venv/lib/python3.9/site-packages/anthropic/lib/streaming/_messages.py", line 167, in __enter__
+    raw_stream = self.__api_request()
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/.venv/lib/python3.9/site-packages/anthropic/_base_client.py", line 1536, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/.venv/lib/python3.9/site-packages/anthropic/_base_client.py", line 1195, in request
+    raise self._make_status_error_from_response(response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'You have reached your specified workspace API usage limits. You will regain access on 2026-11-01 at 00:00 UTC.'}, 'request_id': 'req_011CgEVR1vtd4VeYi4UkvLdx'}
+run 2026-W43-r6: starting at reader (adopting 2026-W43-r4's)
+exit=1

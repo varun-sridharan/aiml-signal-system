@@ -1,0 +1,13 @@
+Attempt 2026-W43-r6 (reframe of r4's Reader output, with the first-pass plain-typography fix live at 04016e7):
+
+  The first model call of the attempt (the framing call) was refused by the API before any answer came back:
+
+    anthropic.BadRequestError: Error code: 400 - invalid_request_error:
+    "You have reached your specified workspace API usage limits. You will regain access on 2026-11-01 at 00:00 UTC."
+    (full traceback in attempt-r6.txt)
+
+  This is the Claude Console's workspace limit, not the app's ledger: the ledger read $11.15 of $40 and the stop line is $35.
+  The Console is one of the things this run must not change. No further paid call is possible until the limit is lifted or resets.
+  The ledger shows the refused call as one 'reserved' framing row ($0.63 worst case) that was never settled: it billed nothing.
+  State: r4 and r5 stopped at the gates (attempt-r4-analysis.txt, attempt-r5.txt); r6 never reached the gates.
+  To finish: lift the limit, then  python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43-r4   (no re-fetch; about $1.3).
