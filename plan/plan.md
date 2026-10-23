@@ -3,7 +3,7 @@ title: Plan & Progress
 kicker: AI/ML Signal · build plan
 lede: One milestone at a time, in detail, with everything it rests on in a single table. Later milestones live in the Roadmap; every decision and when it was made is at the bottom.
 footer: Plan · the live milestone and the archive of completed work for `aiml-signal-system`. Public-safe.
-updated: 2026-10-20
+updated: 2026-10-23
 ---
 
 <!--
@@ -55,6 +55,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 **Nine of sixteen activities are done.** The five carried in from before the pivot, the shared plumbing, the Railway config move, the storage layer, and the Weekly Digest surface, which renders a real edition labelled by the dates its Reader read. **The whole pipeline has run end to end** on the live web, the Weekly Digest page is now the signed-off design with an archive and a sample edition, a fresh edition for this week has not been published (five attempts stopped at the gates, and the sixth was refused by the Console's usage limit, so a rerun may still need a second attempt at the gates), a failed week can now be reframed as a numbered attempt that reuses its Reader without a fetch, and the Reader reads seventeen places, but three fresh attempts on the wider sources all stopped at the gates, so the live edition is still October 18's. **Three rows are open for decisions, not for code:** Reader needs a call on the catalogue (it is prose, 83 sources of which 14 have an address) and on the Gemini changelog, the deduplication gate is built in layers (a model judges only what three free layers leave) but its two draft test sets, 24 URL pairs and 17 content pairs, need Varun's review, and the Framer's faithfulness gate caught four of four planted fabrications today (one result per case, repeated: the grader is deterministic within a day) but still fails `negative-01` on a clean thread claim, while the retry that made a correct verdict wrong is now switched off, and the three gate decisions of 2026-10-20 are in code. **The Framer also has a second pass that writes the template's fields (Step C of the third run), gated by code on the five style rules and on the slot limits.** **Then go-live, the style row and the story video**, all Varun's. **The remaining estimate is 1 to 3 sessions**, and the risk is the grader: a zero-tolerance gate over real prose blocks weeks, as it just did three times, and the same grader missed the original plant on 2026-10-18 and caught it on 2026-10-20.
 
 # Decision log
+
+### 2026-10-23 · Railway's breach: both secrets rotated, nothing misused
+
+On 2026-10-21 Railway disclosed that an attacker may have read customers' environment variables, in an attack aimed at AI inference keys. The Anthropic key was replaced with a workspace-scoped key that expires on 2027-01-29, to be rotated a week before, and the old key was deleted; the Console showed no spend after Oct 21 that was not ours. The Postgres password was regenerated through Railway's Database view, the app reads it as a reference so its redeploy picked it up, and a check afterwards found only the `postgres` role and no unexpected sessions; the database never had public access, so the old password was not usable from the internet. Varun's other Railway projects with databases still need the same rotation.
 
 ### 2026-10-20 · The latest attempt at a fresh edition was refused by the Console's workspace usage limit
 
