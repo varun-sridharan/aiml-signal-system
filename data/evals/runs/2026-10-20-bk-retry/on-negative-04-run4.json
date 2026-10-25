@@ -21,13 +21,13 @@
     },
     {
      "claim": "it will ship as an optimised container in NIM on launch day",
-     "supporting_span": "NVIDIA said it will ship as an optimised container in NIM on launch day",
+     "supporting_span": "[source text withheld (copied span): sha256 0701ba937aa2e83ee232302a4eda2262a2ad7311baed16b8792e331d016e078b; 71 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Neither company gave a price for hosted access",
-     "supporting_span": "Neither company gave a price for hosted access",
+     "supporting_span": "[source text withheld (copied span): sha256 c244dd8cc786004aacc9ff328a8ea81c4cf8feeda1a2fa93e01304d31a57ba43; 46 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -46,19 +46,19 @@
    "claims": [
     {
      "claim": "ETH Zurich researchers released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
-     "supporting_span": "Researchers at ETH Zurich released SafeRoute, a dataset of 40,000 tool-call traces labelled for unsafe actions",
+     "supporting_span": "[source text withheld (copied span): sha256 b1c5dbd53308c84b7d3dab6d25f5922c24b4359e6ea12f2d0c289c8195755064; 110 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "It is released under CC-BY-4.0",
-     "supporting_span": "The dataset is released under CC-BY-4.0",
+     "supporting_span": "[source text withheld (copied span): sha256 37f58f75cc1935b7fd482b81ca265b6c182e788c955298f34a04f3977c4e3a06; 39 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "the annotation work took eleven weeks",
-     "supporting_span": "the annotation work took eleven weeks",
+     "supporting_span": "[source text withheld (copied span): sha256 98cac2363bb8ac89cb54f3d4ae955e09cc8f6e888363f524c3ecf2b10fb53a4f; 37 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -73,13 +73,13 @@
    "claims": [
     {
      "claim": "SafeRoute gives agent safety evals 40,000 labelled tool-call traces",
-     "supporting_span": "a dataset of 40,000 tool-call traces labelled for unsafe actions",
+     "supporting_span": "[source text withheld (copied span): sha256 4fc4a24193030c4a5bf5514fe1850b3add80547e7b37c2d29df516d1c082754c; 64 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "the new open-weight model ships as an optimised container on launch day",
-     "supporting_span": "it will ship as an optimised container in NIM on launch day",
+     "supporting_span": "[source text withheld (copied span): sha256 14f1de6d67b2b3058d4577634536a31da0d28cbcb43648e931b4681bfdc1ec1f; 59 characters]",
      "supported": true,
      "span_verified": true
     }

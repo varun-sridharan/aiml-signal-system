@@ -15,19 +15,19 @@
    "claims": [
     {
      "claim": "Atlas-3 scores 58.4% on SWE-Verify",
-     "supporting_span": "Atlas-3 scores 71.2% on the SWE-Verify benchmark and 58.4% on the Terminal-Ops benchmark",
+     "supporting_span": "[source text withheld (copied span): sha256 c83c9fb6a67e3387a9688ee5fe9e0ddd64c8a0c309934ab25f786ed713efd8a7; 88 characters]",
      "supported": false,
      "span_verified": true
     },
     {
      "claim": "Atlas-3 ships with a 400K-token context window",
-     "supporting_span": "ships with a 400K-token context window",
+     "supporting_span": "[source text withheld (copied span): sha256 a1ae22e2da9a4fe12c786a7c12d91ad3989742891048cded50d11a5c4712f8b1; 38 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "available from today in the API",
-     "supporting_span": "available from today in the API",
+     "supporting_span": "[source text withheld (copied span): sha256 3d3715b7033b229e28b45c78ab2ac8f4935e5abf39551b9d0ab6442bf4a6bc17; 31 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -46,25 +46,25 @@
    "claims": [
     {
      "claim": "Parcel 2.0 adds durable execution",
-     "supporting_span": "The Parcel agent framework 2.0 adds durable execution",
+     "supporting_span": "[source text withheld (copied span): sha256 e534614c8f25dbca8c0abb6a2a8d0f83af303ef8fe9a71cbca59a54b31ec10d1; 53 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "a crashed run resumes from its last completed step",
-     "supporting_span": "a run that crashes resumes from its last completed step",
+     "supporting_span": "[source text withheld (copied span): sha256 94168abb14d3a6aedb7ccd4dcc4ae65a946320f254ad4a498738b84f670eb4d7; 55 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Steps are checkpointed to a Postgres table",
-     "supporting_span": "Steps are checkpointed to a Postgres table",
+     "supporting_span": "[source text withheld (copied span): sha256 415757f6ebc0d066434535f83866bf0a4002602ca3341f1dae477513fb4ca985; 42 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "retries use exponential backoff capped at five attempts",
-     "supporting_span": "retries use exponential backoff capped at five attempts",
+     "supporting_span": "[source text withheld (copied span): sha256 e890ad2ff11e3d730b90fbac8239c3c2508c732c9dbd7cc059844a81da6a31f0; 55 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -79,13 +79,13 @@
    "claims": [
     {
      "claim": "Atlas-3 ships a 400K-token context window",
-     "supporting_span": "ships with a 400K-token context window",
+     "supporting_span": "[source text withheld (copied span): sha256 a1ae22e2da9a4fe12c786a7c12d91ad3989742891048cded50d11a5c4712f8b1; 38 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Parcel 2.0 resumes crashed runs from their last completed step",
-     "supporting_span": "a run that crashes resumes from its last completed step",
+     "supporting_span": "[source text withheld (copied span): sha256 94168abb14d3a6aedb7ccd4dcc4ae65a946320f254ad4a498738b84f670eb4d7; 55 characters]",
      "supported": true,
      "span_verified": true
     }

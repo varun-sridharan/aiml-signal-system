@@ -6,37 +6,37 @@
     "claims": [
      {
       "claim": "arXiv authors published the method on 2026-10-11",
-      "supporting_span": "Published 2026-10-11 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 a3f97219e1e8272e3838cc1faa4d6564afdb631d9b8699775503484e83a94966; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
-      "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supporting_span": "[source text withheld (copied span): sha256 2066a1a8533cef85c9680e7027110fbeafb537eb3bb6a994f7205b3e08528beb; 107 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify",
-      "supporting_span": "It first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supporting_span": "[source text withheld (copied span): sha256 8bbd76a0a3f92610b6af2f2707c162229efc74763a8fae8aba1bef00d48973af; 80 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "then runs a hacker-fixer loop to find and repair remaining vulnerabilities",
-      "supporting_span": "then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities",
+      "supporting_span": "[source text withheld (copied span): sha256 a61b318421e7ff3b536622bc2057228c80bf5cb869df65e21b0cffc253ed860e; 83 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Applied to Terminal Bench, KernelBench, and SETA, it substantially reduced attack success",
-      "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA, substantially reducing attack success across these agent environments.",
+      "supporting_span": "[source text withheld (copied span): sha256 3eaafe32af264c4d30c6494da5e0ec0c21a709750b4c972d9961eccf2987660d; 131 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "it scales with the hardening budget as loop iterations increase",
-      "supporting_span": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases",
+      "supporting_span": "[source text withheld (copied span): sha256 93a7bb59552db87e361d1952f5627a8ad494549a02584e502b48ddaabfc7b8fd; 139 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -53,55 +53,55 @@
     "claims": [
      {
       "claim": "MAI-Gym was published on 2026-10-14",
-      "supporting_span": "Published 2026-10-14 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 9f7384925de4d4ffb176387e8cd4f9a9e3deca4e116a97ae4c93546580438f81; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "an open platform unifying GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
-      "supporting_span": "an open all-in-one platform that unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
+      "supporting_span": "[source text withheld (copied span): sha256 bef729c3aad849b80886bedf2baa41fa1540dc928e72863e2e4897149d3bec01; 148 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "It supports ten established benchmarks",
-      "supporting_span": "supports ten established benchmarks",
+      "supporting_span": "[source text withheld (copied span): sha256 509654d81debf7b3d2230de69c3d971c6c891c8cdfa8d715ff3800901651aff7; 35 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "scales to 20,000 parallel environment instances",
-      "supporting_span": "scales to 20,000 parallel environment instances",
+      "supporting_span": "[source text withheld (copied span): sha256 e8bbcf6e6bceb61a787f5adaa1b2a0572bf64a06f4b3cd153dd4e41b81bbbed3; 47 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "uses a shared rollout pipeline so agent behavior stays consistent between evaluation and training",
-      "supporting_span": "Through a shared rollout pipeline, MAI-Gym ensures consistent agent behavior across evaluation and training",
+      "supporting_span": "[source text withheld (copied span): sha256 7cfa480b48b68bfa3eb623e3b391760d5101b42a45249f8ba28a6f1f7eb74f17; 107 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The trained MAI-Gym-9B reports 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
-      "supporting_span": "achieving state-of-the-art performance among open GUI agents under 10B parameters: 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
+      "supporting_span": "[source text withheld (copied span): sha256 571d8d5509fdf9d1176ecbf997ad04d0857728d69239887ba8362b5c8acf316c; 133 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "state of the art among open GUI agents under 10B parameters",
-      "supporting_span": "state-of-the-art performance among open GUI agents under 10B parameters",
+      "supporting_span": "[source text withheld (copied span): sha256 be3822ebefc586b7f1981f6e825072abf149daef69982153fc1c67468faab0e0; 71 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The release includes the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint",
-      "supporting_span": "We release the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint",
+      "supporting_span": "[source text withheld (copied span): sha256 74aeb5e559c1e109316e2d3061fa0da324ec5a2762e6f046733585485704d07d; 103 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "RL in a mocked train-ticketing app lifted real-phone task success from 28.8% to 48.1%",
-      "supporting_span": "RL in a mocked train-ticketing app transfers to its real-world counterpart, improving task success on a phys- ical phone from 28.8% to 48.1%",
+      "supporting_span": "[source text withheld (copied span): sha256 861d9c6b39a46c68292cfd3ee2142972cd4dab763f796b13e9ea0fe3b35e9fb4; 140 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -116,31 +116,31 @@
     "claims": [
      {
       "claim": "GitHub deprecated a set of models across most Copilot experiences on October 19, 2026",
-      "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+      "supporting_span": "[source text withheld (copied span): sha256 07b1c6294d68f61016af2231e32c4e41fef64a78205438dad3c245dcf78fdacf; 109 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "covering Copilot Chat, inline edits, ask and agent modes, and code completions",
-      "supporting_span": "including Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "supporting_span": "[source text withheld (copied span): sha256 bf60d4c29ba036a68a3a91cdf91565fe379dd9ba9172929b7cb9d65ffe84062c; 79 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Workflows and integrations have to be updated to use supported models",
-      "supporting_span": "Please update your workflows and integrations to use supported models.",
+      "supporting_span": "[source text withheld (copied span): sha256 99682cd8d17d2f52320c6773fb9d22a03297e68e62bcb1e28f574294e83d6219; 70 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "no action is required to remove the deprecated models themselves",
-      "supporting_span": "No action is required to remove the deprecated models.",
+      "supporting_span": "[source text withheld (copied span): sha256 f4d4beb52173bff645eaa497c10e43f92791d3d3574205870e2f9f9005e17d3d; 54 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings before users see them in the model selector in VS Code and on github.com",
-      "supporting_span": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings. As an administrator, you can verify availability by checking your individual Copilot settings and confirming that the policy is enabled for the specific model. Once enabled, you'll see the model in the Copilot Chat model selector in VS Code and on github.com.",
+      "supporting_span": "[source text withheld (copied span): sha256 4fc33c49bcfc5b0a2771f84c8accf8b518f988ad06b8982599c54e3611133a39; 391 characters; source https://github.blog/changelog/2026-10-19-github-copilot-models-deprecated-on-october-19-2026; excerpt sha256 49460d0ac8976f2a8f4bda1df80adb56d762d1985c5632f786c612b65ae9c94b]",
       "supported": true,
       "span_verified": true
      }
@@ -155,61 +155,61 @@
     "claims": [
      {
       "claim": "Terminal-RSI was published on 2026-10-15",
-      "supporting_span": "Published 2026-10-15 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 1cd5d9fb63074a764ea80bba0e5c6be6aa54b1eadd7c1704045ad8e0a74e1aed; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "alternating Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine",
-      "supporting_span": "alternates Recursive Self-Rewrite (RSR) of verified trajectories with critic-inheriting Recursive Policy-Refine (RPR)",
+      "supporting_span": "[source text withheld (copied span): sha256 493fac8272d09879f3d08cd9c6cd75765c221e9996ecb59933a22628189e76a7; 117 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The five-stage sequence runs from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2 to yield Terminal-RSI-27B",
-      "supporting_span": "The five-stage sequence from Qwen3.8-27B base model through RSR-1, RPR-1, RSR-2, and RPR-2 yields Terminal-RSI-27B",
+      "supporting_span": "[source text withheld (copied span): sha256 d9cc33e69d121234828456b10195c51196b360b05b41a1bd22b78544abf7db80; 114 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "which reports 19.84% on Terminal-Bench 4.0",
-      "supporting_span": "19.84% on Terminal-Bench 4.0",
+      "supporting_span": "[source text withheld (copied span): sha256 9ccb435a0d6517ba3d7ebc8470d55124c84df2b2d0ace2244fbf3557077d65ae; 28 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "86.52% on Terminal-Bench 2.1",
-      "supporting_span": "86.52% on Terminal-Bench 2.1",
+      "supporting_span": "[source text withheld (copied span): sha256 77770f0559ec55b5b53b2765b36279adf71991b682fde6cae5cd1a244ff42df3; 28 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "16.95% on Terminal-Bench 3.0",
-      "supporting_span": "16.95% on Terminal-Bench 3.0",
+      "supporting_span": "[source text withheld (copied span): sha256 93b4e444d0a06d3bebcaefacfa85048b3c7f1f0e6150fb43e4970828889279a2; 28 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "79.00% on Terminal-Bench Hard",
-      "supporting_span": "79.00% on Terminal-Bench Hard",
+      "supporting_span": "[source text withheld (copied span): sha256 ac8979013e61e2627da75fc4ce711e75e5319d252b6eb194aea5ac519bc84340; 29 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
-      "supporting_span": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supporting_span": "[source text withheld (copied span): sha256 1b2469dbc48287863efded2d346ed68dabd9e04325555c354a5b484b06392186; 87 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "SWR100 success doubles from 3.00% to 6.00%",
-      "supporting_span": "SWR100 success doubles from 3.00% to 6.00%",
+      "supporting_span": "[source text withheld (copied span): sha256 1d5893c39cf4dd74ed68548aa8ff268253a2ec24b7425bb72166b1bd5c15a1ca; 42 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Success-Prioritized Reward separates strict success from bounded partial credit",
-      "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit",
+      "supporting_span": "[source text withheld (copied span): sha256 47977cfb465aff3e26b76d6c8109b78b5ab5494d1f0500dc06252066e6e49bdd; 85 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -224,37 +224,37 @@
     "claims": [
      {
       "claim": "Agentic autofix for code scanning alerts is now generally available for GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including with data residency",
-      "supporting_span": "Agentic autofix for code scanning alerts is now generally available. It remediates alerts by working across your codebase the way a developer would: it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request for your review. Agentic autofix is available to GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including GitHub Enterprise Cloud with data residency.",
+      "supporting_span": "[source text withheld (copied span): sha256 063c8a29452041ba15f2990a8c8399f847a53a74f5fe05239d4da38e13fd290f; 468 characters; source https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability; excerpt sha256 001e804b9d398e823668fc87c6e149236f438a0eb33dedf67b41090323b9fba5]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "It explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
-      "supporting_span": "it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+      "supporting_span": "[source text withheld (copied span): sha256 41cfae28c58701baad3b82212e2e7c12ca20fcba8dcc4d897d9d9af01917cacc; 127 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "that includes a summary of the fix, why it closes the alert, and the validation steps taken",
-      "supporting_span": "The pull request includes a summary of the fix, why it closes the alert, and the validation steps Copilot took to confirm that it works.",
+      "supporting_span": "[source text withheld (copied span): sha256 5ee69512e4fa055650d278ea0c3b4093c4fe217c2968291ab9a2b56c09147e45; 136 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "It only supports alerts on the repository's default branch — alerts detected only on pull requests or other branches cannot be assigned to Copilot",
-      "supporting_span": "Agentic autofix supports code scanning alerts on the repository's default branch. Alerts detected only on pull requests or other branches cannot be assigned to Copilot.",
+      "supporting_span": "[source text withheld (copied span): sha256 c34c494ebc4e7b8d67ff5e31b972543c8189aaddabda1c8e6d68ad5c27962251; 168 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "An enterprise administrator must enable the new \"Agentic autofix\" policy",
-      "supporting_span": "Agentic autofix requires an enterprise administrator to enable access to it via the new \"Agentic autofix\" policy in Advanced Security policies.",
+      "supporting_span": "[source text withheld (copied span): sha256 cc6d4926cf01870f2fa5cfdaf2258aa7b140f814f8b8e2a425f0ba19f46df71f; 143 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "each run consumes AI Credits from the Code Security budget plus GitHub Actions minutes",
-      "supporting_span": "Agentic autofix for code scanning alerts consumes AI Credits from your Code Security budget and GitHub Actions minutes.",
+      "supporting_span": "[source text withheld (copied span): sha256 61f00f5775cf976b2230c93de1543af705788f3faa204cd13964929d06bdc3a5; 119 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -269,49 +269,49 @@
     "claims": [
      {
       "claim": "Amp chooses and recommends models based on what works best for its users",
-      "supporting_span": "Amp chooses and recommends models based on what works best for its users",
+      "supporting_span": "[source text withheld (copied span): sha256 cb23525cad2cd972a5d5858646b4c633053063da1412fe2c8c0e35e5e1b6e3f1; 72 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "OpenAI models account for the majority of tokens used in Amp",
-      "supporting_span": "OpenAI models account for the majority of tokens used in Amp",
+      "supporting_span": "[source text withheld (copied span): sha256 849a85e527cbb5f92f39387e922a96b8696f8467f40ec35d34c113f4062f7e10; 60 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Quinn describes some Amp users consuming 10 billion tokens a week",
-      "supporting_span": "Quinn describes some Amp users consuming 10 billion tokens a week.",
+      "supporting_span": "[source text withheld (copied span): sha256 e3f83bfbcffb50f2b9f4ed4940b2f379f418a2e1e3c84cf3751c0270361b0f2c; 66 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Amp launched Sign in with ChatGPT to give users access to more tokens and OpenAI models including GPT-6 Astra",
-      "supporting_span": "Amp launched its Sign in with ChatGPT integration. Quinn says it gives Amp users access to more tokens and OpenAI models, including GPT-6 Astra",
+      "supporting_span": "[source text withheld (copied span): sha256 ac71a58e4c6001b91dae06dde591e1a3104ef98cd4bf57601210a72736c02559; 143 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Amp also announced Puck, a conversational assistant that helps users launch and manage other agents",
-      "supporting_span": "Amp recently announced Puck, a conversational AI assistant built into Amp that helps users launch and manage other agents.",
+      "supporting_span": "[source text withheld (copied span): sha256 2ee839c1145f46b438dbb8b57901ce6ed9cd592034c10bf7bf398e183ab47e44; 122 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "with Calling Puck powered by GPT-Live-1 for real-time voice",
-      "supporting_span": "With Calling Puck, powered by GPT-Live-1, users can talk to Puck in real time",
+      "supporting_span": "[source text withheld (copied span): sha256 485a4e39abd436cd38827a28904f46e7954b5bfa7617f35c3afaeea7059996b4; 77 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "has been testing Ultrafast mode with GPT-6 Astra",
-      "supporting_span": "Amp has been testing Ultrafast mode with GPT-6 Astra",
+      "supporting_span": "[source text withheld (copied span): sha256 be8aadc540628e5518b884a354b0c6cc5c56f06f5e1b9cc1431cbd1d11dadb07; 52 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Amp's own team is 20 people",
-      "supporting_span": "Its own 20-person team uses them that way",
+      "supporting_span": "[source text withheld (copied span): sha256 3ec45edf27d66bab9ac4f518e8ad335cd0dc0aeded7dd2d84b1395577547a9ce; 41 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -326,19 +326,19 @@
     "claims": [
      {
       "claim": "GitHub exposed REST endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations",
-      "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+      "supporting_span": "[source text withheld (copied span): sha256 5df0eeed5939f5b55b4180b8d0fcbf1a5d544288f8ab2b570f57a6e638dbf00e; 145 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
-      "supporting_span": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode.",
+      "supporting_span": "[source text withheld (copied span): sha256 455eb4cbcfcf66a7c7272dcf578edb123d8b4bb3b444b725984c51fb22b6533c; 132 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Together the endpoints make model availability manageable",
-      "supporting_span": "Together, these endpoints make it easier to manage Copilot model availability across your enterprise.",
+      "supporting_span": "[source text withheld (copied span): sha256 d9fcad96e4a9d047b5d12ca8b2c06257725607d2c821d885d87b76c8d25f9d21; 101 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -353,163 +353,163 @@
     "claims": [
      {
       "claim": "arXiv authors published a weak-to-strong verifier hardening method on 2026-10-11",
-      "supporting_span": "Published 2026-10-11 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 a3f97219e1e8272e3838cc1faa4d6564afdb631d9b8699775503484e83a94966; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "a hacker-fixer loop to three agent environments: Terminal Bench, KernelBench, and SETA",
-      "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA",
+      "supporting_span": "[source text withheld (copied span): sha256 3ef27877a9101cb25b98bf8b47ecd93f792033fae8d026831d60f4568020da4a; 59 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Agent environments use programmatic verifiers to turn complex outcomes into rewards",
-      "supporting_span": "They use programmatic verifiers to turn complex outcomes into rewards.",
+      "supporting_span": "[source text withheld (copied span): sha256 f32d26d59a094fc3f92dc88eac75f9b2dc8054313447604bf9270a6eda2b07ff; 70 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
-      "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+      "supporting_span": "[source text withheld (copied span): sha256 2066a1a8533cef85c9680e7027110fbeafb537eb3bb6a994f7205b3e08528beb; 107 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify",
-      "supporting_span": "It first sets up an isolated verifier sandbox that agents cannot directly modify",
+      "supporting_span": "[source text withheld (copied span): sha256 8bbd76a0a3f92610b6af2f2707c162229efc74763a8fae8aba1bef00d48973af; 80 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "uses the loop to find and repair remaining verifier vulnerabilities",
-      "supporting_span": "then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+      "supporting_span": "[source text withheld (copied span): sha256 3914da32c1d2a9598c1d1f4ed36f36a40f27c03198cf9ae91bb7b223810fdaa3; 84 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases, and outperforming the static, non-iterative baseline",
-      "supporting_span": "The iterative design scales with the hardening budget, producing progressively stronger defenses as the number of loop iterations increases and outperforming the static, non-iterative baseline.",
+      "supporting_span": "[source text withheld (copied span): sha256 15a73e558f4921b6d7e6f64926118cb39198f429ec93980cb9f4fd3686a142d5; 193 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "MAI-Gym's authors released their platform on 2026-10-14",
-      "supporting_span": "Published 2026-10-14 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 9f7384925de4d4ffb176387e8cd4f9a9e3deca4e116a97ae4c93546580438f81; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "support for ten established benchmarks and scaling to 20,000 parallel environment instances",
-      "supporting_span": "supports ten established benchmarks, and scales to 20,000 parallel environment instances.",
+      "supporting_span": "[source text withheld (copied span): sha256 c11c4fcbd243c073713c315aa54868a856708b8dcb0840204c0e8046f58364ec; 89 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "The platform unifies GUI agent evaluation, data collection, and online reinforcement learning",
-      "supporting_span": "unifies GUI agent evaluation, data collection, and online RL training",
+      "supporting_span": "[source text withheld (copied span): sha256 14d0e3321fec9bd53d536438c2246d11c2fc7fafb75f27807472d83e8cd3f91c; 69 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "training across mobile, computer, and web environments, through a shared rollout pipeline that keeps agent behavior consistent between evaluation and training",
-      "supporting_span": "Through a shared rollout pipeline, MAI-Gym ensures consistent agent behavior across evaluation and training",
+      "supporting_span": "[source text withheld (copied span): sha256 7cfa480b48b68bfa3eb623e3b391760d5101b42a45249f8ba28a6f1f7eb74f17; 107 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "MAI-Gym-9B, a unified 9B agent",
-      "supporting_span": "we train MAI-Gym-9B, a unified 9B agent",
+      "supporting_span": "[source text withheld (copied span): sha256 66265b0b0ed521ec2c71bf201efcebcdc79d33ffcc5378bb9cd2bba0a109e58b; 39 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "reporting 78.4% on MobileWorld and 76.2% on OSWorld-Verified",
-      "supporting_span": "achieving state-of-the-art performance among open GUI agents under 10B parameters: 78.4% on MobileWorld and 76.2% on OSWorld-Verified.",
+      "supporting_span": "[source text withheld (copied span): sha256 749af2b1c9a9aad067f1496d8f0953946204e38205da4c5de6c40a615dad55a8; 134 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "RL in a mocked train-ticketing app moved task success on a physical phone from 28.8% to 48.1%",
-      "supporting_span": "RL in a mocked train-ticketing app transfers to its real-world counterpart, improving task success on a phys- ical phone from 28.8% to 48.1%.",
+      "supporting_span": "[source text withheld (copied span): sha256 1cc7983ae63cd559394d7bc6c9f70a050fe01a44613cbe5ce2b4babafb50df0d; 141 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Terminal-RSI's authors posted their five-stage training sequence on 2026-10-15",
-      "supporting_span": "Published 2026-10-15 by arXiv.",
+      "supporting_span": "[source text withheld (copied span): sha256 1cd5d9fb63074a764ea80bba0e5c6be6aa54b1eadd7c1704045ad8e0a74e1aed; 30 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "86.52% on Terminal-Bench 2.1 and 19.84% on Terminal-Bench 4.0",
-      "supporting_span": "19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1",
+      "supporting_span": "[source text withheld (copied span): sha256 d9459e71a8b5f8c2fd21102c533742b82688ecd6b49884fc588b6ac717d1c315; 58 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "the same model reports 16.95% on Terminal-Bench 3.0 and 79.00% on Terminal-Bench Hard",
-      "supporting_span": "16.95% on Terminal-Bench 3.0, and 79.00% on Terminal-Bench Hard.",
+      "supporting_span": "[source text withheld (copied span): sha256 fb435f96922bf1d64b2161b7cb48440f7f16a807995bf1bd7f85dfe6ee8fbc5c; 64 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
-      "supporting_span": "On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46",
+      "supporting_span": "[source text withheld (copied span): sha256 1b2469dbc48287863efded2d346ed68dabd9e04325555c354a5b484b06392186; 87 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Terminal-RSI's authors separated strict success from bounded partial credit with Success-Prioritized Reward",
-      "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit.",
+      "supporting_span": "[source text withheld (copied span): sha256 dd15fc4cc75a46dc5c3d253040e02dfa0dc6c017632ce44f562a871be226070e; 86 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Family Dense Reward that calibrates semantic progress across 1 set of task families",
-      "supporting_span": "Family Dense Reward (FDR) calibrates semantic progress across task families",
+      "supporting_span": "[source text withheld (copied span): sha256 7310f130e240dac6caf29cb7cbcf0ff656171b52caec6dde5d79616f982797ac; 75 characters]",
       "supported": false,
       "span_verified": true
      },
      {
       "claim": "GitHub deprecated models across most Copilot experiences on October 19, 2026",
-      "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+      "supporting_span": "[source text withheld (copied span): sha256 07b1c6294d68f61016af2231e32c4e41fef64a78205438dad3c245dcf78fdacf; 109 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Copilot Chat, inline edits, ask mode, agent mode, and code completions",
-      "supporting_span": "including Copilot Chat, inline edits, ask and agent modes, and code completions",
+      "supporting_span": "[source text withheld (copied span): sha256 bf60d4c29ba036a68a3a91cdf91565fe379dd9ba9172929b7cb9d65ffe84062c; 79 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "No action is required to remove the deprecated models",
-      "supporting_span": "No action is required to remove the deprecated models.",
+      "supporting_span": "[source text withheld (copied span): sha256 f4d4beb52173bff645eaa497c10e43f92791d3d3574205870e2f9f9005e17d3d; 54 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "workflows and integrations have to be updated to use supported models",
-      "supporting_span": "Please update your workflows and integrations to use supported models.",
+      "supporting_span": "[source text withheld (copied span): sha256 99682cd8d17d2f52320c6773fb9d22a03297e68e62bcb1e28f574294e83d6219; 70 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings",
-      "supporting_span": "Copilot Enterprise administrators may need to enable access to alternative models through their model policies in Copilot settings.",
+      "supporting_span": "[source text withheld (copied span): sha256 b3802a8ad26170edf2d95e8d1b2633c01c4f4e462aae86a566155c882f56e6a5; 131 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "it exposed Copilot model policies through the REST API for enterprises, enterprise teams, enterprise apps, and organizations",
-      "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+      "supporting_span": "[source text withheld (copied span): sha256 5df0eeed5939f5b55b4180b8d0fcbf1a5d544288f8ab2b570f57a6e638dbf00e; 145 characters]",
       "supported": true,
       "span_verified": true
      },
      {
       "claim": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode",
-      "supporting_span": "Enterprise policies can delegate model control to organizations in organization mode, or to teams and apps in enterprise teams mode.",
+      "supporting_span": "[source text withheld (copied span): sha256 455eb4cbcfcf66a7c7272dcf578edb123d8b4bb3b444b725984c51fb22b6533c; 132 characters]",
       "supported": true,
       "span_verified": true
      }
@@ -527,55 +527,55 @@
    "claims": [
     {
      "claim": "deprecated models across most Copilot experiences on October 19, 2026",
-     "supporting_span": "As of today, October 19, 2026, we have deprecated the following models across most GitHub Copilot experiences",
+     "supporting_span": "[source text withheld (copied span): sha256 07b1c6294d68f61016af2231e32c4e41fef64a78205438dad3c245dcf78fdacf; 109 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "REST endpoints to retrieve and update model policies for enterprises and organizations",
-     "supporting_span": "You can now use the REST API to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+     "supporting_span": "[source text withheld (copied span): sha256 5df0eeed5939f5b55b4180b8d0fcbf1a5d544288f8ab2b570f57a6e638dbf00e; 145 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "hacker-fixer loop repaired exploitable verifiers on Terminal Bench, KernelBench, and SETA",
-     "supporting_span": "We apply this loop to Terminal Bench, KernelBench, and SETA, substantially reducing attack success across these agent environments.",
+     "supporting_span": "[source text withheld (copied span): sha256 3eaafe32af264c4d30c6494da5e0ec0c21a709750b4c972d9961eccf2987660d; 131 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "trained a 9B GUI agent",
-     "supporting_span": "we train MAI-Gym-9B, a unified 9B agent for mobile and computer use",
+     "supporting_span": "[source text withheld (copied span): sha256 b02f5d3429f7b6092fa332e548a4522fccbe3b1a38eb12285a230479b89992db; 67 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "real-phone task success from 28.8% to 48.1%",
-     "supporting_span": "improving task success on a phys- ical phone from 28.8% to 48.1%",
+     "supporting_span": "[source text withheld (copied span): sha256 de35b8252cf89348c642765d787e64b82639841c351b4b4f521965f507946f35; 64 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "a verifier can be attacked into awarding full credit to a cheating agent",
-     "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+     "supporting_span": "[source text withheld (copied span): sha256 2066a1a8533cef85c9680e7027110fbeafb537eb3bb6a994f7205b3e08528beb; 107 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Execution-validated task verifiers",
-     "supporting_span": "coherent cross-app worlds with execution-validated task verifiers",
+     "supporting_span": "[source text withheld (copied span): sha256 cbf1be6347d125f347beed948db51681eed92facb5974b03e114115863a4987f; 65 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "verifiers that can be attacked into awarding full credit to a cheating agent",
-     "supporting_span": "Verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+     "supporting_span": "[source text withheld (copied span): sha256 2066a1a8533cef85c9680e7027110fbeafb537eb3bb6a994f7205b3e08528beb; 107 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "rewards that separate strict success from bounded partial credit",
-     "supporting_span": "Success-Prioritized Reward (SPR) separates strict success from bounded partial credit",
+     "supporting_span": "[source text withheld (copied span): sha256 47977cfb465aff3e26b76d6c8109b78b5ab5494d1f0500dc06252066e6e49bdd; 85 characters]",
      "supported": true,
      "span_verified": true
     }

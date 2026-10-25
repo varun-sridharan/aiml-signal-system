@@ -111,7 +111,7 @@
     "#Agents",
     "#AgenticCoding"
    ],
-   "body": "Published 2026-10-15 on arXiv, Terminal-RSI alternates Recursive Self-Rewrite of verified trajectories with critic-inheriting Recursive Policy-Refine. The five-stage sequence runs from a Qwen3.8-27B base through RSR-1, RPR-1, RSR-2 and RPR-2 to produce Terminal-RSI-27B: 19.84% on Terminal-Bench 4.0, 86.52% on Terminal-Bench 2.1, 16.95% on Terminal-Bench 3.0, and 79.00% on Terminal-Bench Hard. On LHTB, process reward rises from 0.21 to 0.37 and strict completion from 0/46 to 5/46. The caveat sits in the reward design: Success-Prioritized Reward separates strict success from bounded partial credit, and a bounded partial-credit signal is a softer target than strict success.",
+   "body": "[source text withheld (copied text): sha256 f1d308649a543ef444f79b40f8fe16c89de5446eca99afa834196d546d795731; 679 characters; source https://arxiv.org/abs/2610.22192; excerpt sha256 d80269bce7c36e0cbd11fa5c7eb234735de734070cd22b1b92770a72e90b7904]",
    "featureParas": null,
    "tryIt": null,
    "tie": {

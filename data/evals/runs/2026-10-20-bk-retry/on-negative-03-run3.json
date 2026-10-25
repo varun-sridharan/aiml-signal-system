@@ -21,13 +21,13 @@
     },
     {
      "claim": "existing keys migrate to v2 in 2027-01",
-     "supporting_span": "existing keys migrate to v2 in 2027-01",
+     "supporting_span": "[source text withheld (copied span): sha256 86a3cb82a6c61d9728d086465777ee324fa44fd96d6ada9a2d7dfe54c82d22ad; 38 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "streaming responses are unchanged between the two versions",
-     "supporting_span": "Streaming responses are unchanged between the two versions",
+     "supporting_span": "[source text withheld (copied span): sha256 be778f625255b9977790fb89ce37e1911f32b53ea6ca93afb1628ec65c5b35aa; 58 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -46,25 +46,25 @@
    "claims": [
     {
      "claim": "Beacon now supports hybrid search, combining keyword and embedding scores in one query",
-     "supporting_span": "The Beacon vector store now supports hybrid search, combining keyword and embedding scores in one query",
+     "supporting_span": "[source text withheld (copied span): sha256 736331463926fe6b10fff039270c66a2e1a79696509f7513665bc3748b1f6f43; 103 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "It is available on all paid plans",
-     "supporting_span": "Hybrid search is available on all paid plans",
+     "supporting_span": "[source text withheld (copied span): sha256 f25aa030cdad45f707c54e50fae1088d0df36f4fed98b3d1e32d87f444ca3624; 44 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "adds no per-query charge",
-     "supporting_span": "adds no per-query charge",
+     "supporting_span": "[source text withheld (copied span): sha256 34b78e9a262b60e86b047148a66ab138a2ecf521c6aecc70cd20cc490259b3d7; 24 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "existing indexes are upgraded in place without a rebuild",
-     "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+     "supporting_span": "[source text withheld (copied span): sha256 0ba3d880625b80b3888a19af11fa6b1a43f533130be2e5554ab51fc050226543; 56 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -79,13 +79,13 @@
    "claims": [
     {
      "claim": "Beacon upgrades existing indexes in place without a rebuild",
-     "supporting_span": "Existing indexes are upgraded in place without a rebuild",
+     "supporting_span": "[source text withheld (copied span): sha256 0ba3d880625b80b3888a19af11fa6b1a43f533130be2e5554ab51fc050226543; 56 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "existing API keys migrate to v2 in 2027-01",
-     "supporting_span": "existing keys migrate to v2 in 2027-01",
+     "supporting_span": "[source text withheld (copied span): sha256 86a3cb82a6c61d9728d086465777ee324fa44fd96d6ada9a2d7dfe54c82d22ad; 38 characters]",
      "supported": true,
      "span_verified": true
     }

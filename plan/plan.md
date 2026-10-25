@@ -56,6 +56,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 
 # Decision log
 
+### 2026-10-25 · Evidence now keeps no article text, and a test fails the build if it does
+
+Seventeen committed files held 200 or more consecutive characters of a stored excerpt, mostly the grader's quoted source spans and a few writer paragraphs that reproduced a source; sixty-eight JSON files under `autopilot/evidence/` and `data/evals/runs/` now carry the URL, SHA-256 and length in place of each such string, with every other value unchanged and no history rewritten. `tests/test_article_text.py` scans both trees against every stored excerpt and the golden fixtures, folds case, markup, quoting, wrapping and nested JSON, and was shown to fail on a planted file. Runs of 100 to 199 characters in our own composed prose and claim lists remain, because they are our outputs and the limit is 200; the old commits still hold the text, which only a history rewrite would remove.
+
 ### 2026-10-25 · A citation-based gate is trialled beside the current one, and evidence keeps no article text
 
 The claim-by-claim gate blocked five attempts at one week, mostly on its own slips, because a longer edition gives a zero-tolerance check more places to be wrong. Run 4 builds a second gate beside it: the writer cites the exact source passage for each factual sentence, code checks that every fact carries a citation, a model checks each citation with a second opinion before rejecting, and a story that still fails is held while the rest publishes. It replaces the current gate only if it catches every planted fabrication and raises fewer false alarms on the same inputs, measured and saved. Evidence files now keep links, content hashes and our own outputs, never copied article text, because the repository is public and the writing is not ours. Varun signed off both deduplication test sets, 24 URL pairs and 17 content pairs.

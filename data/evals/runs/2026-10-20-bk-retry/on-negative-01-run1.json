@@ -21,31 +21,31 @@
    "claims": [
     {
      "claim": "horizontal scale behind a plain load balancer is possible",
-     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer,",
+     "supporting_span": "[source text withheld (copied span): sha256 70100329b42a896a778051f06d546ba015906df7e17f1ddbf59dea5c27dfd292; 78 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "no sticky sessions are needed",
-     "supporting_span": "with no sticky sessions",
+     "supporting_span": "[source text withheld (copied span): sha256 53ef44c121b502d889c62c4f4c6f3985908b424cafb642a43e5773a65043b6a2; 23 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "no shared session store is needed",
-     "supporting_span": "and no shared session store",
+     "supporting_span": "[source text withheld (copied span): sha256 db160d74924173b077390c7d14b876f87bda4b54ef399a817497c8963e1cc154; 27 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated",
-     "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated",
+     "supporting_span": "[source text withheld (copied span): sha256 610998c569f21f25ad292e119845dffb92e9295bebe95bdbf64f56c17a1863fe; 72 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "deprecation is on a 12-month clock",
-     "supporting_span": "deprecated with a 12-month runway",
+     "supporting_span": "[source text withheld (copied span): sha256 88cc3fcd324912648e3d13a34fd3223a0e72417653103faba8269d525c4690d1; 33 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -66,25 +66,25 @@
    "claims": [
     {
      "claim": "Anthropic raised $965B",
-     "supporting_span": "Anthropic is valued at $965B",
+     "supporting_span": "[source text withheld (copied span): sha256 00989739dd3f9f853fe9def0a601b62d68ec7e4cd7093ae390fe28f0e58942f4; 28 characters]",
      "supported": false,
      "span_verified": true
     },
     {
      "claim": "OpenAI closed a record $122B round at an $852B post-money valuation",
-     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supporting_span": "[source text withheld (copied span): sha256 b2e88c2f9d6c739030176d761f7c52d6cf88675529ac0130b1495568742db172; 67 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella you build under",
-     "supporting_span": "Frontier-lab rounds at approximately $1T valuations set the pricing umbrella that downstream builders operate under",
+     "supporting_span": "[source text withheld (copied span): sha256 d6d1178f8a73d793220fd92f10699cad480db933d511ee71cb37d36790bbe0e8; 115 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "they move both API pricing and what you pay for talent",
-     "supporting_span": "moving both API pricing and talent costs",
+     "supporting_span": "[source text withheld (copied span): sha256 d2ac6ec474c1d386a662e2de91ff9549d642c8fa9cae25c6da6b8a52954f9e85; 40 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -103,31 +103,31 @@
    "claims": [
     {
      "claim": "OpenAI's record $122B round at $852B post",
-     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supporting_span": "[source text withheld (copied span): sha256 b2e88c2f9d6c739030176d761f7c52d6cf88675529ac0130b1495568742db172; 67 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Anthropic's $965B valuation",
-     "supporting_span": "Anthropic is valued at $965B",
+     "supporting_span": "[source text withheld (copied span): sha256 00989739dd3f9f853fe9def0a601b62d68ec7e4cd7093ae390fe28f0e58942f4; 28 characters]",
      "supported": false,
      "span_verified": true
     },
     {
      "claim": "set the pricing umbrella over API pricing and talent costs",
-     "supporting_span": "set the pricing umbrella that downstream builders operate under, moving both API pricing and talent costs",
+     "supporting_span": "[source text withheld (copied span): sha256 276e6d4e1b9bdc1d9cc36df7fa46703292a52aeed9a2db3a85e3e53d4a95f2e5; 105 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "stateless request/response scales horizontally behind an ordinary load balancer",
-     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer",
+     "supporting_span": "[source text withheld (copied span): sha256 0e2385b4af12d6151d1d01c36a0876f77c0824369c0614a6d6747d20fd51be44; 77 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "at the price of broken cross-version compatibility and four deprecations on a 12-month runway",
-     "supporting_span": "The change breaks cross-version compatibility, and Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway",
+     "supporting_span": "[source text withheld (copied span): sha256 e13b8213902724999917068495fd64b8d96e2763ff86bdcc26b99b101ffe2e56; 146 characters]",
      "supported": true,
      "span_verified": true
     }

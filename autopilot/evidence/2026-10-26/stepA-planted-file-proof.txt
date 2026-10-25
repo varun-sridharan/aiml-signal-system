@@ -1,0 +1,10 @@
+before: clean tree
+corpus: 89 texts, 301129 windows; files holding 200+ copied characters: 0
+exit=0
+after planting 220 characters of one stored excerpt:
+corpus: 89 texts, 301129 windows; files holding 200+ copied characters: 1
+  autopilot/evidence/2026-10-26/_planted.txt  <- excerpt:00dc44cf-285a-4589-aac3-06418330c843
+exit=1
+after removing the file:
+corpus: 89 texts, 301129 windows; files holding 200+ copied characters: 0
+exit=0

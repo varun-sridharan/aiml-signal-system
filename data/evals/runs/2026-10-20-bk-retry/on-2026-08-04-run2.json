@@ -15,19 +15,19 @@
    "claims": [
     {
      "claim": "stateless servers can be scaled horizontally behind a plain load balancer, with no sticky sessions and no shared session store",
-     "supporting_span": "Stateless servers can be scaled horizontally behind an ordinary load balancer, with no sticky sessions and no shared session store.",
+     "supporting_span": "[source text withheld (copied span): sha256 f99ed866e102912270991e2ae89de6d0f6fa7edadc674078c171b1e54c70c1e4; 131 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "cross-version compatibility breaks",
-     "supporting_span": "The change breaks cross-version compatibility",
+     "supporting_span": "[source text withheld (copied span): sha256 ff86f2f225629324ac4600b00d7e41ec83dc0c0ca7cf72e2e5423e58d5e4943e; 45 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock",
-     "supporting_span": "Roots, Sampling, Logging, and Dynamic Client Registration are deprecated with a 12-month runway.",
+     "supporting_span": "[source text withheld (copied span): sha256 59e0e32c3dac803abf5390c144c08b2a156648cc2d8b075da9fb685fd05acd0e; 96 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -42,13 +42,13 @@
    "claims": [
     {
      "claim": "2.8T open weights at 1M context",
-     "supporting_span": "at 2.8T parameters with a 1M-token context window",
+     "supporting_span": "[source text withheld (copied span): sha256 87dc0cfbfee1a6d42606032d6c2dbb6d682b4144f13ef29925123271cd8fa94f; 49 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "per-call cost compounds across many calls per task",
-     "supporting_span": "where per-call cost compounds across many calls per task",
+     "supporting_span": "[source text withheld (copied span): sha256 9aac97fe0bc6cfd81894ffade2420ff4516d02b2b18ead547fde461d2395b505; 56 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -63,19 +63,19 @@
    "claims": [
     {
      "claim": "iStar scores each intermediate action instead of only on the final outcome in multi-turn agentic RL",
-     "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions rather than only on the final outcome.",
+     "supporting_span": "[source text withheld (copied span): sha256 da77dd535542938c3e23327647607539a2aaa17d2a74397ace793f34e2640841; 130 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "+6.3% success improvement on WebShop and VisualSokoban",
-     "supporting_span": "It reports a +6.3% success improvement on WebShop and VisualSokoban.",
+     "supporting_span": "[source text withheld (copied span): sha256 bf7e642de31ee838a3ce3fbbe61f71ad12cb069daff36701bc673e19c4e9244c; 68 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Results are benchmark-only, and the authors concede the difficulty concentrates in step-reward design",
-     "supporting_span": "Results are benchmark-only, and the paper notes that step-reward design is where the difficulty concentrates.",
+     "supporting_span": "[source text withheld (copied span): sha256 e2330485ac83f2f2a6b5baa1192fecfe8d1f36d5ef89b005ce3f74e13ee3307e; 109 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -90,19 +90,19 @@
    "claims": [
     {
      "claim": "GPT-5.6 Sol at 89.5%",
-     "supporting_span": "GPT-5.6 Sol scores 89.5%",
+     "supporting_span": "[source text withheld (copied span): sha256 43c1c7a4de059eef3bba2e2ec7a852bc9a3c4d7e3bebc67669811ed5e68fdde4; 24 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Opus 5 at 89.1%",
-     "supporting_span": "Opus 5 scores 89.1%",
+     "supporting_span": "[source text withheld (copied span): sha256 716ca2c49816b74f3e2cb93243567de62b35af2345a44a29f181207459242623; 19 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "0.4-point spread between GPT-5.6 Sol and Opus 5",
-     "supporting_span": "a 0.4-point gap at the top of the coding-agent leaderboard",
+     "supporting_span": "[source text withheld (copied span): sha256 767fb1345882fabe86eacd9c04bc9363223e1466b9a0d3037c2d73138abe9394; 58 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -117,13 +117,13 @@
    "claims": [
     {
      "claim": "OpenAI's $122B round at $852B post",
-     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supporting_span": "[source text withheld (copied span): sha256 b2e88c2f9d6c739030176d761f7c52d6cf88675529ac0130b1495568742db172; 67 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Anthropic at $965B",
-     "supporting_span": "Anthropic is valued at $965B",
+     "supporting_span": "[source text withheld (copied span): sha256 00989739dd3f9f853fe9def0a601b62d68ec7e4cd7093ae390fe28f0e58942f4; 28 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -138,13 +138,13 @@
    "claims": [
     {
      "claim": "$510B in H1",
-     "supporting_span": "Global venture funding reached a record $510B in H1 2026",
+     "supporting_span": "[source text withheld (copied span): sha256 c9383d4b52e01d62348af2fa66dadfe76274b440c8a0580b78de51072d676cef; 56 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "AI taking ~80% of Q1 dollars",
-     "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+     "supporting_span": "[source text withheld (copied span): sha256 18acbd7f9acb4eef9f78b82eda70edd93a394d4563a89c60ed195388390bd3c0; 50 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -159,13 +159,13 @@
    "claims": [
     {
      "claim": "Blackwell-class exports banned",
-     "supporting_span": "which bans export of Blackwell-class chips",
+     "supporting_span": "[source text withheld (copied span): sha256 73ef92461831ca113c5db1701855d78a7df3a2e2811fd19712dd0bf1eb394b75; 42 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "H200 moved to case-by-case licensing",
-     "supporting_span": "moves H200 exports to case-by-case licensing",
+     "supporting_span": "[source text withheld (copied span): sha256 bba6d0934c27b339fbd175d64e1ee236a5ea6d5efa268914c95650995e3931ea; 44 characters]",
      "supported": true,
      "span_verified": true
     }
@@ -180,49 +180,49 @@
    "claims": [
     {
      "claim": "GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1",
-     "supporting_span": "On Terminal-Bench 2.1, GPT-5.6 Sol scores 89.5% and Opus 5 scores 89.1% — a 0.4-point gap",
+     "supporting_span": "[source text withheld (copied span): sha256 7b9014c833f2b730d5b0d147e6e0ab6f4c3a5c083d4461fa8d7934c98f1a1a00; 89 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "OpenAI prices at $852B",
-     "supporting_span": "OpenAI closed a record $122B round at an $852B post-money valuation",
+     "supporting_span": "[source text withheld (copied span): sha256 b2e88c2f9d6c739030176d761f7c52d6cf88675529ac0130b1495568742db172; 67 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Anthropic prices at $965B",
-     "supporting_span": "Anthropic is valued at $965B",
+     "supporting_span": "[source text withheld (copied span): sha256 00989739dd3f9f853fe9def0a601b62d68ec7e4cd7093ae390fe28f0e58942f4; 28 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "AI absorbs ~80% of Q1 venture dollars",
-     "supporting_span": "with AI companies taking roughly 80% of Q1 dollars",
+     "supporting_span": "[source text withheld (copied span): sha256 18acbd7f9acb4eef9f78b82eda70edd93a394d4563a89c60ed195388390bd3c0; 50 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "trading stateful sessions for stateless horizontal scale",
-     "supporting_span": "The 2026-07-28 MCP specification changes the core transport from stateful sessions to stateless request/response. Stateless servers can be scaled horizontally behind an ordinary load balancer",
+     "supporting_span": "[source text withheld (copied span): sha256 4a908a553556b77560a3b5509c1a670d94c1d42e211190e75428f70a3426f851; 191 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "Kimi K3's 2.8T open weights",
-     "supporting_span": "at 2.8T parameters",
+     "supporting_span": "[source text withheld (copied span): sha256 381070604f710ec923f2acbdd71dd17c7b1b8d7d9d624c859ccbcacd3bb2d4f7; 18 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "iStar's step-reward credit assignment",
-     "supporting_span": "iStar assigns per-step implicit rewards so an agent receives credit on intermediate actions",
+     "supporting_span": "[source text withheld (copied span): sha256 3d00ed9a5b4e9097935e217fc5ca2aef3f6cc6639f05191870874013136c678d; 91 characters]",
      "supported": true,
      "span_verified": true
     },
     {
      "claim": "the AI OVERWATCH Act's Blackwell ban",
-     "supporting_span": "The House advanced the AI OVERWATCH Act, which bans export of Blackwell-class chips",
+     "supporting_span": "[source text withheld (copied span): sha256 fcadac8500359cad6e33613f46eab6d37cdd52f7b5441d83c460fc2837163566; 83 characters]",
      "supported": true,
      "span_verified": true
     }
