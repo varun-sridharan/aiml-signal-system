@@ -1,0 +1,11 @@
+KILLED   no check that the number of ids equals the number written  (FAILED (failures=1))
+KILLED   no check of the total in 'N of the M stories'  (FAILED (failures=2))
+KILLED   an unlisted count is accepted  (FAILED (errors=5))
+KILLED   story ids are not checked against the edition  (FAILED (failures=1))
+KILLED   duplicate ids are accepted  (FAILED (failures=1))
+KILLED   the plain form ('four releases') is not looked for  (FAILED (failures=11, errors=2))
+KILLED   the 'of' form ('three of ... nine stories') is not looked for  (FAILED (failures=7))
+KILLED   a phrase said twice reuses one entry  (FAILED (failures=1))
+KILLED   the 'N of the M <noun>' total is compared for every noun  (FAILED (failures=1))
+KILLED   the entry's path is ignored  (FAILED (failures=1))
+clean code: OK

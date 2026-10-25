@@ -1,0 +1,8 @@
+Mutation proofs for tests/test_prompt_cache.py. Each mutation was applied to production code, the five tests run, and the
+code restored (git status shows agents/framer.py untouched). The first draft of the date test could not see a date added by the
+loader (the reviewer showed it); it was rewritten to compare against the source files, and M1 was redone.
+
+M1  load_system_prompt prepends today's ISO date                    -> FAILED (failures=1)   [test_the_prefix_holds_no_date_or_week]
+M2  cache_control removed from the framing call's system block        -> FAILED (errors=1)     [test_the_framing_prefix_is_identical_for_different_days]
+M3  the day's date appended to the framing system text                -> FAILED (failures=1)   [test_the_framing_prefix_is_identical_for_different_days, after giving the two days different dates]
+clean code                                                            -> OK (5 tests)

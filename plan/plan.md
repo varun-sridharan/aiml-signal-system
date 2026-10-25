@@ -56,6 +56,14 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 
 # Decision log
 
+### 2026-10-25 · A count across stories must name its stories, and code checks the count
+
+The writer now lists every count of stories or items it states ("four releases", "two papers", "three of this week's nine stories") in a `counts` field as the words used and the ids of the stories counted, and `agents/counts.py` fails the edition when a count is unlisted, names a story that does not exist or the same story twice, has a different number of ids from the number written, or gives a total that is not the edition's size. Counts inside one story's own fields are left alone because they are that story's fact, and a rewrite can fix a failing count only by dropping the number, since the revision pass cannot add list entries. The check proves the count is a list a reader can tally, not that each listed story is a release or a paper; that stays with the grader of each story's own text.
+
+### 2026-10-25 · The 1% cache hit rate is structural, and nothing was changed to raise it
+
+The ledger puts cache reads at 1.2% of all input tokens because 73% of them go to Haiku graders and the Reader, whose prefixes are too short to cache and different on every call; the Opus prompts do cache, and a probe of five short calls showed a repeat reading 99.8% of its input at 11% of the cost. Real runs rarely hit because one composing call a week is days from the next, and because the output schema is part of the cached prefix, so the composing pass and its revision do not share an entry. I changed no production code, since the fixes would save about three cents per edition or disturb the grader's measured scope; `tests/test_prompt_cache.py` now fails if a date is put in the cached prefix or a breakpoint is removed.
+
 ### 2026-10-25 · Evidence now keeps no article text, and a test fails the build if it does
 
 Seventeen committed files held 200 or more consecutive characters of a stored excerpt, mostly the grader's quoted source spans and a few writer paragraphs that reproduced a source; sixty-eight JSON files under `autopilot/evidence/` and `data/evals/runs/` now carry the URL, SHA-256 and length in place of each such string, with every other value unchanged and no history rewritten. `tests/test_article_text.py` scans both trees against every stored excerpt and the golden fixtures, folds case, markup, quoting, wrapping and nested JSON, and was shown to fail on a planted file. Runs of 100 to 199 characters in our own composed prose and claim lists remain, because they are our outputs and the limit is 200; the old commits still hold the text, which only a history rewrite would remove.

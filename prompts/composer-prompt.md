@@ -80,6 +80,17 @@ sentence itself). Use only ids you were given.
 4. A comparison is computed and both endpoints shown: "grew about 25x, from $96 billion to $2.4 trillion", never a bare ratio or percentage change.
 5. No stage directions: no "Read that twice", "So ask what", "Here is the shape", "Notice that", "The point is", "Let's".
 
+## Counts across stories
+
+When any field states how many stories or items something was, such as "four releases", "two papers", "three launches", or "three
+of this week's nine stories", list it in `counts` as `{path, phrase, stories}`: `path` is the field's split path, `phrase` is those
+words exactly as they appear in the field (the text only, without any `[[...]]` marker), and `stories` is the ids of the stories
+you counted, as many ids as the number you wrote, each a different story from this edition. In "three of this week's nine stories"
+the nine must be the number of stories you were given. Code checks every count in the text against `counts`; a count that is not
+listed, or that does not add up, stops the edition. If you cannot name the stories, say it without a number ("several releases").
+A figure inside one story's own excerpt ("five models" in a story's body) is that story's fact and needs no entry. Return
+`counts` as an empty list when you wrote none.
+
 ## Splitting what you wrote
 
 Return every prose field you wrote in `splits` too, as `{path, runs}` where runs is an ordered list of `{text, class}`,

@@ -14,7 +14,8 @@ Everything it writes goes through the same discipline as the first pass:
     of unit: one per story (its own excerpt), the essay (the excerpts it lists in drawnFrom), and the week
     (thread, closing, ties and the section headline, against every excerpt);
   * the five hard style rules are checked by code (agents/style_check.py);
-  * the slot list's counts and limits are checked by code (slot_failures).
+  * the slot list's counts and limits are checked by code (slot_failures);
+  * a count of stories or items in the prose must be listed with the stories it counts, and code checks it (agents/counts.py).
 
 Any failure blocks publishing. Nothing the model decides is trusted where code can decide it: the pill, the
 sources and their one primary, the story ids, `checked`, the numbers and the "how this was made" paragraph are
@@ -28,9 +29,10 @@ import re
 from pathlib import Path
 
 try:
-    from . import budget, framer, llm, style_check
+    from . import budget, counts, framer, llm, style_check
 except ImportError:  # pragma: no cover - top-level import from the eval harness
     import budget
+    import counts
     import framer
     import llm
     import style_check
@@ -108,8 +110,11 @@ COMPOSE_SCHEMA = {
         "splits": {"type": "array", "items": {
             "type": "object", "properties": {"path": {"type": "string"}, "runs": framer.SPLIT_SCHEMA},
             "required": ["path", "runs"], "additionalProperties": False}},
+        "counts": {"type": "array", "items": {
+            "type": "object", "properties": {"path": {"type": "string"}, "phrase": {"type": "string"}, "stories": _STRINGS},
+            "required": ["path", "phrase", "stories"], "additionalProperties": False}},
     },
-    "required": ["thread", "learning", "storiesTitle", "stories", "dividers", "closing", "splits"],
+    "required": ["thread", "learning", "storiesTitle", "stories", "dividers", "closing", "splits", "counts"],
     "additionalProperties": False,
 }
 
@@ -545,6 +550,7 @@ def assemble_edition(composed: dict, raw_day: dict, framing: dict, verdicts: dic
             "doDifferently": learning["doDifferently"],
         },
         "storiesTitle": composed["storiesTitle"],
+        "counts": composed.get("counts") or [],         # the audit trail for every count across stories the prose states
         "stories": stories,
         "dividers": [d for d in composed["dividers"] if d["before"] in ids],
         "closing": composed["closing"],
@@ -562,6 +568,7 @@ def edition_failures(composed: dict, raw_day: dict, payload: dict, verdicts: dic
     """Every hard-gate failure of the composed prose. Empty means the edition may publish."""
     ids = story_ids(raw_day)
     out = coverage_failures(composed) + fact_floor_failures(composed) + slot_failures(composed, ids)
+    out += counts.count_failures(composed, ids, prose_fields(composed))
     out += [f"style — {line}" for line in style_check.edition_style_failures(composed)]
     out += completeness_failures(payload, verdicts, week) + faithfulness_failures(verdicts, week)
     return out
@@ -601,6 +608,9 @@ def revisable_problems(composed: dict, ids: dict) -> dict:
         problems.setdefault(path, []).append(f"{message}: classify the clauses again (a clause one span of the excerpt could settle is a fact), keeping the text")
     for path, line in style_check.edition_style_findings(composed):
         problems.setdefault(path, []).append(line)
+    for line in counts.count_failures(composed, ids, prose_fields(composed)):
+        path, _, message = line.partition(": ")
+        problems.setdefault(path, []).append(f"{message}. In this rewrite state it without a number of stories (you cannot add `counts` entries here)")
     for line in slot_failures(composed, ids):
         for pattern, to_path in _REVISABLE_SLOT:
             m = pattern.match(line)

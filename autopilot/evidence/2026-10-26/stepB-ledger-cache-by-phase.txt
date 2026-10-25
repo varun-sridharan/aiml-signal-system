@@ -1,0 +1,19 @@
+Settled ledger rows, all months to 2026-10-25: tokens by phase (numbers only).
+phase | model | calls | uncached input | cache read | cache write | calls with a read
+eval-faithfulness | claude-haiku-4-5 | 83 | 258949 | 0 | 0 | 0
+reader-fetch | claude-haiku-4-5 | 42 | 218864 | 0 | 0 | 0
+composing-faithfulness | claude-haiku-4-5 | 17 | 123846 | 0 | 0 | 0
+composing | claude-opus-5 | 10 | 60793 | 0 | 65767 | 0
+composing-revise | claude-opus-5 | 7 | 51677 | 5632 | 33515 | 1
+faithfulness | claude-haiku-4-5 | 10 | 44271 | 0 | 0 | 0
+reader-dedup-judge | claude-haiku-4-5 | 10 | 30388 | 0 | 0 | 0
+framing | claude-opus-5 | 10 | 23079 | 6944 | 24284 | 2
+eval-usefulness | claude-haiku-4-5 | 10 | 21448 | 0 | 0 | 0
+reader-probe | claude-haiku-4-5 | 4 | 17066 | 0 | 0 | 0
+eval-faithfulness-retry | claude-haiku-4-5 | 5 | 10595 | 0 | 0 | 0
+dedup-eval-judge | claude-haiku-4-5 | 12 | 9353 | 0 | 0 | 0
+faithfulness-retry | claude-haiku-4-5 | 1 | 4272 | 0 | 0 | 0
+cache-probe | claude-opus-5 | 5 | 70 | 19292 | 12462 | 3
+
+totals: uncached input 874671, cache read 31868, cache write 136028
+cache read as a share of all input tokens (read + write + uncached): 3.1%

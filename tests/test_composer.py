@@ -80,6 +80,8 @@ def valid(n=5):
                     "oneThing": "Try the queue on one repository this week."},
     }
     composed["splits"] = splits_all_fact(composed)
+    composed["counts"] = [{"path": "thread.line.1", "phrase": "Two releases", "stories": ids[:2]},
+                          {"path": "thread.body", "phrase": "Both releases", "stories": ids[:2]}]
     return composed
 
 
@@ -322,6 +324,18 @@ class Faithfulness(unittest.TestCase):
         self.assertTrue(any(f.startswith("style —") and "rule 5" in f for f in failures))
         self.assertTrue(any("learning.paras: 4 paragraphs" in f for f in failures))
         self.assertTrue(any("no split" in f for f in failures))
+
+    def test_a_count_of_stories_must_be_listed_with_the_stories_it_counts(self):
+        c, day, _, verdicts, week, payload = self.grade()
+        sentence = " Four releases cut the cost."
+        c["thread"]["body"] += sentence
+        c["splits"] = [dict(sp, runs=sp["runs"] + [{"text": sentence, "class": "interpretation"}]) if sp["path"] == "thread.body" else sp for sp in c["splits"]]
+        failures = composer.edition_failures(c, day, payload, verdicts, week)
+        self.assertTrue(any("thread.body: count — 'Four releases'" in f for f in failures), failures)
+        c["counts"].append({"path": "thread.body", "phrase": "Four releases", "stories": ["s01", "s02", "s03", "s04"]})
+        self.assertFalse(any("count —" in f for f in composer.edition_failures(c, day, payload, verdicts, week)))
+        c["counts"][-1]["stories"].append("s05")
+        self.assertTrue(any("says 4 but `counts` names 5" in f for f in composer.edition_failures(c, day, payload, verdicts, week)))
 
 
 class Assembly(unittest.TestCase):

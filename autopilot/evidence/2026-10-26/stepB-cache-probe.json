@@ -1,0 +1,47 @@
+[
+ {
+  "call": "1 compose schema",
+  "input_tokens": 14,
+  "cache_read": 0,
+  "cache_write": 6830,
+  "output_tokens": 64,
+  "cost_usd": 0.04436,
+  "seconds": 7.6
+ },
+ {
+  "call": "2 compose schema again",
+  "input_tokens": 14,
+  "cache_read": 6830,
+  "cache_write": 0,
+  "output_tokens": 64,
+  "cost_usd": 0.00509,
+  "seconds": 2.5
+ },
+ {
+  "call": "3 revise schema",
+  "input_tokens": 14,
+  "cache_read": 0,
+  "cache_write": 5632,
+  "output_tokens": 48,
+  "cost_usd": 0.03647,
+  "seconds": 3.3
+ },
+ {
+  "call": "4 revise schema again",
+  "input_tokens": 14,
+  "cache_read": 5632,
+  "cache_write": 0,
+  "output_tokens": 47,
+  "cost_usd": 0.00406,
+  "seconds": 2.1
+ },
+ {
+  "call": "5 compose schema again",
+  "input_tokens": 14,
+  "cache_read": 6830,
+  "cache_write": 0,
+  "output_tokens": 64,
+  "cost_usd": 0.00509,
+  "seconds": 2.5
+ }
+]
