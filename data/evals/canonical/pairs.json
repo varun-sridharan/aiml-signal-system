@@ -1,5 +1,5 @@
 {
-  "status": "draft, awaiting Varun's review",
+  "status": "signed off by Varun on 2026-10-25",
   "about": "URL pairs for Reader's canonicalisation gate (plan row 9). Free and deterministic: no model, no network. 'same' pairs must collapse to one canonical URL; 'different' pairs must NOT. Dedup silently merging two different articles is Reader's only failure that is invisible in the finished edition, so the 'different' pairs are the ones that matter most. Written by the autopilot run of 2026-10-18 from the rules in agents/excerpts.canonicalise; every pair is a judgement about what counts as the same article, which is why the set needs Varun's sign-off before row 9 is DONE.",
   "pairs": [
     {"id": "scheme", "expect": "same", "a": "http://example.com/blog/post-one", "b": "https://example.com/blog/post-one", "why": "http and https serve one page"},

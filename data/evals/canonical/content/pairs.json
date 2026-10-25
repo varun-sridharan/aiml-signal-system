@@ -1,5 +1,5 @@
 {
- "status": "draft, awaiting Varun's review",
+ "status": "signed off by Varun on 2026-10-25",
  "about": "Content pairs for Reader's layered deduplication gate (plan row 9). Every text is invented (fictional companies and figures), because the repository is public. Each pair says what it IS (expect: same|different) and which layer should decide it (layer: url, identity, fingerprint, or model). A pair marked 'model' must NOT be merged by the free layers (they may only pass it on or say different); the paid check asks the model about those and nothing else. Doubt always means different: a duplicate shown twice is visible and fixable, a story merged away is not. Written by the autopilot run of 2026-10-20/21; every pair is a judgement, which is why the set needs Varun's sign-off before row 9 is DONE.",
  "pairs": [
   {
