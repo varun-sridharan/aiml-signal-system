@@ -56,6 +56,24 @@ def tearDownModule():
     budget.MONTHLY_BUDGET_USD = _production_ceiling
 
 
+def live_headroom(test):
+    """For a test that calls llm.call in the live month: the ceiling sits $20 above what the month has already spent, so the test's
+    arithmetic does not depend on the month's real spend (a flat $20 failed it once the month passed $20, on 2026-10-25)."""
+    import functools
+
+    @functools.wraps(test)
+    def wrapper(self):
+        with budget.connect() as conn:
+            live = Decimal(str(budget.month_to_date_spend(conn)))
+        before = budget.MONTHLY_BUDGET_USD
+        budget.MONTHLY_BUDGET_USD = PINNED_CEILING + live
+        try:
+            return test(self)
+        finally:
+            budget.MONTHLY_BUDGET_USD = before
+    return wrapper
+
+
 def usage(inp=1000, out=500, cache_read=0, cache_write=0):
     return SimpleNamespace(input_tokens=inp, output_tokens=out,
                            cache_read_input_tokens=cache_read, cache_creation_input_tokens=cache_write)
@@ -168,6 +186,7 @@ class LedgerInRolledBackTransaction(unittest.TestCase):
         # ...and only toward its own month.
         self.assertEqual(budget.month_to_date_spend(self.conn, FEB_2099), Decimal("0"))
 
+    @live_headroom
     def test_llm_call_books_exactly_once_and_settles_at_actual(self):
         u = usage(inp=1234, out=567)
         client = FakeClient(usage_=u)
@@ -184,6 +203,7 @@ class LedgerInRolledBackTransaction(unittest.TestCase):
         self.assertAlmostEqual(float(rows[-1][1]), budget.estimate_cost_usd("claude-haiku-4-5", u), places=6)
         self.assertAlmostEqual(cost, budget.estimate_cost_usd("claude-haiku-4-5", u), places=6)
 
+    @live_headroom
     def test_truncated_response_is_still_booked_before_the_run_exits(self):
         client = FakeClient(stop_reason="max_tokens", usage_=usage(out=1000))
         with self.assertRaises(SystemExit):
@@ -192,6 +212,7 @@ class LedgerInRolledBackTransaction(unittest.TestCase):
         state = self.conn.execute("SELECT state FROM spend_ledger WHERE phase='test-truncated'").fetchone()
         self.assertEqual(state, ("settled",), "a billed-but-truncated call went unrecorded")
 
+    @live_headroom
     def test_request_that_raises_leaves_the_worst_case_reserved(self):
         client = FakeClient(raises=ConnectionError("network dropped mid-call"))
         with self.assertRaises(ConnectionError):
