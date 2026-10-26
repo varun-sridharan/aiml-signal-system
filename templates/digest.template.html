@@ -255,6 +255,10 @@
   .down-form .opt{letter-spacing:.02em;color:var(--faint)}
   .down-form input[type=text]{font-family:var(--serif);font-size:16px;letter-spacing:0;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:3px;padding:8px 10px}
   .send{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.14em;font-weight:600;color:var(--paper);background:var(--ink);border:0;border-radius:3px;padding:9px 14px;cursor:pointer}
+  .held{margin:40px 0 0;padding:18px 20px;border:1px dashed var(--edge);border-radius:6px}
+  .held .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--accent)}
+  .held p{font-size:15px;line-height:1.55;margin:10px 0 0}
+  .held ul{margin:10px 0 0;padding-left:18px} .held li{font-size:15px;line-height:1.5;margin:6px 0}
   .closing{margin:44px 0 0;padding-top:28px;border-top:2px solid var(--ink)}
   .closing .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}
   .closing .cl{font-size:34px;line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
@@ -371,6 +375,13 @@
         {%- if r.divider %}<div role="separator" aria-label="{{ r.divider }}" class="divider"><span></span><span>{{ r.divider }}</span><span></span></div>{% endif %}
         {{ story(r) }}
         {%- endfor %}
+        {%- if digest.stories.held %}
+        <div class="held">
+          <div class="lab">HELD &middot; COULD NOT BE VERIFIED</div>
+          <p>{{ digest.stories.held|length }} {{ "story was" if digest.stories.held|length == 1 else "stories were" }} read this week and left out, because a sentence in {{ "its" if digest.stories.held|length == 1 else "their" }} write-up could not be checked against the page. The pages are linked so you can read them yourself.</p>
+          <ul>{% for h in digest.stories.held %}<li><span>{{ h.headline }}</span>{% for s in h.sources %} <a href="{{ s.href }}" target="_blank" rel="noopener noreferrer" aria-label="{{ s.aria }}">{{ s.label }} &#8599;</a>{% endfor %}</li>{% endfor %}</ul>
+        </div>
+        {%- endif %}
         {%- if digest.stories.closing %}
         <div class="closing">
           <div class="lab">THE THREAD THROUGH IT ALL</div>

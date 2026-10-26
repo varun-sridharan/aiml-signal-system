@@ -1,0 +1,1289 @@
+[
+ {
+  "run": "claims-run1",
+  "gate": "claims",
+  "unit": "week",
+  "text": "CodeQL agreeing the alert is closed",
+  "id": 1,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "claims-run3",
+  "gate": "claims",
+  "unit": "essay",
+  "text": "scaling to 20,000 parallel environment instances across mobile, computer, and web environments",
+  "id": 2,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "claims-run5",
+  "gate": "claims",
+  "unit": "essay",
+  "text": "Terminal Bench, KernelBench, and SETA are agent environments that use programmatic verifiers",
+  "id": 3,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "thread.line.1",
+  "text": "Three papers measured where agent gains actually come from.",
+  "flag": "uncited",
+  "id": 4,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "thread.line.2",
+  "text": "GitHub made model choice [[hl|an administrator's policy]].",
+  "flag": "uncited",
+  "id": 5,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "learning.headline",
+  "text": "Overfitting explained 54% of harness gains, while a mocked app lifted real-phone success from 28.8% to 48.1%.",
+  "flag": "uncited",
+  "id": 6,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "learning.doDifferently",
+  "text": "Only the remainder is worth shipping.",
+  "flag": "uncited",
+  "id": 7,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "stories.title",
+  "text": "Three papers on measuring agents, three GitHub changes to who controls them.",
+  "flag": "uncited",
+  "id": 8,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s01.headline",
+  "text": "Overfitting and extra compute explained 68% of harness gains across 21 settings",
+  "flag": "uncited",
+  "id": 9,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s01.feature.1",
+  "text": "The harness is iteratively optimized to achieve higher performance on the search set, ~ and the number on that set goes up, which is why the technique spread.",
+  "flag": "verifier-rejected",
+  "id": 10,
+  "verdict": "TRUE_ALARM",
+  "note": "'Which is why the technique spread' is not in the document."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "Put plainly: in two thirds of the settings where tuning worked, most of what worked was the benchmark and the compute budget rather than the harness.",
+  "flag": "figure-in-judgement",
+  "id": 11,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s01.feature.4",
+  "text": "The authors' conclusion is a call for attribution-aware evaluation in future harness evolution research, ~ which for a practitioner means budgeting an extra experiment: run the baseline harness at the evolved harness's inference cost before you credit the evolution with anything.",
+  "flag": "verifier-rejected",
+  "id": 12,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s01.tie",
+  "text": "MAI-Gym is the counter-example this paper asks for: a gain measured in a cheap environment and then shown again in an expensive one.",
+  "flag": "judgement-check",
+  "id": 13,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s02.headline",
+  "text": "A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA",
+  "flag": "uncited",
+  "id": 14,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s02.why",
+  "text": "If you train or evaluate agents against programmatic rewards, a hackable verifier quietly corrupts both.",
+  "flag": "judgement-check",
+  "id": 15,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s02.tie",
+  "text": "GitHub's autofix leans on exactly this kind of verifier to decide a fix is real, which is why the hardening question is not academic.",
+  "flag": "judgement-check",
+  "id": 16,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s03.headline",
+  "text": "A 9B GUI agent trained in mock apps lifted real-phone success from 28.8% to 48.1%",
+  "flag": "uncited",
+  "id": 17,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s03.why",
+  "text": "This is the rare RL result that shows its gain surviving a move out of the simulator.",
+  "flag": "judgement-check",
+  "id": 18,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "divider.s04",
+  "text": "GitHub moves model choice into policy",
+  "flag": "judgement-check",
+  "id": 19,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s04.headline",
+  "text": "Copilot model deprecations landed on October 19 across chat, agent mode and completions",
+  "flag": "uncited",
+  "id": 20,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s04.why",
+  "text": "The deprecations cover most Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions, ~ so pinned model IDs in scripts and integrations break, not only the IDE.",
+  "flag": "verifier-rejected",
+  "id": 21,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "'Break' is a consequence drawn from update-your-integrations advice; borderline."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s04.tie",
+  "text": "The new policy API is the scalable way to do that check, rather than clicking through settings for each organization.",
+  "flag": "judgement-check",
+  "id": 22,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s05.headline",
+  "text": "Copilot now reruns CodeQL to confirm a fix before opening the pull request",
+  "flag": "uncited",
+  "id": 23,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s05.why",
+  "text": "This is a shipped agent loop with a real verifier inside it.",
+  "flag": "judgement-check",
+  "id": 24,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s05.tryIt",
+  "text": "Before turning it on, note that it takes two enablement steps and that it replaces a free option.",
+  "flag": "judgement-check",
+  "id": 25,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s05.tryIt",
+  "text": "Set SKU level budgets for Code Security AI credits first.",
+  "flag": "verifier-rejected",
+  "id": 26,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s06.headline",
+  "text": "Amp says OpenAI models carry the majority of its tokens, with some users at 10 billion a week",
+  "flag": "uncited",
+  "id": 27,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s06.why",
+  "text": "Mostly a vendor story, but two numbers are useful for sizing your own agent budget.",
+  "flag": "judgement-check",
+  "id": 28,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s06.tie",
+  "text": "Longer leashes and faster models both raise inference-time compute, which the attribution paper identifies as a source of gain that does not transfer.",
+  "flag": "judgement-check",
+  "id": 29,
+  "verdict": "TRUE_ALARM",
+  "note": "Claim that faster models/longer leashes raise inference compute, and TTS 'does not transfer', not established."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s07.headline",
+  "text": "Copilot model availability is now readable and writable from the REST API",
+  "flag": "uncited",
+  "id": 30,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "story.s07.body",
+  "text": "The changelog does not state rate limits or which fields are writable.",
+  "flag": "judgement-check",
+  "id": 31,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "closing.line.1",
+  "text": "Three papers showed how much measured agent progress is an artifact.",
+  "flag": "uncited",
+  "id": 32,
+  "verdict": "TRUE_ALARM",
+  "note": "Only the harness paper shows artifact share; other two papers do not show that."
+ },
+ {
+  "run": "citations-run1",
+  "gate": "citations",
+  "unit": "closing.line.2",
+  "text": "GitHub moved model choice behind an [[hl|administrator's policy toggle]].",
+  "flag": "uncited",
+  "id": 33,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "learning.para.1",
+  "text": "[[fn:harness|Harness evolution]] is the loop most teams now run without calling it that.",
+  "flag": "uncited",
+  "id": 34,
+  "verdict": "TRUE_ALARM",
+  "note": "Claim about what most teams run is not in any document."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "learning.para.2",
+  "text": "arXiv published Harness-Delta Attribution on October 15, 2026, an evaluation protocol applied to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+  "flag": "uncited",
+  "id": 35,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "learning.para.2",
+  "text": "Among 21 settings that show statistically significant search-set gains, overfitting accounted for 54% of the gain on average and test-time scaling for 14%, and their combined share exceeds 50% in 14 settings.",
+  "flag": "uncited",
+  "id": 36,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "learning.para.3",
+  "text": "Agent environments use [[fn:verifier|programmatic verifiers]] to turn complex outcomes into rewards.",
+  "flag": "verifier-rejected",
+  "id": 37,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "learning.doDifferently",
+  "text": "If the lift does not survive, you bought compute and a scoreboard, not a better agent.",
+  "flag": "uncited",
+  "id": 38,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s01.feature.2",
+  "text": "Three sources feed one number, and the headline reports only their sum, so the decomposition is the contribution rather than any single score.",
+  "flag": "figure-in-judgement",
+  "id": 39,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "The two shares are not equally bad news.",
+  "flag": "figure-in-judgement",
+  "id": 40,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "Buying more inference-time compute at least does the same work again when you serve the system, at a cost you can see on the bill.",
+  "flag": "uncited",
+  "id": 41,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "Fitting the artifacts of one benchmark buys nothing that leaves the benchmark.",
+  "flag": "uncited",
+  "id": 42,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s02.feature.2",
+  "text": "The loop then has to find the subtler ones, which is the part that does not finish.",
+  "flag": "uncited",
+  "id": 43,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s03.why",
+  "text": "The open question for GUI agents has been whether cheap synthetic environments teach anything that survives on real hardware.",
+  "flag": "judgement-check",
+  "id": 44,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s05.tryIt",
+  "text": "An enterprise administrator must enable the new \"Agentic autofix\" policy in Advanced Security policies before an organization or repository administrator can turn it on in the Code Security settings for the organization or the repository.",
+  "flag": "uncited",
+  "id": 45,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s07.why",
+  "text": "The delegation detail is what decides who can unblock a developer at four in the afternoon.",
+  "flag": "figure-in-judgement",
+  "id": 46,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "story.s07.tie",
+  "text": "The same model policies that an administrator may need to enable after the October 19 deprecation can now be read and updated through the REST API.",
+  "flag": "verifier-rejected",
+  "id": 47,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run2",
+  "gate": "citations",
+  "unit": "closing.oneThing",
+  "text": "Keep the number you get there, and throw the other one away.",
+  "flag": "uncited",
+  "id": 48,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "thread.body",
+  "text": "The week put measurement, not capability, at the centre of agent work.",
+  "flag": "uncited",
+  "id": 49,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "learning.para.2",
+  "text": "ArXiv published Harness-Delta Attribution on October 15, 2026, and among 21 settings with statistically significant search-set gains, overfitting and test-time scaling account for 54% and 14% of the gain on average, with their combined share exceeding 50% in 14 settings.",
+  "flag": "verifier-rejected",
+  "id": 50,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "learning.para.3",
+  "text": "ArXiv published that same protocol on October 15, 2026, applied to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+  "flag": "verifier-rejected",
+  "id": 51,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s01.feature.2",
+  "text": "It is not a measurement of transferable improvement; it is the most that transferable improvement could be, once the other two are subtracted.",
+  "flag": "uncited",
+  "id": 52,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "Put plainly: in two settings out of three, most of the headline improvement was the search memorising the benchmark or the system simply spending more compute at inference.",
+  "flag": "figure-in-judgement",
+  "id": 53,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s01.feature.4",
+  "text": "If you hold out a split and the search can still see its signal, the search will fit that signal too.",
+  "flag": "uncited",
+  "id": 54,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s01.tryIt",
+  "text": "Report the two numbers together; the gap between them is the part you can trust.",
+  "flag": "figure-in-judgement",
+  "id": 55,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s02.feature.1",
+  "text": "A corrupted grader does not merely flatter your eval; it teaches the policy to pursue the exploit.",
+  "flag": "uncited",
+  "id": 56,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s02.feature.2",
+  "text": "The sandbox removes the crudest attack, editing the grader itself; the loop goes after the subtler ones, where the agent satisfies the check without doing the work.",
+  "flag": "uncited",
+  "id": 57,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s02.feature.3",
+  "text": "A single scripted pass of fixes is what most teams do when they find an exploit; iterating the attack and the repair against each other beat it.",
+  "flag": "uncited",
+  "id": 58,
+  "verdict": "TRUE_ALARM",
+  "note": "'What most teams do' is unsupported; doc only says it beat a static baseline."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s04.tie",
+  "text": "The same week, GitHub made Copilot model policies retrievable and updatable through the REST API for enterprises, enterprise teams, enterprise apps, and organizations.",
+  "flag": "verifier-rejected",
+  "id": 59,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "story.s07.tie",
+  "text": "The API arrives in the same week that Copilot Enterprise administrators may need to enable access to alternative models through their model policies after a deprecation.",
+  "flag": "verifier-rejected",
+  "id": 60,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run3",
+  "gate": "citations",
+  "unit": "closing.summary",
+  "text": "The week's two strongest papers both attacked the measurement layer: one attributed 54% of harness-evolution gains to overfitting, the other repaired verifiers that award full credit to cheating agents.",
+  "flag": "verifier-rejected",
+  "id": 61,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "thread.line.2",
+  "text": "GitHub shipped the plumbing: agentic autofix for code scanning alerts is now generally available, and [[hl|model choice became an API]].",
+  "flag": "verifier-rejected",
+  "id": 62,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "thread.body",
+  "text": "The week split between people measuring agent improvements and people shipping them.",
+  "flag": "uncited",
+  "id": 63,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "thread.body",
+  "text": "The question the week leaves: if a verifier can be gamed and a harness gain can be overfit, what evidence would convince you an agent actually got better?",
+  "flag": "uncited",
+  "id": 64,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "stories.title",
+  "text": "Three arXiv papers questioned agent evaluation.",
+  "flag": "uncited",
+  "id": 65,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "stories.title",
+  "text": "Four product changes altered who controls which model runs.",
+  "flag": "uncited",
+  "id": 66,
+  "verdict": "TRUE_ALARM",
+  "note": "'Four product changes altering model control' not established; autofix and Amp story do not change model control."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s01.headline",
+  "text": "Harness tuning gains are mostly overfitting and extra compute, 54% and 14% on average",
+  "flag": "uncited",
+  "id": 67,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s01.why",
+  "text": "The protocol separates artifact-driven overfitting, gains explained by test-time scaling, and a remainder that upper-bounds residual generalizable improvement — the cheapest-looking win, adding compute, is also the one that does not transfer.",
+  "flag": "verifier-rejected",
+  "id": 68,
+  "verdict": "TRUE_ALARM",
+  "note": "Claim that adding compute is the win that does not transfer is not established."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "So in two thirds of the settings where the harness looked like it worked, most of the improvement came from fitting the benchmark or from spending more compute at inference.",
+  "flag": "judgement-check",
+  "id": 69,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s02.headline",
+  "text": "A hacker-fixer loop repairs verifiers that pay cheating agents full credit",
+  "flag": "uncited",
+  "id": 70,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s02.feature.2",
+  "text": "The loop handles what is left, where the grader is honest but its definition of success is too loose.",
+  "flag": "uncited",
+  "id": 71,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s02.feature.3",
+  "text": "Hardening behaves like a budget you spend, not a box you tick.",
+  "flag": "uncited",
+  "id": 72,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s02.tryIt",
+  "text": "Two or three rounds will tell you whether your verifier measures the work or a proxy for it.",
+  "flag": "figure-in-judgement",
+  "id": 73,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s03.headline",
+  "text": "A 9B GUI agent trained in mocked apps lifted real-phone task success from 28.8% to 48.1%",
+  "flag": "uncited",
+  "id": 74,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s03.why",
+  "text": "The usual objection to training agents in simulated apps is that the skill stays in the simulator.",
+  "flag": "judgement-check",
+  "id": 75,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s03.body",
+  "text": "The motivating constraints are the high cost of interactive environments and the scarcity of realistic training tasks, and the released transfer evidence rests on a single app pair.",
+  "flag": "verifier-rejected",
+  "id": 76,
+  "verdict": "TRUE_ALARM",
+  "note": "'Single app pair' exclusivity of transfer evidence not established; doc gives one example only."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s04.headline",
+  "text": "Copilot models were deprecated across chat, agent mode and completions on October 19",
+  "flag": "uncited",
+  "id": 77,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s04.why",
+  "text": "Pinned model identifiers in scripts and integrations break here, not only the IDE picker.",
+  "flag": "judgement-check",
+  "id": 78,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Same as 21: consequence of the deprecation notice; borderline."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s04.tie",
+  "text": "The deprecation and the new policy endpoints land in the same week, so the fix for one can now be scripted with the other.",
+  "flag": "judgement-check",
+  "id": 79,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s05.headline",
+  "text": "Copilot now reruns CodeQL to prove a security fix closed the alert before opening the PR",
+  "flag": "uncited",
+  "id": 80,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s05.why",
+  "text": "This is a shipped agent loop with a real verifier inside it, which is rarer than the demos suggest.",
+  "flag": "judgement-check",
+  "id": 81,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s06.headline",
+  "text": "Amp says some users consume 10 billion tokens a week, and OpenAI models take the majority",
+  "flag": "uncited",
+  "id": 82,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s06.why",
+  "text": "A vendor story, but two numbers in it are useful for sizing your own agent spend.",
+  "flag": "figure-in-judgement",
+  "id": 83,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s06.body",
+  "text": "The usage described comes from a 20-person team and its own users, not an independent measurement.",
+  "flag": "verifier-rejected",
+  "id": 84,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s07.headline",
+  "text": "Copilot model availability is now REST config for enterprises, teams, apps and orgs",
+  "flag": "uncited",
+  "id": 85,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "story.s07.body",
+  "text": "The entry describes retrieval and update endpoints only; it says nothing about auditing what a policy changed or who changed it.",
+  "flag": "judgement-check",
+  "id": 86,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.headline",
+  "text": "Verifiers decide what counts as done, and 54% of harness gains turn out to be fitted to them",
+  "flag": "uncited",
+  "id": 87,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.1",
+  "text": "The number that matters for practice is what is left after those two subtractions, and the paper is careful to call it an upper bound rather than a measured improvement.",
+  "flag": "figure-in-judgement",
+  "id": 88,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.2",
+  "text": "Both of those are real gains on the set they were measured on.",
+  "flag": "uncited",
+  "id": 89,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.2",
+  "text": "Neither is the thing a team believes it has bought when it says the agent got better.",
+  "flag": "uncited",
+  "id": 90,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.3",
+  "text": "That second finding removes the defence most teams already use.",
+  "flag": "uncited",
+  "id": 91,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.3",
+  "text": "A held-out split catches a model memorising examples; it does not catch a harness fitted to the shape of the benchmark itself, because the harness was selected using exactly that signal.",
+  "flag": "uncited",
+  "id": 92,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.4",
+  "text": "A harness tuned against a loose verifier will find the looseness, whether or not anyone intended it to.",
+  "flag": "uncited",
+  "id": 93,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.5",
+  "text": "Hardening is therefore a budget line, not a one-time configuration.",
+  "flag": "uncited",
+  "id": 94,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.5",
+  "text": "The adversary you are defending against is your own next model.",
+  "flag": "uncited",
+  "id": 95,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.7",
+  "text": "GitHub deprecated a set of models across most Copilot experiences as of October 19, 2026, and in the same week made agentic autofix for code scanning alerts generally available: it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening 1 pull request for your review.",
+  "flag": "other-code",
+  "id": 96,
+  "verdict": "TRUE_ALARM",
+  "note": "'Same week' as the deprecation: autofix date not in documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.7",
+  "text": "CodeQL is the verifier here, and its definition of a closed alert is the definition the agent will optimise toward.",
+  "flag": "uncited",
+  "id": 97,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.7",
+  "text": "The pull request review is what stands between those two meanings of done.",
+  "flag": "uncited",
+  "id": 98,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.8",
+  "text": "GitHub, which deprecated its listed Copilot models as of October 19, 2026, puts into each pull request a summary of the fix, why it closes the alert, and the validation steps Copilot took to confirm that it works, and charges the run against 2 budgets: AI Credits from your Code Security budget and GitHub Actions minutes.",
+  "flag": "other-code",
+  "id": 99,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.8",
+  "text": "Publishing the validation trace is the practical version of what the attribution paper argues for in research.",
+  "flag": "uncited",
+  "id": 100,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run4",
+  "gate": "citations",
+  "unit": "learning.para.8",
+  "text": "If you can see which check passed and why, you can judge whether the check was the right one before you merge.",
+  "flag": "uncited",
+  "id": 101,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "thread.line.2",
+  "text": "GitHub shipped an agent that [[hl|reruns CodeQL to confirm]] its own fix, and deprecated models across most Copilot experiences on October 19, 2026.",
+  "flag": "verifier-rejected",
+  "id": 102,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "thread.body",
+  "text": "The week put measurement ahead of capability.",
+  "flag": "uncited",
+  "id": 103,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "learning.para.5",
+  "text": "ArXiv published a weak-to-strong verifier hardening method on October 11, 2026 that runs in 2 stages: it first sets up an isolated verifier sandbox that agents cannot directly modify, then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+  "flag": "verifier-rejected",
+  "id": 104,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "learning.para.6",
+  "text": "arXiv released MAI-Gym on October 14, 2026, a platform that supports ten established benchmarks and scales to 20,000 parallel environment instances.",
+  "flag": "verifier-rejected",
+  "id": 105,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "learning.note.tts",
+  "text": "Test-time scaling is additional inference-time compute, as distinct from a gain that may generalize beyond the search set.",
+  "flag": "verifier-rejected",
+  "id": 106,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "learning.doDifferently",
+  "text": "If you cannot split it, treat the number as a search-set artifact.",
+  "flag": "uncited",
+  "id": 107,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "stories.title",
+  "text": "Three arXiv papers measured agent gains and rewards, and GitHub made agentic autofix for code scanning alerts generally available.",
+  "flag": "verifier-rejected",
+  "id": 108,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.feature.1",
+  "text": "The weights are frozen; the scaffolding is what you can change, and the literature reports that changing it works.",
+  "flag": "uncited",
+  "id": 109,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.feature.2",
+  "text": "What is left after the two known mechanisms are subtracted is at most generalizable improvement, and possibly less.",
+  "flag": "uncited",
+  "id": 110,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "Two thirds of the typical reported gain, then, is accounted for by mechanisms that have nothing to do with a better harness.",
+  "flag": "figure-in-judgement",
+  "id": 111,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "One is a benchmark artifact.",
+  "flag": "uncited",
+  "id": 112,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.feature.3",
+  "text": "The other is a compute bill you could have paid without running any search at all.",
+  "flag": "uncited",
+  "id": 113,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.tryIt",
+  "text": "Then run both on a task family you never searched over.",
+  "flag": "uncited",
+  "id": 114,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s01.tryIt",
+  "text": "If the gap closes on either test, you learned something about your compute, not your harness.",
+  "flag": "uncited",
+  "id": 115,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s02.feature.1",
+  "text": "Two different failures follow from one bug: a number you report that is wrong, and a policy you train that is wrong in the same direction.",
+  "flag": "figure-in-judgement",
+  "id": 116,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s02.feature.2",
+  "text": "The loop then goes after everything the sandbox does not cover, by playing both roles.",
+  "flag": "uncited",
+  "id": 117,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s02.feature.4",
+  "text": "The caveat is that hardening is measured as reduced attack success, not as a proof of absence, and the attacker in the loop is today's model rather than the stronger one the method is meant to withstand.",
+  "flag": "uncited",
+  "id": 118,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s02.tryIt",
+  "text": "Treat anything you find as a training bug, not a test bug, if you have ever used that reward to tune a policy.",
+  "flag": "uncited",
+  "id": 119,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s03.tryIt",
+  "text": "The claim worth reproducing first is the mock-to-real transfer, since that is the one your own environments will be judged against.",
+  "flag": "uncited",
+  "id": 120,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "divider.s04",
+  "text": "GitHub shipped and retired things your scripts depend on",
+  "flag": "judgement-check",
+  "id": 121,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s04.tryIt",
+  "text": "If you are on Enterprise, confirm the replacement is enabled in policy first, because an identifier that exists is not the same as one you are allowed to select.",
+  "flag": "uncited",
+  "id": 122,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s05.why",
+  "text": "This is a shipped agent loop with a real verifier inside it rather than a demo of one.",
+  "flag": "judgement-check",
+  "id": 123,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s05.tryIt",
+  "text": "Turn it on for one repository and read the validation steps in the first three pull requests before you read the diffs.",
+  "flag": "figure-in-judgement",
+  "id": 124,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s06.body",
+  "text": "OpenAI published an account of how Amp builds on GPT-6 Astra, Ultrafast, GPT-Live-1, and Sign in with ChatGPT, noting that Amp chooses and recommends models based on what works best for its users and that OpenAI models account for the majority of tokens used in Amp.",
+  "flag": "verifier-rejected",
+  "id": 125,
+  "verdict": "TRUE_ALARM",
+  "note": "Document does not state OpenAI as publisher."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s07.body",
+  "text": "The changelog describes the endpoints without stating rate limits or rollout timing, so test against a non-production enterprise first.",
+  "flag": "judgement-check",
+  "id": 126,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "story.s07.tryIt",
+  "text": "Start by reading the current policy through the API and diffing it against what you believed was enabled.",
+  "flag": "uncited",
+  "id": 127,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "closing.summary",
+  "text": "The week's most practical result was a benchmark's own maintainers adopting a hacker-fixer loop to audit exploits in its environments.",
+  "flag": "verifier-rejected",
+  "id": 128,
+  "verdict": "FALSE_ALARM_SUPPORTED",
+  "note": "All checkable facts are established by the allowed documents."
+ },
+ {
+  "run": "citations-run5",
+  "gate": "citations",
+  "unit": "closing.oneThing",
+  "text": "Whatever gap survives is the only part worth defending in a review.",
+  "flag": "uncited",
+  "id": 129,
+  "verdict": "FALSE_ALARM_JUDGEMENT",
+  "note": "Opinion, advice or consequence drawn from document facts; no new checkable fact."
+ }
+]

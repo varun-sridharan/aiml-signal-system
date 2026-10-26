@@ -1,0 +1,59 @@
+{
+ "per_unit": {
+  "negative-01-mcp": {
+   "sentences": 4,
+   "flagged": [
+    {
+     "path": "story.s01.example",
+     "text": "Because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server — so you run both fleets during the cutover rather than upgrading in place.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s01.example",
+     "text": "Because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server — so you run both fleets during the cutover rather than upgrading in place.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "negative-01-mega-rounds": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "Anthropic raised $965B, and OpenAI closed a record $122B round at an $852B post-money valuation.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "raised $965B"
+   ]
+  },
+  "thread": {
+   "sentences": 4,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-01-mega-rounds:raised $965B": true
+ },
+ "false_alarms": 1,
+ "units_flagged": 2,
+ "sentences": 11,
+ "uncited_unmatched": 0,
+ "second_checks": 2,
+ "cost": 0.039714,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-01",
+ "run": 3,
+ "seconds": 16.1
+}

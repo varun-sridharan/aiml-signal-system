@@ -1,0 +1,47 @@
+{
+ "per_unit": {
+  "negative-01-mcp": {
+   "sentences": 4,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "negative-01-mega-rounds": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "Anthropic raised $965B, and OpenAI closed a record $122B round at an $852B post-money valuation.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "raised $965B"
+   ]
+  },
+  "thread": {
+   "sentences": 4,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-01-mega-rounds:raised $965B": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "sentences": 11,
+ "uncited_unmatched": 0,
+ "second_checks": 2,
+ "cost": 0.038347,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-01",
+ "run": 4,
+ "seconds": 16.0
+}

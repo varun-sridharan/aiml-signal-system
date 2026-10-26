@@ -1,0 +1,43 @@
+{
+ "per_unit": {
+  "negative-04-launch": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [
+    "NVIDIA said the new model will be open-weight"
+   ],
+   "expected": [
+    "NVIDIA said the new model will be open-weight"
+   ]
+  },
+  "negative-04-saferoute": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-04-launch:NVIDIA said the new model will be open-weight": false
+ },
+ "false_alarms": 0,
+ "units_flagged": 0,
+ "sentences": 9,
+ "uncited_unmatched": 0,
+ "second_checks": 1,
+ "cost": 0.027194999999999997,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-04",
+ "run": 4,
+ "seconds": 13.9
+}

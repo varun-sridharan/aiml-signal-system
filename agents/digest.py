@@ -336,6 +336,10 @@ def _composed_sections(edition: dict, by_item: dict) -> dict:
             "sources": _story_sources(s.get("sources")), "checked": bool(s.get("checked")), "connection": "",
         })
     count = len(rows)
+    held = [{"id": h["id"], "headline": _text(h.get("headline"), "held headline"), "sources": _story_sources(h.get("sources"))[:1],
+             "why": _text(h.get("why"), "held reason") or "could not be verified"}
+            for h in (edition.get("held") if isinstance(edition.get("held"), list) else [])[:MAX_ITEMS]
+            if isinstance(h, dict) and isinstance(h.get("id"), str) and STORY_ID.fullmatch(h["id"])]
     return {
         "thread": {
             "lines": _thread_lines(lines), "body": segments(_text(thread.get("body"), "thread.body"), ids=ids), "signals": f"{count} SIGNALS WORTH YOUR ATTENTION",
@@ -348,7 +352,7 @@ def _composed_sections(edition: dict, by_item: dict) -> dict:
             "count": f"{len(drawn)} sources", "preview": first_sentence((learning.get("paras") or [""])[0]),
         },
         "stories": {
-            "title": segments(_text(edition.get("storiesTitle"), "storiesTitle"), ids=ids), "rows": rows, "count": count,
+            "title": segments(_text(edition.get("storiesTitle"), "storiesTitle"), ids=ids), "rows": rows, "count": count, "held": held,
             "preview": "Lead: " + rows[0]["headline"],
             "closing": {"l1": _text((closing.get("lines") or ["", ""])[0], "closing"), "l2": _text((closing.get("lines") or ["", ""])[-1], "closing"),
                         "summary": _text(closing.get("summary"), "closing.summary"), "one_thing": _text(closing.get("oneThing"), "closing.oneThing")},

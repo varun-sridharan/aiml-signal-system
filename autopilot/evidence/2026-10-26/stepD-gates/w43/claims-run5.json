@@ -1,0 +1,443 @@
+{
+ "gate": "claims",
+ "cost_usd": 0.8113,
+ "seconds": 295.8,
+ "failures_total": 1,
+ "faithfulness_failures": [
+  "essay: unsupported (composed) — Terminal Bench, KernelBench, and SETA are agent environments that use programmatic verifiers"
+ ],
+ "other_failures": [],
+ "units_flagged": [
+  "essay"
+ ],
+ "publishes": false,
+ "revised_fields": [
+  "learning.para.2",
+  "learning.para.3",
+  "learning.para.5",
+  "learning.para.7",
+  "learning.para.8",
+  "story.s01.body"
+ ],
+ "units": {
+  "s01": {
+   "claims": [
+    {
+     "claim": "arXiv authors published Harness-Delta Attribution on 2026-10-15",
+     "supported": true
+    },
+    {
+     "claim": "HDA splits an evolution gain into artifact-driven overfitting, gains explained by test-time scaling, and a remainder that upper-bounds residual generalizable improvement",
+     "supported": true
+    },
+    {
+     "claim": "They applied it to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks",
+     "supported": true
+    },
+    {
+     "claim": "In 21 settings with statistically significant search-set gains, overfitting accounted for 54% of the gain on average",
+     "supported": true
+    },
+    {
+     "claim": "test-time scaling accounted for 14% of the gain on average",
+     "supported": true
+    },
+    {
+     "claim": "overfitting and test-time scaling combined share exceeded 50% in 14 settings",
+     "supported": true
+    },
+    {
+     "claim": "Search-set gains often fail to transfer to held-out tasks",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 373c9b8af16a2abbeb60f833d5274fec7edb8b6605f67afd9c06a8757d3d7233; 64 characters]",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s02": {
+   "claims": [
+    {
+     "claim": "arXiv authors published a fully automatic approach to weak-to-strong verifier hardening on 2026-10-11",
+     "supported": true
+    },
+    {
+     "claim": "The method sets up an isolated verifier sandbox that agents cannot directly modify",
+     "supported": true
+    },
+    {
+     "claim": "it runs a hacker-fixer loop to find and repair remaining verifier vulnerabilities",
+     "supported": true
+    },
+    {
+     "claim": "Applied to Terminal Bench, KernelBench, and SETA, it substantially reduced attack success",
+     "supported": true
+    },
+    {
+     "claim": "defences grew stronger as loop iterations increased, outperforming the static, non-iterative baseline",
+     "supported": true
+    },
+    {
+     "claim": "An earlier version of the loop was adopted by the official Terminal Bench repository as a way to audit exploits in its environments",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s03": {
+   "claims": [
+    {
+     "claim": "arXiv authors released MAI-Gym on 2026-10-14",
+     "supported": true
+    },
+    {
+     "claim": "MAI-Gym is an open platform unifying GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments",
+     "supported": true
+    },
+    {
+     "claim": "A shared rollout pipeline keeps agent behavior consistent between evaluation and training, supports ten established benchmarks, and scales to 20,000 parallel environment instances",
+     "supported": true
+    },
+    {
+     "claim": "The platform synthesizes GUI applications and tasks, including resettable mocked apps and cross-app worlds with execution-validated task verifiers",
+     "supported": true
+    },
+    {
+     "claim": "MAI-Gym-9B, a unified 9B agent, reached 78.4% on MobileWorld and 76.2% on OSWorld-Verified, state of the art among open GUI agents under 10B parameters",
+     "supported": true
+    },
+    {
+     "claim": "RL in a mocked train-ticketing app transferred to the real app, raising success on a physical phone from 28.8% to 48.1%",
+     "supported": true
+    },
+    {
+     "claim": "The framework, synthesis skills, mocked apps, 2,000 verified tasks, and model checkpoint are released",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s04": {
+   "claims": [
+    {
+     "claim": "GitHub deprecated a set of models across most GitHub Copilot experiences on October 19, 2026, including Copilot Chat, inline edits, ask and agent modes, and code completions",
+     "supported": true
+    },
+    {
+     "claim": "Workflows and integrations need updating to use supported models",
+     "supported": true
+    },
+    {
+     "claim": "no action is required to remove the deprecated models themselves",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 d0ca50c89b6f7169a1554c6eab05ebf862fe8f0bbfcbfef5be9cc9b8cf2babb6; 130 characters]",
+     "supported": true
+    },
+    {
+     "claim": "after enabling the policy, the model appears in the Copilot Chat model selector in VS Code and on github.com",
+     "supported": true
+    },
+    {
+     "claim": "GitHub Enterprise customers with questions are directed to their account manager",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s05": {
+   "claims": [
+    {
+     "claim": "GitHub made agentic autofix for code scanning alerts generally available",
+     "supported": true
+    },
+    {
+     "claim": "it is available for GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including data residency",
+     "supported": true
+    },
+    {
+     "claim": "The agent explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+     "supported": true
+    },
+    {
+     "claim": "the pull request includes a summary, why it closes the alert, and the validation steps taken",
+     "supported": true
+    },
+    {
+     "claim": "Enabling it requires an enterprise administrator to turn on the new \"Agentic autofix\" policy in Advanced Security policies, after which an organization or repository administrator enables it in Code Security settings",
+     "supported": true
+    },
+    {
+     "claim": "it replaces the free Generate Fix option with an Assign to Copilot button",
+     "supported": true
+    },
+    {
+     "claim": "It consumes AI Credits from the Code Security budget plus GitHub Actions minutes, reported under \"Advanced Security\" in the AI usage section of enterprise billing",
+     "supported": true
+    },
+    {
+     "claim": "It only covers alerts on the default branch — alerts detected only on pull requests or other branches cannot be assigned",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s06": {
+   "claims": [
+    {
+     "claim": "OpenAI published an account of Amp, which builds on GPT-6 Astra, Ultrafast, GPT-Live-1, and Sign in with ChatGPT",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 e5c746e7aa1926d7f164b1ecefbd84032932c45b1e23bb00f9003012152254ed; 138 characters]",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 c475474682357eb0c00b47f3b5cbc29ede33d9df854887a40602b099aff68930; 65 characters]",
+     "supported": true
+    },
+    {
+     "claim": "Quinn argues that watching every increment of usage holds people back from finding out what an agent can do",
+     "supported": true
+    },
+    {
+     "claim": "Amp's Sign in with ChatGPT integration gives users access to more tokens and OpenAI models",
+     "supported": true
+    },
+    {
+     "claim": "Amp recently announced Puck, a conversational assistant built into Amp that launches and manages other agents",
+     "supported": true
+    },
+    {
+     "claim": "Calling Puck powered by GPT-Live-1 allowing real-time voice, including from a watch",
+     "supported": true
+    },
+    {
+     "claim": "Amp's own 20-person team uses agents for work including marketing",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "s07": {
+   "claims": [
+    {
+     "claim": "GitHub added REST API endpoints to retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations",
+     "supported": true
+    },
+    {
+     "claim": "Together these endpoints manage Copilot model availability across an enterprise",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 50c874f6746d8741b0eb30009efd765c5cc3a9b039c1e525b577259ce3fd1b61; 131 characters]",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [],
+   "grader_errors": 0
+  },
+  "essay": {
+   "claims": [
+    {
+     "claim": "arXiv authors published Harness-Delta Attribution on 2026-10-15",
+     "supported": true
+    },
+    {
+     "claim": "Harness-Delta Attribution was applied to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks",
+     "supported": true
+    },
+    {
+     "claim": "Harness evolution optimizes the prompts, skills, tools, and orchestration code around a fixed-weight model",
+     "supported": true
+    },
+    {
+     "claim": "In 21 settings with statistically significant search-set gains, overfitting accounted for 54% of the gain on average",
+     "supported": true
+    },
+    {
+     "claim": "Test-time scaling accounted for 14% of the gain on average in those 21 settings",
+     "supported": true
+    },
+    {
+     "claim": "The combined share of overfitting and test-time scaling exceeded 50% in 14 of those 21 settings",
+     "supported": true
+    },
+    {
+     "claim": "Validation-based signals are insufficient to prevent overfitting",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 0ae1f001c8327b0f59cd71a5da6443805fb4dd728a0338ac79411351a883f3af; 90 characters]",
+     "supported": true
+    },
+    {
+     "claim": "Search-set gains often fail to transfer to held-out tasks",
+     "supported": true
+    },
+    {
+     "claim": "A second arXiv group published scalable weak-to-strong verifier hardening on 2026-10-11",
+     "supported": true
+    },
+    {
+     "claim": "Terminal Bench, KernelBench, and SETA are agent environments that use programmatic verifiers",
+     "supported": false
+    },
+    {
+     "claim": "Programmatic verifiers turn complex outcomes into rewards",
+     "supported": true
+    },
+    {
+     "claim": "Verifiers can be attacked into awarding full credit to cheating agents that never completed the intended task",
+     "supported": true
+    },
+    {
+     "claim": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify",
+     "supported": true
+    },
+    {
+     "claim": "Attack success fell substantially across 3 environments — Terminal Bench, KernelBench, and SETA",
+     "supported": true
+    },
+    {
+     "claim": "Defences strengthened as loop iterations increased, outperforming the static, non-iterative baseline",
+     "supported": true
+    },
+    {
+     "claim": "An earlier version of the loop was adopted by the official Terminal Bench repository to audit exploits in its environments",
+     "supported": true
+    },
+    {
+     "claim": "Microsoft's MAI-Gym authors released the platform on 2026-10-14",
+     "supported": true
+    },
+    {
+     "claim": "MAI-Gym scales to 20,000 parallel environment instances",
+     "supported": true
+    },
+    {
+     "claim": "MAI-Gym supports ten established benchmarks",
+     "supported": true
+    },
+    {
+     "claim": "Their 9B agent reached 78.4% on MobileWorld",
+     "supported": true
+    },
+    {
+     "claim": "Their 9B agent reached 76.2% on OSWorld-Verified",
+     "supported": true
+    },
+    {
+     "claim": "Reinforcement learning in a mocked train-ticketing app improved task success on a physical phone from 28.8% to 48.1%",
+     "supported": true
+    },
+    {
+     "claim": "GitHub made agentic autofix for code scanning alerts generally available",
+     "supported": true
+    },
+    {
+     "claim": "Agentic autofix explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request",
+     "supported": true
+    },
+    {
+     "claim": "The pull request carries a summary of the fix, why it closes the alert, and the validation steps taken",
+     "supported": true
+    },
+    {
+     "claim": "Only alerts on the repository's default branch can be assigned",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 775542a4e9a409deac1e69fa402767d44b5122579f36e998b73cc6b534c2f11d; 74 characters]",
+     "supported": true
+    },
+    {
+     "claim": "GitHub deprecated models on October 19, 2026",
+     "supported": true
+    },
+    {
+     "claim": "Copilot Chat, inline edits, ask and agent modes, and code completions were deprecated",
+     "supported": true
+    },
+    {
+     "claim": "[source text withheld (the writer reproduced the page): sha256 d0ca50c89b6f7169a1554c6eab05ebf862fe8f0bbfcbfef5be9cc9b8cf2babb6; 130 characters]",
+     "supported": true
+    },
+    {
+     "claim": "GitHub shipped REST endpoints that retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations",
+     "supported": true
+    }
+   ],
+   "unsupported_claims": [
+    "Terminal Bench, KernelBench, and SETA are agent environments that use programmatic verifiers"
+   ],
+   "grader_errors": 0
+  }
+ },
+ "week": {
+  "claims": [
+   {
+    "claim": "54% of harness-evolution gain is overfitting",
+    "supported": true
+   },
+   {
+    "claim": "verifiers can be attacked into awarding full credit to cheating agents without completing the intended task",
+    "supported": true
+   },
+   {
+    "claim": "agentic autofix reruns CodeQL to confirm a fix before opening a pull request",
+    "supported": true
+   },
+   {
+    "claim": "One protocol split harness-evolution gains into overfitting, test-time scaling, and a residual",
+    "supported": true
+   },
+   {
+    "claim": "[source text withheld (the writer reproduced the page): sha256 3a7e153f6b9d044dcefac612b780353fcae0f0039bfa2725f290a61f4da29115; 57 characters]",
+    "supported": true
+   },
+   {
+    "claim": "Another hardened verifiers against agents that win full credit without doing the task, across Terminal Bench, KernelBench, and SETA",
+    "supported": true
+   },
+   {
+    "claim": "GitHub made agentic autofix generally available",
+    "supported": true
+   },
+   {
+    "claim": "Overfitting explained 54% of harness-evolution gain; validation signals did not catch it",
+    "supported": true
+   },
+   {
+    "claim": "RL in a mocked app still moved physical-phone success from 28.8% to 48.1%",
+    "supported": true
+   },
+   {
+    "claim": "tuned harnesses overfit their search sets",
+    "supported": true
+   },
+   {
+    "claim": "the programmatic verifiers that grade agents can be attacked into awarding full credit",
+    "supported": true
+   },
+   {
+    "claim": "training in a mocked train-ticketing app and measuring on a real phone",
+    "supported": true
+   }
+  ],
+  "unsupported_claims": [],
+  "grader_errors": 0
+ },
+ "story_count": 7,
+ "error": null,
+ "ledger_delta_usd": 0.8113
+}

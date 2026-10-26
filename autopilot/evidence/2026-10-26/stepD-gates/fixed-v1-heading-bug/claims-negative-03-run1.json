@@ -1,0 +1,39 @@
+{
+ "per_unit": {
+  "negative-03-v1": {
+   "flagged": [
+    {
+     "text": "The v1 completions endpoint stops accepting requests on 2026-12-01"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "2026-12-01"
+   ]
+  },
+  "negative-03-beacon": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-03-v1:2026-12-01": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "cost": 0.004198,
+ "error": null,
+ "gate": "claims",
+ "case": "negative-03",
+ "run": 1,
+ "seconds": 4.6
+}

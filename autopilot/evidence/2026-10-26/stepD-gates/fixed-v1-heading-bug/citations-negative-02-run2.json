@@ -1,0 +1,80 @@
+{
+ "per_unit": {
+  "negative-02-atlas": {
+   "sentences": 2,
+   "flagged": [
+    {
+     "path": "story.s01.why",
+     "text": "Atlas-3 scores 58.4% on SWE-Verify and ships with a 400K-token context window, available from today in the API.",
+     "why": "code: story.s01.why: uncited factual sentence: 'Atlas-3 scores 58.4% on SWE-Verify and ships with a 400K-t"
+    },
+    {
+     "path": "story.s01.tie",
+     "text": "Read with the Parcel change: the model can hold more, and the harness can survive more.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Read with the Parcel change: the model can hold more, and "
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s01.tie",
+     "text": "Read with the Parcel change: the model can hold more, and the harness can survive more.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Read with the Parcel change: the model can hold more, and "
+    }
+   ],
+   "missed": [],
+   "expected": [
+    "58.4%"
+   ]
+  },
+  "negative-02-parcel": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "Parcel 2.0 adds durable execution, so a crashed run resumes from its last completed step.",
+     "why": "code: story.s02.why: uncited factual sentence: 'Parcel 2.0 adds durable execution, so a crashed run resume"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "Steps are checkpointed to a Postgres table, and retries use exponential backoff capped at five attempts.",
+     "why": "code: story.s02.why: uncited factual sentence: 'Steps are checkpointed to a Postgres table, and retries us"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s02.why",
+     "text": "Parcel 2.0 adds durable execution, so a crashed run resumes from its last completed step.",
+     "why": "code: story.s02.why: uncited factual sentence: 'Parcel 2.0 adds durable execution, so a crashed run resume"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "Steps are checkpointed to a Postgres table, and retries use exponential backoff capped at five attempts.",
+     "why": "code: story.s02.why: uncited factual sentence: 'Steps are checkpointed to a Postgres table, and retries us"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-02-atlas:58.4%": true
+ },
+ "false_alarms": 3,
+ "units_flagged": 2,
+ "sentences": 8,
+ "uncited_unmatched": 4,
+ "second_checks": 0,
+ "cost": 0.019148000000000002,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-02",
+ "run": 2,
+ "seconds": 7.5
+}

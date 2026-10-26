@@ -1,0 +1,47 @@
+{
+ "per_unit": {
+  "negative-02-atlas": {
+   "sentences": 2,
+   "flagged": [
+    {
+     "path": "story.s01.why",
+     "text": "Atlas-3 scores 58.4% on SWE-Verify and ships with a 400K-token context window, available from today in the API.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "58.4%"
+   ]
+  },
+  "negative-02-parcel": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-02-atlas:58.4%": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "sentences": 8,
+ "uncited_unmatched": 0,
+ "second_checks": 2,
+ "cost": 0.025507000000000002,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-02",
+ "run": 4,
+ "seconds": 11.4
+}

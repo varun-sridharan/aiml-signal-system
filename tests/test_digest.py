@@ -90,6 +90,18 @@ class View(unittest.TestCase):
         self.assertEqual(rows[0]["sources"][0]["prefix"], "Primary: ")
         self.assertEqual(v["stories"]["closing"]["l1"], "One lab shipped a queue.")
 
+    def test_held_stories_are_listed_with_their_page_and_nothing_else_of_theirs(self):
+        body = composed_body()
+        body["edition"]["held"] = [{"id": "s03", "headline": "Parcel 2.0 adds durable execution", "why": "could not be verified",
+                                    "sources": [{"label": "Parcel", "href": "https://parcel.example/2", "primary": True}], "body": "never shown"},
+                                   {"id": "../x", "headline": "bad id"}, "not a dict"]
+        v = digest.view(WEEK, body, None, 2)
+        held = v["stories"]["held"]
+        self.assertEqual([h["id"] for h in held], ["s03"])
+        self.assertEqual(held[0]["sources"][0]["href"], "https://parcel.example/2")
+        self.assertNotIn("body", held[0])
+        self.assertEqual(digest.view(WEEK, composed_body(), None, 2)["stories"]["held"], [])
+
     def test_tokens_that_point_nowhere_become_plain_text(self):
         body = composed_body()
         body["edition"]["thread"]["body"] = "See [[#s02|story two]] and [[#s99|story ninety-nine]] and [[fn:nope|a term]] and [[bogus|x]]."
@@ -316,6 +328,22 @@ class Routes(unittest.TestCase):
             self.assertIn(f'aria-controls="body-{key}"', r.text)
         self.assertIn("/static/digest.js", r.text)
         self.assertNotIn("<script>alert", r.text)
+
+    def test_d2j_a_clean_edition_has_no_held_block(self):
+        self.publish(composed_body())
+        self.assertNotIn("COULD NOT BE VERIFIED", self.client.get(f"/weekly-digest?week={WEEK}").text)
+
+    def test_d2k_held_stories_are_listed_under_the_stories(self):
+        body = composed_body()
+        body["edition"]["held"] = [{"id": "s03", "headline": "<b>Parcel</b> 2.0", "why": "could not be verified",
+                                    "sources": [{"label": "Parcel", "href": "https://parcel.example/2"}, {"label": "evil", "href": "javascript:alert(1)"}]}]
+        self.publish(body)
+        text = self.client.get(f"/weekly-digest?week={WEEK}").text
+        self.assertIn("HELD &middot; COULD NOT BE VERIFIED", text)
+        self.assertIn("1 story was read this week and left out", text)
+        self.assertIn("&lt;b&gt;Parcel&lt;/b&gt; 2.0", text)
+        self.assertIn('href="https://parcel.example/2"', text)
+        self.assertNotIn("javascript:", text)
 
     def test_d2b_the_page_shows_the_window_not_the_week_key(self):
         self.publish({**GOLDEN, "window": {"from": "2026-10-10T05:00:00+00:00", "to": "2026-10-18T05:00:00+00:00", "label": "Oct 10 \u2013 Oct 18, 2026"}})

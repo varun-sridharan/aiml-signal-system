@@ -1,0 +1,632 @@
+[
+ {
+  "gate": "claims",
+  "case": "negative-01",
+  "run": 1,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.005293,
+  "seconds": 6.4,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-01",
+  "run": 2,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.005293,
+  "seconds": 5.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-01",
+  "run": 3,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.005293,
+  "seconds": 5.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-01",
+  "run": 4,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.005293,
+  "seconds": 5.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-01",
+  "run": 5,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.005293,
+  "seconds": 5.9,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 1,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 2,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 4.7,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 3,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 4,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 5,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-03",
+  "run": 1,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004198,
+  "seconds": 4.6,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-03",
+  "run": 2,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004198,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-03",
+  "run": 3,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004198,
+  "seconds": 4.7,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-03",
+  "run": 4,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004198,
+  "seconds": 4.6,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-03",
+  "run": 5,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004198,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-04",
+  "run": 1,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004305,
+  "seconds": 4.7,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-04",
+  "run": 2,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004305,
+  "seconds": 4.7,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-04",
+  "run": 3,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004305,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-04",
+  "run": 4,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004305,
+  "seconds": 4.8,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "negative-04",
+  "run": 5,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004305,
+  "seconds": 4.5,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 1,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.2,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 2,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.1,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 3,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.1,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 4,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.1,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 5,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.2,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-01",
+  "run": 1,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.039264,
+  "seconds": 20.6,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-01",
+  "run": 2,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.037032999999999996,
+  "seconds": 18.5,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-01",
+  "run": 3,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.039664000000000005,
+  "seconds": 17.1,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-01",
+  "run": 4,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.041858000000000006,
+  "seconds": 18.6,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-01",
+  "run": 5,
+  "caught": {
+   "negative-01-mega-rounds:raised $965B": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.041633,
+  "seconds": 17.8,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 1,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.025507000000000002,
+  "seconds": 11.2,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 2,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 3,
+  "units_flagged": 2,
+  "cost": 0.019148000000000002,
+  "seconds": 7.5,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 3,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.025507000000000002,
+  "seconds": 11.1,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 4,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.025507000000000002,
+  "seconds": 10.7,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 5,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.025507000000000002,
+  "seconds": 10.7,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-03",
+  "run": 1,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 4,
+  "units_flagged": 3,
+  "cost": 0.026985000000000002,
+  "seconds": 12.3,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-03",
+  "run": 2,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 4,
+  "units_flagged": 3,
+  "cost": 0.02843,
+  "seconds": 12.9,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-03",
+  "run": 3,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 3,
+  "units_flagged": 3,
+  "cost": 0.027725,
+  "seconds": 13.3,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-03",
+  "run": 4,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 4,
+  "units_flagged": 3,
+  "cost": 0.026834999999999998,
+  "seconds": 12.5,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-03",
+  "run": 5,
+  "caught": {
+   "negative-03-v1:2026-12-01": true
+  },
+  "false_alarms": 4,
+  "units_flagged": 3,
+  "cost": 0.02643,
+  "seconds": 11.5,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-04",
+  "run": 1,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.026383999999999998,
+  "seconds": 12.0,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-04",
+  "run": 2,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.028784999999999998,
+  "seconds": 13.2,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-04",
+  "run": 3,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.026383999999999998,
+  "seconds": 12.1,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-04",
+  "run": 4,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.026383999999999998,
+  "seconds": 12.1,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-04",
+  "run": 5,
+  "caught": {
+   "negative-04-launch:NVIDIA said the new model will be open-weight": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.026383999999999998,
+  "seconds": 12.3,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 1,
+  "caught": {},
+  "false_alarms": 33,
+  "units_flagged": 8,
+  "cost": 0.087585,
+  "seconds": 23.7,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 2,
+  "caught": {},
+  "false_alarms": 33,
+  "units_flagged": 8,
+  "cost": 0.08626,
+  "seconds": 23.4,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 3,
+  "caught": {},
+  "false_alarms": 33,
+  "units_flagged": 8,
+  "cost": 0.094276,
+  "seconds": 29.6,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 4,
+  "caught": {},
+  "false_alarms": 33,
+  "units_flagged": 8,
+  "cost": 0.085985,
+  "seconds": 23.1,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 5,
+  "caught": {},
+  "false_alarms": 33,
+  "units_flagged": 8,
+  "cost": 0.094701,
+  "seconds": 29.8,
+  "error": null
+ }
+]

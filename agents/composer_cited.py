@@ -243,10 +243,12 @@ def cited_share(draft: dict) -> float:
     return sum(1 for s in sents if s["citations"]) / len(sents) if sents else 0.0
 
 
-def compose_and_check(client, system_prompt, profile, raw_day, framing, window_label, published, *, conn=None):
-    """Write, repair what code can repair, then check every sentence. Returns a result dict (see keys below); publishes nothing."""
+def compose_draft(client, system_prompt, profile, raw_day, framing, window_label, published, *, conn=None):
+    """The writer's answer, read into a draft, with its rewrites. Returns (draft, record, cost); nothing is checked yet.
+
+    The draft is plain data (sentences with their citations), so it can be stored and checked later.
+    """
     ids = composer.story_ids(raw_day)
-    docs = documents(raw_day, published)
     text, spans, cost = write(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn)
     draft = draft_from(text, spans)
     record = {"rounds": [], "replaced": [], "first_text_chars": len(text), "rewrites_for_no_citations": 0}
@@ -271,7 +273,20 @@ def compose_and_check(client, system_prompt, profile, raw_day, framing, window_l
         record["rounds"].append({"problems": problems, "replaced": replaced})
         record["replaced"] += [p for p in replaced if p not in record["replaced"]]
         composed, missing = build_composed(draft, ids)
-    result = check_draft(client, profile, draft, composed, missing, ids, docs, conn=conn)
+    return draft, record, cost
+
+
+def check_from_draft(client, profile, draft, raw_day, published, *, conn=None):
+    """Check a stored or fresh draft: rebuild the composed edition from it, then structure, every sentence, the verdict."""
+    ids = composer.story_ids(raw_day)
+    composed, missing = build_composed(draft, ids)
+    return check_draft(client, profile, draft, composed, missing, ids, documents(raw_day, published), conn=conn)
+
+
+def compose_and_check(client, system_prompt, profile, raw_day, framing, window_label, published, *, conn=None):
+    """Write, repair what code can repair, then check every sentence. Returns a result dict; publishes nothing."""
+    draft, record, cost = compose_draft(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn)
+    result = check_from_draft(client, profile, draft, raw_day, published, conn=conn)
     result.update(revision=record, writer_cost_usd=cost, cost_usd=cost + result["verify_cost_usd"])
     return result
 
@@ -337,7 +352,7 @@ def assemble_edition(result: dict, raw_day: dict, framing: dict, *, stats: dict,
                                "marked_interpretation": sum(1 for s in sents if s["interpretation"]),
                                "citations": sum(len(s["citations"]) for s in sents),
                                "second_checks": sum(1 for s in sents if (s.get("verdict") or {}).get("second") is not None),
-                               "held": {k: v[:3] for k, v in decision["held"].items()}}
+                               "held": {k: len(v) for k, v in decision["held"].items()}}      # counts only: the unverified words are not stored
     considered, fetched, merged, hosts = (int(stats.get(k, 0)) for k in ("candidates", "fetched", "merged", "feeds_ok"))
     dup = f", folded {merged} duplicate{'s' if merged != 1 else ''} into the story they repeated" if merged else ""
     held_text = f" {len(held)} {'story was' if len(held) == 1 else 'stories were'} held because a sentence could not be verified, and the rest were published." if held else ""

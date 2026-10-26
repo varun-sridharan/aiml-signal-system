@@ -12,6 +12,7 @@ Database tests run in rolled-back transactions and skip when the database is unr
 from __future__ import annotations
 
 import sys
+import os
 import unittest
 import unittest.mock
 from datetime import datetime, timedelta, timezone
@@ -20,7 +21,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from agents import composer, briefs, budget, excerpts, framer, items, reader, runs, weekly  # noqa: E402
+from agents import composer_cited, composer, briefs, budget, excerpts, framer, items, reader, runs, weekly  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 from tests.test_reader import ATOM, ATOM_FEED, HF, HF_FEED, HN, HN_FEED, RSS, RSS_FEED, FakeClient  # noqa: E402
 
@@ -320,6 +321,72 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         self.assertEqual(len(self.framer_calls), 1)                                   # the first pass ran once and its artifact exists
         self.assertEqual([r[2] for r in self.stages()], ["done", "done", "failed"])
         self.assertIsNone(briefs.get(self.conn, WEEK))
+
+    def cited_result(self, held_last=True, publishable=True):
+        def check_from_draft(client, profile, draft, wide_day, published, *, conn=None):
+            ids = composer.story_ids(wide_day)
+            composed = canned_composed(wide_day)
+            for st in composed["stories"]:
+                st.update(why=f"Cited why of {st['id']}.", ninety=None)
+            sids = list(ids)
+            held = {sids[-1]: ["story: a sentence was rejected"]} if held_last else {}
+            decision = {"passing": [s for s in sids if s not in held], "held": held, "blockers": [] if publishable else ["thread.body: uncited factual sentence: 'x'"],
+                        "publishable": publishable}
+            sentences = [{"path": "thread.body", "text": "t", "interpretation": False, "citations": [{"cited_text": "c"}], "verdict": {"supported": True, "second": None}}]
+            return {"composed": composed, "decision": decision, "ids": ids, "sentences": sentences, "verify_cost_usd": 0.01, "structural": []}
+        return check_from_draft
+
+    def run_cited(self, **kw):
+        draft_calls = []
+
+        def compose_draft(client, system_prompt, profile, wide_day, framing, label, published, *, conn=None):
+            draft_calls.append(label)
+            return {"fields": {}, "counts_text": ""}, {"rounds": [], "replaced": ["story.s01.body"], "rewrites_for_no_citations": 0}, 0.3
+        with unittest.mock.patch.dict(os.environ, {"GATE": "citations"}), \
+                unittest.mock.patch.object(composer_cited, "compose_draft", compose_draft), \
+                unittest.mock.patch.object(composer_cited, "check_from_draft", self.cited_result(**kw)):
+            try:
+                return self.run_week(), draft_calls
+            except weekly.GateFailed as e:
+                return e, draft_calls
+
+    def test_w24_gate_citations_writes_with_the_citing_writer_checks_with_citations_and_holds_a_failing_story(self):
+        out, draft_calls = self.run_cited()
+        self.assertEqual(list(out), ["reader", "framer", "gates", "publish"])
+        self.assertEqual(len(draft_calls), 1)
+        self.assertEqual(self.compose_calls, [])                  # the claim gate's writer did not run
+        self.assertEqual(self.check_calls, [])                    # nor its first-pass grader
+        self.assertEqual(runs.stage_output(self.conn, WEEK, "framer")["gate"], "citations")
+        self.assertEqual(runs.stage_output(self.conn, WEEK, "gates")["stories_held"], 1)
+        _id, body, _at = briefs.get(self.conn, WEEK)
+        edition = body["edition"]
+        n = len(body["items"])
+        self.assertEqual(len(edition["stories"]), n - 1)
+        self.assertEqual([h["id"] for h in edition["held"]], [f"s{n:02d}"])
+        self.assertEqual(edition["faithfulness"]["gate"], "citations")
+        shown = {i["id"]: i for i in body["items"]}
+        last = body["items"][-1]
+        self.assertNotIn("why", last)                              # the held story's unverified words are not stored
+        self.assertTrue(all(i.get("why", "").startswith("Cited why") for i in body["items"][:-1]))
+
+    def test_w25_gate_citations_does_not_publish_when_the_week_fails(self):
+        out, _ = self.run_cited(held_last=False, publishable=False)
+        self.assertIsInstance(out, weekly.GateFailed)
+        self.assertIsNone(briefs.get(self.conn, WEEK))
+
+    def test_w26_the_gate_setting_defaults_to_claims_and_refuses_anything_else(self):
+        with unittest.mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("GATE", None)
+            self.assertEqual(weekly.gate_mode(), "claims")
+        for good in ("claims", "citations", " Citations "):
+            with unittest.mock.patch.dict(os.environ, {"GATE": good}):
+                self.assertIn(weekly.gate_mode(), ("claims", "citations"))
+        with unittest.mock.patch.dict(os.environ, {"GATE": "vibes"}):
+            with self.assertRaises(ValueError):
+                weekly.gate_mode()
+            with self.assertRaises(ValueError):                    # and a run fails before its first paid call, not after it
+                self.run_week()
+            self.assertEqual(self.framer_calls, [])
 
     def test_w2_a_failed_framer_resumes_without_refetching_or_repaying_the_reader(self):
         self.fail_framer = 1

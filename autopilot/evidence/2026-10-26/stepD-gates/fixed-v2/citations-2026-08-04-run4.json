@@ -1,0 +1,122 @@
+{
+ "per_unit": {
+  "2026-08-04-mcp": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s01.example",
+     "text": "If your agent's tool server relied on Sampling to call back into the model mid-tool, that path is deprecated — you have 12 months to restructure it as a request the client initiates.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-kimi-k3": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "both checks said no"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "both checks said no"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-istar": {
+   "sentences": 6,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-terminal-bench": {
+   "sentences": 5,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-mega-rounds": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-vc-record": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s06.tie",
+     "text": "Same direction as the OpenAI/Anthropic rounds — capital concentration and frontier valuations are one phenomenon, and it prices your inputs before you write a line of code.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s06.tie",
+     "text": "Same direction as the OpenAI/Anthropic rounds — capital concentration and frontier valuations are one phenomenon, and it prices your inputs before you write a line of code.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-export-controls": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 4,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {},
+ "false_alarms": 4,
+ "units_flagged": 3,
+ "sentences": 34,
+ "uncited_unmatched": 0,
+ "second_checks": 10,
+ "cost": 0.118528,
+ "error": null,
+ "gate": "citations",
+ "case": "2026-08-04",
+ "run": 4,
+ "seconds": 52.3
+}

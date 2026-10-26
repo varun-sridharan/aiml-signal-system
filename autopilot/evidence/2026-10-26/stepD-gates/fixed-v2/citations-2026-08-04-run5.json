@@ -1,0 +1,177 @@
+{
+ "per_unit": {
+  "2026-08-04-mcp": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s01.example",
+     "text": "If your agent's tool server relied on Sampling to call back into the model mid-tool, that path is deprecated — you have 12 months to restructure it as a request the client initiates.",
+     "why": "code: story.s01.example: a sentence marked as interpretation carries a figure, date or count: \"If your age"
+    },
+    {
+     "path": "story.s01.tie",
+     "text": "Directly reinforces Terminal-Bench 2.1: with a 0.4-point gap at the frontier, the harness — transport, scaling, tool surface — is where your differentiation actually lives, and it just got rewritten.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Directly reinforces Terminal-Bench 2.1: with a 0.4-point g"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s01.tie",
+     "text": "Directly reinforces Terminal-Bench 2.1: with a 0.4-point gap at the frontier, the harness — transport, scaling, tool surface — is where your differentiation actually lives, and it just got rewritten.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Directly reinforces Terminal-Bench 2.1: with a 0.4-point g"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-kimi-k3": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "2.8T open weights at 1M context shifts build-vs-buy for agents, because per-call cost compounds across many calls per task and self-hosting caps that cost.",
+     "why": "code: story.s02.why: uncited factual sentence: '2.8T open weights at 1M context shifts build-vs-buy for ag"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "code: story.s02.why: uncited factual sentence: 'The tradeoff is blunt: you take on serving cost and latenc"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s02.why",
+     "text": "2.8T open weights at 1M context shifts build-vs-buy for agents, because per-call cost compounds across many calls per task and self-hosting caps that cost.",
+     "why": "code: story.s02.why: uncited factual sentence: '2.8T open weights at 1M context shifts build-vs-buy for ag"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "code: story.s02.why: uncited factual sentence: 'The tradeoff is blunt: you take on serving cost and latenc"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-istar": {
+   "sentences": 6,
+   "flagged": [
+    {
+     "path": "story.s03.tie",
+     "text": "Pairs with the MCP spec change: step-level credit assignment assumes you can cleanly attribute each tool call, which is easier when transport is stateless request/response than when state hides in a session.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s03.tie",
+     "text": "Pairs with the MCP spec change: step-level credit assignment assumes you can cleanly attribute each tool call, which is easier when transport is stateless request/response than when state hides in a session.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-terminal-bench": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s04.example",
+     "text": "Swapping between the top two models buys you 0.4 points; a better retry policy or tool schema in your harness plausibly moves more.",
+     "why": "both checks said no"
+    },
+    {
+     "path": "story.s04.tie",
+     "text": "Sets up the MCP item: if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s04.example",
+     "text": "Swapping between the top two models buys you 0.4 points; a better retry policy or tool schema in your harness plausibly moves more.",
+     "why": "both checks said no"
+    },
+    {
+     "path": "story.s04.tie",
+     "text": "Sets up the MCP item: if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-mega-rounds": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s05.tie",
+     "text": "Read with Kimi K3: open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s05.tie",
+     "text": "Read with Kimi K3: open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+     "why": "both checks said no"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-vc-record": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-export-controls": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 4,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {},
+ "false_alarms": 9,
+ "units_flagged": 5,
+ "sentences": 34,
+ "uncited_unmatched": 3,
+ "second_checks": 6,
+ "cost": 0.113895,
+ "error": null,
+ "gate": "citations",
+ "case": "2026-08-04",
+ "run": 5,
+ "seconds": 48.4
+}

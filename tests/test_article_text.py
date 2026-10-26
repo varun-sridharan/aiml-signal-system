@@ -90,6 +90,13 @@ class PlantedText(unittest.TestCase):
         self.assertEqual(self.hits(), [])
 
 
+class GoldenCorpus(unittest.TestCase):
+    def test_only_the_source_excerpts_of_the_golden_cases_are_in_the_corpus(self):
+        labels = {label.split("#")[0] for label, _ in A.golden_corpus()}
+        self.assertTrue(labels)
+        self.assertTrue(all(name.endswith("input.json") for name in labels), labels)
+
+
 @needs_db
 class CommittedEvidence(unittest.TestCase):
     def test_no_file_holds_200_characters_of_a_stored_excerpt(self):

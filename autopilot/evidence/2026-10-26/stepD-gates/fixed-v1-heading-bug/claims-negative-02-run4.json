@@ -1,0 +1,39 @@
+{
+ "per_unit": {
+  "negative-02-atlas": {
+   "flagged": [
+    {
+     "text": "Atlas-3 scores 58.4% on SWE-Verify"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "58.4%"
+   ]
+  },
+  "negative-02-parcel": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-02-atlas:58.4%": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "cost": 0.004444,
+ "error": null,
+ "gate": "claims",
+ "case": "negative-02",
+ "run": 4,
+ "seconds": 4.8
+}

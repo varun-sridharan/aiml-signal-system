@@ -81,6 +81,23 @@ def norm(text: str) -> str:
     return re.sub(r"\s+", " ", style_check.plain(text).replace("~", "", 1) if text.startswith("~") else style_check.plain(text)).strip().lower()
 
 
+def split_known(text: str, paths) -> dict:
+    """Sections of the citer's answer, found by the paths it was given. The model sometimes runs a heading into the first word after it
+    ("@@ story.s01.whyYour MCP..."), which a heading-only parser cannot split; knowing the paths, this can."""
+    alt = "|".join(re.escape(p) for p in sorted(paths, key=len, reverse=True))
+    marks = list(re.finditer(rf"@@ ({alt})(?=[^A-Za-z0-9_.\-]|[A-Z]|$)", text))
+    out = {}
+    for n, m in enumerate(marks):
+        start = m.end()
+        while start < len(text) and text[start] in " \t":
+            start += 1
+        if start < len(text) and text[start] == "\n":
+            start += 1
+        end = marks[n + 1].start() if n + 1 < len(marks) else len(text)
+        out.setdefault(m.group(1), (start, end))
+    return out
+
+
 def cite_fixed(client, profile, raw_day, framing, conn=None):
     """The stand-in citer: returns (sentences with citations matched to the original sentences, cost)."""
     docs = [{"id": f"s{n:02d}", "text": item["source_excerpt"], "title": f"s{n:02d}"} for n, item in enumerate(raw_day["items"], start=1)]
@@ -94,7 +111,7 @@ def cite_fixed(client, profile, raw_day, framing, conn=None):
         client, model=llm.FRAMER_MODEL, max_tokens=16_000, user_id=profile["user_id"], phase="eval-citer", stream=True, conn=conn,
         system=[{"type": "text", "text": CITER_SYSTEM}], messages=[{"role": "user", "content": content}], output_config={"effort": "low"})
     text, spans = citegate.read_blocks(message.content)
-    sections = citegate.split_fields(text)
+    sections = split_known(text, wanted)
     theirs = {p: citegate.field_sentences(p, se, text, spans) for p, se in sections.items()}
     out = []
     for path, original in wanted.items():

@@ -1,0 +1,1362 @@
+{
+ "gate": "citations",
+ "cost_usd": 0.7618,
+ "writer_cost_usd": 0.6577,
+ "verify_cost_usd": 0.1041,
+ "seconds": 351.8,
+ "structural_failures": [],
+ "held": {
+  "s01": [
+   "story.s01.feature.2: a sentence marked as interpretation carries a figure, date or count: 'Three sources feed one number, and the headline reports only their sum, so the decompositi'",
+   "story.s01.feature.3: a sentence marked as interpretation carries a figure, date or count: 'The two shares are not equally bad news.'",
+   "story.s01.feature.3: uncited factual sentence: 'Buying more inference-time compute at least does the same work again when you serve the sy'",
+   "story.s01.feature.3: uncited factual sentence: 'Fitting the artifacts of one benchmark buys nothing that leaves the benchmark.'"
+  ],
+  "s02": [
+   "story.s02.feature.2: uncited factual sentence: 'The loop then has to find the subtler ones, which is the part that does not finish.'"
+  ],
+  "s03": [
+   "story.s03.why: marked as judgement but states a checkable fact (or could not be read): 'The open question for GUI agents has been whether cheap synthetic environments teach anyth'"
+  ],
+  "s05": [
+   "story.s05.tryIt: uncited factual sentence: 'An enterprise administrator must enable the new \"Agentic autofix\" policy in Advanced Secur'"
+  ],
+  "s07": [
+   "story.s07.why: a sentence marked as interpretation carries a figure, date or count: 'The delegation detail is what decides who can unblock a developer at four in the afternoon'",
+   "story.s07.tie: rejected by both checks: 'The same model policies that an administrator may need to enable after the October 19 depr' (not established: 'the October 19 deprecation')"
+  ]
+ },
+ "blockers": [
+  "learning.para.1: uncited factual sentence: 'Harness evolution is the loop most teams now run without calling it that.'",
+  "learning.para.2: uncited factual sentence: 'arXiv published Harness-Delta Attribution on October 15, 2026, an evaluation protocol appl'",
+  "learning.para.2: uncited factual sentence: 'Among 21 settings that show statistically significant search-set gains, overfitting accoun'",
+  "learning.para.3: rejected by both checks: 'Agent environments use programmatic verifiers to turn complex outcomes into rewards.' (not established: 'Agent environments use programmatic verifiers to turn complex outcomes into rewa')",
+  "learning.doDifferently: uncited factual sentence: 'If the lift does not survive, you bought compute and a scoreboard, not a better agent.'",
+  "closing.oneThing: uncited factual sentence: 'Keep the number you get there, and throw the other one away.'",
+  "after holding s01, s02, s03, s05, s07: stories: 2 stories, the template holds 4 to 11",
+  "after holding s01, s02, s03, s05, s07: thread.body: 0 story links, 2 or 3 are required",
+  "after holding s01, s02, s03, s05, s07: learning.drawnFrom: [] must be 2 to 6 ids of stories in this edition"
+ ],
+ "passing": [
+  "s04",
+  "s06"
+ ],
+ "publishes": false,
+ "flagged": [
+  {
+   "path": "learning.para.1",
+   "text": "[[fn:harness|Harness evolution]] is the loop most teams now run without calling it that.",
+   "code": [
+    "learning.para.1: uncited factual sentence: 'Harness evolution is the loop most teams now run without calling it that.'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "arXiv published Harness-Delta Attribution on October 15, 2026, an evaluation protocol applied to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+   "code": [
+    "learning.para.2: uncited factual sentence: 'arXiv published Harness-Delta Attribution on October 15, 2026, an evaluation protocol appl'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "Among 21 settings that show statistically significant search-set gains, overfitting accounted for 54% of the gain on average and test-time scaling for 14%, and their combined share exceeds 50% in 14 settings.",
+   "code": [
+    "learning.para.2: uncited factual sentence: 'Among 21 settings that show statistically significant search-set gains, overfitting accoun'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "learning.para.3",
+   "text": "Agent environments use [[fn:verifier|programmatic verifiers]] to turn complex outcomes into rewards.",
+   "code": [],
+   "verdict": {
+    "first": [
+     false
+    ],
+    "second_unsupported": [
+     "Agent environments use programmatic verifiers to turn complex outcomes into rewards."
+    ]
+   }
+  },
+  {
+   "path": "learning.doDifferently",
+   "text": "If the lift does not survive, you bought compute and a scoreboard, not a better agent.",
+   "code": [
+    "learning.doDifferently: uncited factual sentence: 'If the lift does not survive, you bought compute and a scoreboard, not a better agent.'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s01.feature.2",
+   "text": "Three sources feed one number, and the headline reports only their sum, so the decomposition is the contribution rather than any single score.",
+   "code": [
+    "story.s01.feature.2: a sentence marked as interpretation carries a figure, date or count: 'Three sources feed one number, and the headline reports only their sum, so the decompositi'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "The two shares are not equally bad news.",
+   "code": [
+    "story.s01.feature.3: a sentence marked as interpretation carries a figure, date or count: 'The two shares are not equally bad news.'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "Buying more inference-time compute at least does the same work again when you serve the system, at a cost you can see on the bill.",
+   "code": [
+    "story.s01.feature.3: uncited factual sentence: 'Buying more inference-time compute at least does the same work again when you serve the sy'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "Fitting the artifacts of one benchmark buys nothing that leaves the benchmark.",
+   "code": [
+    "story.s01.feature.3: uncited factual sentence: 'Fitting the artifacts of one benchmark buys nothing that leaves the benchmark.'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s02.feature.2",
+   "text": "The loop then has to find the subtler ones, which is the part that does not finish.",
+   "code": [
+    "story.s02.feature.2: uncited factual sentence: 'The loop then has to find the subtler ones, which is the part that does not finish.'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s03.why",
+   "text": "The open question for GUI agents has been whether cheap synthetic environments teach anything that survives on real hardware.",
+   "code": [
+    "story.s03.why: marked as judgement but states a checkable fact (or could not be read): 'The open question for GUI agents has been whether cheap synthetic environments teach anyth'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s05.tryIt",
+   "text": "An enterprise administrator must enable the new \"Agentic autofix\" policy in Advanced Security policies before an organization or repository administrator can turn it on in the Code Security settings for the organization or the repository.",
+   "code": [
+    "story.s05.tryIt: uncited factual sentence: 'An enterprise administrator must enable the new \"Agentic autofix\" policy in Advanced Secur'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s07.why",
+   "text": "The delegation detail is what decides who can unblock a developer at four in the afternoon.",
+   "code": [
+    "story.s07.why: a sentence marked as interpretation carries a figure, date or count: 'The delegation detail is what decides who can unblock a developer at four in the afternoon'"
+   ],
+   "verdict": null
+  },
+  {
+   "path": "story.s07.tie",
+   "text": "The same model policies that an administrator may need to enable after the October 19 deprecation can now be read and updated through the REST API.",
+   "code": [],
+   "verdict": {
+    "first": [
+     false,
+     false
+    ],
+    "second_unsupported": [
+     "the October 19 deprecation"
+    ]
+   }
+  },
+  {
+   "path": "closing.oneThing",
+   "text": "Keep the number you get there, and throw the other one away.",
+   "code": [
+    "closing.oneThing: uncited factual sentence: 'Keep the number you get there, and throw the other one away.'"
+   ],
+   "verdict": null
+  }
+ ],
+ "sentences": 167,
+ "cited": 113,
+ "marked": 45,
+ "second_checks": 21,
+ "revised_fields": [
+  "learning.para.2",
+  "learning.para.3",
+  "learning.para.4",
+  "story.s05.tryIt"
+ ],
+ "story_count": 7,
+ "sentences_detail": [
+  {
+   "path": "thread.line.1",
+   "text": "Across 21 settings with significant search-set gains, overfitting explained 54% of the harness-evolution improvement and test-time scaling another 14%.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "thread.line.2",
+   "text": "GitHub's agentic autofix [[hl|reruns CodeQL to confirm]] a fix closes an alert before it opens a pull request.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "thread.body",
+   "text": "The week's agent news turned on measurement rather than new capability.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "thread.body",
+   "text": "On October 15, 2026, arXiv published [[#s01|an attribution protocol]] that dissects an evolution gain into artifact-driven overfitting, gains explained by test-time scaling, and a remainder bounding residual generalizable improvement.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "thread.body",
+   "text": "On October 11, 2026, arXiv published [[#s02|a hacker-fixer loop]] that repairs verifiers which can be attacked into awarding full credit to cheating agents.",
+   "n_citations": 3,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "thread.body",
+   "text": "MAI-Gym's [[#s03|RL in a mocked train-ticketing app]] transferred to the real app, improving task success on a physical phone from 28.8% to 48.1%.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "thread.body",
+   "text": "The harder question is whether a gain you measured in your own environment survives contact with someone else's.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.headline",
+   "text": "Overfitting and test-time scaling explained 54% and 14% of harness-evolution gains.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.headline",
+   "text": "Training in a mocked app carried a real phone from 28.8% to 48.1%.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.1",
+   "text": "arXiv published Harness-Delta Attribution on October 15, 2026, applying it to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.1",
+   "text": "[[fn:harness|Harness evolution]] is the loop most teams now run without calling it that.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "learning.para.1",
+   "text": "[source text withheld (the writer reproduced the page): sha256 56e64459e871b86ab42206ebe5d4ab909de26af878f890ab06fa7369e6a4dd9a; 91 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.1",
+   "text": "A loop that optimises against a scoreboard will, left alone, learn the scoreboard.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "arXiv published Harness-Delta Attribution on October 15, 2026, an evaluation protocol applied to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "Among 21 settings that show statistically significant search-set gains, overfitting accounted for 54% of the gain on average and test-time scaling for 14%, and their combined share exceeds 50% in 14 settings.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "The larger share is the one you cannot buy your way out of: extra inference-time compute at least does something real at serving time, while artifact-driven overfitting leaves nothing behind when the tasks change.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.para.2",
+   "text": "Validation-based signals are insufficient to prevent overfitting.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.3",
+   "text": "arXiv published a fully automatic approach to weak-to-strong verifier hardening on October 11, 2026, applied to 3 agent environments: Terminal Bench, KernelBench, and SETA, substantially reducing attack success across them.",
+   "n_citations": 3,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.3",
+   "text": "Agent environments use [[fn:verifier|programmatic verifiers]] to turn complex outcomes into rewards.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": false
+  },
+  {
+   "path": "learning.para.3",
+   "text": "The approach first sets up an isolated verifier sandbox that agents cannot directly modify, then uses a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.4",
+   "text": "The official Terminal Bench repository adopted an earlier version of the hacker-fixer loop to audit exploits in its environments, one of the 3 agent environments — Terminal Bench, KernelBench and SETA — in which the October 11, 2026 arXiv paper reduced attack success.",
+   "n_citations": 3,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.4",
+   "text": "[source text withheld (the writer reproduced the page): sha256 15a73e558f4921b6d7e6f64926118cb39198f429ec93980cb9f4fd3686a142d5; 193 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.4",
+   "text": "Adoption by the benchmark being attacked is the strongest evidence on offer here, because it means the defence is being judged by someone other than its authors.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.para.5",
+   "text": "arXiv published MAI-Gym on October 14, 2026, a platform that supports ten established benchmarks and scales to 20,000 parallel environment instances.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.5",
+   "text": "MAI-Gym unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.5",
+   "text": "Online reinforcement learning with verifiable rewards has driven rapid progress in mathematics, coding, and tool use, but scaling it to GUI agents remains hard because interactive environments are costly and realistic training tasks are scarce.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.6",
+   "text": "arXiv reported on October 14, 2026 that MAI-Gym-9B, a unified 9B agent for mobile and computer use, reached 78.4% on MobileWorld and 76.2% on OSWorld-Verified, the best among open GUI agents under 10B parameters.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.6",
+   "text": "A shared rollout pipeline keeps agent behavior consistent across evaluation and training.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.6",
+   "text": "Consistency between the training loop and the scoring loop is cheap to describe and expensive to get wrong; when they drift apart, the number you report is about the pipeline, not the agent.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.para.7",
+   "text": "arXiv reported on October 14, 2026 that RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1%.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.7",
+   "text": "By contrast, search-set gains from harness evolution often fail to transfer to held-out tasks, and provide limited evidence that they will persist under practical distribution shifts.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.para.7",
+   "text": "Both results are about the same thing from opposite ends: a measured improvement is only worth what it survives outside the place it was measured.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.note.harness.term",
+   "text": "harness evolution",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.note.harness",
+   "text": "[source text withheld (the writer reproduced the page): sha256 2af177a9034ca69d95b6370759bd86a2f981c7db75f4302ee006e6a0e88bf57a; 195 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.note.verifier.term",
+   "text": "programmatic verifiers",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.note.verifier",
+   "text": "Programmatic verifiers turn complex outcomes into rewards inside agent environments.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "learning.doDifferently",
+   "text": "Before you ship the prompt-and-tool changes that lifted your agent's score this week, rerun them on a task set the tuning loop never saw.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "learning.doDifferently",
+   "text": "If the lift does not survive, you bought compute and a scoreboard, not a better agent.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "stories.title",
+   "text": "GitHub deprecated models across most Copilot experiences on October 19, 2026.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "stories.title",
+   "text": "[source text withheld (the writer reproduced the page): sha256 b3ce8021071f4afe2124ce9d4e1c694bec5ba4ab50af60aeff9c83c10893ce52; 68 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.headline",
+   "text": "In 14 of 21 settings, overfitting and test-time scaling explained more than half the harness gain",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.hashtags",
+   "text": "#Agents #Evals #HarnessEngineering",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.why",
+   "text": "If you tune prompts, tools and orchestration around a frozen model, this gives you a way to ask which part of the lift is yours to keep.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.why",
+   "text": "The protocol dissects an evolution gain into artifact-driven overfitting, gains explained by test-time scaling, and a remainder that gives an upper bound on residual generalizable improvement.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.body",
+   "text": "On October 15, 2026, arXiv published Harness-Delta Attribution, an evaluation protocol that splits an evolution gain into artifact-driven overfitting, gains explained by test-time scaling, and a bounded residual.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.body",
+   "text": "The authors apply it to 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.body",
+   "text": "Among 21 settings with significant search-set gains, overfitting accounts for 54% of the gain on average and test-time scaling for 14%, and together they exceed 50% in 14 settings.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 87875127508a7c3e931b1bc63f1413844dd97144beb8992daa80bcebb2c57a67; 91 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.body",
+   "text": "Validation-based signals are insufficient to prevent overfitting.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.1",
+   "text": "[source text withheld (the writer reproduced the page): sha256 5f3fd36dbcdac68ec4c38267c21487e4ca1ca6befe0e22749fd3c9d6a656dc17; 275 characters]",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.1",
+   "text": "The setting is harness evolution: automatically optimizing the prompts, skills, tools, and orchestration code around a fixed-weight model, a way to improve agentic systems without updating model weights.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.1",
+   "text": "That is the loop most teams can actually afford to run, which is why it matters whether its output is durable.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.2",
+   "text": "[source text withheld (the writer reproduced the page): sha256 56e64459e871b86ab42206ebe5d4ab909de26af878f890ab06fa7369e6a4dd9a; 91 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.2",
+   "text": "The paper's question is how much of the resulting gain reflects benchmark-specific overfitting or additional inference-time compute, and how much may generalize beyond the search set.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.2",
+   "text": "To answer it, the authors run the protocol over 11 executor models and three harness-evolution frameworks across math, coding, creativity, and agentic tasks.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.2",
+   "text": "Three sources feed one number, and the headline reports only their sum, so the decomposition is the contribution rather than any single score.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "In 21 settings that showed statistically significant search-set gains, overfitting accounted for 54% of the improvement on average and test-time scaling for 14%; the combined share exceeded 50% in 14 of those settings.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "The two shares are not equally bad news.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "Buying more inference-time compute at least does the same work again when you serve the system, at a cost you can see on the bill.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.3",
+   "text": "Fitting the artifacts of one benchmark buys nothing that leaves the benchmark.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "Search-set gains often fail to transfer to held-out tasks, and provide limited evidence that they will persist under practical distribution shifts.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "[source text withheld (the writer reproduced the page): sha256 87875127508a7c3e931b1bc63f1413844dd97144beb8992daa80bcebb2c57a67; 91 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "[source text withheld (the writer reproduced the page): sha256 7b269ecf2351152c2b623f2e39f87dd27ee1a5b8c6191e6ec8ee33fdc1992271; 75 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "The last point is the expensive one for practitioners, because holding out a validation split is the standard defence and the paper says it does not hold.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "The authors conclude by motivating attribution-aware evaluation in future harness evolution research.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.feature.4",
+   "text": "For a team, that translates into reporting harness wins with their sources attached rather than as a single delta.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.tryIt",
+   "text": "Take the last harness change that moved your score and rerun it with the extra inference-time compute held fixed.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.tryIt",
+   "text": "Then rerun it on tasks the tuning loop never touched.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.tryIt",
+   "text": "Whatever survives both is the part worth defending in a review.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s01.ninety.method",
+   "text": "Harness evolution automatically optimizes the prompts, skills, tools, and orchestration code around a fixed-weight model, iterating the harness for higher performance on a search set.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.ninety.result",
+   "text": "Among 21 settings with significant gains, overfitting and test-time scaling accounted for 54% and 14% of the gain on average, and their combined share exceeded 50% in 14 settings.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s01.ninety.caveat",
+   "text": "The residual and held-out transfer vary substantially across tasks, models, and frameworks, and search-set gains often fail to transfer to held-out tasks.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.headline",
+   "text": "A hacker-fixer loop cut attack success on Terminal Bench, KernelBench and SETA, and Terminal Bench adopted it",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.hashtags",
+   "text": "#Agents #RL #Evals #RewardHacking",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.why",
+   "text": "If your agent's reward comes from a script, the script is part of your threat model.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.why",
+   "text": "[source text withheld (the writer reproduced the page): sha256 adb3fc227bdc651b8feaadd681b249514e89f0378d8f072f585fc4dd1776c3d1; 168 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.body",
+   "text": "On October 11, 2026, arXiv published a scalable, fully automatic approach to weak-to-strong verifier hardening.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.body",
+   "text": "The question it asks is whether today's model with scaled compute can automatically harden agent environments against reward hacking by potentially stronger future models.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.body",
+   "text": "The method first sets up an isolated verifier sandbox that agents cannot directly modify, then runs a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.body",
+   "text": "Applied to Terminal Bench, KernelBench and SETA, it substantially reduced attack success, and the iterative design outperformed the static, non-iterative baseline.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 4cc132685b96c4cfa3c31e754264eeca74057e7781c4c2f4de62332c54ac49d9; 102 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.1",
+   "text": "On October 11, 2026, arXiv published a scalable, fully automatic approach to weak-to-strong verifier hardening.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.1",
+   "text": "Agent environments are essential for large language model development, and they use programmatic verifiers to turn complex outcomes into rewards.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.1",
+   "text": "When those verifiers can be attacked, a cheating agent takes full credit without completing the intended task, which corrupts evaluation and misaligns training.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.2",
+   "text": "The framing is weak-to-strong: whether today's model, given scaled compute, can automatically harden agent environments to prevent potentially stronger future models from reward hacking.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.2",
+   "text": "The approach has two parts: an isolated verifier sandbox that agents cannot directly modify, and a hacker-fixer loop that finds and repairs the vulnerabilities the sandbox does not remove.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.2",
+   "text": "The sandbox closes the crudest route, where the agent edits the thing that grades it.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.feature.2",
+   "text": "The loop then has to find the subtler ones, which is the part that does not finish.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "story.s02.feature.3",
+   "text": "Applied to Terminal Bench, KernelBench, and SETA, the loop substantially reduced attack success across these agent environments.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.3",
+   "text": "[source text withheld (the writer reproduced the page): sha256 15a73e558f4921b6d7e6f64926118cb39198f429ec93980cb9f4fd3686a142d5; 193 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.3",
+   "text": "That is the comparison worth holding onto: a single hardening pass is the baseline the iterative version beats, so hardening behaves like a budget you spend rather than a patch you apply.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.feature.4",
+   "text": "An earlier version of the hacker-fixer loop has been adopted by the official Terminal Bench repository as a way to audit exploits in its environments.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.4",
+   "text": "The authors state the standing condition plainly: as agent environments scale in numbers and difficulty, so must the repairing of exploitable verifiers.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.feature.4",
+   "text": "Reduced attack success is measured against the attacks the loop itself generated, which is the usual limit of adversarial defence work and the reason the benchmark's own adoption carries weight.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.feature.4",
+   "text": "The project page is at https://verifier-hardening.github.io/.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.tryIt",
+   "text": "Point an agent at your own reward script and ask it to earn credit without doing the task.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.tryIt",
+   "text": "Then move the script somewhere the agent cannot write to, and run the exercise again.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s02.ninety.method",
+   "text": "The approach sets up an isolated verifier sandbox that agents cannot directly modify, then runs a hacker-fixer loop to find and repair remaining verifier vulnerabilities.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.ninety.result",
+   "text": "Applied to Terminal Bench, KernelBench and SETA, the loop substantially reduced attack success and outperformed the static, non-iterative baseline as iterations increased.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.ninety.caveat",
+   "text": "Repair must keep pace: as agent environments scale in numbers and difficulty, so must the repairing of exploitable verifiers.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s02.tie",
+   "text": "One paper repairs verifiers that award credit for work never done; the other attributes how much of a harness gain was overfitting rather than generalizable improvement.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.headline",
+   "text": "Training a GUI agent in a mocked ticketing app raised real-phone success from 28.8% to 48.1%",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.hashtags",
+   "text": "#Agents #RL #GUIAgents #OpenWeights",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s03.why",
+   "text": "The open question for GUI agents has been whether cheap synthetic environments teach anything that survives on real hardware.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s03.why",
+   "text": "Here, RL in a mocked train-ticketing app transferred to its real-world counterpart, improving task success on a physical phone from 28.8% to 48.1%.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.body",
+   "text": "On October 14, 2026, arXiv published MAI-Gym, an open all-in-one platform that unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.body",
+   "text": "A shared rollout pipeline keeps agent behavior consistent across evaluation and training, and the platform supports ten established benchmarks and scales to 20,000 parallel environment instances.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.body",
+   "text": "It also synthesizes GUI applications and tasks automatically, including resettable mocked apps and coherent cross-app worlds with execution-validated task verifiers.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.body",
+   "text": "The trained model, MAI-Gym-9B, reached 78.4% on MobileWorld and 76.2% on OSWorld-Verified, state-of-the-art among open GUI agents under 10B parameters.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.body",
+   "text": "The motivating constraints remain the cost of interactive environments and the scarcity of realistic training tasks.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.tryIt",
+   "text": "MAI-Gym releases the framework, synthesis skills, mocked apps, 2,000 verified tasks, and the model checkpoint.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.tryIt",
+   "text": "If you are building a GUI agent, start by running your current one against the released tasks before writing any environment code of your own.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s03.tryIt",
+   "text": "The mocked apps are the cheap part to reuse.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s03.ninety.method",
+   "text": "MAI-Gym unifies GUI agent evaluation, data collection, and online RL training across mobile, computer, and web environments through a shared rollout pipeline that keeps agent behavior consistent across evaluation and training.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.ninety.result",
+   "text": "It supports ten established benchmarks and scales to 20,000 parallel environment instances, and the 9B agent trained on it reached 78.4% on MobileWorld and 76.2% on OSWorld-Verified.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s03.ninety.caveat",
+   "text": "The platform addresses the cost of interactive environments and the scarcity of realistic training tasks, which are the constraints it was built against.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.headline",
+   "text": "Copilot models were deprecated on October 19, 2026, and enterprise admins may have to enable the replacements",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.hashtags",
+   "text": "#AgenticCoding #Copilot #Deprecations",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s04.why",
+   "text": "The deprecation covers most GitHub Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.why",
+   "text": "So a pinned model name in a script or integration breaks the same way the editor does, and on Enterprise the fix needs someone with policy access, not just you.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s04.body",
+   "text": "As of October 19, 2026, GitHub deprecated a set of models across most Copilot experiences, including Copilot Chat, inline edits, ask and agent modes, and code completions.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.body",
+   "text": "GitHub asks users to update their workflows and integrations to use supported models.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 b3802a8ad26170edf2d95e8d1b2633c01c4f4e462aae86a566155c882f56e6a5; 131 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.body",
+   "text": "An administrator can verify availability by checking individual Copilot settings and confirming the policy is enabled for the specific model, after which it appears in the Copilot Chat model selector in VS Code and on github.com.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 f4d4beb52173bff645eaa497c10e43f92791d3d3574205870e2f9f9005e17d3d; 54 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.tryIt",
+   "text": "Grep your CI configuration, scripts and extension settings for hardcoded Copilot model names before your next build runs.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s04.tryIt",
+   "text": "If a replacement does not appear in the Copilot Chat model selector in VS Code or on github.com, the policy has not been enabled for it.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s04.tryIt",
+   "text": "That is an administrator's task, so raise it early rather than on the morning it blocks you.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s05.headline",
+   "text": "Agentic autofix is generally available and reruns CodeQL before opening a pull request",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.hashtags",
+   "text": "#Agents #AgenticCoding #CodeSecurity",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s05.why",
+   "text": "This is a shipped agent loop with a verifier inside it: it explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request for review.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.why",
+   "text": "The gate is only as strong as what CodeQL counts as closed, which is why the review still lands on you.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s05.body",
+   "text": "Agentic autofix for code scanning alerts is now generally available to GitHub Code Security and GitHub Advanced Security customers on GitHub Enterprise Cloud, including GitHub Enterprise Cloud with data residency.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 5ee69512e4fa055650d278ea0c3b4093c4fe217c2968291ab9a2b56c09147e45; 136 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.body",
+   "text": "When enabled, it replaces the free Generate Fix option on individual code scanning alerts with an Assign to Copilot button.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.body",
+   "text": "It supports alerts on the repository's default branch only; alerts detected only on pull requests or other branches cannot be assigned to Copilot.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.body",
+   "text": "It also consumes AI Credits from your Code Security budget and GitHub Actions minutes.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.tryIt",
+   "text": "An enterprise administrator must enable the new \"Agentic autofix\" policy in Advanced Security policies before an organization or repository administrator can turn it on in the Code Security settings for the organization or the repository.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  },
+  {
+   "path": "story.s05.tryIt",
+   "text": "Switch it on for one repository with a backlog of default-branch alerts, then read the validation steps in the first pull request before you widen it.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s05.tryIt",
+   "text": "Agentic autofix consumes AI Credits from your Code Security budget and GitHub Actions minutes, and you can set SKU level budgets for Code Security AI credits.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s05.tie",
+   "text": "Autofix trusts CodeQL to say an alert is closed, which is exactly the trust the verifier-hardening work attacks when it shows verifiers awarding full credit to agents that never did the task.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.headline",
+   "text": "OpenAI models take the majority of Amp's tokens, with some users at 10 billion a week",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.hashtags",
+   "text": "#Agents #AgenticCoding #Tokens",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s06.why",
+   "text": "One number here is worth keeping: OpenAI models account for the majority of tokens used in Amp, and Amp chooses and recommends models based on what works best for its users.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.why",
+   "text": "The rest is a vendor account of one customer, useful mainly as a picture of what token budgets do to how people use agents.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s06.body",
+   "text": "Amp describes building on GPT-6 Astra, Ultrafast, GPT-Live-1, and Sign in with ChatGPT.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.body",
+   "text": "Quinn describes some Amp users consuming 10 billion tokens a week, and says Amp launched its Sign in with ChatGPT integration partly to ease that constraint.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.body",
+   "text": "He says the integration gives users access to more tokens and OpenAI models, including GPT-6 Astra, which changes how willing they are to let an agent take on a larger task.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.body",
+   "text": "Amp also announced Puck, a conversational assistant built into Amp that helps users launch and manage other agents, with Calling Puck powered by GPT-Live-1 for real-time speech, including from a watch.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s06.body",
+   "text": "The claims are a single team's experience: Amp's own 20-person team uses agents including in marketing, and its Ultrafast testing with GPT-6 Astra is reported without measurements.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.headline",
+   "text": "Copilot model policies can now be read and updated over the REST API",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.hashtags",
+   "text": "#Copilot #Platform #API",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s07.why",
+   "text": "Model availability becomes configuration you can manage from code: REST endpoints now retrieve and update Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.why",
+   "text": "The delegation detail is what decides who can unblock a developer at four in the afternoon.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s07.body",
+   "text": "GitHub added REST API support for retrieving and updating Copilot model policies for enterprises, enterprise teams, enterprise apps, and organizations.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.body",
+   "text": "[source text withheld (the writer reproduced the page): sha256 455eb4cbcfcf66a7c7272dcf578edb123d8b4bb3b444b725984c51fb22b6533c; 132 characters]",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.body",
+   "text": "Together, the endpoints are meant to make managing Copilot model availability across an enterprise easier.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.body",
+   "text": "GitHub points to its documentation on managing model availability and its REST API reference as the starting point.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "story.s07.tryIt",
+   "text": "Write a small script that reads your current policies and prints which models each organization may select.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s07.tryIt",
+   "text": "Keep the output in version control so the next deprecation shows up as a diff rather than a support ticket.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "story.s07.tie",
+   "text": "The same model policies that an administrator may need to enable after the October 19 deprecation can now be read and updated through the REST API.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": false
+  },
+  {
+   "path": "closing.line.1",
+   "text": "A mocked train-ticketing app taught an agent enough to move real-phone success from 28.8% to 48.1%.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "closing.line.2",
+   "text": "Harness gains measured on a search set often failed to transfer to held-out tasks.",
+   "n_citations": 1,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "closing.summary",
+   "text": "The week put two numbers next to one worry: overfitting and test-time scaling explained 54% and 14% of harness-evolution gains, while verifiers can be attacked into awarding full credit to agents that never did the task.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "closing.summary",
+   "text": "Against that, the practical work went the other way, with GitHub rerunning CodeQL to confirm a fix before opening a pull request and MAI-Gym holding agent behavior consistent across evaluation and training through a shared rollout pipeline.",
+   "n_citations": 2,
+   "marked": false,
+   "supported": true
+  },
+  {
+   "path": "closing.oneThing",
+   "text": "Pick the agent change you are proudest of this month and measure it once more on tasks it was never tuned against.",
+   "n_citations": 0,
+   "marked": true,
+   "supported": null
+  },
+  {
+   "path": "closing.oneThing",
+   "text": "Keep the number you get there, and throw the other one away.",
+   "n_citations": 0,
+   "marked": false,
+   "supported": null
+  }
+ ],
+ "error": null,
+ "ledger_delta_usd": 0.7618
+}

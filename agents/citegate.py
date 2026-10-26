@@ -263,9 +263,13 @@ def check_marked(client, sentences: list[dict], *, user_id: str, conn=None) -> f
     questions = [{"id": n, "line": style_check.plain(s["text"]), "context": [t for t in by_path.get(s["path"], []) if t != style_check.plain(s["text"])][:8]}
                  for n, s in enumerate(todo)]
     answers, cost = _ask(client, MARKED_SYSTEM, MARKED_SCHEMA, questions, user_id=user_id, conn=conn)
+    # A line is accepted as judgement only if two readers, a cheap one and a stronger one, both say it states no fact.
+    maybe = [q for q in questions if (answers.get(q["id"]) or {}).get("states_fact") is False]
+    again, c2 = _ask(client, MARKED_SYSTEM, MARKED_SCHEMA, maybe, user_id=user_id, conn=conn, second=True) if maybe else ({}, 0.0)
+    cost += c2
     for n, s in enumerate(todo):
-        a = answers.get(n)
-        if a is None or a.get("states_fact") is not False:
+        a, b = answers.get(n), again.get(n)
+        if a is None or a.get("states_fact") is not False or b is None or b.get("states_fact") is not False:
             s.setdefault("code_failures", []).append(f"{s['path']}: marked as judgement but states a checkable fact (or could not be read): {style_check.plain(s['text'])[:90]!r}")
     return cost
 

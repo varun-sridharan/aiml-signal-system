@@ -1,0 +1,61 @@
+{
+ "per_unit": {
+  "2026-08-04-mcp": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-kimi-k3": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-istar": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-terminal-bench": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-mega-rounds": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-vc-record": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-export-controls": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {},
+ "false_alarms": 0,
+ "units_flagged": 0,
+ "cost": 0.010342,
+ "error": null,
+ "gate": "claims",
+ "case": "2026-08-04",
+ "run": 1,
+ "seconds": 11.2
+}

@@ -1,0 +1,47 @@
+{
+ "per_unit": {
+  "negative-01-mcp": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "negative-01-mega-rounds": {
+   "flagged": [
+    {
+     "text": "Anthropic raised $965B"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "raised $965B"
+   ]
+  },
+  "thread": {
+   "flagged": [
+    {
+     "text": "Anthropic's $965B valuation"
+    }
+   ],
+   "false_alarms": [
+    {
+     "text": "Anthropic's $965B valuation"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-01-mega-rounds:raised $965B": true
+ },
+ "false_alarms": 1,
+ "units_flagged": 2,
+ "cost": 0.005293,
+ "error": null,
+ "gate": "claims",
+ "case": "negative-01",
+ "run": 1,
+ "seconds": 6.4
+}

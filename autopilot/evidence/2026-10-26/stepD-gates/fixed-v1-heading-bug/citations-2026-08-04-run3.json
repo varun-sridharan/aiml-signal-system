@@ -1,0 +1,423 @@
+{
+ "per_unit": {
+  "2026-08-04-mcp": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s01.why",
+     "text": "Your MCP servers become ordinary stateless web services — horizontal scale behind a plain load balancer, no sticky sessions, no shared session store.",
+     "why": "code: story.s01.why: uncited factual sentence: 'Your MCP servers become ordinary stateless web services — "
+    },
+    {
+     "path": "story.s01.why",
+     "text": "The cost is a hard migration: cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, so anything you built on those needs a replacement designed now.",
+     "why": "code: story.s01.why: uncited factual sentence: 'The cost is a hard migration: cross-version compatibility "
+    },
+    {
+     "path": "story.s01.example",
+     "text": "If your agent's tool server relied on Sampling to call back into the model mid-tool, that path is deprecated — you have 12 months to restructure it as a request the client initiates.",
+     "why": "both checks said no"
+    },
+    {
+     "path": "story.s01.example",
+     "text": "And because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server, so you run both fleets during the cutover rather than upgrading in place.",
+     "why": "code: story.s01.example: uncited factual sentence: 'And because compatibility breaks across versions, a cl"
+    },
+    {
+     "path": "story.s01.tie",
+     "text": "Directly reinforces Terminal-Bench 2.1: with a 0.4-point gap at the frontier, the harness — transport, scaling, tool surface — is where your differentiation actually lives, and it just got rewritten.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Directly reinforces Terminal-Bench 2.1: with a 0.4-point g"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s01.why",
+     "text": "Your MCP servers become ordinary stateless web services — horizontal scale behind a plain load balancer, no sticky sessions, no shared session store.",
+     "why": "code: story.s01.why: uncited factual sentence: 'Your MCP servers become ordinary stateless web services — "
+    },
+    {
+     "path": "story.s01.why",
+     "text": "The cost is a hard migration: cross-version compatibility breaks, and Roots, Sampling, Logging, and Dynamic Client Registration are all deprecated on a 12-month clock, so anything you built on those needs a replacement designed now.",
+     "why": "code: story.s01.why: uncited factual sentence: 'The cost is a hard migration: cross-version compatibility "
+    },
+    {
+     "path": "story.s01.example",
+     "text": "And because compatibility breaks across versions, a client pinned to the old spec cannot talk to a new server, so you run both fleets during the cutover rather than upgrading in place.",
+     "why": "code: story.s01.example: uncited factual sentence: 'And because compatibility breaks across versions, a cl"
+    },
+    {
+     "path": "story.s01.tie",
+     "text": "Directly reinforces Terminal-Bench 2.1: with a 0.4-point gap at the frontier, the harness — transport, scaling, tool surface — is where your differentiation actually lives, and it just got rewritten.",
+     "why": "code: story.s01.tie: uncited factual sentence: 'Directly reinforces Terminal-Bench 2.1: with a 0.4-point g"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-kimi-k3": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s02.why",
+     "text": "2.8T open weights at 1M context shifts build-vs-buy for agents, because per-call cost compounds across many calls per task and self-hosting caps that cost.",
+     "why": "code: story.s02.why: uncited factual sentence: '2.8T open weights at 1M context shifts build-vs-buy for ag"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "code: story.s02.why: uncited factual sentence: 'The tradeoff is blunt: you take on serving cost and latenc"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "code: story.s02.example: uncited factual sentence: 'But at 2.8T parameters you now pay that 20× in your ow"
+    },
+    {
+     "path": "story.s02.tie",
+     "text": "Cuts against the OpenAI/Anthropic mega-rounds: those ~$1T valuations set the pricing umbrella for API and talent, and open weights at this scale are the main lever a downstream builder has against it.",
+     "why": "code: story.s02.tie: uncited factual sentence: 'Cuts against the OpenAI/Anthropic mega-rounds: those ~$1T "
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s02.why",
+     "text": "2.8T open weights at 1M context shifts build-vs-buy for agents, because per-call cost compounds across many calls per task and self-hosting caps that cost.",
+     "why": "code: story.s02.why: uncited factual sentence: '2.8T open weights at 1M context shifts build-vs-buy for ag"
+    },
+    {
+     "path": "story.s02.why",
+     "text": "The tradeoff is blunt: you take on serving cost and latency to escape API pricing.",
+     "why": "code: story.s02.why: uncited factual sentence: 'The tradeoff is blunt: you take on serving cost and latenc"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "For an agent making 20 calls per task, the per-call price is multiplied by 20 before you see any value — the case for owning the weights.",
+     "why": "code: story.s02.example: a sentence marked as interpretation carries a figure, date or count: 'For an agen"
+    },
+    {
+     "path": "story.s02.example",
+     "text": "But at 2.8T parameters you now pay that 20× in your own serving infrastructure and latency budget instead of someone's API line item.",
+     "why": "code: story.s02.example: uncited factual sentence: 'But at 2.8T parameters you now pay that 20× in your ow"
+    },
+    {
+     "path": "story.s02.tie",
+     "text": "Cuts against the OpenAI/Anthropic mega-rounds: those ~$1T valuations set the pricing umbrella for API and talent, and open weights at this scale are the main lever a downstream builder has against it.",
+     "why": "code: story.s02.tie: uncited factual sentence: 'Cuts against the OpenAI/Anthropic mega-rounds: those ~$1T "
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-istar": {
+   "sentences": 6,
+   "flagged": [
+    {
+     "path": "story.s03.example",
+     "text": "On a multi-turn task, outcome-only reward gives one signal for a whole trajectory; iStar scores each intermediate action instead, so a run that took the right first three steps and failed on the fourth still teaches something.",
+     "why": "code: story.s03.example: uncited factual sentence: 'On a multi-turn task, outcome-only reward gives one si"
+    },
+    {
+     "path": "story.s03.example",
+     "text": "That per-step scoring function is the part you have to design yourself.",
+     "why": "code: story.s03.example: uncited factual sentence: 'That per-step scoring function is the part you have to"
+    },
+    {
+     "path": "story.s03.tie",
+     "text": "Pairs with the MCP spec change: step-level credit assignment assumes you can cleanly attribute each tool call, which is easier when transport is stateless request/response than when state hides in a session.",
+     "why": "code: story.s03.tie: uncited factual sentence: 'Pairs with the MCP spec change: step-level credit assignme"
+    },
+    {
+     "path": "story.s03.ninety.method",
+     "text": "Assign per-step implicit rewards so the agent gets credit on intermediate actions instead of only on the final outcome in multi-turn agentic RL.",
+     "why": "code: story.s03.ninety.method: uncited factual sentence: 'Assign per-step implicit rewards so the agent ge"
+    },
+    {
+     "path": "story.s03.ninety.result",
+     "text": "[source text withheld (the writer reproduced the page): sha256 f5b59741db02bfd2d7794fed224754f19331a10f139340ee2a6b5649cfa31ffb; 55 characters]",
+     "why": "code: story.s03.ninety.result: uncited factual sentence: '+6.3% success improvement on WebShop and VisualS"
+    },
+    {
+     "path": "story.s03.ninety.caveat",
+     "text": "Benchmark-only results, and the authors concede the difficulty concentrates in step-reward design — the part you'd have to build for your own task.",
+     "why": "code: story.s03.ninety.caveat: uncited factual sentence: 'Benchmark-only results, and the authors concede "
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s03.example",
+     "text": "On a multi-turn task, outcome-only reward gives one signal for a whole trajectory; iStar scores each intermediate action instead, so a run that took the right first three steps and failed on the fourth still teaches something.",
+     "why": "code: story.s03.example: uncited factual sentence: 'On a multi-turn task, outcome-only reward gives one si"
+    },
+    {
+     "path": "story.s03.example",
+     "text": "That per-step scoring function is the part you have to design yourself.",
+     "why": "code: story.s03.example: uncited factual sentence: 'That per-step scoring function is the part you have to"
+    },
+    {
+     "path": "story.s03.tie",
+     "text": "Pairs with the MCP spec change: step-level credit assignment assumes you can cleanly attribute each tool call, which is easier when transport is stateless request/response than when state hides in a session.",
+     "why": "code: story.s03.tie: uncited factual sentence: 'Pairs with the MCP spec change: step-level credit assignme"
+    },
+    {
+     "path": "story.s03.ninety.method",
+     "text": "Assign per-step implicit rewards so the agent gets credit on intermediate actions instead of only on the final outcome in multi-turn agentic RL.",
+     "why": "code: story.s03.ninety.method: uncited factual sentence: 'Assign per-step implicit rewards so the agent ge"
+    },
+    {
+     "path": "story.s03.ninety.result",
+     "text": "[source text withheld (the writer reproduced the page): sha256 f5b59741db02bfd2d7794fed224754f19331a10f139340ee2a6b5649cfa31ffb; 55 characters]",
+     "why": "code: story.s03.ninety.result: uncited factual sentence: '+6.3% success improvement on WebShop and VisualS"
+    },
+    {
+     "path": "story.s03.ninety.caveat",
+     "text": "Benchmark-only results, and the authors concede the difficulty concentrates in step-reward design — the part you'd have to build for your own task.",
+     "why": "code: story.s03.ninety.caveat: uncited factual sentence: 'Benchmark-only results, and the authors concede "
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-terminal-bench": {
+   "sentences": 5,
+   "flagged": [
+    {
+     "path": "story.s04.why",
+     "text": "A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5 at 89.1% means model choice is no longer the variable that decides whether your coding agent works.",
+     "why": "code: story.s04.why: uncited factual sentence: 'A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5"
+    },
+    {
+     "path": "story.s04.why",
+     "text": "Differentiation moves to the harness and the eval design around it — which is a harder, slower kind of engineering than swapping a model string.",
+     "why": "code: story.s04.why: uncited factual sentence: 'Differentiation moves to the harness and the eval design a"
+    },
+    {
+     "path": "story.s04.example",
+     "text": "Swapping between the top two models buys you 0.4 points; a better retry policy or tool schema in your harness plausibly moves more.",
+     "why": "code: story.s04.example: uncited factual sentence: 'Swapping between the top two models buys you 0.4 point"
+    },
+    {
+     "path": "story.s04.example",
+     "text": "Budget your quarter accordingly — spend it on the scaffold and your own evals, not on frontier benchmarking.",
+     "why": "code: story.s04.example: uncited factual sentence: 'Budget your quarter accordingly — spend it on the scaf"
+    },
+    {
+     "path": "story.s04.tie",
+     "text": "Sets up the MCP item: if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+     "why": "code: story.s04.tie: uncited factual sentence: 'Sets up the MCP item: if the harness is the differentiator"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s04.why",
+     "text": "A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5 at 89.1% means model choice is no longer the variable that decides whether your coding agent works.",
+     "why": "code: story.s04.why: uncited factual sentence: 'A 0.4-point spread between GPT-5.6 Sol at 89.5% and Opus 5"
+    },
+    {
+     "path": "story.s04.why",
+     "text": "Differentiation moves to the harness and the eval design around it — which is a harder, slower kind of engineering than swapping a model string.",
+     "why": "code: story.s04.why: uncited factual sentence: 'Differentiation moves to the harness and the eval design a"
+    },
+    {
+     "path": "story.s04.example",
+     "text": "Swapping between the top two models buys you 0.4 points; a better retry policy or tool schema in your harness plausibly moves more.",
+     "why": "code: story.s04.example: uncited factual sentence: 'Swapping between the top two models buys you 0.4 point"
+    },
+    {
+     "path": "story.s04.example",
+     "text": "Budget your quarter accordingly — spend it on the scaffold and your own evals, not on frontier benchmarking.",
+     "why": "code: story.s04.example: uncited factual sentence: 'Budget your quarter accordingly — spend it on the scaf"
+    },
+    {
+     "path": "story.s04.tie",
+     "text": "Sets up the MCP item: if the harness is the differentiator, the 2026-07-28 transport change is the most consequential engineering item of the day.",
+     "why": "code: story.s04.tie: uncited factual sentence: 'Sets up the MCP item: if the harness is the differentiator"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-mega-rounds": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s05.why",
+     "text": "OpenAI's $122B round at $852B post and Anthropic at $965B set the pricing umbrella you build under — it moves both API pricing and what you pay for talent.",
+     "why": "code: story.s05.why: uncited factual sentence: \"OpenAI's $122B round at $852B post and Anthropic at $965B "
+    },
+    {
+     "path": "story.s05.why",
+     "text": "If you're planning a company, both of your main input costs are being repriced by people who are not your competitors.",
+     "why": "code: story.s05.why: uncited factual sentence: \"If you're planning a company, both of your main input cost"
+    },
+    {
+     "path": "story.s05.tie",
+     "text": "Read with Kimi K3: open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+     "why": "code: story.s05.tie: uncited factual sentence: 'Read with Kimi K3: open weights at 2.8T parameters are the"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s05.why",
+     "text": "OpenAI's $122B round at $852B post and Anthropic at $965B set the pricing umbrella you build under — it moves both API pricing and what you pay for talent.",
+     "why": "code: story.s05.why: uncited factual sentence: \"OpenAI's $122B round at $852B post and Anthropic at $965B "
+    },
+    {
+     "path": "story.s05.why",
+     "text": "If you're planning a company, both of your main input costs are being repriced by people who are not your competitors.",
+     "why": "code: story.s05.why: uncited factual sentence: \"If you're planning a company, both of your main input cost"
+    },
+    {
+     "path": "story.s05.tie",
+     "text": "Read with Kimi K3: open weights at 2.8T parameters are the only real hedge against a pricing umbrella set at ~$1T valuations.",
+     "why": "code: story.s05.tie: uncited factual sentence: 'Read with Kimi K3: open weights at 2.8T parameters are the"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-vc-record": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s06.why",
+     "text": "$510B in H1 with AI taking ~80% of Q1 dollars means an AI-labeled company raises into valuations priced for perfection — funding is available, but so is the expectation that you grow into it.",
+     "why": "code: story.s06.why: uncited factual sentence: '$510B in H1 with AI taking ~80% of Q1 dollars means an AI-"
+    },
+    {
+     "path": "story.s06.why",
+     "text": "Anything not AI-labeled is fighting over the remaining ~20%.",
+     "why": "code: story.s06.why: uncited factual sentence: 'Anything not AI-labeled is fighting over the remaining ~20"
+    },
+    {
+     "path": "story.s06.tie",
+     "text": "Same direction as the OpenAI/Anthropic rounds — capital concentration and frontier valuations are one phenomenon, and it prices your inputs before you write a line of code.",
+     "why": "code: story.s06.tie: uncited factual sentence: 'Same direction as the OpenAI/Anthropic rounds — capital co"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s06.why",
+     "text": "$510B in H1 with AI taking ~80% of Q1 dollars means an AI-labeled company raises into valuations priced for perfection — funding is available, but so is the expectation that you grow into it.",
+     "why": "code: story.s06.why: uncited factual sentence: '$510B in H1 with AI taking ~80% of Q1 dollars means an AI-"
+    },
+    {
+     "path": "story.s06.why",
+     "text": "Anything not AI-labeled is fighting over the remaining ~20%.",
+     "why": "code: story.s06.why: uncited factual sentence: 'Anything not AI-labeled is fighting over the remaining ~20"
+    },
+    {
+     "path": "story.s06.tie",
+     "text": "Same direction as the OpenAI/Anthropic rounds — capital concentration and frontier valuations are one phenomenon, and it prices your inputs before you write a line of code.",
+     "why": "code: story.s06.tie: uncited factual sentence: 'Same direction as the OpenAI/Anthropic rounds — capital co"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "2026-08-04-export-controls": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s07.why",
+     "text": "Chip access turns into a policy variable: Blackwell-class exports banned, H200 moved to case-by-case licensing.",
+     "why": "code: story.s07.why: uncited factual sentence: 'Chip access turns into a policy variable: Blackwell-class "
+    },
+    {
+     "path": "story.s07.why",
+     "text": "That makes vendor and region choices contingent on where you and your customers operate, not just on price and availability.",
+     "why": "code: story.s07.why: uncited factual sentence: 'That makes vendor and region choices contingent on where y"
+    },
+    {
+     "path": "story.s07.tie",
+     "text": "Tightens the Kimi K3 tradeoff — self-hosting a 2.8T open-weight model assumes you can get and keep the accelerators, and case-by-case H200 licensing makes that assumption jurisdiction-dependent.",
+     "why": "code: story.s07.tie: uncited factual sentence: 'Tightens the Kimi K3 tradeoff — self-hosting a 2.8T open-w"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s07.why",
+     "text": "Chip access turns into a policy variable: Blackwell-class exports banned, H200 moved to case-by-case licensing.",
+     "why": "code: story.s07.why: uncited factual sentence: 'Chip access turns into a policy variable: Blackwell-class "
+    },
+    {
+     "path": "story.s07.why",
+     "text": "That makes vendor and region choices contingent on where you and your customers operate, not just on price and availability.",
+     "why": "code: story.s07.why: uncited factual sentence: 'That makes vendor and region choices contingent on where y"
+    },
+    {
+     "path": "story.s07.tie",
+     "text": "Tightens the Kimi K3 tradeoff — self-hosting a 2.8T open-weight model assumes you can get and keep the accelerators, and case-by-case H200 licensing makes that assumption jurisdiction-dependent.",
+     "why": "code: story.s07.tie: uncited factual sentence: 'Tightens the Kimi K3 tradeoff — self-hosting a 2.8T open-w"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 4,
+   "flagged": [
+    {
+     "path": "thread.body",
+     "text": "The frontier stopped being the differentiator on the same day it got the most expensive: GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1 while OpenAI and Anthropic price at $852B and $965B, and AI absorbs ~80% of Q1 venture dollars.",
+     "why": "code: thread.body: uncited factual sentence: 'The frontier stopped being the differentiator on the same da"
+    },
+    {
+     "path": "thread.body",
+     "text": "If the top two coding agents are a near-tie, your leverage moves to harness and eval design — which is exactly what the 2026-07-28 MCP spec forces you to rebuild, trading stateful sessions for stateless horizontal scale and a broken-compatibility migration.",
+     "why": "code: thread.body: uncited factual sentence: 'If the top two coding agents are a near-tie, your leverage m"
+    },
+    {
+     "path": "thread.body",
+     "text": "The tension: Kimi K3's 2.8T open weights and iStar's step-reward credit assignment both argue you can own more of the stack, while trillion-dollar rounds and the AI OVERWATCH Act's Blackwell ban argue the inputs — capital, talent, chips — are consolidating out of reach.",
+     "why": "code: thread.body: uncited factual sentence: \"The tension: Kimi K3's 2.8T open weights and iStar's step-re"
+    },
+    {
+     "path": "thread.body",
+     "text": "Read that as a mandate to spend the next quarter on plumbing and evals, not on model selection.",
+     "why": "code: thread.body: uncited factual sentence: 'Read that as a mandate to spend the next quarter on plumbing"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "thread.body",
+     "text": "The frontier stopped being the differentiator on the same day it got the most expensive: GPT-5.6 Sol beats Opus 5 by 0.4 points on Terminal-Bench 2.1 while OpenAI and Anthropic price at $852B and $965B, and AI absorbs ~80% of Q1 venture dollars.",
+     "why": "code: thread.body: uncited factual sentence: 'The frontier stopped being the differentiator on the same da"
+    },
+    {
+     "path": "thread.body",
+     "text": "If the top two coding agents are a near-tie, your leverage moves to harness and eval design — which is exactly what the 2026-07-28 MCP spec forces you to rebuild, trading stateful sessions for stateless horizontal scale and a broken-compatibility migration.",
+     "why": "code: thread.body: uncited factual sentence: 'If the top two coding agents are a near-tie, your leverage m"
+    },
+    {
+     "path": "thread.body",
+     "text": "The tension: Kimi K3's 2.8T open weights and iStar's step-reward credit assignment both argue you can own more of the stack, while trillion-dollar rounds and the AI OVERWATCH Act's Blackwell ban argue the inputs — capital, talent, chips — are consolidating out of reach.",
+     "why": "code: thread.body: uncited factual sentence: \"The tension: Kimi K3's 2.8T open weights and iStar's step-re"
+    },
+    {
+     "path": "thread.body",
+     "text": "Read that as a mandate to spend the next quarter on plumbing and evals, not on model selection.",
+     "why": "code: thread.body: uncited factual sentence: 'Read that as a mandate to spend the next quarter on plumbing"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {},
+ "false_alarms": 33,
+ "units_flagged": 8,
+ "sentences": 34,
+ "uncited_unmatched": 32,
+ "second_checks": 1,
+ "cost": 0.094276,
+ "error": null,
+ "gate": "citations",
+ "case": "2026-08-04",
+ "run": 3,
+ "seconds": 29.6
+}

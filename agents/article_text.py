@@ -67,8 +67,10 @@ def _strings(obj) -> Iterable[str]:
 
 
 def golden_corpus(root: Path = REPO) -> List[Tuple[str, str]]:
+    """The long strings of the golden cases' INPUT files: the source excerpts. Their output and label files hold our own writing and
+    hand labels, which evidence may quote; the pages they were written from it may not."""
     out: List[Tuple[str, str]] = []
-    for path in sorted((root / GOLDEN).rglob("*.json")):
+    for path in sorted((root / GOLDEN).rglob("input.json")):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):

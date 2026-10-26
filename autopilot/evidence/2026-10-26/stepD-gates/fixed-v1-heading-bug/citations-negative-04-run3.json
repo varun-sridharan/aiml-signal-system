@@ -1,0 +1,47 @@
+{
+ "per_unit": {
+  "negative-04-launch": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s01.why",
+     "text": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence, and that it will ship as an optimised container in NIM on launch day.",
+     "why": "both checks said no"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "NVIDIA said the new model will be open-weight"
+   ]
+  },
+  "negative-04-saferoute": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 3,
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-04-launch:NVIDIA said the new model will be open-weight": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "sentences": 9,
+ "uncited_unmatched": 0,
+ "second_checks": 1,
+ "cost": 0.026383999999999998,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-04",
+ "run": 3,
+ "seconds": 12.1
+}

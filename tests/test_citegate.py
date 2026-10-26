@@ -319,6 +319,19 @@ class ReviewFixes(unittest.TestCase):
         self.assertTrue(a.get("code_failures"))
         self.assertFalse(b.get("code_failures"))
 
+    def test_a_judgement_line_needs_both_readers_to_say_it_states_no_fact(self):
+        a = sentence("story.s01.body", "Teams should try this.", interpretation=True)
+        seen = []
+
+        def call(client, **kw):
+            qs = json.loads(kw["messages"][0]["content"])["questions"]
+            seen.append(kw["model"])
+            return json.dumps({"answers": [{"id": q["id"], "states_fact": kw["model"] == citegate.llm.FRAMER_MODEL} for q in qs]}), NS(), 0.0
+        with unittest.mock.patch.object(citegate.llm, "call", call):
+            citegate.check_marked(object(), [a], user_id="t")
+        self.assertEqual(seen, [citegate.llm.CHECK_MODEL, citegate.llm.FRAMER_MODEL])
+        self.assertTrue(a.get("code_failures"))
+
     def test_an_unreadable_judgement_check_fails_closed(self):
         a = sentence("story.s01.body", "Teams should try this.", interpretation=True)
         with unittest.mock.patch.object(citegate.llm, "call", lambda client, **kw: ("not json", NS(), 0.0)):

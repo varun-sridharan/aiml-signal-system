@@ -1,0 +1,39 @@
+{
+ "per_unit": {
+  "negative-04-launch": {
+   "flagged": [
+    {
+     "text": "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+    }
+   ],
+   "false_alarms": [],
+   "missed": [],
+   "expected": [
+    "NVIDIA said the new model will be open-weight"
+   ]
+  },
+  "negative-04-saferoute": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "flagged": [],
+   "false_alarms": [],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-04-launch:NVIDIA said the new model will be open-weight": true
+ },
+ "false_alarms": 0,
+ "units_flagged": 1,
+ "cost": 0.004305,
+ "error": null,
+ "gate": "claims",
+ "case": "negative-04",
+ "run": 5,
+ "seconds": 4.5
+}

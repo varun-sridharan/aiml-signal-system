@@ -1,0 +1,82 @@
+{
+ "per_unit": {
+  "negative-03-v1": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s01.why",
+     "text": "The v1 completions endpoint stops accepting requests on 2026-12-01.",
+     "why": "code: story.s01.why: uncited factual sentence: 'The v1 completions endpoint stops accepting requests on 20"
+    },
+    {
+     "path": "story.s01.tie",
+     "text": "If anything you run still calls v1, the migration is a calendar problem before it is an engineering one.",
+     "why": "code: story.s01.tie: a sentence marked as interpretation carries a figure, date or count: 'If anything you"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s01.tie",
+     "text": "If anything you run still calls v1, the migration is a calendar problem before it is an engineering one.",
+     "why": "code: story.s01.tie: a sentence marked as interpretation carries a figure, date or count: 'If anything you"
+    }
+   ],
+   "missed": [],
+   "expected": [
+    "2026-12-01"
+   ]
+  },
+  "negative-03-beacon": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "story.s02.tie",
+     "text": "Hybrid retrieval removes one of the two systems many teams run side by side.",
+     "why": "code: story.s02.tie: a sentence marked as interpretation carries a figure, date or count: 'Hybrid retrieva"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "story.s02.tie",
+     "text": "Hybrid retrieval removes one of the two systems many teams run side by side.",
+     "why": "code: story.s02.tie: a sentence marked as interpretation carries a figure, date or count: 'Hybrid retrieva"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  },
+  "thread": {
+   "sentences": 3,
+   "flagged": [
+    {
+     "path": "thread.body",
+     "text": "Two infrastructure changes landed that reward teams who read changelogs.",
+     "why": "code: thread.body: a sentence marked as interpretation carries a figure, date or count: 'Two infrastructur"
+    }
+   ],
+   "false_alarms": [
+    {
+     "path": "thread.body",
+     "text": "Two infrastructure changes landed that reward teams who read changelogs.",
+     "why": "code: thread.body: a sentence marked as interpretation carries a figure, date or count: 'Two infrastructur"
+    }
+   ],
+   "missed": [],
+   "expected": []
+  }
+ },
+ "caught": {
+  "negative-03-v1:2026-12-01": true
+ },
+ "false_alarms": 3,
+ "units_flagged": 3,
+ "sentences": 9,
+ "uncited_unmatched": 0,
+ "second_checks": 1,
+ "cost": 0.027075000000000002,
+ "error": null,
+ "gate": "citations",
+ "case": "negative-03",
+ "run": 2,
+ "seconds": 13.4
+}

@@ -22,16 +22,18 @@ see README.md for how to put this on a Railway cron when it has earned the switc
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from datetime import date, datetime, timezone
 
 try:
-    from . import briefs, budget, composer, excerpts, framer, gates, items, llm, reader, runs, style_check
+    from . import briefs, budget, composer, composer_cited, excerpts, framer, gates, items, llm, reader, runs, style_check
 except ImportError:  # pragma: no cover
     import briefs
     import budget
     import composer
+    import composer_cited
     import excerpts
     import framer
     import gates
@@ -66,6 +68,18 @@ class AlreadyPublished(RuntimeError):
 
 class GateFailed(RuntimeError):
     """The brief failed a hard gate and was not published."""
+
+
+GATES = ("claims", "citations")
+DEFAULT_GATE = "claims"      # Run 4 Step D: the citation gate was measured beside this one; the decision is in plan/plan.md
+
+
+def gate_mode() -> str:
+    """Which faithfulness gate the run uses: GATE=claims (the claim-by-claim grader) or GATE=citations (the writer cites, code and a model check)."""
+    mode = os.environ.get("GATE", DEFAULT_GATE).strip().lower()
+    if mode not in GATES:
+        raise ValueError(f"GATE={mode!r} is not one of {', '.join(GATES)}")
+    return mode
 
 
 def week_key(now: datetime) -> str:
@@ -251,6 +265,7 @@ def composer_day(conn, raw_day: dict) -> tuple[dict, dict, int]:
 
 
 def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
+    gate_mode()                       # a mistyped GATE must fail before the first paid call, not after it
     def work(attempt: int) -> dict:
         reader_out = runs.stage_output(conn, week, "reader")
         skipped: list = []
@@ -266,25 +281,81 @@ def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
         # A failure of the composing pass (a truncated answer, say) must not throw away the first pass that was paid for: the
         # artifact records it, and the gates stage fails closed on it, so no edition publishes without its template fields.
         composed, revision, composer_cost, composer_error = None, None, 0.0, None
+        mode = gate_mode()
+        draft = None
         try:
-            composed, revision, composer_cost = composer.compose_with_revision(
-                client, composer.load_system_prompt(), profile, wide_day, framing, label, published)
+            if mode == "citations":
+                draft, revision, composer_cost = composer_cited.compose_draft(
+                    client, composer_cited.load_system_prompt(), profile, wide_day, framing, label, published, conn=conn)
+            else:
+                composed, revision, composer_cost = composer.compose_with_revision(
+                    client, composer.load_system_prompt(), profile, wide_day, framing, label, published)
         except (budget.BudgetExceeded, budget.LedgerUnavailable):
             raise
         except Exception as e:     # noqa: BLE001
             composer_error = f"{type(e).__name__}: {str(e)[:200]}"
-        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing, "composing": "on", "composed": composed,
+        runs.save_artifact(conn, week, "framer", attempt, {"raw_day": raw_day, "framing": framing, "composing": "cited" if mode == "citations" else "on",
+                                                            "composed": composed, "draft": draft, "gate": mode,
                                                             "composer_error": composer_error, "wide_day": wide_day, "published": published,
                                                             "source_minutes": minutes, "revision": revision}, runs._at(now))
-        return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped),
+        return {"artifact": "framer", "items": len(raw_day["items"]), "skipped_ungrounded": len(skipped), "gate": mode,
                 "cost_usd": round(cost + composer_cost, 4), "composer_cost_usd": round(composer_cost, 4),
                 "revised_fields": len(revision["replaced"]) if revision else 0, "composer_error": composer_error}
     return runs.checkpointed(conn, week, "framer", now, work)
 
 
+def cited_gates(conn, client, week: str, art: dict, attempt: int, now: datetime, profile: dict) -> dict:
+    """GATE=citations: check the stored draft (code, then a question per citation), hold what fails, publish the rest."""
+    raw_day, framing = art["raw_day"], art["framing"]
+    reader_out = runs.stage_output(conn, week, "reader") or {}
+    failures: list = []
+    if not art.get("draft"):
+        failures.append(f"the citing writer produced nothing ({art.get('composer_error') or 'no output'}), so there are no template fields to publish")
+        day = framer.assemble_day(profile, raw_day, framing, {}, {})
+        check_cost = 0.0
+    else:
+        wide_day, published = art["wide_day"], art.get("published") or {}
+        result = composer_cited.check_from_draft(client, profile, art["draft"], wide_day, published, conn=conn)
+        decision = result["decision"]
+        failures += decision["blockers"] if not decision["publishable"] else []
+        if not decision["publishable"] and not failures:
+            failures.append(f"only {len(decision['passing'])} stories passed the citation checks, {citegate_min()} are needed")
+        day = framer.assemble_day(profile, raw_day, framing, {}, {})
+        failures += gates.structural_failures(profile, day, framing)
+        if not failures:
+            by_sid = {s["id"]: s for s in result["composed"]["stories"]}
+            ids = result["ids"]
+            keep = {ids[sid] for sid in decision["passing"]}
+            for item in day["items"]:
+                for key in ("why", "ninety", "example", "connection"):
+                    item.pop(key, None)                       # the first pass's unverified words are not stored; the cited ones replace them
+                story = by_sid.get(next((sid for sid, iid in ids.items() if iid == item["id"]), ""))
+                if story and item["id"] in keep:
+                    item["why"] = story["why"]
+                    if story.get("ninety"):
+                        item["ninety"] = story["ninety"]
+            day["thread"] = composer_cited.without_held(result["composed"], set(decision["held"]))["thread"]["body"]
+            day["edition"] = composer_cited.assemble_edition(result, wide_day, framing, stats=reader_out.get("stats") or {},
+                                                             source_minutes=art.get("source_minutes", 0), published=published)
+        check_cost = float(result["verify_cost_usd"])
+    if reader_out.get("window"):
+        day["window"] = reader_out["window"]
+    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
+    if failures:
+        raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
+    return {"artifact": "gates", "items": len(day["items"]), "check_cost_usd": round(check_cost, 4), "gate": "citations",
+            "stories_published": len(day["edition"]["stories"]), "stories_held": len(day["edition"]["held"])}
+
+
+def citegate_min() -> int:
+    return composer_cited.citegate.MIN_STORIES
+
+
 def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     def work(attempt: int) -> dict:
         art = runs.load_artifact(conn, week, "framer")
+        if art.get("composing") == "cited":
+            return cited_gates(conn, client, week, art, attempt, now, profile)
         raw_day, framing = art["raw_day"], art["framing"]
         verdicts, thread_verdict, usage = framer.check_faithfulness(
             client, raw_day, framing, user_id=profile["user_id"], phase="faithfulness")
