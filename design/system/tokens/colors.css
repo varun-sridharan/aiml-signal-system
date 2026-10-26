@@ -1,0 +1,60 @@
+:root{
+  /* ground */
+  --paper:#F4F1E8;          /* the reading page */
+  --surround:#E8E2D4;       /* the warm-grey frame around the page (Weekly Digest) */
+  --panel:#FBF9F3;          /* raised but flat: tiles, tables, figures */
+  --inset:#EFE9DC;          /* quietly highlighted boxes: Try it, What to do differently */
+
+  /* ink */
+  --ink:#201C17;            /* headlines and body on the Weekly Digest */
+  --ink-2:#2B2620;          /* long-form prose, empty-state lines */
+  --soft:#4C463D;           /* secondary body, card bodies, table cells */
+  --muted:#6B6357;          /* meta lines, dates, hashtags (4.5:1 on paper) */
+  --faint:#6B6357;          /* small mono text: tile numerals, rail labels, counts. Passes 4.5:1 on paper */
+
+  /* rules */
+  --rule:#DED7C6;           /* the default hairline */
+  --rule2:#EAE4D6;          /* lighter hairline inside a panel */
+  --rule-strong:#B3A994;    /* tab underline track, vs rule between quotes */
+  --rule-dotted:#CFC6B2;    /* dotted leader lines in number lists */
+
+  /* brand accent: burnt amber */
+  --accent:#B5502A;
+  --accent-ink:#A3451F;     /* the same hue darkened for headline text at 4.5:1 */
+  --accent-soft:#F4E7DF;
+
+  /* work in progress: mustard. Never red, never the accent */
+  --active:#7A5F14;
+  --active-soft:#F5EAD0;
+
+  /* meaning */
+  --ok:#2F6B52;             /* verified, HIT, DONE, checked against source */
+  --ok-soft:#E4EEE7;
+  --ok-notice-border:#C4D6CB; /* vote-confirmation notice, text in var(--ok) */
+  --ok-notice-bg:#EAF1EC;
+  --miss:#9B2F2F;           /* miss, failed, not found */
+  --miss-soft:#F3E6E1;
+
+  /* the four Weekly Digest NEWS sections. Neither is green or red */
+  --sec-thread:#B5502A;     --sec-thread-ink:#A3451F;
+  --sec-learning:#2F5D7C;   --sec-learning-ink:#2F5D7C;
+  --sec-stories:#8A4F7D;    --sec-stories-ink:#7E4572;
+  --sec-leaders:#7A5F14;    --sec-leaders-ink:#7A5F14;
+
+  --dark:#201C17;
+  --darktext:#EFE6D4;
+
+  /* semantic aliases */
+  --surface-page:var(--paper);
+  --surface-surround:var(--surround);
+  --surface-panel:var(--panel);
+  --surface-inset:var(--inset);
+  --text-body:var(--ink);
+  --text-prose:var(--ink-2);
+  --text-secondary:var(--soft);
+  --text-meta:var(--muted);
+  --border-hairline:var(--rule);
+  --border-hairline-soft:var(--rule2);
+  --link:var(--accent);
+  --focus-ring:var(--accent);
+}

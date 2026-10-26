@@ -1,0 +1,23 @@
+<!-- @dsCard group="Components" viewport="700x190" name="Tabs" -->
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{background:var(--paper);margin:0;padding:22px 26px}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const NS = window[Object.keys(window).find(k => window[k] && typeof window[k] === 'object' && window[k].SiteHeader)] || {};
+const { Tabs } = NS;
+function Demo(){
+  const [a, setA] = React.useState('news');
+  const [b, setB] = React.useState('stories');
+  return <div style={{display:'flex',flexDirection:'column',gap:22}}>
+    <Tabs value={a} onChange={setA} items={[{id:'news',label:'News'},{id:'prediction',label:'Prediction',count:'3/3'},{id:'homework',label:'Homework',count:1},{id:'archive',label:'Archive'}]} />
+    <Tabs variant="sub" value={b} onChange={setB} label="News sections"
+      trailing={<button style={{background:'none',border:0,fontFamily:'var(--mono)',fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',color:'var(--soft)',padding:'10px 0',cursor:'pointer',whiteSpace:'nowrap'}}>Expand all</button>}
+      items={[{id:'thread',label:'Thread',color:'var(--sec-thread)'},{id:'learning',label:'Learning',color:'var(--sec-learning)'},{id:'stories',label:'Stories',count:9,color:'var(--sec-stories)'},{id:'leaders',label:'Leaders',count:5,color:'var(--sec-leaders)'}]} />
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

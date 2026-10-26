@@ -1,0 +1,29 @@
+:root{
+  --serif:'Newsreader',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+
+  /* site scale: Product, Plan, Roadmap, System Design */
+  --fs-hero:clamp(40px,5.4vw,68px);
+  --fs-h2:40px;
+  --fs-h3:21px;
+  --fs-body:17px;
+  --fs-small:13px;
+  --fs-micro:10.5px;
+  --fs-display:38px;        /* stat values and step numerals only */
+
+  /* reading scale: the Weekly Digest */
+  --fs-read-headline:44px;
+  --fs-read-tile:24px;      /* story-tile headline */
+  --fs-read-feature:34px;   /* feature-tile headline */
+  --fs-read-body:18px;
+  --fs-read-quote:20px;     /* quote tiles, serif italic */
+  --fs-read-number:28px;    /* the 01/ tile number, mono */
+  --lh-read:1.6;
+  --lh-head:1.12;
+
+  /* labels: small-caps mono, wide tracking */
+  --track-kicker:.16em;
+  --track-label:.12em;
+  --track-tag:.06em;
+}

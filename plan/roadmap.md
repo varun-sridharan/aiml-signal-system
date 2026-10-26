@@ -231,6 +231,13 @@ The healthcheck path now lives only in Railway's service settings, so a change t
 
 ## Product feature backlog
 
+### bk-email-summary · An email summary of each edition
+
+- **Size:** S
+- **Origin:** Oct-25-2026 — Varun, at the go-live decision: "an email summary will be nice to have and can be pushed to M2"
+
+The website is the edition. A short email on Friday evening (the opening thread, the story headlines with links, and a link to the page) would bring the reader to it, the way the old digest's email does today. Candidate for M2 triage.
+
 ### bk-pfb · This is the only product feature backlog
 
 - **Size:** —

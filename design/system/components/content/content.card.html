@@ -1,0 +1,19 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Tiles" -->
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{background:var(--paper);margin:0;padding:22px 26px}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const NS = window[Object.keys(window).find(k => window[k] && typeof window[k] === 'object' && window[k].SiteHeader)] || {};
+const { StoryTile, QuoteTile } = NS;
+ReactDOM.createRoot(document.getElementById('root')).render(<div style={{display:'grid',gridTemplateColumns:'1.25fr 1fr',gap:24,alignItems:'start'}}>
+  <StoryTile n={2} tag="DO THIS" headline="Agent tools now ship with a permission manifest" hashtags={['Agents','Permissions','ModelContextProtocol']}
+    body="A sample body of three sentences with specifics about what changed and who shipped it."
+    why="Faster setup in exchange for a wider blast radius."
+    sources={[{label:'GitHub Blog',href:'#',primary:true},{label:'The Decoder',href:'#'}]} />
+  <QuoteTile quote="We stopped arguing about which model is smarter and started arguing about who checks its work…" href="#" name="Sample Person" role="VP Engineering" org="Example Co" date="Oct 21" kind="POST" why="Names the cost that did not fall." />
+</div>);
+</script></body></html>
