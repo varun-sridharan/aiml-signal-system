@@ -1,0 +1,150 @@
+{
+ "A citations only (Haiku)": {
+  "ok": true,
+  "stop": "end_turn",
+  "blocks": [
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 0,
+      "end": 51,
+      "cited_len": 51,
+      "in_document": true
+     }
+    ],
+    "text_len": 50
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 57
+   },
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 51,
+      "end": 141,
+      "cited_len": 90,
+      "in_document": true
+     }
+    ],
+    "text_len": 88
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 66
+   }
+  ],
+  "cost_usd": 0.00114
+ },
+ "B citations + json_schema (Haiku)": {
+  "ok": false,
+  "error": "BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Citations cannot be enabled when output format is set. Please disable citations on uploaded document blocks.'"
+ },
+ "C citations + effort medium, streamed (Opus)": {
+  "ok": true,
+  "stop": "end_turn",
+  "blocks": [
+   {
+    "type": "thinking",
+    "citations": [],
+    "text_len": 0
+   },
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 0,
+      "end": 141,
+      "cited_len": 141,
+      "in_document": true
+     }
+    ],
+    "text_len": 144
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 82
+   },
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 141,
+      "end": 210,
+      "cited_len": 69,
+      "in_document": true
+     }
+    ],
+    "text_len": 68
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 51
+   }
+  ],
+  "cost_usd": 0.00955
+ },
+ "D citations + cache_control on the document (Opus)": {
+  "ok": true,
+  "stop": "end_turn",
+  "blocks": [
+   {
+    "type": "thinking",
+    "citations": [],
+    "text_len": 0
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 13
+   },
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 0,
+      "end": 141,
+      "cited_len": 141,
+      "in_document": true
+     }
+    ],
+    "text_len": 144
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 124
+   },
+   {
+    "type": "text",
+    "citations": [
+     {
+      "type": "char_location",
+      "start": 141,
+      "end": 210,
+      "cited_len": 69,
+      "in_document": true
+     }
+    ],
+    "text_len": 68
+   },
+   {
+    "type": "text",
+    "citations": [],
+    "text_len": 77
+   }
+  ],
+  "cost_usd": 0.01141
+ }
+}
