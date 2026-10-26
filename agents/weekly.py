@@ -22,24 +22,27 @@ see README.md for how to put this on a Railway cron when it has earned the switc
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
 from datetime import date, datetime, timezone
 
 try:
-    from . import briefs, budget, composer, composer_cited, excerpts, framer, gates, items, llm, reader, runs, style_check
+    from . import briefs, budget, composer, composer_cited, counts, excerpts, framer, gates, items, llm, reader, repair, runs, style_check
 except ImportError:  # pragma: no cover
     import briefs
     import budget
     import composer
     import composer_cited
+    import counts
     import excerpts
     import framer
     import gates
     import items
     import llm
     import reader
+    import repair
     import runs
     import style_check
 
@@ -351,38 +354,140 @@ def citegate_min() -> int:
     return composer_cited.citegate.MIN_STORIES
 
 
+def _resolved(verdict: dict, unit: str) -> dict:
+    """A verdict as stored once its flags have been dealt with. What is kept is only what supports published text: the supported
+    claims. The unsupported ones (and the possible false alarms and lifted claims that quote around them) are counted, not stored."""
+    out = dict(verdict or {})
+    out["flagged_then_resolved"] = len(out.get("unsupported_claims") or [])
+    out["claims"] = [c for c in (out.get("claims") or []) if c.get("supported")]
+    out.setdefault("confidence", None)
+    out["unsupported_claims"], out["possible_false_alarms"], out["lifted_claims"] = [], [], []
+    return out
+
+
+def claims_gates(conn, client, week: str, art: dict, attempt: int, now: datetime, profile: dict) -> dict:
+    """GATE=claims. A failure stops a sentence or a story, never the week (agents/repair.py; plan decision log 2026-10-25).
+
+    Unsupported facts are acted on only after a second reader agrees, get one rewrite, and are then removed or their story held;
+    style, length and split problems were repaired once by the writer and are now warnings; the edition publishes when at least
+    MIN_STORIES stories pass. Nothing unsupported reaches the stored brief: held stories lose every first-pass word as well.
+    """
+    uid = profile["user_id"]
+    raw_day, framing = art["raw_day"], art["framing"]
+    reader_out = runs.stage_output(conn, week, "reader") or {}
+    ids = composer.story_ids(raw_day)                           # story id -> item id
+    item_story = {item: sid for sid, item in ids.items()}
+    hard, warnings, repairs, cost = [], [], {}, 0.0
+
+    # ---- the first pass: each story's why and 90-second summary
+    fstore = repair.FramingStore(framing, raw_day, client, user_id=uid)
+    fverdicts, c = fstore.grade()
+    cost += c
+    fverdicts, flog = repair.settle(fstore, fverdicts, client, user_id=uid, conn=conn)
+    cost += flog.pop("cost_usd")
+    repairs["first_pass"] = flog
+    held_items = set(flog["held"])
+    for item in raw_day["items"]:
+        verdict = fverdicts.get(item["id"])
+        if not verdict or not verdict.get("claims"):
+            held_items.add(item["id"])
+            flog["held"].setdefault(item["id"], []).append("the grader checked nothing for this story")
+    written = {f.get("id"): f for f in framing.get("items", [])}
+    for item in raw_day["items"]:
+        entry = written.get(item["id"]) or {}
+        if not (entry.get("why") or entry.get("ninety") or entry.get("example")):
+            warnings.append(f"{item_story[item['id']]}: the first pass wrote nothing for this story")
+    if flog["unlocatable"]:
+        warnings.append(f"first pass: {len(flog['unlocatable'])} flagged claim(s) could not be tied to a sentence")
+
+    # ---- the composing pass: the edition's own fields
+    composed, wide_day, published = None, None, {}
+    held_sids, cverdicts, cweek = set(), {}, {}
+    if art.get("composing") == "on" and not art.get("composed"):
+        hard.append(f"the composing pass produced nothing ({art.get('composer_error') or 'no output'}), so there are no template fields to publish")
+    if art.get("composed"):
+        composed = json.loads(json.dumps(art["composed"]))
+        wide_day, published = art["wide_day"], art.get("published") or {}
+        cstore = repair.ComposedStore(composed, wide_day, published, client, user_id=uid, conn=conn)
+        cv, c = cstore.grade()
+        cost += c
+        cv, clog = repair.settle(cstore, cv, client, user_id=uid, conn=conn)
+        cost += clog.pop("cost_usd")
+        repairs["composed"] = clog
+        held_sids = set(clog["held"])
+        for sid in ids:
+            v = cv.get(sid)
+            if not v or not v.get("claims"):
+                held_sids.add(sid)
+                clog["held"].setdefault(sid, []).append("the grader checked nothing for this story")
+        for unit in ("essay", "week"):
+            has_text = bool(cstore.paths(unit)) and any(composer.facts(composed, p) for p in cstore.paths(unit))
+            if has_text and not (cv.get(unit) or {}).get("claims"):
+                hard.append(f"{unit}: the grader enumerated no claims, so nothing in it was checked")
+        for item in clog["unlocatable"]:
+            hard.append(f"{item.get('unit') or item.get('path')}: a flagged claim could not be tied to a sentence to remove: {str(item['claim'])[:80]}")
+        cverdicts = {k: v for k, v in cv.items() if k != "week"}
+        cweek = cv.get("week") or {}
+    held_sids |= {item_story[i] for i in held_items if i in item_story}
+    held_items |= {ids[sid] for sid in held_sids}
+    if composed is not None:
+        # a count that names a story held a moment ago is no longer true of the edition: its sentence goes (the held ids are known only now)
+        repair.drop_failing_counts(cstore, {sid: item for sid, item in ids.items() if sid not in held_sids}, clog)
+
+    # ---- what remains must stand: structure is warnings, the number of stories is the rule
+    fthread = fverdicts.get("thread") or {"confidence": None, "claims": [], "unsupported_claims": [], "grader_errors": [], "possible_false_alarms": [], "lifted_claims": []}
+    if composed is not None:
+        # the first pass's thread is not shown; the edition's is, with its links to held stories made plain text
+        framing = dict(framing, thread=composer_cited.strip_links_to(composed["thread"]["body"], held_sids), threadSplit=None)
+    day = framer.assemble_day(profile, raw_day, framing, {i: _resolved(v, i) for i, v in fverdicts.items() if i != "thread"}, _resolved(fthread, "thread"))
+    for item in day["items"]:
+        if item["id"] in held_items:
+            item["faithfulness"] = {"held": True}                  # nothing the grader said about a held story is kept
+    for line in gates.structural_failures(profile, day, framing):
+        (warnings if line.startswith("coverage —") else hard).append(line)
+    kept_ids = {sid: item for sid, item in ids.items() if sid not in held_sids}
+    published_n = len(kept_ids)
+    if published_n < composer.MIN_STORIES:
+        hard.append(f"only {published_n} of {len(ids)} stories passed the checks, {composer.MIN_STORIES} are needed to publish")
+    if composed is not None:
+        kept = composer_cited.without_held(composed, held_sids)
+        warnings += [f"coverage — {f}" for f in composer.coverage_failures(kept)]
+        warnings += composer.fact_floor_failures(kept) + [f for f in composer.slot_failures(kept, kept_ids) if not f.startswith("stories: ids")]
+        warnings += [f"style — {f}" for f in style_check.edition_style_failures(kept)]
+        warnings += counts.count_failures(kept, kept_ids, composer.prose_fields(kept))
+    for item in day["items"]:
+        if item["id"] in held_items:
+            for key in ("why", "ninety", "example", "connection"):
+                item.pop(key, None)                               # a held story keeps none of the first pass's words
+    if composed is not None and not hard:
+        edition = composer.assemble_edition(
+            kept, wide_day, framing, {k: _resolved(v, k) for k, v in cverdicts.items() if k not in held_sids}, _resolved(cweek, "week"),
+            stats=reader_out.get("stats") or {}, source_minutes=art.get("source_minutes", 0),
+            style=style_check.edition_style_failures(kept), published=published)
+        by_item = {i["id"]: i for i in raw_day["items"]}
+        edition["held"] = [{"id": sid, "headline": by_item[ids[sid]]["headline"], "sources": composer.story_sources(by_item[ids[sid]])[:1],
+                            "why": "could not be verified"} for sid in ids if sid in held_sids]
+        edition["learning"]["drawnFrom"] = [d for d in edition["learning"]["drawnFrom"] if d not in held_sids]
+        edition["repairs"] = {"flags": sum(r["flags"] for r in repairs.values()), "dismissed": sum(len(r["dismissed"]) for r in repairs.values()),
+                              "rewritten": sum(len(r["rewritten"]) for r in repairs.values()), "removed": sum(len(r["removed"]) for r in repairs.values()),
+                              "held": sorted(held_sids)}
+        edition["warnings"] = warnings
+        day["edition"] = edition
+    if reader_out.get("window"):
+        day["window"] = reader_out["window"]
+    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": hard, "warnings": warnings, "repairs": repairs}, runs._at(now))
+    if hard:
+        raise GateFailed(f"{len(hard)} hard-gate failure(s): " + "; ".join(hard)[:350])
+    return {"artifact": "gates", "items": len(day["items"]), "check_cost_usd": round(cost, 4), "gate": "claims",
+            "stories_published": published_n, "stories_held": len(held_sids), "warnings": len(warnings)}
+
+
 def gates_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
     def work(attempt: int) -> dict:
         art = runs.load_artifact(conn, week, "framer")
         if art.get("composing") == "cited":
             return cited_gates(conn, client, week, art, attempt, now, profile)
-        raw_day, framing = art["raw_day"], art["framing"]
-        verdicts, thread_verdict, usage = framer.check_faithfulness(
-            client, raw_day, framing, user_id=profile["user_id"], phase="faithfulness")
-        day = framer.assemble_day(profile, raw_day, framing, verdicts, thread_verdict)
-        failures = (gates.completeness_failures(raw_day, framing, verdicts, thread_verdict)
-                    + gates.structural_failures(profile, day, framing) + gates.faithfulness_failures(day))
-        reader_out = runs.stage_output(conn, week, "reader") or {}
-        composer_check_cost = 0.0
-        if art.get("composing") == "on" and not art.get("composed"):
-            failures.append(f"the composing pass produced nothing ({art.get('composer_error') or 'no output'}), so there are no template fields to publish")
-        if art.get("composed"):          # attempts framed before the composing pass have no edition fields
-            wide_day, published = art["wide_day"], art.get("published") or {}
-            cverdicts, cweek, cusage, cpayload = composer.check_faithfulness(
-                client, art["composed"], wide_day, published, user_id=profile["user_id"])
-            failures += composer.edition_failures(art["composed"], wide_day, cpayload, cverdicts, cweek)
-            day["edition"] = composer.assemble_edition(
-                art["composed"], wide_day, framing, cverdicts, cweek, stats=reader_out.get("stats") or {},
-                source_minutes=art.get("source_minutes", 0), style=style_check.edition_style_failures(art["composed"]), published=published)
-            composer_check_cost = budget.estimate_cost_usd(llm.CHECK_MODEL, cusage)
-        window = reader_out.get("window")
-        if window:
-            day["window"] = window       # what the edition covers, by what its Reader read; the page labels it with this
-        runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
-        if failures:
-            raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
-        return {"artifact": "gates", "items": len(day["items"]),
-                "check_cost_usd": round(budget.estimate_cost_usd(llm.CHECK_MODEL, usage) + composer_check_cost, 4)}
+        return claims_gates(conn, client, week, art, attempt, now, profile)
     return runs.checkpointed(conn, week, "gates", now, work)
 
 

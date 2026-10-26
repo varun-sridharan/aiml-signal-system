@@ -1,0 +1,32 @@
+{
+ "planted": [
+  {
+   "unit": "negative-03-v1",
+   "pattern": "2026-12-01",
+   "kept_out": true,
+   "held": false,
+   "final_sentences_with_pattern": [
+    "The v1 completions endpoint stops accepting requests on 2027-03-01, while v2 becomes the default for new API keys on 2026-12-01. Existing keys migrate to v2 in 2027-01, and streaming responses are unchanged between the two versions."
+   ]
+  }
+ ],
+ "flags_first_grade": {
+  "negative-03-v1": 1
+ },
+ "dismissed": 0,
+ "rewritten": 1,
+ "removed": 0,
+ "held": [],
+ "clean_touched": 0,
+ "regraded": true,
+ "remaining_flags": {},
+ "removed_claims": [],
+ "rewritten_claims": [
+  "The v1 completions endpoint stops accepting requests on 2026-12-01"
+ ],
+ "cost": 0.02137,
+ "seconds": 14.9,
+ "error": null,
+ "case": "negative-03",
+ "run": 2
+}

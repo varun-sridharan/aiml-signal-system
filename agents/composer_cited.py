@@ -321,6 +321,7 @@ def without_held(composed: dict, held: set[str]) -> dict:
     out["dividers"] = [d for d in out["dividers"] if d["before"] not in held]
     out["learning"]["drawnFrom"] = [d for d in out["learning"]["drawnFrom"] if d not in held]
     out["thread"]["body"] = strip_links_to(out["thread"]["body"], held)
+    out["counts"] = [c for c in out.get("counts") or [] if not (set(c.get("stories") or []) & held)]
     return out
 
 

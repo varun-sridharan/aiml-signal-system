@@ -386,6 +386,22 @@ class Assembly(unittest.TestCase):
         self.assertNotIn("tie", edition["stories"][0])
 
 
+class GradedWhole(unittest.TestCase):
+    def test_a_split_that_does_not_reproduce_the_field_is_graded_whole(self):
+        c = valid(5)
+        c["splits"] = [dict(sp, runs=[{"text": "Only the start.", "class": "fact"}]) if sp["path"] == "closing.summary" else sp for sp in c["splits"]]
+        self.assertEqual(composer.facts(c, "closing.summary"), style_check.plain(c["closing"]["summary"]))
+
+    def test_a_fact_bearing_field_classed_wholly_as_interpretation_is_graded_whole(self):
+        c = valid(5)
+        text = c["thread"]["body"]
+        c["splits"] = [dict(sp, runs=[{"text": text, "class": "interpretation"}]) if sp["path"] == "thread.body" else sp for sp in c["splits"]]
+        self.assertEqual(composer.facts(c, "thread.body"), style_check.plain(text))
+
+    def test_the_story_minimum_is_four(self):
+        self.assertEqual(composer.MIN_STORIES, 4)
+
+
 class Request(unittest.TestCase):
     def test_the_style_guide_is_in_the_cached_system_prompt_and_excerpts_are_what_is_shown(self):
         profile = framer.load_json(framer.PROFILE_PATH)
@@ -531,24 +547,22 @@ class Revision(unittest.TestCase):
         self.assertEqual(composed["learning"]["paras"][1], paragraph(2))
         self.assertAlmostEqual(cost, 0.4)
 
-    def test_a_second_rewrite_round_is_allowed_and_a_third_is_not(self):
+    def test_one_repair_round_only_and_what_survives_it_is_left_for_a_warning(self):
         profile = framer.load_json(framer.PROFILE_PATH)
         broken = valid()
         broken["learning"]["paras"][1] = "The same authors report a result."
         resplit(broken)
         still_broken = {"fields": [{"path": "learning.para.2", "text": "This also fails the rule.", "runs": [{"text": "This also fails the rule.", "class": "fact"}]}]}
-        fixed = {"fields": [{"path": "learning.para.2", "text": paragraph(2), "runs": [{"text": paragraph(2), "class": "fact"}]}]}
-        for second, expected_calls in ((fixed, 3), (still_broken, 3)):
-            answers, calls = [broken, still_broken, second], []
+        answers, calls = [broken, still_broken, still_broken], []
 
-            def call(client, **kw):
-                calls.append(kw["phase"])
-                return json.dumps(answers.pop(0)), TinyUsage(), 0.1
-            with unittest.mock.patch.object(composer.llm, "call", call):
-                composed, record, cost = composer.compose_with_revision(object(), "S", profile, raw_day(), {"items": []}, "w", None)
-            self.assertEqual(len(calls), expected_calls)                                           # a draft and two rewrites, never a third rewrite
-            self.assertEqual(len(record["rounds"]), 2)
-        self.assertTrue(composer.revisable_problems(composed, IDS))                                  # the last case is left broken, for the gate to fail
+        def call(client, **kw):
+            calls.append(kw["phase"])
+            return json.dumps(answers.pop(0)), TinyUsage(), 0.1
+        with unittest.mock.patch.object(composer.llm, "call", call):
+            composed, record, cost = composer.compose_with_revision(object(), "S", profile, raw_day(), {"items": []}, "w", None)
+        self.assertEqual(len(calls), 2)                                                              # a draft and ONE rewrite, never a second
+        self.assertEqual(len(record["rounds"]), 1)
+        self.assertTrue(composer.revisable_problems(composed, IDS))                                  # left broken: the gate reports it as a warning
 
     def test_a_split_that_does_not_reconstruct_is_sent_back_with_the_same_text(self):
         c = valid()

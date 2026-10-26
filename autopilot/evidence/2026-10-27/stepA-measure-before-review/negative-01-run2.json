@@ -1,0 +1,31 @@
+{
+ "planted": [
+  {
+   "unit": "negative-01-mega-rounds",
+   "pattern": "raised $965B",
+   "kept_out": true,
+   "held": false,
+   "final_sentences_with_pattern": []
+  }
+ ],
+ "flags_first_grade": {
+  "negative-01-mega-rounds": 1,
+  "thread": 1
+ },
+ "dismissed": 1,
+ "rewritten": 1,
+ "removed": 0,
+ "held": [],
+ "clean_touched": 0,
+ "regraded": true,
+ "remaining_flags": {},
+ "removed_claims": [],
+ "rewritten_claims": [
+  "Anthropic raised $965B"
+ ],
+ "cost": 0.02846,
+ "seconds": 19.1,
+ "error": null,
+ "case": "negative-01",
+ "run": 2
+}

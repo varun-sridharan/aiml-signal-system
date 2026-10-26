@@ -1,0 +1,10 @@
+KILLED   a flag is acted on without the second reader  (FAILED (failures=1))
+KILLED   the unreadable second reader dismisses the flag  (FAILED (failures=1))
+KILLED   no regrade and no removal after the one rewrite  (FAILED (failures=5))
+KILLED   a load-bearing sentence is removed instead of holding the story  (FAILED (failures=4))
+KILLED   removing a sentence leaves its space  (FAILED (failures=6))
+KILLED   an invalid split is trusted  (FAILED (failures=2))
+KILLED   a rewrite is applied without being kept as a record  (FAILED (failures=1))
+KILLED   sentences without a fact run are graded and edited too  (FAILED (failures=1))
+KILLED   counts naming a held story stay  (FAILED (failures=1))
+clean code: OK

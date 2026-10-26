@@ -1,0 +1,8 @@
+KILLED   style warnings become blocks  (FAILED (errors=1))
+KILLED   fact-floor warnings become blocks  (FAILED (errors=4))
+KILLED   counts are cleaned against the full story list  (FAILED (failures=1))
+KILLED   the grader is shown the writer's split even when it hides text  (FAILED (failures=1))
+KILLED   the four-story rule is dropped  (FAILED (failures=1))
+KILLED   a held story keeps its grader ledger  (FAILED (failures=1))
+SURVIVED unsupported claims stay in the stored ledgers  (OK)
+clean code: OK

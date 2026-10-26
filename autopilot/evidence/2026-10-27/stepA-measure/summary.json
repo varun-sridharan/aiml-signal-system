@@ -1,0 +1,288 @@
+[
+ {
+  "planted": [
+   {
+    "unit": "negative-01-mega-rounds",
+    "pattern": "raised $965B",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": []
+   }
+  ],
+  "flags_first_grade": {
+   "negative-01-mega-rounds": 1,
+   "thread": 1
+  },
+  "dismissed": 1,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "Anthropic raised $965B"
+  ],
+  "cost": 0.03002,
+  "seconds": 20.8,
+  "error": null,
+  "case": "negative-01",
+  "run": 1
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-01-mega-rounds",
+    "pattern": "raised $965B",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": []
+   }
+  ],
+  "flags_first_grade": {
+   "negative-01-mega-rounds": 1,
+   "thread": 1
+  },
+  "dismissed": 1,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "Anthropic raised $965B"
+  ],
+  "cost": 0.03032,
+  "seconds": 19.7,
+  "error": null,
+  "case": "negative-01",
+  "run": 2
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-02-atlas",
+    "pattern": "58.4%",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": [
+     "Atlas-3 scores 71.2% on SWE-Verify and 58.4% on Terminal-Ops, and ships with a 400K-token context window, available from today in the API."
+    ]
+   }
+  ],
+  "flags_first_grade": {
+   "negative-02-atlas": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "Atlas-3 scores 58.4% on SWE-Verify"
+  ],
+  "cost": 0.02171,
+  "seconds": 14.7,
+  "error": null,
+  "case": "negative-02",
+  "run": 1
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-02-atlas",
+    "pattern": "58.4%",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": [
+     "Atlas-3 scores 71.2% on SWE-Verify and 58.4% on Terminal-Ops, and ships with a 400K-token context window, available from today in the API."
+    ]
+   }
+  ],
+  "flags_first_grade": {
+   "negative-02-atlas": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "Atlas-3 scores 58.4% on SWE-Verify"
+  ],
+  "cost": 0.02173,
+  "seconds": 14.7,
+  "error": null,
+  "case": "negative-02",
+  "run": 2
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-03-v1",
+    "pattern": "2026-12-01",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": [
+     "The v1 completions endpoint stops accepting requests on 2027-03-01, while the v2 endpoint becomes the default for new API keys on 2026-12-01. Existing keys migrate to v2 in 2027-01, and streaming responses are unchanged between the two versions."
+    ]
+   }
+  ],
+  "flags_first_grade": {
+   "negative-03-v1": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "The v1 completions endpoint stops accepting requests on 2026-12-01"
+  ],
+  "cost": 0.02174,
+  "seconds": 15.4,
+  "error": null,
+  "case": "negative-03",
+  "run": 1
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-03-v1",
+    "pattern": "2026-12-01",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": [
+     "The v1 completions endpoint stops accepting requests on 2027-03-01, while v2 becomes the default for new API keys on 2026-12-01. Existing keys migrate to v2 in 2027-01, and streaming responses are unchanged between the two versions."
+    ]
+   }
+  ],
+  "flags_first_grade": {
+   "negative-03-v1": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "The v1 completions endpoint stops accepting requests on 2026-12-01"
+  ],
+  "cost": 0.0215,
+  "seconds": 15.0,
+  "error": null,
+  "case": "negative-03",
+  "run": 2
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-04-launch",
+    "pattern": "NVIDIA said the new model will be open-weight",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": []
+   }
+  ],
+  "flags_first_grade": {
+   "negative-04-launch": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+  ],
+  "cost": 0.02174,
+  "seconds": 14.2,
+  "error": null,
+  "case": "negative-04",
+  "run": 1
+ },
+ {
+  "planted": [
+   {
+    "unit": "negative-04-launch",
+    "pattern": "NVIDIA said the new model will be open-weight",
+    "kept_out": true,
+    "held": false,
+    "final_sentences_with_pattern": []
+   }
+  ],
+  "flags_first_grade": {
+   "negative-04-launch": 1
+  },
+  "dismissed": 0,
+  "rewritten": 1,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": true,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [
+   "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+  ],
+  "cost": 0.02174,
+  "seconds": 15.0,
+  "error": null,
+  "case": "negative-04",
+  "run": 2
+ },
+ {
+  "planted": [],
+  "flags_first_grade": {},
+  "dismissed": 0,
+  "rewritten": 0,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": false,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [],
+  "cost": 0.01222,
+  "seconds": 12.7,
+  "error": null,
+  "case": "2026-08-04",
+  "run": 1
+ },
+ {
+  "planted": [],
+  "flags_first_grade": {},
+  "dismissed": 0,
+  "rewritten": 0,
+  "removed": 0,
+  "held": [],
+  "clean_touched": 0,
+  "regraded": false,
+  "remaining_flags": {},
+  "removed_claims": [],
+  "rewritten_claims": [],
+  "cost": 0.01222,
+  "seconds": 12.5,
+  "error": null,
+  "case": "2026-08-04",
+  "run": 2
+ }
+]

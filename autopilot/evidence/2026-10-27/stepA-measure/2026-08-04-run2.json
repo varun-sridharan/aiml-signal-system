@@ -1,0 +1,18 @@
+{
+ "planted": [],
+ "flags_first_grade": {},
+ "dismissed": 0,
+ "rewritten": 0,
+ "removed": 0,
+ "held": [],
+ "clean_touched": 0,
+ "regraded": false,
+ "remaining_flags": {},
+ "removed_claims": [],
+ "rewritten_claims": [],
+ "cost": 0.01222,
+ "seconds": 12.5,
+ "error": null,
+ "case": "2026-08-04",
+ "run": 2
+}

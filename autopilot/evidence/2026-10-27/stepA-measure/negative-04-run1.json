@@ -1,0 +1,30 @@
+{
+ "planted": [
+  {
+   "unit": "negative-04-launch",
+   "pattern": "NVIDIA said the new model will be open-weight",
+   "kept_out": true,
+   "held": false,
+   "final_sentences_with_pattern": []
+  }
+ ],
+ "flags_first_grade": {
+  "negative-04-launch": 1
+ },
+ "dismissed": 0,
+ "rewritten": 1,
+ "removed": 0,
+ "held": [],
+ "clean_touched": 0,
+ "regraded": true,
+ "remaining_flags": {},
+ "removed_claims": [],
+ "rewritten_claims": [
+  "NVIDIA said the new model will be open-weight under an Apache 2.0 licence"
+ ],
+ "cost": 0.02174,
+ "seconds": 14.2,
+ "error": null,
+ "case": "negative-04",
+ "run": 1
+}

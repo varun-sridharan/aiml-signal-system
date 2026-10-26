@@ -265,6 +265,12 @@ def facts(composed: dict, path: str) -> str:
     """The factual clauses of one field, as the grader reads them: tokens replaced by the words they display."""
     runs = split_map(composed).get(path)
     text = prose_fields(composed)[path]
+    # A split that does not reproduce the field, or one that calls a fact-bearing field wholly interpretation, would hide the field
+    # from the grader. Those are style problems for the writer to fix; for the grader the whole field is a fact.
+    if runs and "".join(r["text"] for r in runs) != text:
+        runs = None
+    if runs and _FLOOR_PATH.match(path) and not any(r["class"] == "fact" and r["text"].strip() for r in runs):
+        runs = None
     return style_check.plain(framer.join_runs(runs, text))
 
 
@@ -707,7 +713,7 @@ def revise(client, system_prompt: str, profile: dict, raw_day: dict, framing: di
     return out, usage, cost, replaced
 
 
-MAX_REVISIONS = 2     # rewrite rounds after the first draft; the third draft would be the same gamble as the first
+MAX_REVISIONS = 1     # one automatic repair attempt (Run 5): a style, length or split problem that survives it is a warning, not a block
 
 
 def compose_with_revision(client, system_prompt: str, profile: dict, raw_day: dict, framing: dict, window_label: str,

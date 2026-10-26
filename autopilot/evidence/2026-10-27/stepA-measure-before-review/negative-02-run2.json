@@ -1,0 +1,32 @@
+{
+ "planted": [
+  {
+   "unit": "negative-02-atlas",
+   "pattern": "58.4%",
+   "kept_out": true,
+   "held": false,
+   "final_sentences_with_pattern": [
+    "Atlas-3 scores 71.2% on SWE-Verify and 58.4% on Terminal-Ops, and ships with a 400K-token context window, available from today in the API."
+   ]
+  }
+ ],
+ "flags_first_grade": {
+  "negative-02-atlas": 1
+ },
+ "dismissed": 0,
+ "rewritten": 1,
+ "removed": 0,
+ "held": [],
+ "clean_touched": 0,
+ "regraded": true,
+ "remaining_flags": {},
+ "removed_claims": [],
+ "rewritten_claims": [
+  "Atlas-3 scores 58.4% on SWE-Verify"
+ ],
+ "cost": 0.02194,
+ "seconds": 14.8,
+ "error": null,
+ "case": "negative-02",
+ "run": 2
+}
