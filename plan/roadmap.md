@@ -161,6 +161,13 @@ The usefulness score has been reported and never gated because there was nothing
 
 The hard case in prediction scoring. Handled for now by the resolution date and a third state, **Expired-unresolved**, which is honest about a claim that was not falsifiable enough to score. Revisit once the ledger holds real entries. **The trap this avoids:** marking only Hits guarantees the track record looks good, and a hidden miss makes it worthless.
 
+### bk-citation-gate · Improve the citation gate and measure it again
+
+- **Size:** M
+- **Origin:** Oct-26-2026 — Run 4 trial: caught 19 of 20 planted fabrications but raised 58 false alarms to the claim gate's 5
+
+Built and switchable (`GATE=citations`) but not the default. Three improvements named by the trial: verify only the factual clause of each sentence, cite headlines too, and use a stronger verifier. It found 10 real unsupported statements on the W43 text, so it may catch what the claim gate's split misses; it switches only if it beats the claim gate on the same inputs.
+
 ## Agents & capability
 
 ### bk-prior-art · Prior-art reconciliation

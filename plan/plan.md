@@ -57,6 +57,10 @@ Everything this milestone rests on, complete and outstanding in one table. The f
 
 # Decision log
 
+### 2026-10-25 · A failed check stops a sentence or a story, never the week
+
+Eight attempts at one week stopped at the claim gate, and of the last two, four failures were about style, length or splitting rather than facts, and most "unsupported" verdicts were judged false alarms. So the claim gate stays, but a failure now has a size: an unsupported fact gets one rewrite of that sentence, then the sentence is removed or its story is held and listed as "held: could not be verified"; style, length and splitting problems get one automatic repair and then a warning; and an "unsupported" verdict acts only after a second, independent check agrees. An edition publishes when at least four stories pass. No unsupported claim is published under any of these rules. The citation gate, which raised 58 false alarms to the claim gate's 5, goes to the backlog with its three named improvements.
+
 ### 2026-10-25 · One site, one header, and the brand kit lives in the repo
 
 The five pages had drifted into four headers and three body sizes because each carried its own styles, so M1 adopts `bk-tokens-css`: one `tokens.css`, one shared header and three layouts, with a test that fails on drift. Varun chose the Product page's header for every page: sticky, translucent, wordmark and nav centred over the content. The brand kit Claude Design built was corrected against the live site (`--faint` is #6B6357, and the vote-notice greens were added), rebuilt as a native design system in the Claude app, and moved into the repo at `design/system/` with a Claude Code skill, so designs made in chat and pages built by autopilot runs share one source. Go-live is fixed too: the new system publishes on Fridays at 19:00 Pacific, website only, from the old digest's sources plus Varun's captures; an email summary is moved to the backlog.
