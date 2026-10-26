@@ -46,9 +46,9 @@
         {%- elif b.t == "list" %}<ul class="plain">{% for it in b["items"] %}<li>{{ it | safe }}</li>{% endfor %}</ul>
         {%- elif b.t == "card" %}<div class="note{{ ' accent' if b.accent else '' }}">{% for x in b.blocks %}<p>{{ x.html | safe }}</p>{% endfor %}</div>
         {%- elif b.t == "table" %}
-        <div class="table-wrap"><table>
+        <div class="table-wrap"><table{% if b.wide %} class="wide"{% endif %}>
           <thead><tr>{% for h in b.head %}<th>{{ h | safe }}</th>{% endfor %}</tr></thead>
-          <tbody>{% for row in b.rows %}<tr>{% for c in row %}<td>{{ c | safe }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+          <tbody>{% for row in b.rows %}<tr>{% for c in row %}<td{% if loop.first and b.label %} class="label"{% endif %}>{{ c | safe }}</td>{% endfor %}</tr>{% endfor %}</tbody>
         </table></div>
         {%- elif b.t in ("figure", "figureSpec") %}
         <figure class="fig"{% if b.id %} id="{{ b.id }}"{% endif %}>{{ b.svg | safe }}<figcaption>{{ b.caption | safe }}</figcaption></figure>

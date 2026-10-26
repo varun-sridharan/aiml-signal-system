@@ -65,7 +65,7 @@ def valid(n=5):
             "drawnFrom": ["s01", "s02"],
             "doDifferently": "Give each agent its own branch before you let two of them edit one repository.",
         },
-        "storiesTitle": "Helio Labs released 5 products in 5 days",
+        "storiesTitle": "Helio Labs released products on every day of the week",
         "stories": [{
             "id": sid, "headline": f"Helio Labs released product {i} to {200 + i} repositories",
             "hashtags": ["#Agents", "#DevTools"],

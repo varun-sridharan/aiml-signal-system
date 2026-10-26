@@ -162,6 +162,7 @@
   .big44{font-size:44px;line-height:1.08;letter-spacing:-.022em}
   .big36{font-size:36px;line-height:1.14;letter-spacing:-.018em}
   .line{display:block}
+  .thread-lines{max-width:22em;text-wrap:balance}
   .rule{display:block;width:48px;height:2px;background:var(--c);margin:16px 0 10px}
   .preview{display:block;font-size:17px;line-height:1.5;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .preview[hidden]{display:none}
@@ -317,7 +318,7 @@
 
     {{ sec_open("thread", "THE WEEK IN ONE THREAD", digest.thread.count) }}
         {%- if digest.thread.lines %}
-        <span class="big big44"><span class="line">{{ runs(digest.thread.lines[0]) }}</span><span class="line">{{ runs(digest.thread.lines[1]) }}</span></span>
+        <span class="big big36 thread-lines"><span class="line">{{ runs(digest.thread.lines[0]) }}</span><span class="line">{{ runs(digest.thread.lines[1]) }}</span></span>
         {%- endif %}
     {{ sec_mid("thread", digest.thread.preview) }}
       <div class="copy">

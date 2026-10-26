@@ -70,6 +70,11 @@ Rules:
   `TO DO · <blocker>` (a TO DO that blocks something, rendered with a warning pill).
   Uppercase, nothing else. Progress (`55% · 6 of 11`) is computed from these cells and is
   never written in the file.
+- **Cells stay short** (Run 7): Activity at most 8 words, Outcome at most 35, Why it matters at most 30, and no cell over 45
+  words, or the check fails. What a cell no longer carries moves, word for word, under `### Row notes` directly after the
+  table: one `#### <the row's Activity>` entry per row that has notes, in the table's row order. The row's Outcome ends with
+  `[Notes →](#note-<activity, lower-cased, non-letters as hyphens, backlog id left out>)`. A link with no entry, an entry with no
+  link, and entries out of row order all fail the check. Bold in a cell is allowed only for its lead phrase.
 - An activity adopted from the AI concepts backlog ends with its backlog id in
   parentheses, for example `(bk-agent-hooks)`, so the link back survives.
 - `## Status` is required. Prose only.

@@ -216,31 +216,31 @@
           ],
           "rows": [
             [
-              "<b><span class=\"gloss\" data-term=\"reader\">Reader</span></b>",
+              "<span class=\"gloss\" data-term=\"reader\">Reader</span>",
               "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate, check provenance and corroboration, and kill the rest. Seeded with 91 tiered domains and grown through <code>/add-news</code>.",
               "pipeline",
               "<b>M1</b>"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"framer\">Framer</span></b>",
+              "<span class=\"gloss\" data-term=\"framer\">Framer</span>",
               "Write the edition: <em>Learning for the Week</em> as one continuous argument, and <em>This Week's Stories</em> one at a time. Splits its own output into checkable claims and its reading of them.",
               "pipeline",
               "<b>built</b>"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"thought-leadership\">Thought Leadership</span></b>",
+              "<span class=\"gloss\" data-term=\"thought-leadership\">Thought Leadership</span>",
               "Ranked six-month predictions with a stated falsification condition, and what named people actually said — quoted, never paraphrased.",
               "pipeline",
               "M2"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"coach\">Coach</span></b>",
+              "<span class=\"gloss\" data-term=\"coach\">Coach</span>",
               "Read the configured repository and write homework that fits a real spot in it. Sixty minutes or less, with every path and symbol verified before it ships.",
               "<b>agent loop</b>",
               "M3"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"tuner\">Tuner</span></b>",
+              "<span class=\"gloss\" data-term=\"tuner\">Tuner</span>",
               "Read the thumbs and the free-form feedback; recalibrate the others. Carries credit assignment and the anti-echo-chamber guardrail.",
               "pipeline",
               "later"
@@ -265,27 +265,27 @@
           ],
           "rows": [
             [
-              "<b>Reader</b>",
+              "Reader",
               "<span class=\"gloss\" data-term=\"canonicalisation\">Canonicalisation</span> · dedup · <span class=\"gloss\" data-term=\"precision-recall\">precision / recall, recall-biased</span> · <span class=\"gloss\" data-term=\"miss-ledger\">miss ledger</span> · <span class=\"gloss\" data-term=\"hard-gate\">hard vs soft gates</span>"
             ],
             [
-              "<b>Framer</b>",
+              "Framer",
               "<span class=\"gloss\" data-term=\"harness\">Harness engineering</span> · <span class=\"gloss\" data-term=\"structured-output\">structured output</span> · <span class=\"gloss\" data-term=\"batching\">batching</span> · <span class=\"gloss\" data-term=\"prompt-caching\">prompt caching</span> · <span class=\"gloss\" data-term=\"model-routing\">model routing</span> · <span class=\"gloss\" data-term=\"verifier\">verify the verifier</span> · <span class=\"gloss\" data-term=\"golden-set\">golden set</span>"
             ],
             [
-              "<b>Thought Leadership</b>",
+              "Thought Leadership",
               "<span class=\"gloss\" data-term=\"verifier\">Verify the verifier</span> (quote substring) · <span class=\"gloss\" data-term=\"resolution-ledger\">resolution ledger</span> · <span class=\"gloss\" data-term=\"hard-gate\">hard vs soft gates</span>"
             ],
             [
-              "<b>Coach</b>",
+              "Coach",
               "Agent loop · subagents · <span class=\"gloss\" data-term=\"hooks\">hooks</span> · repo assertions · <span class=\"gloss\" data-term=\"revealed-preference\">revealed preference</span>"
             ],
             [
-              "<b>Tuner</b>",
+              "Tuner",
               "Credit assignment · anti-echo-chamber guardrail · longitudinal meta-eval"
             ],
             [
-              "<b>Everywhere</b>",
+              "Everywhere",
               "<span class=\"gloss\" data-term=\"cost-breaker\">Cost circuit-breaker</span> · <span class=\"gloss\" data-term=\"excerpt-immutability\">excerpt immutability</span> · <span class=\"gloss\" data-term=\"pipeline-vs-agent\">pipeline vs agent loop</span>"
             ]
           ]
@@ -344,12 +344,12 @@
             ],
             [
               "INPUT<br><span style=\"color:var(--soft)\">humans</span>",
-              "<span class=\"gloss\" data-term=\"framer-contract\"><code>prompts/framer-contract.md</code></span><br><span style=\"color:var(--soft)\">The I/O contract and hard rules. Documentation — <b>never sent to the model</b>.</span>",
+              "<span class=\"gloss\" data-term=\"framer-contract\"><code>prompts/framer-contract.md</code></span><br><span style=\"color:var(--soft)\">The I/O contract and hard rules. Documentation — never sent to the model.</span>",
               "<b style=\"color:var(--ok)\">BUILT</b>"
             ],
             [
               "INPUT<br><span style=\"color:var(--soft)\">= <span class=\"gloss\" data-term=\"gatekeeper\">Gatekeeper</span> output</span>",
-              "<code>data/verified/gatekeeper_&lt;date&gt;.json</code> — <b>the contract between two agents</b><br><span style=\"color:var(--soft)\">Shape: <code>date</code>, <code>items[]</code> → <code>id · category · headline · tags · source_excerpt · sources[]</code>. No <code>user_id</code>: the verified pool is shared across readers. <code>source_excerpt</code> is the only text the <span class=\"gloss\" data-term=\"framer\">Framer</span> may draw facts from.</span>",
+              "<code>data/verified/gatekeeper_&lt;date&gt;.json</code> — the contract between two agents<br><span style=\"color:var(--soft)\">Shape: <code>date</code>, <code>items[]</code> → <code>id · category · headline · tags · source_excerpt · sources[]</code>. No <code>user_id</code>: the verified pool is shared across readers. <code>source_excerpt</code> is the only text the <span class=\"gloss\" data-term=\"framer\">Framer</span> may draw facts from.</span>",
               "<b style=\"color:var(--ok)\">BUILT</b> <span style=\"color:var(--soft)\">(fixture)</span>"
             ],
             [
@@ -358,33 +358,33 @@
               "<b style=\"color:var(--faint)\">DESIGNED</b>"
             ],
             [
-              "<b>PROCESS</b>",
+              "PROCESS",
               "<span class=\"gloss\" data-term=\"framer-py\"><code>agents/framer.py</code></span><br><span style=\"color:var(--soft)\">Reads all of the above; makes two API calls (write, then grade); verifies quotes; enforces the profile rules in code; computes reading time and counts; writes the brief and appends its spend.</span>",
               "<b style=\"color:var(--ok)\">BUILT</b>"
             ],
             [
-              "<b>PROCESS</b>",
-              "<code>agents/budget.py</code><br><span style=\"color:var(--soft)\">Everything that touches money, extracted from <code>framer.py</code> at <b>M1</b>, when Reader becomes its second caller: pricing table, the append-only ledger, month-to-date spend, and <code>reserve_for(calls)</code> / <code>can_afford()</code> — the worst-case bound that decides whether a run may start. Takes a list of planned calls rather than a constant, because Scout's shape is many small calls where the Framer's is one large one.</span>",
+              "PROCESS",
+              "<code>agents/budget.py</code><br><span style=\"color:var(--soft)\">Everything that touches money, extracted from <code>framer.py</code> at M1, when Reader becomes its second caller: pricing table, the append-only ledger, month-to-date spend, and <code>reserve_for(calls)</code> / <code>can_afford()</code> — the worst-case bound that decides whether a run may start. Takes a list of planned calls rather than a constant, because Scout's shape is many small calls where the Framer's is one large one.</span>",
               "<b style=\"color:var(--faint)\">DESIGNED</b>"
             ],
             [
-              "<b>PROCESS</b>",
-              "<code>agents/llm.py</code><br><span style=\"color:var(--soft)\">The guard rails around a model call: <code>structured_text()</code>, which exits loudly on a refusal or a response truncated at <code>max_tokens</code> rather than writing a half-object, plus the client factory so <code>.env</code> loading happens in one place. Extracted at <b>M1</b>.</span>",
+              "PROCESS",
+              "<code>agents/llm.py</code><br><span style=\"color:var(--soft)\">The guard rails around a model call: <code>structured_text()</code>, which exits loudly on a refusal or a response truncated at <code>max_tokens</code> rather than writing a half-object, plus the client factory so <code>.env</code> loading happens in one place. Extracted at M1.</span>",
               "<b style=\"color:var(--faint)\">DESIGNED</b>"
             ],
             [
-              "<b>PROCESS</b>",
-              "<code>agents/graders.py</code><br><span style=\"color:var(--soft)\">The faithfulness family — <span class=\"gloss\" data-term=\"claim-ledger\">claim ledger</span>, span verification, the claim-vs-inference test. Moves out of <code>framer.py</code> at <b>M3</b>, when the <span class=\"gloss\" data-term=\"coach\">Coach</span> becomes its second caller.</span>",
+              "PROCESS",
+              "<code>agents/graders.py</code><br><span style=\"color:var(--soft)\">The faithfulness family — <span class=\"gloss\" data-term=\"claim-ledger\">claim ledger</span>, span verification, the claim-vs-inference test. Moves out of <code>framer.py</code> at M3, when the <span class=\"gloss\" data-term=\"coach\">Coach</span> becomes its second caller.</span>",
               "<b style=\"color:var(--faint)\">DESIGNED</b>"
             ],
             [
-              "<b>PROCESS</b>",
+              "PROCESS",
               "<span class=\"gloss\" data-term=\"run-evals\"><code>data/evals/run_evals.py</code></span><br><span style=\"color:var(--soft)\">Regrades a frozen golden case with the current grader, asserts the structural rules, scores usefulness, and exits non-zero on any hard-gate failure.</span>",
               "<b style=\"color:var(--ok)\">BUILT</b>"
             ],
             [
               "OUTPUT",
-              "<code>data/briefs/framer_&lt;date&gt;.json</code> — <b>the Framer’s product</b><br><span style=\"color:var(--soft)\">Shape: the verified item fields <em>plus</em> <code>user_id</code> (personalization starts here), <code>generatedBy</code>, <code>readingTimeMin</code>, <code>counts</code>, <code><span class=\"gloss\" data-term=\"thread\">thread</span></code>, <code>threadFaithfulness</code>, and per item <code>why · example · connection · ninety · faithfulness</code>, plus <code>_enforcements</code> listing anything code stripped.</span>",
+              "<code>data/briefs/framer_&lt;date&gt;.json</code> — the Framer’s product<br><span style=\"color:var(--soft)\">Shape: the verified item fields <em>plus</em> <code>user_id</code> (personalization starts here), <code>generatedBy</code>, <code>readingTimeMin</code>, <code>counts</code>, <code><span class=\"gloss\" data-term=\"thread\">thread</span></code>, <code>threadFaithfulness</code>, and per item <code>why · example · connection · ninety · faithfulness</code>, plus <code>_enforcements</code> listing anything code stripped.</span>",
               "<b style=\"color:var(--ok)\">BUILT</b>"
             ],
             [
@@ -432,37 +432,37 @@
             [
               "3",
               "<code>frame_day()</code> — one streamed call",
-              "All 7 items plus the profile go in a <b>single</b> request; <code>sources</code> is stripped first, since the writer needs no URLs. Back comes <code>why / example / connection / ninety</code> per item and an 870-character thread. <b>1,884 in → 3,024 out, $0.0958.</b> The thread is the reason for <span class=\"gloss\" data-term=\"batching\">batching</span>: it links MCP to Kimi K3 to the funding rounds, which no per-item call could do.",
+              "All 7 items plus the profile go in a single request; <code>sources</code> is stripped first, since the writer needs no URLs. Back comes <code>why / example / connection / ninety</code> per item and an 870-character thread. 1,884 in → 3,024 out, $0.0958. The thread is the reason for <span class=\"gloss\" data-term=\"batching\">batching</span>: it links MCP to Kimi K3 to the funding rounds, which no per-item call could do.",
               "Opus 5"
             ],
             [
               "4",
               "<span class=\"gloss\" data-term=\"build-check-payload\"><code>build_check_payload()</code></span>",
-              "Repackages the same day for auditing: <code>writing_under_test</code> <b>first</b>, <code>ground_truth_excerpt</code> second, headlines dropped entirely — the Gatekeeper wrote those, so they are not the Framer's burden. Order matters: with the excerpt first, the grader enumerated the <em>excerpt's</em> claims and never read the writing.",
+              "Repackages the same day for auditing: <code>writing_under_test</code> first, <code>ground_truth_excerpt</code> second, headlines dropped entirely — the Gatekeeper wrote those, so they are not the Framer's burden. Order matters: with the excerpt first, the grader enumerated the <em>excerpt's</em> claims and never read the writing.",
               "local"
             ],
             [
               "5",
               "<span class=\"gloss\" data-term=\"check-faithfulness\"><code>check_faithfulness()</code></span>",
-              "Haiku audits every item against its own excerpt, and the thread against the <b>union</b> of all seven. In the committed brief six items come back <code>confidence 1.0</code> with nothing flagged — but <code>vc-record</code> reads <code>confidence 0.85</code> and flags <em>“~80% of Q1 dollars”</em>, arguing the framing conflates H1 with Q1. <b>The grader was wrong:</b> the excerpt states that figure verbatim. That flag became a permanent <span class=\"gloss\" data-term=\"regression\">regression</span> case. <code>temperature=0</code> came later, for the same reason.",
+              "Haiku audits every item against its own excerpt, and the thread against the union of all seven. In the committed brief six items come back <code>confidence 1.0</code> with nothing flagged — but <code>vc-record</code> reads <code>confidence 0.85</code> and flags <em>“~80% of Q1 dollars”</em>, arguing the framing conflates H1 with Q1. The grader was wrong: the excerpt states that figure verbatim. That flag became a permanent <span class=\"gloss\" data-term=\"regression\">regression</span> case. <code>temperature=0</code> came later, for the same reason.",
               "Haiku 4.5"
             ],
             [
               "6",
               "<code>normalise_verdict()</code>",
-              "Every quoted span must be a <b>literal substring</b> of the excerpt — a grader can invent a citation, a substring match cannot be talked into agreeing. An invented span forces the claim to unsupported and logs a <code>grader_error</code>, gated separately because that means the <em>checker</em> misbehaved rather than the writing. It also warns when a claim marked unsupported contains numbers that <em>are</em> present: on <code>vc-record</code> above, “80%” appears in the excerpt, so today that flag would be surfaced as a possible <span class=\"gloss\" data-term=\"false-alarm\">false alarm</span> rather than passing quietly.",
+              "Every quoted span must be a literal substring of the excerpt — a grader can invent a citation, a substring match cannot be talked into agreeing. An invented span forces the claim to unsupported and logs a <code>grader_error</code>, gated separately because that means the <em>checker</em> misbehaved rather than the writing. It also warns when a claim marked unsupported contains numbers that <em>are</em> present: on <code>vc-record</code> above, “80%” appears in the excerpt, so today that flag would be surfaced as a possible <span class=\"gloss\" data-term=\"false-alarm\">false alarm</span> rather than passing quietly.",
               "local"
             ],
             [
               "7",
               "<code>assemble_day()</code>",
-              "Merges framing onto the raw items and enforces the profile in code: a DO THIS on the Investment item would be stripped and recorded. This run needed nothing — <code>_enforcements: []</code>. Then the arithmetic: <b>5 min, 7 items, 2 DO THIS</b>, 4 AI / 1 Market / 1 Investment / 1 Geopolitical.",
+              "Merges framing onto the raw items and enforces the profile in code: a DO THIS on the Investment item would be stripped and recorded. This run needed nothing — <code>_enforcements: []</code>. Then the arithmetic: 5 min, 7 items, 2 DO THIS, 4 AI / 1 Market / 1 Investment / 1 Geopolitical.",
               "local"
             ],
             [
               "8",
               "Write the brief and the ledger",
-              "<code>data/briefs/framer_2026-08-04.json</code> is written, and both calls are appended to <code>usage.json</code> with tokens and cost — <b>$0.0998 for the run</b>. That ledger is what step 2 of the <em>next</em> run reads.",
+              "<code>data/briefs/framer_2026-08-04.json</code> is written, and both calls are appended to <code>usage.json</code> with tokens and cost — $0.0998 for the run. That ledger is what step 2 of the <em>next</em> run reads.",
               "local"
             ]
           ]
@@ -553,42 +553,42 @@
           ],
           "rows": [
             [
-              "<b>Question</b>",
+              "Question",
               "Is every fact traceable to a source?",
               "Is this worth the reader’s time?"
             ],
             [
-              "<b>Nature</b>",
+              "Nature",
               "Objective — same answer for anyone",
               "Subjective — personal to one reader"
             ],
             [
-              "<b>Scope</b>",
-              "Per item → its own excerpt. Thread → the <b>union</b> of all excerpts. Headlines excluded (Gatekeeper wrote them)",
+              "Scope",
+              "Per item → its own excerpt. Thread → the union of all excerpts. Headlines excluded (Gatekeeper wrote them)",
               "Every unit, item and thread alike"
             ],
             [
-              "<b>Sees</b>",
-              "The writing + the source excerpts. <b>No profile</b> — truth doesn’t depend on the reader",
-              "The writing + <b>the profile</b>. <b>No sources</b> — value doesn’t depend on truth"
+              "Sees",
+              "The writing + the source excerpts. No profile — truth doesn’t depend on the reader",
+              "The writing + the profile. No sources — value doesn’t depend on truth"
             ],
             [
-              "<b>Returns</b>",
+              "Returns",
               "A claim ledger: each claim, its quoted span, supported true/false, plus confidence",
               "Scores 1–5 on relevance, insight, concision, tradeoff_named, plus a comment"
             ],
             [
-              "<b>Verified by code?</b>",
+              "Verified by code?",
               "Yes — every span must be a literal substring of the excerpt",
               "No — nothing to verify mechanically"
             ],
             [
-              "<b>Gates?</b>",
+              "Gates?",
               "<b style=\"color:var(--ok)\">Hard</b> — a failure blocks the change",
               "<b style=\"color:var(--faint)\">Soft</b> — reported only, until calibrated against real ratings"
             ],
             [
-              "<b>Model</b>",
+              "Model",
               "Haiku, <code>temperature=0</code>",
               "Haiku (upgrade before it ever gates)"
             ]
@@ -905,7 +905,7 @@
             [
               "Fetched source excerpts",
               "<b>Postgres, write-once, compressed plain text</b>",
-              "Immutable by rule, and read by every grading run afterwards. Article text only, never the fetched page, and compressed: a page is roughly 100 KB, its text about 6 KB. <b>Kept forever only if a published brief cites it</b>; everything else expires after a few weeks, once dedup, corroboration and prediction checks no longer need it."
+              "Immutable by rule, and read by every grading run afterwards. Article text only, never the fetched page, and compressed: a page is roughly 100 KB, its text about 6 KB. Kept forever only if a published brief cites it; everything else expires after a few weeks, once dedup, corroboration and prediction checks no longer need it."
             ],
             [
               "Golden cases, prompts, agent code",
@@ -938,22 +938,22 @@
           ],
           "rows": [
             [
-              "<b>Data layer</b>",
+              "Data layer",
               "JSON files on disk",
               "<b>Postgres at M1</b> — containers restart, and a JSON file on a container filesystem is memory with extra steps. pgvector and multi-tenant sessions only if this is ever productised; the <code>user_id</code> seam has been carried since the first commit for exactly that."
             ],
             [
-              "<b>Excerpt store</b>",
+              "Excerpt store",
               "—",
               "<b>Write-once at M1.</b> Immutable by rule, because it is what makes the faithfulness gate reproducible."
             ],
             [
-              "<b>Observability</b>",
+              "Observability",
               "<code>usage.json</code>, an append-only spend ledger",
               "A structured per-run trace at M1; a real observability tool only if run volume ever justifies one."
             ],
             [
-              "<b>Cost</b>",
+              "Cost",
               "Ledger and circuit-breaker, stop-<em>after</em>",
               "<b>Stop-before at M1</b>, when a second agent starts spending — reserve the worst case and refuse to start unless it fits."
             ]
@@ -989,19 +989,19 @@
           ],
           "rows": [
             [
-              "<b>Deterministic</b>",
+              "Deterministic",
               "Code. Is this string inside that string; does this path exist; do these sets match.",
               "<b>free</b>",
               "<b style=\"color:var(--ok)\">Yes</b> — it cannot flake and cannot be argued with"
             ],
             [
-              "<b>Model-judged against labels</b>",
+              "Model-judged against labels",
               "A model, compared to an answer key a human wrote.",
               "cents",
               "<b style=\"color:var(--ok)\">Yes</b> — once the labels cover both directions of failure"
             ],
             [
-              "<b>Longitudinal</b>",
+              "Longitudinal",
               "Time. Did the prediction resolve; did the miss close; did the change help.",
               "weeks",
               "<b style=\"color:var(--faint)\">Reports first.</b> Gates only after enough history to know what normal looks like"
@@ -1028,7 +1028,7 @@
           ],
           "rows": [
             [
-              "<b><span class=\"gloss\" data-term=\"reader\">Reader</span></b>",
+              "<span class=\"gloss\" data-term=\"reader\">Reader</span>",
               "<span class=\"gloss\" data-term=\"canonicalisation\">Canonicalisation</span> — a golden set of URL pairs that must and must not collapse, including a planted near-duplicate differing only by tracking parameters",
               "deterministic",
               "<b>hard</b>"
@@ -1052,8 +1052,8 @@
               "report"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"framer\">Framer</span></b>",
-              "Faithfulness — every factual clause traced to a span of its own source; <em>Learning for the Week</em> against the <b>union</b> of the week's sources",
+              "<span class=\"gloss\" data-term=\"framer\">Framer</span>",
+              "Faithfulness — every factual clause traced to a span of its own source; <em>Learning for the Week</em> against the union of the week's sources",
               "model + labels",
               "<b>hard</b>"
             ],
@@ -1070,7 +1070,7 @@
               "soft"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"thought-leadership\">Thought Leadership</span></b>",
+              "<span class=\"gloss\" data-term=\"thought-leadership\">Thought Leadership</span>",
               "<b>Quote fidelity</b> — every quote a literal substring of the excerpt fetched from that source. The Framer's span check, unchanged",
               "deterministic",
               "<b>hard</b>"
@@ -1094,7 +1094,7 @@
               "report"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"coach\">Coach</span></b>",
+              "<span class=\"gloss\" data-term=\"coach\">Coach</span>",
               "Repo grounding — every named path exists, every named symbol appears in it, every command parses",
               "deterministic",
               "<b>hard</b>"
@@ -1106,7 +1106,7 @@
               "<b>diagnostic only</b>"
             ],
             [
-              "<b><span class=\"gloss\" data-term=\"tuner\">Tuner</span></b>",
+              "<span class=\"gloss\" data-term=\"tuner\">Tuner</span>",
               "Anti-echo-chamber — a minimum share of items outside your established priors",
               "deterministic",
               "<b>hard, on its recommendations</b>"
@@ -1239,12 +1239,12 @@
             ],
             [
               "<code>claim</code>",
-              "One checkable statement the <b>grader extracted from the writing</b> — phrased as the writing phrased it",
+              "One checkable statement the grader extracted from the writing — phrased as the writing phrased it",
               "“Anthropic is valued at $965B”"
             ],
             [
               "<code>supporting_span</code>",
-              "The grader’s <b>receipt</b>: the exact quote from the excerpt it says backs the claim (or <code>null</code>)",
+              "The grader’s receipt: the exact quote from the excerpt it says backs the claim (or <code>null</code>)",
               "“Anthropic is valued at $965B” — code confirms it really appears"
             ],
             [
@@ -1254,7 +1254,7 @@
             ],
             [
               "<code>expected_span_contains</code>",
-              "In the labels: <b>what a valid receipt should mention</b>. A pattern, not the text itself",
+              "In the labels: what a valid receipt should mention. A pattern, not the text itself",
               "<code>&quot;965&quot;</code>"
             ],
             [
@@ -1263,38 +1263,38 @@
               "<code>[]</code>"
             ],
             [
-              "<b>False alarm</b><br><span style=\"color:var(--soft)\">= false positive</span>",
+              "False alarm<br><span style=\"color:var(--soft)\">= false positive</span>",
               "Flagged something that <em>was</em> supported. Erodes trust in the gate",
               "grader flags “$965B” though it is in the excerpt — the original bug"
             ],
             [
-              "<b>Missed hallucination</b><br><span style=\"color:var(--soft)\">= false negative</span>",
+              "Missed hallucination<br><span style=\"color:var(--soft)\">= false negative</span>",
               "Failed to flag something invented. Erodes trust in the brief — the dangerous direction",
               "writing says “$1.4T”; grader returns no flag"
             ],
             [
-              "<b>Omission</b>",
-              "The subset of <span class=\"gloss\" data-term=\"missed-hallucination\">missed hallucination</span>s where the claim was <b>never enumerated</b>. Code cannot see it — no span was offered",
+              "Omission",
+              "The subset of <span class=\"gloss\" data-term=\"missed-hallucination\">missed hallucination</span>s where the claim was never enumerated. Code cannot see it — no span was offered",
               "“$1.4T” appears nowhere in the ledger, neither supported nor flagged"
             ],
             [
-              "<b>Grader error</b>",
+              "Grader error",
               "The grader quoted a span that isn’t in the excerpt — an invented citation. Gated separately, because it means the <em>checker</em> misbehaved",
               "span “Anthropic is valued at $1.4T” — not present, so downgraded"
             ],
             [
-              "<b>Possible <span class=\"gloss\" data-term=\"false-alarm\">false alarm</span></b>",
-              "New: a claim marked unsupported whose <b>numbers appear verbatim</b> in the excerpt. Warns, never promotes — a number’s presence doesn’t prove the claim built on it",
+              "Possible <span class=\"gloss\" data-term=\"false-alarm\">false alarm</span>",
+              "New: a claim marked unsupported whose numbers appear verbatim in the excerpt. Warns, never promotes — a number’s presence doesn’t prove the claim built on it",
               "“$965B” flagged, but “$965B” is in the excerpt → warning raised"
             ],
             [
-              "<b>Precision</b>",
+              "Precision",
               "Of everything flagged, how much deserved it",
               "flags 4, three were real → 0.75"
             ],
             [
-              "<b>Recall</b>",
-              "Of everything that deserved flagging, how much was caught. <b>Only measurable where labels exist</b>",
+              "Recall",
+              "Of everything that deserved flagging, how much was caught. Only measurable where labels exist",
               "6 real problems, caught 5 → 0.83"
             ]
           ]

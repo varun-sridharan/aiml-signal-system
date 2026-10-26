@@ -221,6 +221,36 @@ def prose_failures(text: str, label: str, *, opening: bool = False) -> list[str]
     return out
 
 
+THREAD_LINE_WORDS = 9
+THREAD_WORDS = 16
+_FIGURE = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def thread_findings(edition: dict) -> list[tuple[str, str]]:
+    """(path, failure) for the week's thread headline (Run 7): two short lines, no figures, and no number repeated in the
+    essay headline or the stories headline. A finding sends the field back for the one rewrite; it never holds an edition."""
+    out: list[tuple[str, str]] = []
+    lines = [plain(x) for x in ((edition.get("thread") or {}).get("lines") or [])]
+    for n, line in enumerate(lines, start=1):
+        words = len(line.split())
+        if words > THREAD_LINE_WORDS:
+            out.append((f"thread.line.{n}", f"thread line {n}: {words} words, at most {THREAD_LINE_WORDS}"))
+        if _NUMBER.search(line):
+            out.append((f"thread.line.{n}", f"thread line {n}: carries a figure; the thread names one shift in words, and numbers belong in the body, the essay and the stories"))
+    total = sum(len(x.split()) for x in lines)
+    if total > THREAD_WORDS:
+        out.append(("thread.line.2", f"thread lines: {total} words in all, at most {THREAD_WORDS}"))
+    fields = [(f"thread.line.{n}", x) for n, x in enumerate(lines, start=1)]
+    fields += [("learning.headline", plain((edition.get("learning") or {}).get("headline", ""))), ("stories.title", plain(edition.get("storiesTitle", "")))]
+    seen: dict = {}
+    for path, text in fields:
+        for fig in {f.rstrip(",") for f in _FIGURE.findall(text)}:
+            if fig in seen and seen[fig] != path:
+                out.append((path, f"{path.split('.')[0]} headline: the figure {fig} already appears in {seen[fig]}; a number is stated once across the thread, essay and stories headlines"))
+            seen.setdefault(fig, path)
+    return out
+
+
 def edition_style_findings(edition: dict) -> list[tuple[str, str]]:
     """(split path, failure) for the rules over every prose field of a composed edition. Essay paragraphs also get rule 1.
 
@@ -235,6 +265,7 @@ def edition_style_findings(edition: dict) -> list[tuple[str, str]]:
     for n, line in enumerate(thread.get("lines") or [], start=1):
         check(f"thread.line.{n}", line, f"thread line {n}")
     check("thread.body", thread.get("body", ""), "thread body")
+    out.extend(thread_findings(edition))
     learning = edition.get("learning") or {}
     check("learning.headline", learning.get("headline", ""), "essay headline")
     for n, para in enumerate(learning.get("paras") or [], start=1):

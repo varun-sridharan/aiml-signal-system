@@ -478,11 +478,79 @@ def parse_plan(path: Path) -> tuple[dict, list[FormatError]]:
     return {"meta": meta, "milestones": milestones, "decisions": decisions}, ctx.errors
 
 
+ROW_NOTE_LINK_RE = re.compile(r'href="#(note-[a-z0-9-]+)"')
+MAX_CELL_WORDS = 45
+
+
+def note_anchor(activity_html: str) -> str:
+    """The anchor of a row's notes: the activity's visible words, lower-cased, without its backlog id."""
+    text = re.sub(r"<[^>]+>|&\w+;", " ", activity_html or "")
+    text = re.sub(r"\(bk-[a-z0-9-]+\)", " ", text.lower())
+    return "note-" + re.sub(r"[^a-z0-9]+", "-", text).strip("-")
+
+
+def _cell_words(html: str) -> int:
+    return len(re.sub(r"<[^>]+>", " ", html or "").replace("&rarr;", "→").split())
+
+
+def _parse_row_notes(ctx: _Ctx, after: list, rows: list, where: str) -> list:
+    """`### Row notes` under the Plan table: one `####` per row that links to it, in row order, holding what its cells no longer carry.
+
+    A cell stays short (at most MAX_CELL_WORDS words), a row whose Outcome links to `#note-...` must have that note, and a note must
+    belong to a row. Nothing here is rendered unless the file passes.
+    """
+    toks = ctx.tokens
+    notes: list = []
+    if not after:
+        heading = None
+    else:
+        heading = after[0]
+        h = toks[heading[0]]
+        if h.type != "heading_open" or _heading_level(h) != 3 or _heading_inline(ctx, heading[0]).content.strip() != "Row notes":
+            ctx.err(toks[heading[0]], "plan.row-notes", f"{where} '## Plan' may hold, after the table, only a '### Row notes' section")
+            heading = None
+    if heading is not None:
+        current = None
+        for b in after[1:]:
+            t = toks[b[0]]
+            if t.type == "heading_open":
+                if _heading_level(t) != 4:
+                    ctx.err(t, "plan.row-notes", f"{where} Row notes holds '####' entries only, found '{t.markup}'")
+                    continue
+                title = _heading_inline(ctx, b[0])
+                current = {"title": _render_inline(title.children), "anchor": note_anchor(_render_inline(title.children)), "html": ""}
+                notes.append(current)
+            elif current is None:
+                ctx.err(t, "plan.row-notes", f"{where} Row notes: text before the first '####' entry")
+            else:
+                current["html"] += _render_blocks(toks[b[0]:b[1]])
+    anchors = {n["anchor"] for n in notes}
+    linked = []
+    for n, row in enumerate(rows, start=1):
+        for cell in ("activity", "outcome", "why"):
+            if _cell_words(row[cell]) > MAX_CELL_WORDS:
+                ctx.err(toks[0], "plan.cell-length", f"{where} row {n} ({re.sub('<[^>]+>', '', row['activity'])[:40]}): the {cell} cell is over {MAX_CELL_WORDS} words; "
+                        f"keep a summary in the cell and move the rest, word for word, to '### Row notes'")
+        for target in ROW_NOTE_LINK_RE.findall(row["outcome"]):
+            linked.append(target)
+            if target not in anchors:
+                ctx.err(toks[0], "plan.row-notes", f"{where} row {n} links to {target}, which has no '####' entry in Row notes")
+            if target != note_anchor(row["activity"]):
+                ctx.err(toks[0], "plan.row-notes", f"{where} row {n} links to {target}, which is not its own note ({note_anchor(row['activity'])})")
+    for note in notes:
+        if note["anchor"] not in linked:
+            ctx.err(toks[0], "plan.row-notes", f"{where} the note '{re.sub('<[^>]+>', '', note['title'])}' belongs to no row's Outcome link")
+    order = [r for r in (note_anchor(row["activity"]) for row in rows) if r in anchors]
+    if [n["anchor"] for n in notes] != order:
+        ctx.err(toks[0], "plan.row-notes", f"{where} Row notes must follow the table's row order")
+    return notes
+
+
 def _parse_plan_milestone(ctx: _Ctx, h_idx: int, blocks, m, body_lines) -> dict:
     toks = ctx.tokens
     code, where = f"M{m.group(1)}", f"M{m.group(1)}"
     ms = {"code": code, "id": code.lower(), "title": _render_inline(_strip_prefix(_heading_inline(ctx, h_idx).children, len(code) + 3)),
-          "end_state": "", "plan_intro": "", "rows": [], "status_html": ""}
+          "end_state": "", "plan_intro": "", "rows": [], "notes": [], "status_html": ""}
 
     # End state: the first block, a paragraph opening with **End state:**.
     head_blocks = []
@@ -490,6 +558,9 @@ def _parse_plan_milestone(ctx: _Ctx, h_idx: int, blocks, m, body_lines) -> dict:
     for b in blocks:
         t = toks[b[0]]
         if t.type == "heading_open":
+            if _heading_level(t) > 2 and sub:
+                sub[-1][1].append(b)          # '### Row notes' and its '####' entries sit inside '## Plan'; the Plan handler checks them
+                continue
             if _heading_level(t) != 2:
                 ctx.err(t, "plan.milestone-sections", f"only '##' headings belong inside {where}, found '{t.markup}'")
                 continue
@@ -525,19 +596,21 @@ def _parse_plan_milestone(ctx: _Ctx, h_idx: int, blocks, m, body_lines) -> dict:
     for (i, bl), name in zip(sub, names):
         if name == "Plan":
             tables = [b for b in bl if toks[b[0]].type == "table_open"]
-            paras = [b for b in bl if toks[b[0]].type == "paragraph_open"]
-            others = [b for b in bl if toks[b[0]].type not in ("table_open", "paragraph_open")]
             if len(tables) != 1:
                 ctx.err(toks[i], "plan.plan-table", f"{where} '## Plan' must hold exactly one table, found {len(tables)}")
-            for b in others:
-                ctx.err(toks[b[0]], "plan.plan-table", f"{where} '## Plan' holds only an optional intro paragraph and the table")
+            at = bl.index(tables[0]) if tables else len(bl)
+            before, after = bl[:at], bl[at + 1:]
+            for b in before:
+                if toks[b[0]].type != "paragraph_open":
+                    ctx.err(toks[b[0]], "plan.plan-table", f"{where} '## Plan' holds only an optional intro paragraph and the table")
+            paras = [b for b in before if toks[b[0]].type == "paragraph_open"]
+            if len(paras) > 1:
+                ctx.err(toks[paras[-1][0]], "plan.plan-table", f"{where} '## Plan' allows one intro paragraph, between the heading and the table")
             if paras:
-                if len(paras) > 1 or (tables and paras[0][0] > tables[0][0]):
-                    ctx.err(toks[paras[-1][0]], "plan.plan-table",
-                            f"{where} '## Plan' allows one intro paragraph, between the heading and the table")
                 ms["plan_intro"] = _render_inline(toks[paras[0][0] + 1].children)
             if tables:
                 ms["rows"] = _parse_plan_table(ctx, tables[0], body_lines, where)
+            ms["notes"] = _parse_row_notes(ctx, after, ms["rows"], where)
         elif name == "Status":
             paras = [b for b in bl if toks[b[0]].type == "paragraph_open"]
             for b in bl:

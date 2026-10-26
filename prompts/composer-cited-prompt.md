@@ -21,7 +21,7 @@ You answer through the citations feature: every sentence that states a fact carr
 
 ## The pieces
 
-**thread.line.1, thread.line.2** - a two-line contrast headline for the week ("Four releases cut the cost of running a model." / "Three decisions restricted who may inspect one."). Each line states a fact or a pair of facts, never an abstraction, and is cited. Put `[[hl|a phrase of at most five words]]` around the key phrase in at most one of the two lines, and only if it reads naturally.
+**thread.line.1, thread.line.2** - exactly two short lines that name **one** shift connecting at least two of the week's stories: line 1 states the shift, line 2 its consequence or counter-move. At most 9 words each and 16 in all, and **no figures** (numbers belong in `thread.body`, the essay and the stories; a number in the thread, the essay headline or the stories headline must not appear in another of them). Each line states a fact or a pair of facts, never an abstraction, and is cited. Put `[[hl|a phrase of at most five words]]` around the key phrase in at most one of the two lines, and only if it reads naturally. Good (invented): "Agent scaffolding is now measured." / "Vendors keep shipping it regardless." Bad: a long line pairing two unrelated stories with a benchmark figure.
 
 **thread.body** - 80 to 120 words: one sentence naming how the week shifted, two or three stories as evidence, then the harder question the week raises. Link two or three stories with `[[#s02|short text]]` (the text is words of the sentence itself). Use only ids you were given.
 

@@ -1,0 +1,2407 @@
+{
+ "system_design": {
+  "url": "/design/System-Design.html",
+  "viewport": 390,
+  "page_scrolls_sideways": false,
+  "tables": [
+   {
+    "index": 0,
+    "columns": 4,
+    "rows": 5,
+    "widest_cell_words": 31,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 5,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 1,
+    "columns": 2,
+    "rows": 6,
+    "widest_cell_words": 20,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 6,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 2,
+    "columns": 3,
+    "rows": 13,
+    "widest_cell_words": 61,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 5,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 3,
+    "columns": 4,
+    "rows": 8,
+    "widest_cell_words": 87,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 0,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 4,
+    "columns": 3,
+    "rows": 6,
+    "widest_cell_words": 16,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 0,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 5,
+    "columns": 3,
+    "rows": 8,
+    "widest_cell_words": 18,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 8,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 6,
+    "columns": 3,
+    "rows": 4,
+    "widest_cell_words": 56,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 0,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 7,
+    "columns": 3,
+    "rows": 4,
+    "widest_cell_words": 42,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 4,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 8,
+    "columns": 4,
+    "rows": 3,
+    "widest_cell_words": 15,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 3,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 9,
+    "columns": 4,
+    "rows": 15,
+    "widest_cell_words": 24,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 5,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   },
+   {
+    "index": 10,
+    "columns": 3,
+    "rows": 13,
+    "widest_cell_words": 26,
+    "table_w": 350,
+    "wrap_w": 350,
+    "scrolls": false,
+    "first_col_label_class": false,
+    "first_col_bold": 7,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "400",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   }
+  ],
+  "mid_word_splits": [
+   {
+    "table": 0,
+    "word": "pipeline",
+    "before": "pipeli",
+    "after": "ne"
+   },
+   {
+    "table": 0,
+    "word": "pipeline",
+    "before": "pipeli",
+    "after": "ne"
+   },
+   {
+    "table": 0,
+    "word": "Thought",
+    "before": "Though",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "Leadership",
+    "before": "Leader",
+    "after": "ship"
+   },
+   {
+    "table": 0,
+    "word": "pipeline",
+    "before": "pipeli",
+    "after": "ne"
+   },
+   {
+    "table": 0,
+    "word": "agent",
+    "before": "agen",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "pipeline",
+    "before": "pipeli",
+    "after": "ne"
+   },
+   {
+    "table": 1,
+    "word": "Leadership",
+    "before": "Leadershi",
+    "after": "p"
+   },
+   {
+    "table": 1,
+    "word": "Everywhere",
+    "before": "Everywhe",
+    "after": "re"
+   },
+   {
+    "table": 2,
+    "word": "INPUT",
+    "before": "INPU",
+    "after": "T"
+   },
+   {
+    "table": 2,
+    "word": "INPUT",
+    "before": "INPU",
+    "after": "T"
+   },
+   {
+    "table": 2,
+    "word": "INPUT",
+    "before": "INPU",
+    "after": "T"
+   },
+   {
+    "table": 2,
+    "word": "humans",
+    "before": "huma",
+    "after": "ns"
+   },
+   {
+    "table": 2,
+    "word": "INPUT",
+    "before": "INPU",
+    "after": "T"
+   },
+   {
+    "table": 2,
+    "word": "Gatekeeper",
+    "before": "Gatek",
+    "after": "eeper"
+   },
+   {
+    "table": 2,
+    "word": "output",
+    "before": "outpu",
+    "after": "t"
+   },
+   {
+    "table": 2,
+    "word": "data/verified/gatekeeper_<date>.json",
+    "before": "data/verified/gatekeeper_<date>.j",
+    "after": "son"
+   },
+   {
+    "table": 2,
+    "word": "INPUT",
+    "before": "INPU",
+    "after": "T"
+   },
+   {
+    "table": 2,
+    "word": "DESIGNED",
+    "before": "DESIG",
+    "after": "NED"
+   },
+   {
+    "table": 2,
+    "word": "PROCESS",
+    "before": "PROC",
+    "after": "ESS"
+   },
+   {
+    "table": 2,
+    "word": "PROCESS",
+    "before": "PROC",
+    "after": "ESS"
+   },
+   {
+    "table": 2,
+    "word": "DESIGNED",
+    "before": "DESIG",
+    "after": "NED"
+   },
+   {
+    "table": 2,
+    "word": "PROCESS",
+    "before": "PROC",
+    "after": "ESS"
+   },
+   {
+    "table": 2,
+    "word": "DESIGNED",
+    "before": "DESIG",
+    "after": "NED"
+   },
+   {
+    "table": 2,
+    "word": "PROCESS",
+    "before": "PROC",
+    "after": "ESS"
+   },
+   {
+    "table": 2,
+    "word": "DESIGNED",
+    "before": "DESIG",
+    "after": "NED"
+   },
+   {
+    "table": 2,
+    "word": "PROCESS",
+    "before": "PROC",
+    "after": "ESS"
+   },
+   {
+    "table": 2,
+    "word": "OUTPUT",
+    "before": "OUTP",
+    "after": "UT"
+   },
+   {
+    "table": 2,
+    "word": "OUTPUT",
+    "before": "OUTP",
+    "after": "UT"
+   },
+   {
+    "table": 2,
+    "word": "OUTPUT",
+    "before": "OUTP",
+    "after": "UT"
+   },
+   {
+    "table": 3,
+    "word": "profile,",
+    "before": "profile",
+    "after": ","
+   },
+   {
+    "table": 3,
+    "word": "system",
+    "before": "syste",
+    "after": "m"
+   },
+   {
+    "table": 3,
+    "word": "prompt",
+    "before": "promp",
+    "after": "t"
+   },
+   {
+    "table": 3,
+    "word": "circuit-breaker",
+    "before": "circuit",
+    "after": "-breaker"
+   },
+   {
+    "table": 3,
+    "word": "frame_day()",
+    "before": "frame",
+    "after": "_day()"
+   },
+   {
+    "table": 3,
+    "word": "streamed",
+    "before": "strea",
+    "after": "med"
+   },
+   {
+    "table": 3,
+    "word": "build_check_payload()",
+    "before": "build",
+    "after": "_check_payload()"
+   },
+   {
+    "table": 3,
+    "word": "check_faithfulness()",
+    "before": "check",
+    "after": "_faithfulness()"
+   },
+   {
+    "table": 3,
+    "word": "normalise_verdict()",
+    "before": "norma",
+    "after": "lise_verdict()"
+   },
+   {
+    "table": 3,
+    "word": "assemble_day()",
+    "before": "assem",
+    "after": "ble_day()"
+   },
+   {
+    "table": 4,
+    "word": "FRAMER_MAX_TOKENS",
+    "before": "FRAMER_MAX_TOK",
+    "after": "ENS"
+   },
+   {
+    "table": 4,
+    "word": "CHECK_MAX_TOKENS",
+    "before": "CHECK_MAX_TOKE",
+    "after": "NS"
+   },
+   {
+    "table": 4,
+    "word": "MONTHLY_BUDGET_USD",
+    "before": "MONTHLY_BUDGET",
+    "after": "_USD"
+   },
+   {
+    "table": 5,
+    "word": "Question",
+    "before": "Qu",
+    "after": "estion"
+   },
+   {
+    "table": 5,
+    "word": "Nature",
+    "before": "Nat",
+    "after": "ure"
+   },
+   {
+    "table": 5,
+    "word": "Scope",
+    "before": "Sco",
+    "after": "pe"
+   },
+   {
+    "table": 5,
+    "word": "Sees",
+    "before": "Se",
+    "after": "es"
+   },
+   {
+    "table": 5,
+    "word": "Returns",
+    "before": "Ret",
+    "after": "urns"
+   },
+   {
+    "table": 5,
+    "word": "Verified",
+    "before": "Ver",
+    "after": "ified"
+   },
+   {
+    "table": 5,
+    "word": "code?",
+    "before": "cod",
+    "after": "e?"
+   },
+   {
+    "table": 5,
+    "word": "Gates?",
+    "before": "Gat",
+    "after": "es?"
+   },
+   {
+    "table": 5,
+    "word": "Model",
+    "before": "Mo",
+    "after": "del"
+   },
+   {
+    "table": 6,
+    "word": "feedback,",
+    "before": "feedback",
+    "after": ","
+   },
+   {
+    "table": 6,
+    "word": "Postgres,",
+    "before": "Postgres",
+    "after": ","
+   },
+   {
+    "table": 6,
+    "word": "compressed",
+    "before": "compres",
+    "after": "sed"
+   },
+   {
+    "table": 7,
+    "word": "Observability",
+    "before": "Observa",
+    "after": "bility"
+   },
+   {
+    "table": 7,
+    "word": "usage.json",
+    "before": "usage.js",
+    "after": "on"
+   },
+   {
+    "table": 8,
+    "word": "Deterministic",
+    "before": "Determi",
+    "after": "nistic"
+   },
+   {
+    "table": 8,
+    "word": "cents",
+    "before": "cent",
+    "after": "s"
+   },
+   {
+    "table": 8,
+    "word": "Longitudinal",
+    "before": "Longitud",
+    "after": "inal"
+   },
+   {
+    "table": 8,
+    "word": "weeks",
+    "before": "wee",
+    "after": "ks"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "longitudinal",
+    "before": "longitu",
+    "after": "dinal"
+   },
+   {
+    "table": 9,
+    "word": "longitudinal",
+    "before": "longitu",
+    "after": "dinal"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "Thought",
+    "before": "Though",
+    "after": "t"
+   },
+   {
+    "table": 9,
+    "word": "Leadership",
+    "before": "Leader",
+    "after": "ship"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "longitudinal",
+    "before": "longitu",
+    "after": "dinal"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "longitudinal",
+    "before": "longitu",
+    "after": "dinal"
+   },
+   {
+    "table": 9,
+    "word": "diagnostic",
+    "before": "diagnosti",
+    "after": "c"
+   },
+   {
+    "table": 9,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 9,
+    "word": "recommendations",
+    "before": "recomme",
+    "after": "ndations"
+   },
+   {
+    "table": 9,
+    "word": "longitudinal",
+    "before": "longitu",
+    "after": "dinal"
+   },
+   {
+    "table": 10,
+    "word": "source_excerpt",
+    "before": "source",
+    "after": "_excerpt"
+   },
+   {
+    "table": 10,
+    "word": "supporting_span",
+    "before": "suppor",
+    "after": "ting_span"
+   },
+   {
+    "table": 10,
+    "word": "supported",
+    "before": "suppor",
+    "after": "ted"
+   },
+   {
+    "table": 10,
+    "word": "expected_span_contains",
+    "before": "expect",
+    "after": "ed_span_contains"
+   },
+   {
+    "table": 10,
+    "word": "expected_unsupported",
+    "before": "expect",
+    "after": "ed_unsupported"
+   },
+   {
+    "table": 10,
+    "word": "positive",
+    "before": "positiv",
+    "after": "e"
+   },
+   {
+    "table": 10,
+    "word": "hallucination",
+    "before": "halluci",
+    "after": "nation"
+   },
+   {
+    "table": 10,
+    "word": "negative",
+    "before": "negativ",
+    "after": "e"
+   },
+   {
+    "table": 10,
+    "word": "Omission",
+    "before": "Omissi",
+    "after": "on"
+   },
+   {
+    "table": 10,
+    "word": "Possible",
+    "before": "Possibl",
+    "after": "e"
+   },
+   {
+    "table": 10,
+    "word": "Precision",
+    "before": "Precisi",
+    "after": "on"
+   }
+  ],
+  "thread": null
+ },
+ "roadmap": {
+  "url": "/roadmap",
+  "viewport": 390,
+  "page_scrolls_sideways": false,
+  "tables": [],
+  "mid_word_splits": [],
+  "thread": null
+ },
+ "plan": {
+  "url": "/plan",
+  "viewport": 390,
+  "page_scrolls_sideways": false,
+  "tables": [
+   {
+    "index": 0,
+    "columns": 0,
+    "rows": 18,
+    "widest_cell_words": 543,
+    "table_w": 266,
+    "wrap_w": null,
+    "scrolls": null,
+    "first_col_label_class": false,
+    "first_col_bold": 17,
+    "first_col_style": {
+     "family": "Public Sans",
+     "size": "13px",
+     "weight": "600",
+     "transform": "none",
+     "white_space": "normal"
+    }
+   }
+  ],
+  "mid_word_splits": [
+   {
+    "table": 0,
+    "word": "Claude",
+    "before": "Claud",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "Scaffolding,",
+    "before": "Scaffold",
+    "after": "ing,"
+   },
+   {
+    "table": 0,
+    "word": "README,",
+    "before": "READM",
+    "after": "E,"
+   },
+   {
+    "table": 0,
+    "word": "workflow",
+    "before": "workflo",
+    "after": "w"
+   },
+   {
+    "table": 0,
+    "word": "Roadmap",
+    "before": "Roadma",
+    "after": "p"
+   },
+   {
+    "table": 0,
+    "word": "markdown",
+    "before": "markdo",
+    "after": "wn"
+   },
+   {
+    "table": 0,
+    "word": "snapshots",
+    "before": "snapsho",
+    "after": "ts"
+   },
+   {
+    "table": 0,
+    "word": "Framer",
+    "before": "Frame",
+    "after": "r"
+   },
+   {
+    "table": 0,
+    "word": "agents/framer.py",
+    "before": "agents",
+    "after": "/framer.py"
+   },
+   {
+    "table": 0,
+    "word": "framer-prompt.md",
+    "before": "framer",
+    "after": "-prompt.md"
+   },
+   {
+    "table": 0,
+    "word": "framer-contract.md",
+    "before": "framer",
+    "after": "-contract.md"
+   },
+   {
+    "table": 0,
+    "word": "structured",
+    "before": "structur",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "harness",
+    "before": "harnes",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "golden",
+    "before": "golde",
+    "after": "n"
+   },
+   {
+    "table": 0,
+    "word": "run_evals.py",
+    "before": "run_ev",
+    "after": "als.py"
+   },
+   {
+    "table": 0,
+    "word": "faithfulness",
+    "before": "faithfuln",
+    "after": "ess"
+   },
+   {
+    "table": 0,
+    "word": "structural",
+    "before": "structur",
+    "after": "al"
+   },
+   {
+    "table": 0,
+    "word": "measured",
+    "before": "measure",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "interpretation",
+    "before": "interpr",
+    "after": "etation"
+   },
+   {
+    "table": 0,
+    "word": "threadSplit",
+    "before": "thread",
+    "after": "Split"
+   },
+   {
+    "table": 0,
+    "word": "coverage",
+    "before": "coverag",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "Deploy",
+    "before": "Deplo",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "skeleton",
+    "before": "skelet",
+    "after": "on"
+   },
+   {
+    "table": 0,
+    "word": "Railway",
+    "before": "Railwa",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "Postgres",
+    "before": "Postgre",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "scheduler",
+    "before": "schedul",
+    "after": "er"
+   },
+   {
+    "table": 0,
+    "word": "aiml-signal-system-production.up.railway.app",
+    "before": "aiml-signal",
+    "after": "-system-production.up.railway.app"
+   },
+   {
+    "table": 0,
+    "word": "dependency;",
+    "before": "depend",
+    "after": "ency;"
+   },
+   {
+    "table": 0,
+    "word": "/health",
+    "before": "/healt",
+    "after": "h"
+   },
+   {
+    "table": 0,
+    "word": "deployed",
+    "before": "deploye",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "Extract",
+    "before": "Extrac",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "shared",
+    "before": "share",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "plumbing",
+    "before": "plumb",
+    "after": "ing"
+   },
+   {
+    "table": 0,
+    "word": "agents/budget.py",
+    "before": "agents",
+    "after": "/budget.py"
+   },
+   {
+    "table": 0,
+    "word": "agents/llm.py",
+    "before": "agents",
+    "after": "/llm.py"
+   },
+   {
+    "table": 0,
+    "word": "upgraded",
+    "before": "upgrade",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "Storage",
+    "before": "Storag",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "excerpt",
+    "before": "excerp",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "Postgres",
+    "before": "Postgre",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "feedback,",
+    "before": "feedbac",
+    "after": "k,"
+   },
+   {
+    "table": 0,
+    "word": "database",
+    "before": "databas",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "published",
+    "before": "publishe",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "otherwise.",
+    "before": "otherwis",
+    "after": "e."
+   },
+   {
+    "table": 0,
+    "word": "attached",
+    "before": "attache",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "provenance,",
+    "before": "provena",
+    "after": "nce,"
+   },
+   {
+    "table": 0,
+    "word": "feedback",
+    "before": "feedbac",
+    "after": "k"
+   },
+   {
+    "table": 0,
+    "word": "Reader",
+    "before": "Reade",
+    "after": "r"
+   },
+   {
+    "table": 0,
+    "word": "Gatekeeper",
+    "before": "Gatek",
+    "after": "eeper"
+   },
+   {
+    "table": 0,
+    "word": "merged",
+    "before": "merge",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "Discovers",
+    "before": "Discover",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "seventeen",
+    "before": "sevente",
+    "after": "en"
+   },
+   {
+    "table": 0,
+    "word": "canonicalises,",
+    "before": "canonic",
+    "after": "alises,"
+   },
+   {
+    "table": 0,
+    "word": "provenance",
+    "before": "provena",
+    "after": "nce"
+   },
+   {
+    "table": 0,
+    "word": "corroboration",
+    "before": "corrobor",
+    "after": "ation"
+   },
+   {
+    "table": 0,
+    "word": "recorded",
+    "before": "recorde",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "ADD_NEWS_TOKEN",
+    "before": "ADD_NE",
+    "after": "WS_TOKEN"
+   },
+   {
+    "table": 0,
+    "word": "candidates",
+    "before": "candidat",
+    "after": "es"
+   },
+   {
+    "table": 0,
+    "word": "discovery",
+    "before": "discover",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "answered",
+    "before": "answere",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "config/digest-sources.md",
+    "before": "config",
+    "after": "/digest-sources.md"
+   },
+   {
+    "table": 0,
+    "word": "catalogue",
+    "before": "catalogu",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "Anthropic's",
+    "before": "Anthropi",
+    "after": "c's"
+   },
+   {
+    "table": 0,
+    "word": "Microsoft",
+    "before": "Microso",
+    "after": "ft"
+   },
+   {
+    "table": 0,
+    "word": "OpenAI's",
+    "before": "OpenAI'",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "research",
+    "before": "researc",
+    "after": "h"
+   },
+   {
+    "table": 0,
+    "word": "changelog",
+    "before": "changel",
+    "after": "og"
+   },
+   {
+    "table": 0,
+    "word": "discovery.",
+    "before": "discover",
+    "after": "y."
+   },
+   {
+    "table": 0,
+    "word": "Fetching",
+    "before": "Fetchin",
+    "after": "g"
+   },
+   {
+    "table": 0,
+    "word": "delegated,",
+    "before": "delegat",
+    "after": "ed,"
+   },
+   {
+    "table": 0,
+    "word": "reimplemented.",
+    "before": "reimple",
+    "after": "mented."
+   },
+   {
+    "table": 0,
+    "word": "Reimplementing",
+    "before": "Reimplement",
+    "after": "ing"
+   },
+   {
+    "table": 0,
+    "word": "Reader's",
+    "before": "Reade",
+    "after": "r's"
+   },
+   {
+    "table": 0,
+    "word": "deduplication",
+    "before": "dedup",
+    "after": "lication"
+   },
+   {
+    "table": 0,
+    "word": "Duplicates",
+    "before": "Duplicat",
+    "after": "es"
+   },
+   {
+    "table": 0,
+    "word": "cheapest",
+    "before": "cheapes",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "(tracking",
+    "before": "(trackin",
+    "after": "g"
+   },
+   {
+    "table": 0,
+    "word": "fragments);",
+    "before": "fragmen",
+    "after": "ts);"
+   },
+   {
+    "table": 0,
+    "word": "different",
+    "before": "differen",
+    "after": "t"
+   },
+   {
+    "table": 0,
+    "word": "deterministic",
+    "before": "determi",
+    "after": "nistic"
+   },
+   {
+    "table": 0,
+    "word": "fingerprint",
+    "before": "fingerpr",
+    "after": "int"
+   },
+   {
+    "table": 0,
+    "word": "judgement",
+    "before": "judgem",
+    "after": "ent"
+   },
+   {
+    "table": 0,
+    "word": "recorded",
+    "before": "recorde",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "candidates",
+    "before": "candidat",
+    "after": "es"
+   },
+   {
+    "table": 0,
+    "word": "compared.",
+    "before": "compar",
+    "after": "ed."
+   },
+   {
+    "table": 0,
+    "word": "captured",
+    "before": "capture",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "happened",
+    "before": "happene",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "data/evals/canonical/",
+    "before": "data/e",
+    "after": "vals/canonical/"
+   },
+   {
+    "table": 0,
+    "word": "preview's",
+    "before": "preview'",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "template,",
+    "before": "templat",
+    "after": "e,"
+   },
+   {
+    "table": 0,
+    "word": "agents/dedupe.py",
+    "before": "agents",
+    "after": "/dedupe.py"
+   },
+   {
+    "table": 0,
+    "word": "Substack",
+    "before": "Substac",
+    "after": "k"
+   },
+   {
+    "table": 0,
+    "word": "data/evals/canonical/content/",
+    "before": "data/e",
+    "after": "vals/canonical/content/"
+   },
+   {
+    "table": 0,
+    "word": "disagreed",
+    "before": "disagre",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "recorded",
+    "before": "recorde",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "dedup_decisions",
+    "before": "dedup_decisi",
+    "after": "ons"
+   },
+   {
+    "table": 0,
+    "word": "captured",
+    "before": "capture",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "captured",
+    "before": "capture",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "happened",
+    "before": "happene",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "Framer",
+    "before": "Frame",
+    "after": "r"
+   },
+   {
+    "table": 0,
+    "word": "agents/weekly.py",
+    "before": "agents",
+    "after": "/weekly.py"
+   },
+   {
+    "table": 0,
+    "word": "database",
+    "before": "databas",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "re-fetching.",
+    "before": "re-fetching",
+    "after": "."
+   },
+   {
+    "table": 0,
+    "word": "unchanged",
+    "before": "unchang",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "bounded",
+    "before": "bounde",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "verified);",
+    "before": "verified)",
+    "after": ";"
+   },
+   {
+    "table": 0,
+    "word": "functions",
+    "before": "function",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "agents/gates.py",
+    "before": "agents",
+    "after": "/gates.py"
+   },
+   {
+    "table": 0,
+    "word": "negative-01",
+    "before": "negati",
+    "after": "ve-01"
+   },
+   {
+    "table": 0,
+    "word": "supporting",
+    "before": "supporti",
+    "after": "ng"
+   },
+   {
+    "table": 0,
+    "word": "fabrication,",
+    "before": "fabricati",
+    "after": "on,"
+   },
+   {
+    "table": 0,
+    "word": "bounded",
+    "before": "bounde",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "switched",
+    "before": "switche",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "RETRY_ON_LIFT",
+    "before": "RETRY_ON_LIF",
+    "after": "T"
+   },
+   {
+    "table": 0,
+    "word": "summary",
+    "before": "summar",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "agents/composer.py",
+    "before": "agents",
+    "after": "/composer.py"
+   },
+   {
+    "table": 0,
+    "word": "template's",
+    "before": "templat",
+    "after": "e's"
+   },
+   {
+    "table": 0,
+    "word": "Learning",
+    "before": "Learnin",
+    "after": "g"
+   },
+   {
+    "table": 0,
+    "word": "footnotes,",
+    "before": "footnot",
+    "after": "es,"
+   },
+   {
+    "table": 0,
+    "word": "headline,",
+    "before": "headlin",
+    "after": "e,"
+   },
+   {
+    "table": 0,
+    "word": "hashtags",
+    "before": "hashtag",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "features,",
+    "before": "features",
+    "after": ","
+   },
+   {
+    "table": 0,
+    "word": "interpretation,",
+    "before": "interpre",
+    "after": "tation,"
+   },
+   {
+    "table": 0,
+    "word": "excerpts",
+    "before": "excerpt",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "unsupported",
+    "before": "unsupp",
+    "after": "orted"
+   },
+   {
+    "table": 0,
+    "word": "dismissed,",
+    "before": "dismiss",
+    "after": "ed,"
+   },
+   {
+    "table": 0,
+    "word": "rewritten,",
+    "before": "rewritte",
+    "after": "n,"
+   },
+   {
+    "table": 0,
+    "word": "removed",
+    "before": "remove",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "warning;",
+    "before": "warning",
+    "after": ";"
+   },
+   {
+    "table": 0,
+    "word": "composing",
+    "before": "composi",
+    "after": "ng"
+   },
+   {
+    "table": 0,
+    "word": "GATE=citations",
+    "before": "GATE=c",
+    "after": "itations"
+   },
+   {
+    "table": 0,
+    "word": "measured",
+    "before": "measur",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "Structural",
+    "before": "Structur",
+    "after": "al"
+   },
+   {
+    "table": 0,
+    "word": "faithfulness",
+    "before": "faithfuln",
+    "after": "ess"
+   },
+   {
+    "table": 0,
+    "word": "positives,",
+    "before": "positive",
+    "after": "s,"
+   },
+   {
+    "table": 0,
+    "word": "sentence",
+    "before": "sentenc",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "agents/repair.py",
+    "before": "agents",
+    "after": "/repair.py"
+   },
+   {
+    "table": 0,
+    "word": "unsupported",
+    "before": "unsupp",
+    "after": "orted"
+   },
+   {
+    "table": 0,
+    "word": "independent",
+    "before": "indepen",
+    "after": "dent"
+   },
+   {
+    "table": 0,
+    "word": "sentence,",
+    "before": "sentenc",
+    "after": "e,"
+   },
+   {
+    "table": 0,
+    "word": "sentence",
+    "before": "sentenc",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "removed",
+    "before": "remove",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "problems",
+    "before": "problem",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "warnings;",
+    "before": "warning",
+    "after": "s;"
+   },
+   {
+    "table": 0,
+    "word": "publishes",
+    "before": "publish",
+    "after": "es"
+   },
+   {
+    "table": 0,
+    "word": "published",
+    "before": "publish",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "warnings),",
+    "before": "warning",
+    "after": "s),"
+   },
+   {
+    "table": 0,
+    "word": "attempts",
+    "before": "attempt",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "fabrications",
+    "before": "fabricati",
+    "after": "ons"
+   },
+   {
+    "table": 0,
+    "word": "re-measured",
+    "before": "re-measur",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "published",
+    "before": "publish",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "touched).",
+    "before": "touched",
+    "after": ")."
+   },
+   {
+    "table": 0,
+    "word": "harness's",
+    "before": "harness",
+    "after": "'s"
+   },
+   {
+    "table": 0,
+    "word": "negative-01",
+    "before": "negati",
+    "after": "ve-01"
+   },
+   {
+    "table": 0,
+    "word": "PROGRESS;",
+    "before": "PROGR",
+    "after": "ESS;"
+   },
+   {
+    "table": 0,
+    "word": "published",
+    "before": "publishe",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "correctly,",
+    "before": "correctl",
+    "after": "y,"
+   },
+   {
+    "table": 0,
+    "word": "excerpts",
+    "before": "excerpt",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "Weekly",
+    "before": "Weekl",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "surface",
+    "before": "surfac",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "/weekly-digest",
+    "before": "/weekl",
+    "after": "y-digest"
+   },
+   {
+    "table": 0,
+    "word": "published",
+    "before": "publishe",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "database",
+    "before": "databas",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "template",
+    "before": "templat",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "templates/digest.template.html",
+    "before": "templa",
+    "after": "tes/digest.template.html"
+   },
+   {
+    "table": 0,
+    "word": "Learning",
+    "before": "Learnin",
+    "after": "g"
+   },
+   {
+    "table": 0,
+    "word": "hashtags,",
+    "before": "hashtag",
+    "after": "s,"
+   },
+   {
+    "table": 0,
+    "word": "collapsible",
+    "before": "collapsi",
+    "after": "ble"
+   },
+   {
+    "table": 0,
+    "word": "collapsed",
+    "before": "collapse",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "/weekly-digest/sample-2026-08-04",
+    "before": "/weekl",
+    "after": "y-digest/sample-2026-08-04"
+   },
+   {
+    "table": 0,
+    "word": "ARCHIVE",
+    "before": "ARCHIV",
+    "after": "E"
+   },
+   {
+    "table": 0,
+    "word": "PREDICTION",
+    "before": "PREDIC",
+    "after": "TION"
+   },
+   {
+    "table": 0,
+    "word": "HOMEWORK",
+    "before": "HOMEW",
+    "after": "ORK"
+   },
+   {
+    "table": 0,
+    "word": "rendered.",
+    "before": "rendere",
+    "after": "d."
+   },
+   {
+    "table": 0,
+    "word": "server-rendered",
+    "before": "server-rendere",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "static/digest.js",
+    "before": "static",
+    "after": "/digest.js"
+   },
+   {
+    "table": 0,
+    "word": "template",
+    "before": "templat",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "database",
+    "before": "databas",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "/application/Weekly-Digest.html",
+    "before": "/appli",
+    "after": "cation/Weekly-Digest.html"
+   },
+   {
+    "table": 0,
+    "word": "redirects",
+    "before": "redirect",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "becomes",
+    "before": "become",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "shared",
+    "before": "share",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "header,",
+    "before": "heade",
+    "after": "r,"
+   },
+   {
+    "table": 0,
+    "word": "layouts",
+    "before": "layout",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "(bk-tokens-css)",
+    "before": "(bk-tokens",
+    "after": "-css)"
+   },
+   {
+    "table": 0,
+    "word": "static/tokens.css",
+    "before": "static",
+    "after": "/tokens.css"
+   },
+   {
+    "table": 0,
+    "word": "design/system/tokens/",
+    "before": "design",
+    "after": "/system/tokens/"
+   },
+   {
+    "table": 0,
+    "word": "scripts/build_tokens.py",
+    "before": "script",
+    "after": "s/build_tokens.py"
+   },
+   {
+    "table": 0,
+    "word": "translucent,",
+    "before": "transluc",
+    "after": "ent,"
+   },
+   {
+    "table": 0,
+    "word": "wordmark",
+    "before": "wordma",
+    "after": "rk"
+   },
+   {
+    "table": 0,
+    "word": "centred):",
+    "before": "centred)",
+    "after": ":"
+   },
+   {
+    "table": 0,
+    "word": "measured",
+    "before": "measure",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "wordmark",
+    "before": "wordma",
+    "after": "rk"
+   },
+   {
+    "table": 0,
+    "word": "Newsreader",
+    "before": "Newsre",
+    "after": "ader"
+   },
+   {
+    "table": 0,
+    "word": "(Product),",
+    "before": "(Product",
+    "after": "),"
+   },
+   {
+    "table": 0,
+    "word": "Document",
+    "before": "Docume",
+    "after": "nt"
+   },
+   {
+    "table": 0,
+    "word": "contents",
+    "before": "content",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "Roadmap,",
+    "before": "Roadma",
+    "after": "p,"
+   },
+   {
+    "table": 0,
+    "word": "rendered",
+    "before": "rendere",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "templates",
+    "before": "templat",
+    "after": "es"
+   },
+   {
+    "table": 0,
+    "word": "Roadmap,",
+    "before": "Roadma",
+    "after": "p,"
+   },
+   {
+    "table": 0,
+    "word": "tests/test_site.py",
+    "before": "tests/test_s",
+    "after": "ite.py"
+   },
+   {
+    "table": 0,
+    "word": "tokens.css",
+    "before": "tokens",
+    "after": ".css"
+   },
+   {
+    "table": 0,
+    "word": "Document",
+    "before": "Docume",
+    "after": "nt"
+   },
+   {
+    "table": 0,
+    "word": "Roadmap,",
+    "before": "Roadma",
+    "after": "p,"
+   },
+   {
+    "table": 0,
+    "word": "snapshot,",
+    "before": "snapsho",
+    "after": "t,"
+   },
+   {
+    "table": 0,
+    "word": "capture",
+    "before": "captur",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "inboxes",
+    "before": "inboxe",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "publishes",
+    "before": "publishe",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "catalogue",
+    "before": "catalogu",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "captured",
+    "before": "capture",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "alongside",
+    "before": "alongsid",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "scheduled",
+    "before": "schedul",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "news-backlog.md",
+    "before": "news-backlo",
+    "after": "g.md"
+   },
+   {
+    "table": 0,
+    "word": "style-guide-backlog.md",
+    "before": "style-guide-backlo",
+    "after": "g.md"
+   },
+   {
+    "table": 0,
+    "word": "scheduled",
+    "before": "schedul",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "captures",
+    "before": "capture",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "untouched",
+    "before": "untouch",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "switched",
+    "before": "switche",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "agents.weekly",
+    "before": "agents",
+    "after": ".weekly"
+   },
+   {
+    "table": 0,
+    "word": "--scheduled",
+    "before": "--schedu",
+    "after": "led"
+   },
+   {
+    "table": 0,
+    "word": "published,",
+    "before": "publishe",
+    "after": "d,"
+   },
+   {
+    "table": 0,
+    "word": "/health",
+    "before": "/healt",
+    "after": "h"
+   },
+   {
+    "table": 0,
+    "word": "last_edition",
+    "before": "last_e",
+    "after": "dition"
+   },
+   {
+    "table": 0,
+    "word": "/add-news/batch",
+    "before": "/add-news/b",
+    "after": "atch"
+   },
+   {
+    "table": 0,
+    "word": "(token-guarded,",
+    "before": "(token-guarded",
+    "after": ","
+   },
+   {
+    "table": 0,
+    "word": "backlog\";",
+    "before": "backlog",
+    "after": "\";"
+   },
+   {
+    "table": 0,
+    "word": "docs/go-live.md",
+    "before": "docs/g",
+    "after": "o-live.md"
+   },
+   {
+    "table": 0,
+    "word": "docs/capture-import.md",
+    "before": "docs/c",
+    "after": "apture-import.md"
+   },
+   {
+    "table": 0,
+    "word": "ADD_NEWS_TOKEN",
+    "before": "ADD_NE",
+    "after": "WS_TOKEN"
+   },
+   {
+    "table": 0,
+    "word": "scheduled",
+    "before": "schedul",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "Framer",
+    "before": "Frame",
+    "after": "r"
+   },
+   {
+    "table": 0,
+    "word": "Varun's",
+    "before": "Varun'",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "template:",
+    "before": "templat",
+    "after": "e:"
+   },
+   {
+    "table": 0,
+    "word": "agents/composer.py",
+    "before": "agents",
+    "after": "/composer.py"
+   },
+   {
+    "table": 0,
+    "word": "config/style-guide.md",
+    "before": "config",
+    "after": "/style-guide.md"
+   },
+   {
+    "table": 0,
+    "word": "publishing",
+    "before": "publishi",
+    "after": "ng"
+   },
+   {
+    "table": 0,
+    "word": "agents/style_check.py",
+    "before": "agents",
+    "after": "/style_check.py"
+   },
+   {
+    "table": 0,
+    "word": "usefulness",
+    "before": "usefuln",
+    "after": "ess"
+   },
+   {
+    "table": 0,
+    "word": "refreshed",
+    "before": "refresh",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "releases\")",
+    "before": "release",
+    "after": "s\")"
+   },
+   {
+    "table": 0,
+    "word": "agents/counts.py",
+    "before": "agents",
+    "after": "/counts.py"
+   },
+   {
+    "table": 0,
+    "word": "style-guide-backlog.md",
+    "before": "style-guide-backlo",
+    "after": "g.md"
+   },
+   {
+    "table": 0,
+    "word": "stopping",
+    "before": "stoppin",
+    "after": "g"
+   },
+   {
+    "table": 0,
+    "word": "usefulness",
+    "before": "usefuln",
+    "after": "ess"
+   },
+   {
+    "table": 0,
+    "word": "confirms",
+    "before": "confirm",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "unattributable.",
+    "before": "unattributabl",
+    "after": "e."
+   },
+   {
+    "table": 0,
+    "word": "Railway",
+    "before": "Railwa",
+    "after": "y"
+   },
+   {
+    "table": 0,
+    "word": "railway.toml",
+    "before": "railwa",
+    "after": "y.toml"
+   },
+   {
+    "table": 0,
+    "word": "healthcheck",
+    "before": "healthch",
+    "after": "eck"
+   },
+   {
+    "table": 0,
+    "word": "/health",
+    "before": "/healt",
+    "after": "h"
+   },
+   {
+    "table": 0,
+    "word": "deliberately",
+    "before": "delibera",
+    "after": "tely"
+   },
+   {
+    "table": 0,
+    "word": "plan.md",
+    "before": "plan.m",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "healthcheck,",
+    "before": "healthch",
+    "after": "eck,"
+   },
+   {
+    "table": 0,
+    "word": "deployment",
+    "before": "deploym",
+    "after": "ent"
+   },
+   {
+    "table": 0,
+    "word": "throughout",
+    "before": "through",
+    "after": "out"
+   },
+   {
+    "table": 0,
+    "word": "standalone",
+    "before": "stand",
+    "after": "alone"
+   },
+   {
+    "table": 0,
+    "word": "Claude",
+    "before": "Claud",
+    "after": "e"
+   },
+   {
+    "table": 0,
+    "word": "Design",
+    "before": "Desig",
+    "after": "n"
+   },
+   {
+    "table": 0,
+    "word": "(Settings",
+    "before": "(Setting",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "systems),",
+    "before": "systems",
+    "after": "),"
+   },
+   {
+    "table": 0,
+    "word": "corrected",
+    "before": "correcte",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "design/system/",
+    "before": "design",
+    "after": "/system/"
+   },
+   {
+    "table": 0,
+    "word": ".claude/skills/ai-ml-signal-design/",
+    "before": ".claud",
+    "after": "e/skills/ai-ml-signal-design/"
+   },
+   {
+    "table": 0,
+    "word": "chapter",
+    "before": "chapt",
+    "after": "er"
+   },
+   {
+    "table": 0,
+    "word": "application/story.md",
+    "before": "applic",
+    "after": "ation/story.md"
+   },
+   {
+    "table": 0,
+    "word": "re-exported",
+    "before": "re-exporte",
+    "after": "d"
+   },
+   {
+    "table": 0,
+    "word": "approves",
+    "before": "approve",
+    "after": "s"
+   },
+   {
+    "table": 0,
+    "word": "committed",
+    "before": "committ",
+    "after": "ed"
+   },
+   {
+    "table": 0,
+    "word": "application/media/story.mp4",
+    "before": "applic",
+    "after": "ation/media/story.mp4"
+   }
+  ],
+  "thread": null
+ },
+ "weekly_digest": {
+  "url": "/weekly-digest",
+  "viewport": 390,
+  "page_scrolls_sideways": false,
+  "tables": [],
+  "mid_word_splits": [],
+  "thread": {
+   "font_size": "34px",
+   "max_width": "none",
+   "text_wrap": "balance",
+   "width": 283,
+   "height": 551,
+   "rendered_lines": 15,
+   "lines": [
+    "Two papers measured what agent scaffolding actually buys: a task-completion score fell from 8.08 to 3.23 out of 10 under injected MCP faults.",
+    "GitHub shipped named telemetry and agentic autofix while deprecating models across Copilot."
+   ]
+  }
+ }
+}

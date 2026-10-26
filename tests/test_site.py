@@ -194,5 +194,86 @@ class PlantedDrift(unittest.TestCase):
             self.assertIn("templates/page.html", problems[0])
 
 
+class DocumentTables(unittest.TestCase):
+    """Run 7, Step B: words never break mid-word in a table; a label column has one style; bold is only a cell's lead phrase."""
+    PAGES = ("/design/System-Design.html", "/roadmap", "/plan")
+
+    @classmethod
+    def setUpClass(cls):
+        client = TestClient(site.app)
+        cls.html = {p: client.get(p).text for p in cls.PAGES}
+
+    def tables(self, html):
+        for t in re.findall(r"<table\b([^>]*)>(.*?)</table>", html, re.S):
+            head = re.findall(r"<th\b[^>]*>(.*?)</th>", t[1], re.S)
+            rows = [re.findall(r"<td\b([^>]*)>(.*?)</td>", r, re.S) for r in re.findall(r"<tr>(.*?)</tr>", t[1].split("<tbody", 1)[-1], re.S)]
+            yield t[0], head, rows
+
+    def test_no_rule_lets_a_table_break_a_word(self):
+        css = (REPO / "static" / "site.css").read_text(encoding="utf-8")
+        plan = (REPO / "plan" / "plan.template.html").read_text(encoding="utf-8")
+        for name, text in (("site.css", css), ("plan.template.html", plan)):
+            self.assertNotRegex(text, r"overflow-wrap\s*:\s*anywhere", name)
+            self.assertNotRegex(text, r"word-break\s*:\s*break-all", name)
+
+    def test_long_identifiers_break_only_after_a_separator(self):
+        self.assertEqual(pages.break_code("<code>agents/build_check_payload()</code>"), "<code>agents/<wbr>build_<wbr>check_<wbr>payload(<wbr>)</code>")
+        self.assertEqual(pages.break_code("<code>CHECK_MODEL</code>"), "<code>CHECK_<wbr>MODEL</code>")
+        self.assertEqual(pages.break_code("plain/text_here"), "plain/text_here")
+
+    def test_every_label_table_first_column_carries_the_label_class_and_no_bold(self):
+        seen = 0
+        for path, html in self.html.items():
+            for _attrs, head, rows in self.tables(html):
+                label = pages.is_label_table([re.sub("<[^>]+>", "", h) for h in head])
+                for row in rows:
+                    if not row:
+                        continue
+                    attrs, cell = row[0]
+                    self.assertNotRegex(cell, r"<(b|strong)\b", f"{path}: bold in a first-column cell: {cell[:60]}")
+                    if label:
+                        seen += 1
+                        self.assertIn("label", attrs, f"{path}: first-column cell without the label class: {cell[:60]}")
+        self.assertGreater(seen, 20)
+
+    def test_a_bold_phrase_in_a_cell_is_only_its_lead(self):
+        for path, html in self.html.items():
+            for _a, _h, rows in self.tables(html):
+                for row in rows:
+                    for _attrs, cell in row:
+                        for m in re.finditer(r"<(b|strong)\b[^>]*>", cell):
+                            self.assertEqual(re.sub(r"<[^>]+>", "", cell[:m.start()]).strip(), "", f"{path}: bold that is not the lead of its cell: {cell[:80]}")
+
+    def test_wide_tables_keep_their_width_and_scroll_on_a_narrow_screen(self):
+        self.assertTrue(pages.is_wide_table(["a", "b", "c", "d"], [["x"] * 4]))
+        self.assertTrue(pages.is_wide_table(["a", "b"], [["word " * 41, "y"]]))
+        self.assertFalse(pages.is_wide_table(["a", "b", "c"], [["a few words", "x", "y"]]))
+        css = (REPO / "static" / "site.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"table\.wide\{[^}]*min-width")
+        self.assertRegex(css, r"\.table-wrap\{[^}]*overflow-x:auto")
+        self.assertIn('<table class="wide">', self.html["/design/System-Design.html"])
+
+    def test_the_label_style_is_mono_micro_uppercase_nowrap_and_not_bold(self):
+        css = (REPO / "static" / "site.css").read_text(encoding="utf-8")
+        rule = re.search(r"td\.label\{([^}]*)\}", css).group(1)
+        for part in ("var(--mono)", "var(--fs-micro)", "text-transform:uppercase", "font-weight:500", "white-space:nowrap"):
+            self.assertIn(part, rule)
+
+
+class ThreadHeadlineSize(unittest.TestCase):
+    """Run 7, Step A.4: the week's thread is set at the edition's section-headline size, not the 44px display size."""
+    def test_thread_lines_use_the_section_headline_size_and_a_measure(self):
+        t = (REPO / "templates" / "digest.template.html").read_text(encoding="utf-8")
+        block = re.search(r'<span class="([^"]*)"><span class="line">\{\{ runs\(digest\.thread\.lines\[0\]\)', t)
+        self.assertIsNotNone(block)
+        classes = block.group(1).split()
+        self.assertIn("big36", classes)
+        self.assertNotIn("big44", classes)
+        self.assertIn("thread-lines", classes)
+        self.assertRegex(t, r"\.thread-lines\{[^}]*max-width:22em[^}]*text-wrap:balance")
+        self.assertRegex(t, r"\.big36\{font-size:36px")
+        self.assertRegex(t, r"@media \(max-width:760px\)\{.*\.big36\{font-size:28px")
+
+
 if __name__ == "__main__":
     unittest.main()

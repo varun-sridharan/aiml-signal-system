@@ -70,7 +70,7 @@
     JSON this page used to read carried them that way, so they render a step heavier
     than TO DO; dropping the <b> would quietly change the page. #}
 {%- set PILL = "display:inline-block;font-family:var(--mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:.12em;border-radius:3px;padding:3px 9px;white-space:nowrap;" %}
-{%- set CELL = "padding:13px 14px 13px 0;border-bottom:1px solid var(--rule2);vertical-align:top;color:var(--soft);font-size:var(--fs-small);line-height:1.66;overflow-wrap:anywhere" %}
+{%- set CELL = "padding:13px 14px 13px 0;border-bottom:1px solid var(--rule2);vertical-align:top;color:var(--soft);font-size:var(--fs-small);line-height:1.66;overflow-wrap:normal" %}
 {{ site_header("Plan & Progress") }}
 <div class="doc">
   <aside data-sidebar="">
@@ -85,6 +85,9 @@
       {%- for ms in milestones %}
         <a data-toc="{{ ms.id }}" href="#{{ ms.id }}" style="display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--soft);font-size:var(--fs-small);font-weight:500;line-height:1.3;padding:5px 8px;border-radius:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--active);flex:none;align-self:center"></span><span>{{ ms.code }} &middot; {{ ms.title | safe }}</span></a>
         <a data-toc="{{ ms.id }}-plan" href="#{{ ms.id }}-plan" style="display:flex;text-decoration:none;color:var(--faint);font-size:var(--fs-micro);line-height:1.3;padding:4px 8px 4px 26px;border-radius:5px"><span>Plan</span></a>
+        {%- if ms.notes %}
+        <a data-toc="{{ ms.id }}-notes" href="#{{ ms.id }}-notes" style="display:flex;text-decoration:none;color:var(--faint);font-size:var(--fs-micro);line-height:1.3;padding:4px 8px 4px 26px;border-radius:5px"><span>Row notes</span></a>
+        {%- endif %}
         <a data-toc="{{ ms.id }}-status" href="#{{ ms.id }}-status" style="display:flex;text-decoration:none;color:var(--faint);font-size:var(--fs-micro);line-height:1.3;padding:4px 8px 4px 26px;border-radius:5px"><span>Status</span></a>
       {%- endfor %}
         <a data-toc="decision-log" href="#decision-log" style="display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--soft);font-size:var(--fs-small);font-weight:500;line-height:1.3;padding:5px 8px;border-radius:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--rule);flex:none;align-self:center"></span><span>Decision Log</span></a>
@@ -123,7 +126,7 @@
           {%- if ms.plan_intro %}
           <p style="margin:0 0 14px;color:var(--soft);font-size:var(--fs-small);line-height:1.72;max-width:86ch;text-wrap:pretty">{{ ms.plan_intro | safe }}</p>
           {%- endif %}
-          <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed">
+          <div class="table-wrap" style="overflow-x:auto"><table class="wide" style="width:100%;border-collapse:collapse;text-align:left;table-layout:fixed">
             <tr>
               {%- for h in ["Activity", "Outcome", "Why it matters", "Status"] %}
               <th style="text-align:left;padding:10px 14px 10px 0;border-bottom:1px solid var(--ink);color:var(--ink);font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;font-weight:500;width:{{ [21, 25, 36, 18][loop.index0] }}%{% if loop.last %};text-align:right{% endif %}">{{ h }}</th>
@@ -131,9 +134,9 @@
             </tr>
             {%- for row in ms.rows %}
             <tr>
-              <td style="{{ CELL }};color:var(--ink);font-weight:600">{{ row.activity | safe }}</td>
-              <td style="{{ CELL }}">{{ row.outcome | safe }}</td>
-              <td style="{{ CELL }};color:var(--soft)">{{ row.why | safe }}</td>
+              <td style="{{ CELL }};color:var(--ink);font-weight:600">{{ row.activity | wbr_code | safe }}</td>
+              <td style="{{ CELL }}">{{ row.outcome | wbr_code | safe }}</td>
+              <td style="{{ CELL }};color:var(--soft)">{{ row.why | wbr_code | safe }}</td>
               <td style="{{ CELL }};text-align:right;white-space:nowrap">
                 <span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:5px">
                 {%- if row.status == "done" %}
@@ -150,6 +153,16 @@
             </tr>
             {%- endfor %}
           </table></div>
+          {%- if ms.notes %}
+          <div id="{{ ms.id }}-notes" class="plan-row-notes" style="margin:30px 0 0;padding-top:18px;border-top:1px solid var(--rule)">
+            <h3 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.014em;line-height:1.2;margin:0 0 6px">Row notes</h3>
+            <p style="margin:0 0 6px;color:var(--faint);font-size:var(--fs-small);line-height:1.6">What the table's short cells no longer carry, word for word, in the table's order.</p>
+            {%- for n in ms.notes %}
+            <h4 id="{{ n.anchor }}" style="font-family:var(--serif);font-size:var(--fs-body);font-weight:600;color:var(--ink);line-height:1.3;margin:26px 0 0;scroll-margin-top:calc(var(--header-h) + 16px)">{{ n.title | safe }}</h4>
+            <div style="color:var(--soft);font-size:var(--fs-small);line-height:1.72;max-width:84ch">{{ n.html | safe }}</div>
+            {%- endfor %}
+          </div>
+          {%- endif %}
         </div>
 
         <div id="{{ ms.id }}-status" style="margin:30px 0 0;padding-top:18px;border-top:1px solid var(--rule)">

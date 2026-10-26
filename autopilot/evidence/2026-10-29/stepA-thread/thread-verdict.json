@@ -1,0 +1,29 @@
+{
+ "confidence": 0.67,
+ "claims": [
+  {
+   "claim": "New studies measure what agent scaffolding actually buys",
+   "supporting_span": null,
+   "supported": false,
+   "span_verified": false
+  },
+  {
+   "claim": "GitHub shipped agent tooling",
+   "supporting_span": "Agentic autofix for code scanning alerts is now generally available",
+   "supported": true,
+   "span_verified": true
+  },
+  {
+   "claim": "GitHub shipped autofix",
+   "supporting_span": "Agentic autofix for code scanning alerts is now generally available",
+   "supported": true,
+   "span_verified": true
+  }
+ ],
+ "unsupported_claims": [
+  "New studies measure what agent scaffolding actually buys"
+ ],
+ "grader_errors": [],
+ "possible_false_alarms": [],
+ "lifted_claims": []
+}

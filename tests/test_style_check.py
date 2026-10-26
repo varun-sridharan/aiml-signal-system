@@ -166,6 +166,37 @@ class Rule5StageDirections(unittest.TestCase):
             self.assertEqual(sc.stage_direction_failures(s), [], s)
 
 
+class ThreadHeadline(unittest.TestCase):
+    """Run 7, Step A: two short lines, no figures, no number repeated across the thread, essay and stories headlines."""
+    def ed(self, lines, learning="Helio cut conflicts sharply", stories="Helio shipped a queue"):
+        return {"thread": {"lines": lines, "body": ""}, "learning": {"headline": learning, "paras": []}, "storiesTitle": stories}
+
+    def test_two_short_figure_free_lines_pass(self):
+        self.assertEqual(sc.thread_findings(self.ed(["Scaffolding is now measured.", "Vendors keep shipping it anyway."])), [])
+
+    def test_a_line_over_nine_words_is_flagged(self):
+        got = sc.thread_findings(self.ed(["Two papers measured what agent scaffolding actually buys here today.", "Vendors ship."]))
+        self.assertEqual([p for p, _ in got], ["thread.line.1"])
+
+    def test_sixteen_words_in_all_is_the_limit(self):
+        nine = "one two three four five six seven eight nine"
+        self.assertEqual(sc.thread_findings(self.ed([nine, "a b c d e f g"])), [])
+        self.assertEqual([p for p, _ in sc.thread_findings(self.ed([nine, "a b c d e f g h"]))], ["thread.line.2"])
+
+    def test_a_figure_in_a_line_is_flagged(self):
+        got = sc.thread_findings(self.ed(["Cost fell from 8.08 to 3.23.", "Vendors ship."]))
+        self.assertTrue(any(p == "thread.line.1" and "figure" in m for p, m in got))
+
+    def test_a_number_shared_by_the_essay_and_stories_headlines_is_flagged_on_the_later_one(self):
+        got = sc.thread_findings(self.ed(["Scaffolding is measured.", "Vendors ship it."], learning="Cost fell from 8.08 to 3.23", stories="Scaffolding cut 8.08 to 3.23"))
+        self.assertEqual({p for p, _ in got}, {"stories.title"})
+
+    def test_it_is_part_of_the_edition_findings_and_sends_the_field_back(self):
+        ed = WholeEdition().edition()
+        ed["thread"]["lines"][0] = "Four releases cut the cost of running a model for everyone this week."
+        self.assertIn("thread.line.1", {p for p, _ in sc.edition_style_findings(ed)})
+
+
 class WholeEdition(unittest.TestCase):
     def edition(self, **over):
         base = {

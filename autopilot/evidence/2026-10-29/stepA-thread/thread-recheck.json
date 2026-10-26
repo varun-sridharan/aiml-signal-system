@@ -1,0 +1,36 @@
+{
+ "week": "2026-W44",
+ "old_lines": [
+  " Two papers measured what agent scaffolding actually buys: a task-completion score fell from 8.08 to 3.23 out of 10 under injected MCP faults.",
+  "GitHub shipped [[hl|named telemetry and agentic autofix]] while deprecating models across Copilot."
+ ],
+ "new_lines": [
+  "New studies measure what agent scaffolding actually buys.",
+  "GitHub meanwhile shipped [[hl|agent tooling and autofix]]."
+ ],
+ "thread_rule_findings": [],
+ "ledger_before_usd": 31.1231,
+ "payload_chars": 10069,
+ "claims": [
+  {
+   "claim": "New studies measure what agent scaffolding actually buys",
+   "supported": false,
+   "span_verified": false
+  },
+  {
+   "claim": "GitHub shipped agent tooling",
+   "supported": true,
+   "span_verified": true
+  },
+  {
+   "claim": "GitHub shipped autofix",
+   "supported": true,
+   "span_verified": true
+  }
+ ],
+ "unsupported_claims": [
+  "New studies measure what agent scaffolding actually buys"
+ ],
+ "ledger_after_usd": 31.1275,
+ "result": "failed: the old lines are kept"
+}

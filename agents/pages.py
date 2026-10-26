@@ -97,6 +97,30 @@ def links(html: str) -> str:
     return re.sub(r'href="([^"#]*)(#[^"]*)?"', lambda m: f'href="{LINKS.get(m.group(1), m.group(1))}{m.group(2) or ""}"', html or "")
 
 
+# Heads of a table whose first column names the row (a kind, an agent, a concern): one label style for every row, never bold.
+LABEL_HEADS = ("agent", "kind", "concern", "shape", "status", "")
+WIDE_COLUMNS = 4
+WIDE_CELL_WORDS = 40
+_CODE = re.compile(r"(<code\b[^>]*>)(.*?)(</code>)", re.S)
+_BREAK_AFTER = re.compile(r"([/_.(])(?=[^<\s&])")
+_WORDS = re.compile(r"<[^>]+>")
+
+
+def break_code(html: str) -> str:
+    """Words never break mid-word in a table; a long identifier may break only after / _ . or ( , where a <wbr> allows it."""
+    return _CODE.sub(lambda m: m.group(1) + _BREAK_AFTER.sub(r"\1<wbr>", m.group(2)) + m.group(3), html or "")
+
+
+def is_label_table(head: list) -> bool:
+    return bool(head) and re.sub(r"<[^>]+>", "", str(head[0])).strip().lower() in LABEL_HEADS
+
+
+def is_wide_table(head: list, rows: list) -> bool:
+    """A table of 4 or more columns, or with a cell over 40 words, keeps its full column and scrolls on a narrow screen."""
+    longest = max((len(_WORDS.sub(" ", str(c)).split()) for r in rows for c in r), default=0)
+    return len(head) >= WIDE_COLUMNS or longest > WIDE_CELL_WORDS
+
+
 def _walk(obj, fn):
     if isinstance(obj, str):
         return fn(obj)
@@ -152,6 +176,9 @@ def system_design() -> dict:
                 b["svg"] = tokenise_svg(b["svg"])
             elif t == "figureHtml":
                 b["html"] = tokenise_css(b["html"])
+            elif t == "table":
+                b["label"], b["wide"] = is_label_table(b["head"]), is_wide_table(b["head"], b["rows"])
+                b["rows"] = [[break_code(c) for c in row] for row in b["rows"]]
         toc.append({"id": section["id"], "num": section["num"], "title": section["title"], "subs": subs})
     d["toc"] = toc
     return d

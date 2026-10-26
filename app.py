@@ -72,6 +72,7 @@ except budget.LedgerUnavailable as _missing:
 # WHAT: templates come from plan/ (the two page templates, beside their sources) and
 # templates/ (the shared head and header partials).
 templates = Jinja2Templates(directory=ROOT / "templates")
+templates.env.filters["wbr_code"] = pages.break_code      # a long identifier in a table cell may break only after / _ . or (
 templates.env.loader = ChoiceLoader([
     FileSystemLoader(ROOT / "plan"),
     FileSystemLoader(ROOT / "templates"),
