@@ -1,18 +1,12 @@
 {#
-  The site header and navigation, shared by every rendered page.
+  The one site header, included by all five pages (Landing, Document with contents sidebar, Edition).
 
-  THE HEADER IS IDENTICAL ON ALL FIVE PAGES. wordmark + wordmarkAccent render as one
-  lockup in the serif face, the accent character in --accent. It is the site name and
-  never changes per page. The page you are on is shown ONLY by nav.current. There is no
-  descriptor pill, no page title, and no second active state in the header.
+  It follows design/system/components/chrome/SiteHeader: sticky, 93% paper with an 8px blur, the wordmark in Newsreader 17px 600
+  and the nav in Public Sans 13px, the current page underlined in the accent, centred over the content. Its styles are the
+  .site-header rules in static/site.css and use tokens only. The wordmark never changes per page; the current page is shown by
+  the nav's active item alone. The span sits flush against the wordmark, since whitespace there renders as a space.
 
-  The span sits flush against the wordmark with no whitespace between the tags, because
-  any whitespace there renders as a space before the accent character.
-
-  Font sizes are tokens, not literals: the Plan page sets --fs-body:17px and the Roadmap
-  page 15px, which is what each page's bundle rendered.
-
-  Import with: {% from "_site.html" import NAV, site_header %}
+  Import with: {% from "_site.html" import NAV, site_header %}   and call   {{ site_header("Plan & Progress") }}
 #}
 {%- set WORDMARK = "AI/ML Signal" %}
 {%- set WORDMARK_ACCENT = "." %}
@@ -26,19 +20,19 @@
 ] %}
 
 {%- macro site_header(current) %}
-  <header style="position:fixed;top:0;left:var(--rail);right:0;z-index:20;background:rgba(244,241,232,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);transition:left .22s ease">
-    <div style="padding:12px 40px;display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap">
-      <a href="{{ HOME }}" style="font-family:var(--serif);font-size:var(--fs-body);font-weight:600;letter-spacing:-.012em;color:var(--ink);text-decoration:none;flex:none;white-space:nowrap">{{ WORDMARK }}<span style="color:var(--accent)">{{ WORDMARK_ACCENT }}</span></a>
-      <div style="display:flex;align-items:center;gap:10px 19px;flex-wrap:wrap;font-size:var(--fs-small);min-width:0">
+  <header class="site-header">
+    <div class="in">
+      <a class="mark" href="{{ HOME }}">{{ WORDMARK }}<span>{{ WORDMARK_ACCENT }}</span></a>
+      <nav aria-label="Site">
         {%- for item in NAV %}
         {%- if item.label == current %}
-        <span aria-current="page" style="color:var(--accent);font-weight:600;border-bottom:1.5px solid var(--accent);padding-bottom:2px">{{ item.label }}</span>
+        <span aria-current="page">{{ item.label }}</span>
         {%- else %}
-        <a href="{{ item.href }}" style="color:var(--soft);text-decoration:none;border-bottom:0">{{ item.label }}</a>
+        <a href="{{ item.href }}">{{ item.label }}</a>
         {%- endif %}
         {%- endfor %}
-      </div>
+      </nav>
     </div>
-    <div style="height:2px;background:transparent"><div data-scrollfill="" style="height:100%;width:0%;background:var(--accent)"></div></div>
+    <div class="bar"><div data-scrollfill=""></div></div>
   </header>
 {%- endmacro %}

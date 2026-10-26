@@ -169,8 +169,8 @@ def client_address(headers, peer: str | None) -> str:
 import re
 
 TOKEN = re.compile(r"\[\[([^|\]\[]{1,40})\|([^\]\[]*)\]\]")       # any [[kind|text]]; a kind the page does not know shows as its text
-SECTION_COLOURS = {"thread": ("#B5502A", "#A3451F"), "learning": ("#2F5D7C", "#2F5D7C"),
-                   "stories": ("#8A4F7D", "#7E4572"), "leaders": ("#7A5F14", "#7A5F14")}
+SECTION_COLOURS = {"thread": ("var(--sec-thread)", "var(--sec-thread-ink)"), "learning": ("var(--sec-learning)", "var(--sec-learning-ink)"),
+                   "stories": ("var(--sec-stories)", "var(--sec-stories-ink)"), "leaders": ("var(--sec-leaders)", "var(--sec-leaders-ink)")}
 PILLS = ("DO THIS", "RADAR", "KNOW")
 SAMPLE = {"label": "SAMPLE", "range": "Sample edition · week ending 2026-08-04", "l1": "Capability spread out.",
           "l2": "Capital concentrated.", "stories": 7, "href": "/weekly-digest/sample-2026-08-04"}

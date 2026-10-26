@@ -12,7 +12,7 @@
   A brief written before the composing pass (the October 18 edition) has no essay, closing or hashtags, and renders the fields it has.
 #}
 {%- from "_site.html" import site_header %}
-{%- macro runs(rs, hl="#A3451F") -%}
+{%- macro runs(rs, hl="var(--sec-thread-ink)") -%}
 {%- for r in rs -%}
 {%- if r.kind == "plain" -%}{{ r.text }}
 {%- elif r.kind == "hl" -%}<span style="color:{{ hl }}">{{ r.text }}</span>
@@ -115,21 +115,13 @@
 <title>Weekly Digest{% if digest and digest.label %} &middot; {{ digest.label }}{% endif %}</title>
 {% include "_head.html" %}
 <style>
-  :root{
-    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#6B6357; --rule:#DED7C6; --rule2:#EAE4D6; --edge:#B3A994;
-    --accent:#B5502A; --ok:#2F6B52; --text:#2B2620; --wash:#EFE9DC;
-    --serif:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
-    --rail:0px; --fs-body:17px; --fs-small:13px; --hdr:52px;
-  }
-  *{box-sizing:border-box}
+  :root{--edge:var(--rule-strong); --text:var(--ink-2); --wash:var(--inset); --hdr:var(--header-h)}
   html{scroll-behavior:smooth} @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  html,body{margin:0;background:#E8E2D4}
   body{color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
   a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
   a:hover{color:var(--accent)}
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-  ::selection{background:#F4E7DF}
-  .wrap{padding:76px 16px 96px}
+  .wrap{padding:24px 16px 96px}
   main{max-width:1080px;margin:14px auto 0;background:var(--paper);border:1px solid var(--rule);padding:0 clamp(18px,5.7vw,62px) 72px}
   .titlebar{display:flex;justify-content:space-between;align-items:baseline;gap:10px 20px;flex-wrap:wrap;padding:26px 0 16px;border-bottom:1px solid var(--ink)}
   .titlebar h1{font-size:24px;font-weight:600;letter-spacing:-.012em;margin:0}
@@ -140,7 +132,7 @@
   .tabs button.on{border-bottom-color:var(--accent);color:var(--ink)}
   [role=tabpanel][hidden]{display:none}
   .notice{border:1px solid var(--rule);border-radius:4px;background:var(--panel);padding:12px 16px;margin:16px 0 0;font-size:15px;color:var(--soft)}
-  .notice.good{border-color:#C4D6CB;background:#EAF1EC;color:var(--ok)}
+  .notice.good{border-color:var(--ok-notice-border);background:var(--ok-notice-bg);color:var(--ok)}
   .panel{border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--panel);padding:16px 20px;margin:28px 0 0}
   .panel h2{margin:0;font-size:22px} .panel p{margin:8px 0 0;color:var(--soft)}
   .lede{font-size:20px;line-height:1.5;margin:56px 0 0;max-width:680px;color:var(--text)}
@@ -148,7 +140,7 @@
   nav.subnav{position:sticky;top:var(--hdr);z-index:6;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:stretch;gap:14px}
   .subwrap{position:relative;flex:1;min-width:0;display:flex}
   .subscroll{flex:1;min-width:0;display:flex;gap:4px 16px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding-right:28px}
-  .subfade{position:absolute;top:0;right:0;bottom:1px;width:36px;pointer-events:none;background:linear-gradient(to right,rgba(244,241,232,0),var(--paper))}
+  .subfade{position:absolute;top:0;right:0;bottom:1px;width:36px;pointer-events:none;background:linear-gradient(to right,var(--paper-clear),var(--paper))}
   nav.subnav a{flex:none;display:flex;align-items:center;gap:8px;padding:13px 0 11px;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;font-weight:600;color:var(--soft);white-space:nowrap}
   nav.subnav a[aria-current=true]{color:var(--ink)}
   .sw{width:8px;height:8px;border-radius:2px;flex:none}
@@ -156,8 +148,8 @@
   .subpill{font-size:10px;padding:1px 7px} .pill{font-size:10.5px;letter-spacing:.06em;padding:1px 8px}
   #toggle-all{flex:none;align-self:center;background:transparent;border:1px solid var(--edge);border-radius:3px;padding:5px 10px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;color:var(--ink);white-space:nowrap}
 
-  .s-thread{--c:#B5502A;--ink2:#A3451F} .s-learning{--c:#2F5D7C;--ink2:#2F5D7C} .s-stories{--c:#8A4F7D;--ink2:#7E4572} .s-leaders{--c:#7A5F14;--ink2:#7A5F14}
-  .news-sec{scroll-margin-top:60px;padding:34px 0 34px 26px;border-top:1px solid var(--rule);border-left:3px solid transparent;transition:border-color .15s ease}
+  .s-thread{--c:var(--sec-thread);--ink2:var(--sec-thread-ink)} .s-learning{--c:var(--sec-learning);--ink2:var(--sec-learning-ink)} .s-stories{--c:var(--sec-stories);--ink2:var(--sec-stories-ink)} .s-leaders{--c:var(--sec-leaders);--ink2:var(--sec-leaders-ink)}
+  .news-sec{scroll-margin-top:calc(var(--hdr) + 56px);padding:34px 0 34px 26px;border-top:1px solid var(--rule);border-left:3px solid transparent;transition:border-color .15s ease}
   .news-sec:first-of-type{padding-top:40px;border-top:0}
   .news-sec.open{border-left-color:var(--c)}
   .news-sec h2{margin:0;font-weight:400}
@@ -205,7 +197,7 @@
   .drawn li{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid var(--rule2);font-size:15px;line-height:1.4}
   .drawn .dn{font-family:var(--mono);font-size:10.5px;color:var(--faint);padding-top:3px}
   .numbers{display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--soft)}
-  .numbers div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted #CFC6B2;padding-bottom:6px}
+  .numbers div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted var(--rule-dotted);padding-bottom:6px}
   .numbers b{color:var(--ink);font-weight:600}
   .made p{font-size:14.5px;line-height:1.55;color:var(--soft);margin:8px 0 0}
 
@@ -243,12 +235,12 @@
   .tie{font-size:16px;line-height:1.5;margin:16px 0 0;color:var(--soft)} .tie span{color:var(--accent)}
   .srcs{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--soft)}
   .checked{color:var(--ok);display:inline-flex;align-items:center;gap:5px}
-  .vote{margin-top:16px;padding-top:14px;border-top:1px dotted #CFC6B2;scroll-margin-top:90px}
+  .vote{margin-top:16px;padding-top:14px;border-top:1px dotted var(--rule-dotted);scroll-margin-top:calc(var(--hdr) + 56px)}
   .thumbs{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
   .thumbs form{margin:0}
   .thumb{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--edge);color:var(--soft);list-style:none}
   .thumb::-webkit-details-marker{display:none}
-  .thumb:hover,.down[open] summary{border-color:#8A4F7D;color:#8A4F7D}
+  .thumb:hover,.down[open] summary{border-color:var(--sec-stories);color:var(--sec-stories)}
   .down[open]{flex-basis:100%}
   .down-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-width:460px}
   .down-form label{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--soft)}
@@ -279,14 +271,14 @@
   .archive .t2{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--soft);margin-top:6px}
   .archive .rd{font-family:var(--mono);font-size:11px;letter-spacing:.1em}
   @media (max-width:760px){.big44{font-size:34px}.big36{font-size:28px}.story.feature{padding:22px 18px}.feature h3{font-size:28px}.closing .cl{font-size:28px}}
-  @media (max-width:560px){:root{--hdr:78px}.wrap{padding-top:100px}}
+  @media (max-width:560px){.wrap{padding-top:24px}}
 </style>
 <noscript><style>
   .sec-body{grid-template-rows:1fr!important;visibility:visible!important} .preview{display:none} .tabs,#toggle-all{display:none}
   [role=tabpanel][hidden]{display:block} .news-sec{border-left-color:var(--c)}
 </style></noscript>
 </head>
-<body>
+<body class="layout-edition">
 {{ site_header("Weekly Digest") }}
 <div class="wrap">
 <main>
@@ -336,7 +328,7 @@
 
     {%- if digest.learning %}
     {{ sec_open("learning", "LEARNING FOR THE WEEK", digest.learning.count) }}
-        <span class="big big36">{{ runs(digest.learning.headline, "#2F5D7C") }}</span>
+        <span class="big big36">{{ runs(digest.learning.headline, "var(--sec-learning-ink)") }}</span>
     {{ sec_mid("learning", digest.learning.preview) }}
       <div class="essay">
         <div class="essay-main">
@@ -368,7 +360,7 @@
     {%- endif %}
 
     {{ sec_open("stories", "THIS WEEK'S STORIES", digest.stories.count) }}
-        <span class="big big36">{{ runs(digest.stories.title, "#7E4572") }}</span>
+        <span class="big big36">{{ runs(digest.stories.title, "var(--sec-stories-ink)") }}</span>
     {{ sec_mid("stories", digest.stories.preview) }}
       <div class="copy">
         {%- for r in digest.stories.rows %}

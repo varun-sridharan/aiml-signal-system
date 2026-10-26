@@ -1,0 +1,34 @@
+/* Site additions (autopilot Run 5, 2026-10-27, bk-tokens-css).
+   Every value here was already in a live page; none is new. They are tokens now so that no page needs a hex of its own.
+   The kit's colors.css, typography.css and spacing.css are untouched. */
+:root{
+  --paper-clear:rgba(244,241,232,0);     /* paper at 0%: the end of a fade into paper */
+  --paper-glass:rgba(244,241,232,.93);   /* the site header: paper at 93%, with an 8px backdrop blur */
+  --header-h:58px;                       /* the site header's height, border included; a sticky sidebar sits below it */
+  --rail:288px;                          /* the contents sidebar of the Document layout (site.js collapses it to 0) */
+  --shadow-tile:0 1px 2px rgba(32,28,23,.04);     /* Product's stat tile */
+  --shadow-tip:0 4px 16px rgba(32,28,23,.12);     /* a tooltip */
+  --scrollbar:#D2CBBA;                   /* scrollbar thumb */
+  --fs-section:28px;                     /* a numbered section heading in a Document page */
+  --radius-btn:8px;                      /* Product's buttons */
+  --on-accent:#FFFDF8;                   /* text on an accent button */
+
+  /* the three meaning colours' borders, where a pill or note needs one */
+  --ok-border:#C4D6CB;
+  --active-border:#E6D9B6;
+  --accent-border:#E0C4B4;
+  --accent-note-border:#E5CDBF;
+  --ok-line:#CFE0D5;
+
+  /* Roadmap's NEXT / M markers: a third warm colour, between the accent and the mustard */
+  --warn:#A9762A;
+  --warn-soft:#F6EEDD;
+  --warn-border:#E3CFA6;
+
+  /* the figures in System Design that draw other tools' interfaces (a code host, a cloud console, a terminal) use a cool grey-blue
+     palette of their own; it stays inside those figures and is named here so that no page carries a hex */
+  --fig-ink:#1B1F24;      --fig-blue:#2F6FB2;     --fig-grey:#8A939C;     --fig-line:#C3CCD4;
+  --fig-blue-soft:#C9DAE6; --fig-sand:#D4CCBA;     --fig-clay:#E3C8BC;     --fig-clay-2:#E3CBBC;
+  --fig-mist:#E6EDF2;     --fig-green-soft:#E7EFE9; --fig-fog:#EDF1F5;      --fig-cream:#EFEADD;
+  --fig-sky:#F4F8FC;      --fig-white:#F6F8FA;     --white:#FFFFFF;
+}

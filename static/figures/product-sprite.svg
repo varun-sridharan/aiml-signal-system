@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol data-dc-tpl="25" id="i-anchor" viewBox="0 0 24 24"><circle data-dc-tpl="26" cx="12" cy="5.2" r="2.2"></circle><path data-dc-tpl="27" d="M12 7.4V20"></path><path data-dc-tpl="28" d="M5 12.6h14"></path><path data-dc-tpl="29" d="M4.5 14.4A8 8 0 0 0 12 20a8 8 0 0 0 7.5-5.6"></path></symbol>
+<symbol data-dc-tpl="33" id="i-bug" viewBox="0 0 24 24"><path data-dc-tpl="34" d="M9 6.6a3 3 0 0 1 6 0"></path><rect data-dc-tpl="35" x="7.6" y="8.4" width="8.8" height="10.4" rx="4.4"></rect><path data-dc-tpl="36" d="M4.6 11h3M16.4 11h3M4.6 16h3M16.4 16h3M12 8.4v10.4"></path></symbol>
+<symbol data-dc-tpl="17" id="i-dumbbell" viewBox="0 0 24 24"><path data-dc-tpl="18" d="M3 9.5v5M6 7.5v9M18 7.5v9M21 9.5v5M6 12h12"></path></symbol>
+<symbol data-dc-tpl="22" id="i-eye" viewBox="0 0 24 24"><path data-dc-tpl="23" d="M2.5 12S6 6.2 12 6.2 21.5 12 21.5 12 18 17.8 12 17.8 2.5 12 2.5 12z"></path><circle data-dc-tpl="24" cx="12" cy="12" r="2.6"></circle></symbol>
+<symbol data-dc-tpl="8" id="i-funnel" viewBox="0 0 24 24"><path data-dc-tpl="9" d="M3.5 5h17l-6.6 8.2V20l-3.8-2.2v-4.6z"></path></symbol>
+<symbol data-dc-tpl="14" id="i-inbox" viewBox="0 0 24 24"><path data-dc-tpl="15" d="M3.5 13.5h5l1.4 2.4h4.2l1.4-2.4h5"></path><path data-dc-tpl="16" d="M6.4 4.5h11.2l2.9 9v6h-17v-6z"></path></symbol>
+<symbol data-dc-tpl="19" id="i-pen" viewBox="0 0 24 24"><path data-dc-tpl="20" d="M4 20l4.4-1.1L19.4 7.9 16.1 4.6 5.1 15.6z"></path><path data-dc-tpl="21" d="M14.6 6.1l3.3 3.3"></path></symbol>
+<symbol data-dc-tpl="37" id="i-scales" viewBox="0 0 24 24"><path data-dc-tpl="38" d="M12 4.4V20M7 20h10"></path><path data-dc-tpl="39" d="M5 8.6h14"></path><path data-dc-tpl="40" d="M5 8.6L2.6 14a2.9 2.9 0 0 0 4.8 0z"></path><path data-dc-tpl="41" d="M19 8.6L16.6 14a2.9 2.9 0 0 0 4.8 0z"></path></symbol>
+<symbol data-dc-tpl="10" id="i-sieve" viewBox="0 0 24 24"><path data-dc-tpl="11" d="M4 8h16"></path><path data-dc-tpl="12" d="M5.5 8l1.6 11h9.8L18.5 8"></path><path data-dc-tpl="13" d="M9 12v4M15 12v4M12 12v4"></path></symbol>
+<symbol data-dc-tpl="30" id="i-sun" viewBox="0 0 24 24"><circle data-dc-tpl="31" cx="12" cy="12" r="4.2"></circle><path data-dc-tpl="32" d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"></path></symbol>
+<marker data-dc-tpl="42" id="p-ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path data-dc-tpl="43" d="M0.5 1.2L9 5 0.5 8.8z" fill="#4C463D"></path></marker>
+<marker data-dc-tpl="44" id="p-ar-a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path data-dc-tpl="45" d="M0.5 1.2L9 5 0.5 8.8z" fill="#B5502A"></path></marker>
+</defs></svg>

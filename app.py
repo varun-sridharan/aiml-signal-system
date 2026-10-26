@@ -32,7 +32,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from agents import briefs, budget, digest, llm, reader
+from agents import briefs, budget, digest, llm, pages, reader
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -178,6 +178,19 @@ def roadmap(request: Request):
 # Registered BEFORE the mount. Starlette matches in registration order and a mount at
 # "/" matches every path, so after it this would never fire — and it would not 404
 # either, it would silently keep serving whatever file happened to be there.
+# WHAT: the Product and System Design pages, rendered from their content files like Plan and Roadmap (Run 5, bk-tokens-css).
+# CONCEPT: one build path for every page. The old URLs stay: they were Claude Design snapshots, and the snapshots are kept in the
+# repository as they were (they are not served). The content is the JSON's; the templates only lay it out.
+@app.get("/application/Product.html")
+def product_page(request: Request):
+    return templates.TemplateResponse(request=request, name="product.template.html", context={"page": pages.product()})
+
+
+@app.get("/design/System-Design.html")
+def system_design_page(request: Request):
+    return templates.TemplateResponse(request=request, name="system_design.template.html", context={"page": pages.system_design()})
+
+
 @app.get("/plan/Plan.html")
 def plan_legacy() -> RedirectResponse:
     return RedirectResponse("/plan", status_code=301)

@@ -1,0 +1,202 @@
+{
+ "product": {
+  "url": "/application/Product.html",
+  "viewport": 390,
+  "wordmark": {
+   "size": "17px",
+   "family": "Newsreader",
+   "weight": "600",
+   "rect": {
+    "x": 16,
+    "y": 10,
+    "w": 104,
+    "h": 29
+   }
+  },
+  "header": {
+   "position": "sticky",
+   "background": "rgba(244, 241, 232, 0.93)",
+   "blur": "blur(8px)",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 380,
+    "h": 50
+   },
+   "tag": "HEADER"
+  },
+  "nav": {
+   "size": "13px",
+   "family": "Public Sans"
+  },
+  "body": {
+   "size": "17px",
+   "family": "Public Sans"
+  },
+  "h1": {
+   "size": "40px",
+   "family": "Newsreader",
+   "weight": "600"
+  }
+ },
+ "weekly_digest": {
+  "url": "/weekly-digest",
+  "viewport": 390,
+  "wordmark": {
+   "size": "17px",
+   "family": "Newsreader",
+   "weight": "600",
+   "rect": {
+    "x": 16,
+    "y": 10,
+    "w": 104,
+    "h": 29
+   }
+  },
+  "header": {
+   "position": "sticky",
+   "background": "rgba(244, 241, 232, 0.93)",
+   "blur": "blur(8px)",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 380,
+    "h": 50
+   },
+   "tag": "HEADER"
+  },
+  "nav": {
+   "size": "13px",
+   "family": "Public Sans"
+  },
+  "body": {
+   "size": "18px",
+   "family": "Newsreader"
+  },
+  "h1": {
+   "size": "24px",
+   "family": "Newsreader",
+   "weight": "600"
+  }
+ },
+ "system_design": {
+  "url": "/design/System-Design.html",
+  "viewport": 390,
+  "wordmark": {
+   "size": "17px",
+   "family": "Newsreader",
+   "weight": "600",
+   "rect": {
+    "x": 16,
+    "y": 10,
+    "w": 104,
+    "h": 29
+   }
+  },
+  "header": {
+   "position": "sticky",
+   "background": "rgba(244, 241, 232, 0.93)",
+   "blur": "blur(8px)",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 380,
+    "h": 50
+   },
+   "tag": "HEADER"
+  },
+  "nav": {
+   "size": "13px",
+   "family": "Public Sans"
+  },
+  "body": {
+   "size": "17px",
+   "family": "Public Sans"
+  },
+  "h1": {
+   "size": "40px",
+   "family": "Newsreader",
+   "weight": "600"
+  }
+ },
+ "roadmap": {
+  "url": "/roadmap",
+  "viewport": 390,
+  "wordmark": {
+   "size": "17px",
+   "family": "Newsreader",
+   "weight": "600",
+   "rect": {
+    "x": 16,
+    "y": 10,
+    "w": 104,
+    "h": 29
+   }
+  },
+  "header": {
+   "position": "sticky",
+   "background": "rgba(244, 241, 232, 0.93)",
+   "blur": "blur(8px)",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 380,
+    "h": 50
+   },
+   "tag": "HEADER"
+  },
+  "nav": {
+   "size": "13px",
+   "family": "Public Sans"
+  },
+  "body": {
+   "size": "17px",
+   "family": "Public Sans"
+  },
+  "h1": {
+   "size": "40px",
+   "family": "Newsreader",
+   "weight": "600"
+  }
+ },
+ "plan": {
+  "url": "/plan",
+  "viewport": 390,
+  "wordmark": {
+   "size": "17px",
+   "family": "Newsreader",
+   "weight": "600",
+   "rect": {
+    "x": 16,
+    "y": 10,
+    "w": 104,
+    "h": 29
+   }
+  },
+  "header": {
+   "position": "sticky",
+   "background": "rgba(244, 241, 232, 0.93)",
+   "blur": "blur(8px)",
+   "rect": {
+    "x": 0,
+    "y": 0,
+    "w": 380,
+    "h": 50
+   },
+   "tag": "HEADER"
+  },
+  "nav": {
+   "size": "13px",
+   "family": "Public Sans"
+  },
+  "body": {
+   "size": "17px",
+   "family": "Public Sans"
+  },
+  "h1": {
+   "size": "40px",
+   "family": "Newsreader",
+   "weight": "600"
+  }
+ }
+}

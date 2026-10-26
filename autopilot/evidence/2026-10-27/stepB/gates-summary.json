@@ -1,0 +1,34 @@
+{
+ "run": "2026-W44",
+ "gate": "claims",
+ "failures": [],
+ "warnings": [
+  "coverage \u2014 thread: no split",
+  "style \u2014 essay paragraph 6: rule 1: the opening sentence carries no date"
+ ],
+ "repairs": {
+  "composed": {
+   "held": 0,
+   "flags": 2,
+   "removed": 0,
+   "regraded": false,
+   "dismissed": 2,
+   "rewritten": 0,
+   "unlocatable": 0,
+   "second_unreadable": 0
+  },
+  "first_pass": {
+   "held": 0,
+   "flags": 1,
+   "removed": 0,
+   "regraded": false,
+   "dismissed": 1,
+   "rewritten": 0,
+   "unlocatable": 0,
+   "second_unreadable": 0
+  }
+ },
+ "stories_published": 7,
+ "stories_held": 0,
+ "window": "Oct 18 \u2013 Oct 26, 2026"
+}

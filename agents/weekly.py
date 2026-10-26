@@ -438,7 +438,8 @@ def claims_gates(conn, client, week: str, art: dict, attempt: int, now: datetime
     fthread = fverdicts.get("thread") or {"confidence": None, "claims": [], "unsupported_claims": [], "grader_errors": [], "possible_false_alarms": [], "lifted_claims": []}
     if composed is not None:
         # the first pass's thread is not shown; the edition's is, with its links to held stories made plain text
-        framing = dict(framing, thread=composer_cited.strip_links_to(composed["thread"]["body"], held_sids), threadSplit=None)
+        thread_text = composer_cited.strip_links_to(composed["thread"]["body"], held_sids)
+        framing = dict(framing, thread=thread_text, threadSplit=repair.as_runs(thread_text, None))
     day = framer.assemble_day(profile, raw_day, framing, {i: _resolved(v, i) for i, v in fverdicts.items() if i != "thread"}, _resolved(fthread, "thread"))
     for item in day["items"]:
         if item["id"] in held_items:

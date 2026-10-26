@@ -60,42 +60,20 @@
 <title>{{ meta.title }}</title>
 {% include "_head.html" %}
 <style>
-  :root{
-    --paper:#F4F1E8; --panel:#FBF9F3; --ink:#201C17; --soft:#4C463D; --faint:#8B8375;
-    --rule:#DED7C6; --rule2:#EAE4D6; --accent:#B5502A; --accent-soft:#F4E7DF;
-    --dark:#201C17; --darktext:#EFE6D4; --ok:#2F6B52; --active:#7A5F14; --active-soft:#F5EAD0;
-    --sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-    --serif:'Newsreader',Georgia,serif;
-    --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
-    --rail:288px;
-    --fs-hero:clamp(40px,5.4vw,68px);
-    --fs-h2:40px;
-    --fs-h3:21px;
-    --fs-body:17px;
-    --fs-small:13px;
-    --fs-micro:10.5px;
-    --fs-display:38px;
-  }
   .pjust{text-align:justify;hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
   .foot code{font-family:var(--mono);font-size:11.5px}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);line-height:1.62;-webkit-font-smoothing:antialiased}
-  a{color:var(--accent);text-decoration:none}
-  a:hover{color:var(--ink);text-decoration:underline}
-  ::selection{background:var(--accent-soft)}
   input::placeholder{color:var(--faint)}
-  ::-webkit-scrollbar{width:10px;height:10px}
-  ::-webkit-scrollbar-thumb{background:#D2CBBA;border-radius:8px;border:3px solid var(--paper)}
 </style>
 </head>
-<body>
+<body class="layout-doc">
 {#- One pill style, four colourings. DONE and the blocker are wrapped in <b> because the
     JSON this page used to read carried them that way, so they render a step heavier
     than TO DO; dropping the <b> would quietly change the page. #}
 {%- set PILL = "display:inline-block;font-family:var(--mono);font-size:var(--fs-micro);font-weight:600;letter-spacing:.12em;border-radius:3px;padding:3px 9px;white-space:nowrap;" %}
 {%- set CELL = "padding:13px 14px 13px 0;border-bottom:1px solid var(--rule2);vertical-align:top;color:var(--soft);font-size:var(--fs-small);line-height:1.66;overflow-wrap:anywhere" %}
-<div style="display:block;min-height:100vh">
-  <aside data-sidebar="" style="position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:var(--panel);border-right:1px solid var(--rule);z-index:30;display:flex;flex-direction:column;overflow:hidden;transition:width .22s ease">
+{{ site_header("Plan & Progress") }}
+<div class="doc">
+  <aside data-sidebar="">
     <div style="display:flex;align-items:center;gap:12px;padding:15px 14px;border-bottom:1px solid var(--rule2);flex:none">
       <div data-toggle-toc="" title="Contents" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--rule);border-radius:6px;background:var(--paper);cursor:pointer;flex:none;font-size:var(--fs-micro);color:var(--soft);user-select:none">&#9776;</div>
       <div data-toc-label="" style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);white-space:nowrap">Contents</div>
@@ -113,17 +91,15 @@
     </div>
   </aside>
 
-  {{ site_header("Plan & Progress") }}
-
-  <main style="margin-left:var(--rail);padding:0 40px 120px;transition:margin-left .22s ease">
-    <article style="max-width:820px;margin:0 auto;padding-top:132px">
-      <div style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">{{ meta.kicker }}</div>
-      <h1 style="font-family:var(--serif);font-weight:600;font-size:var(--fs-hero);line-height:1.03;letter-spacing:-.022em;margin:14px 0 0">{{ meta.title }}</h1>
-      <p style="font-family:var(--serif);font-size:var(--fs-h3);line-height:1.45;color:var(--soft);margin:18px 0 0;max-width:52ch;text-wrap:pretty">{{ meta.lede_html | safe }}</p>
+  <main>
+    <article>
+      <div class="kicker">{{ meta.kicker }}</div>
+      <h1 class="page">{{ meta.title }}</h1>
+      <p class="lede">{{ meta.lede_html | safe }}</p>
 
       {%- for ms in milestones %}
 
-      <div data-phase="" data-status="{{ ms.percent }}%" id="{{ ms.id }}" style="scroll-margin-top:110px;background:var(--active-soft);border:1px solid #E6D9B6;border-left:3px solid var(--active);border-radius:0 4px 4px 0;margin:34px 0 0">
+      <div data-phase="" data-status="{{ ms.percent }}%" id="{{ ms.id }}" style="background:var(--active-soft);border:1px solid var(--active-border);border-left:3px solid var(--active);border-radius:0 4px 4px 0;margin:34px 0 0">
         <div data-phase-head="" style="display:flex;gap:16px;align-items:flex-start;padding:20px 24px;cursor:pointer">
           <span data-chev="" style="font-size:var(--fs-micro);color:var(--faint);display:inline-block;transform:rotate(0deg);margin-top:9px;transition:transform .18s ease;flex:none">&#9660;</span>
           <span style="font-family:var(--mono);font-size:var(--fs-small);font-weight:600;color:var(--active);letter-spacing:.04em;flex:none;margin-top:5px">{{ ms.code }}</span>
@@ -139,7 +115,7 @@
           </div>
         </div>
         <div data-phase-body="" data-open="1" style="display:block;padding:0 24px 24px 56px">
-        <div id="{{ ms.id }}-plan" style="scroll-margin-top:110px;margin:0">
+        <div id="{{ ms.id }}-plan" style="margin:0">
           <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 10px">
             <h2 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.014em;line-height:1.2;margin:0">Plan</h2>
             <span style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--faint)">{{ ms.total }} activities</span>
@@ -161,7 +137,7 @@
               <td style="{{ CELL }};text-align:right;white-space:nowrap">
                 <span style="display:inline-flex;flex-direction:column;align-items:flex-end;gap:5px">
                 {%- if row.status == "done" %}
-                <span style="{{ PILL }}color:var(--ok);border:1px solid #C4D6CB;background:#EAF1EC"><b>{{ row.label }}</b></span>
+                <span style="{{ PILL }}color:var(--ok);border:1px solid var(--ok-border);background:var(--ok-notice-bg)"><b>{{ row.label }}</b></span>
                 {%- elif row.status == "progress" %}
                 <span style="{{ PILL }}color:var(--active);border:1px solid var(--active);background:var(--active-soft)">{{ row.label }}</span>
                 {%- elif row.status == "blocked" %}
@@ -176,7 +152,7 @@
           </table></div>
         </div>
 
-        <div id="{{ ms.id }}-status" style="scroll-margin-top:110px;margin:30px 0 0;padding-top:18px;border-top:1px solid var(--rule)">
+        <div id="{{ ms.id }}-status" style="margin:30px 0 0;padding-top:18px;border-top:1px solid var(--rule)">
           <h2 style="font-family:var(--serif);font-size:var(--fs-h3);font-weight:600;letter-spacing:-.014em;line-height:1.2;margin:0 0 10px">Status</h2>
           {%- for p in ms.status_paras %}
           <p style="margin:{{ '0' if loop.first else '14px 0 0' }};color:var(--soft);font-size:var(--fs-body);line-height:1.78;max-width:84ch;text-wrap:pretty">{{ p | safe }}</p>
@@ -186,7 +162,7 @@
         </div>
       </div>
       {%- endfor %}
-      <div id="decision-log" style="scroll-margin-top:110px;margin:52px 0 0;padding-top:18px;border-top:1px solid var(--ink)">
+      <div id="decision-log" style="margin:52px 0 0;padding-top:18px;border-top:1px solid var(--ink)">
         <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
           <h1 style="font-family:var(--serif);font-weight:600;font-size:var(--fs-h3);letter-spacing:-.018em;margin:0">Decision Log</h1>
           <span style="font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--faint)">{{ decisions | length }} entries &middot; newest first</span>

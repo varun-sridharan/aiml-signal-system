@@ -170,6 +170,9 @@ Your own deployment needs only a `DATABASE_URL` pointing at any Postgres; the ta
 
 ## Notes
 
+**One site.** The five pages share one header (`templates/_site.html`), one token file (`static/tokens.css`, built from the brand kit in `design/system/tokens/` by `python scripts/build_tokens.py`) and three layouts (Landing, Document with a contents sidebar, Edition), whose rules are in `static/site.css`. Plan and Roadmap render from markdown; Product and System Design render from `application/Product.json` and `design/System_Design.json`; the Weekly Digest renders from the database. `tests/test_site.py` fails the build if a page lacks the header or the token file, or defines a colour of its own. A person or an agent making a page reads `design/system/readme.md` first (the project skill `.claude/skills/ai-ml-signal-design/` says how).
+
+
 Single-user today, but every record carries `user_id` and agents take `(profile, data) → output` with no personal facts hardcoded in prompts — so going multi-tenant is a data change, not a rewrite.
 
 `config/profile.json` is a **problem statement, not a settings file** — it describes the reader the system is solving for, and every agent takes it as input rather than having any of it baked into a prompt. That is the seam personalization runs through: the pipeline up to the Framer is identical for every reader, and only the framing step is per-person. Replace it with your own and nothing in the agent code changes.

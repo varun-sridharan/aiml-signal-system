@@ -1,0 +1,77 @@
+{#
+  The System Design page (the Document layout with a contents sidebar), rendered from design/System_Design.json by the
+  /design/System-Design.html route. agents/pages.py prepares the content: live links, figures with token colours, the two flow
+  diagrams, a table of contents from the sections and their sub-headings. The content is the file's; this template lays it out.
+  Terms in the text are <span class="gloss" data-term="..."> and their definitions are in the file's glossary, shown by static/gloss.js.
+#}
+{%- from "_site.html" import site_header %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.site.title }} · System Design</title>
+{% include "_head.html" %}
+</head>
+<body class="layout-doc">
+{{ site_header("System Design") }}
+<div class="doc">
+  <aside data-sidebar="">
+    <div class="toc-head">
+      <div data-toggle-toc="" title="Contents" class="toc-toggle">&#9776;</div>
+      <div data-toc-label="" class="toc-label">Contents</div>
+    </div>
+    <div data-toc-top="" class="toc-top"><input data-search="" type="text" class="toc-search" placeholder="Filter&#8230;"></div>
+    <div data-toc-body="" class="toc-body">
+      {%- for t in page.toc %}
+      <a class="toc-a" data-toc="{{ t.id }}" href="#{{ t.id }}"><span class="num">{{ t.num }}</span><span>{{ t.title | safe }}</span></a>
+      {%- for sub in t.subs %}<a class="toc-sub" data-toc="{{ sub.id }}" href="#{{ sub.id }}"><span>{{ sub.title | safe }}</span></a>{% endfor %}
+      {%- endfor %}
+    </div>
+  </aside>
+  <main>
+    <article>
+      <div class="kicker">{{ page.site.kicker }}</div>
+      <h1 class="page">{{ page.site.title }}</h1>
+      <p class="lede">{{ page.site.lede | safe }}</p>
+      <div class="meta-line">{% for st in page.site.stats %}<span>{{ st }}</span>{% endfor %}</div>
+
+      {%- for sec in page.sections %}
+      <section class="sec" id="{{ sec.id }}">
+        <h2 class="sec-head"><span class="num">{{ sec.num }}</span>{{ sec.title | safe }}</h2>
+        {%- for b in sec.blocks %}
+        {%- if b.t == "p" %}<p>{{ b.html | safe }}</p>
+        {%- elif b.t == "h3" %}<h3 id="{{ b.anchor }}">{{ b.title | safe }}{% if b.status %} <span class="pill">{{ b.status }}</span>{% endif %}</h3>
+        {%- elif b.t == "h4" %}<h4{% if b.anchor %} id="{{ b.anchor }}"{% endif %}>{{ b.label | safe }}{% if b.status %} <span class="pill">{{ b.status }}</span>{% endif %}</h4>
+        {%- elif b.t == "list" %}<ul class="plain">{% for it in b["items"] %}<li>{{ it | safe }}</li>{% endfor %}</ul>
+        {%- elif b.t == "card" %}<div class="note{{ ' accent' if b.accent else '' }}">{% for x in b.blocks %}<p>{{ x.html | safe }}</p>{% endfor %}</div>
+        {%- elif b.t == "table" %}
+        <div class="table-wrap"><table>
+          <thead><tr>{% for h in b.head %}<th>{{ h | safe }}</th>{% endfor %}</tr></thead>
+          <tbody>{% for row in b.rows %}<tr>{% for c in row %}<td>{{ c | safe }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+        </table></div>
+        {%- elif b.t in ("figure", "figureSpec") %}
+        <figure class="fig"{% if b.id %} id="{{ b.id }}"{% endif %}>{{ b.svg | safe }}<figcaption>{{ b.caption | safe }}</figcaption></figure>
+        {%- elif b.t == "figureHtml" %}
+        <figure class="fig html"{% if b.id %} id="{{ b.id }}"{% endif %}>{{ b.html | safe }}<figcaption>{{ b.caption | safe }}</figcaption></figure>
+        {%- endif %}
+        {%- endfor %}
+        {%- if sec.log %}
+        <div class="decision-log">
+          <div class="log-tools"><button type="button" data-log-all="" aria-pressed="false">EXPAND ALL</button></div>
+          {%- for e in page.decisionLog %}
+          <details class="entry"><summary><span class="date">{{ e.date }}</span><span class="lead">{{ e.lead | safe }}</span></summary><p>{{ e.body | safe }}</p></details>
+          {%- endfor %}
+        </div>
+        {%- endif %}
+      </section>
+      {%- endfor %}
+      <div class="foot">{{ page.site.footerNote | safe }} Last updated {{ page.lastUpdated }}.</div>
+    </article>
+  </main>
+</div>
+<script type="application/json" id="glossary">{{ page.glossary | tojson }}</script>
+<script src="/static/site.js" defer></script>
+<script src="/static/gloss.js" defer></script>
+</body>
+</html>

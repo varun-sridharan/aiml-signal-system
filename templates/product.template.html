@@ -1,0 +1,99 @@
+{#
+  The Product page (the Landing layout), rendered from application/Product.json by the /application/Product.html route.
+  agents/pages.py prepares the content (live links, figures with token colours). The page's content is the file's; this template
+  only lays it out, with the shared header and static/tokens.css + static/site.css. Section layouts: hero, prose-figure, stats-split,
+  grid, steps-visual, cards.
+#}
+{%- from "_site.html" import site_header %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI/ML Signal · Product</title>
+{% include "_head.html" %}
+</head>
+<body class="layout-landing">
+{{ site_header("Product") }}
+<main>
+  {{ page.sprite | safe }}
+  {%- set h = page.hero %}
+  <section class="band hero">
+    <div class="wrap">
+      <div class="kicker">{{ h.kicker }}</div>
+      <h1 class="hero-title">{{ h.title }} <span>{{ h.titleAccent }}</span></h1>
+      <p class="hero-lede">{{ h.lede | safe }}</p>
+      <div class="actions">
+        {%- for a in h.actions %}<a class="btn{{ ' primary' if a.primary else '' }}" href="{{ a.href }}">{{ a.label | safe }}</a>{% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {%- for s in page.sections %}
+  <section class="band {{ 'alt' if loop.index is odd else '' }} l-{{ s.layout }}" id="{{ s.id }}">
+    <div class="wrap">
+    {%- if s.layout == "prose-figure" %}
+      <div class="kicker">{{ s.kicker }}</div>
+      <h2 class="sec-title">{{ s.title }}</h2>
+      <div class="split prose-figure">
+        <div class="prose">{% for b in s.blocks %}<p>{{ b.html | safe }}</p>{% endfor %}</div>
+        <figure class="fig" aria-label="{{ s.figure.alt }}">{{ s.figure.svg | safe }}<figcaption>{{ s.figure.caption }}</figcaption></figure>
+      </div>
+    {%- elif s.layout == "stats-split" %}
+      <div class="split stats-split">
+        <div class="glass">
+          <div class="stats">
+            {%- for st in s.stats %}
+            <div class="stat">
+              <div class="value">{{ st.value }}</div>
+              <div class="label">{{ st.label }}</div>
+              {%- if st.source %}<div class="source"><a href="{{ st.source.href }}" target="_blank" rel="noopener noreferrer">{{ st.source.label }}</a></div>{% endif %}
+            </div>
+            {%- endfor %}
+          </div>
+          <p class="stats-note">{{ s.statsNote | safe }}</p>
+        </div>
+        <div>
+          <h2 class="sec-title">{{ s.title }}</h2>
+          <div class="prose">{% for b in s.blocks %}<p>{{ b.html | safe }}</p>{% endfor %}</div>
+        </div>
+      </div>
+    {%- elif s.layout == "grid" %}
+      <div class="kicker">{{ s.kicker }}</div>
+      <h2 class="sec-title">{{ s.title }}</h2>
+      <div class="cards4">
+        {%- for b in s.blocks %}<div class="card"><h3>{{ b.title }}</h3><p>{{ b.body | safe }}</p></div>{% endfor %}
+      </div>
+      <p class="close">{{ s.close | safe }}</p>
+    {%- elif s.layout == "steps-visual" %}
+      <div class="kicker">{{ s.kicker }}</div>
+      <h2 class="sec-title">{{ s.title }}</h2>
+      <p class="sec-lede">{{ s.lede | safe }}</p>
+      <ol class="steps">
+        {%- for st in s.steps %}
+        <li class="step">
+          <div class="step-text"><span class="n">{{ st.n }}</span><div><h3>{{ st.title }}</h3><p>{{ st.body | safe }}</p></div></div>
+          {%- if st.svg %}<figure class="fig step-fig" aria-label="{{ st.figureSpec }}">{{ st.svg | safe }}</figure>{% endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+      {%- if s.proof %}
+      <div class="proof"><div class="value">{{ s.proof.value }}</div><div><div class="label">{{ s.proof.label }}</div><p>{{ s.proof.note | safe }}</p></div></div>
+      {%- endif %}
+    {%- elif s.layout == "cards" %}
+      <div class="kicker">{{ s.kicker }}</div>
+      <h2 class="sec-title">{{ s.title }}</h2>
+      <div class="cards4 links">
+        {%- for b in s.blocks %}<a class="card" href="{{ b.href }}"><h3>{{ b.title | safe }} <span aria-hidden="true">&rarr;</span></h3><p>{{ b.body | safe }}</p></a>{% endfor %}
+      </div>
+    {%- endif %}
+    </div>
+  </section>
+  {%- endfor %}
+</main>
+<footer class="band alt foot">
+  <div class="wrap"><span>{{ page.footer.note }}</span> <a href="{{ page.footer.repo.href }}" target="_blank" rel="noopener noreferrer">{{ page.footer.repo.label }}</a></div>
+</footer>
+<script src="/static/site.js" defer></script>
+</body>
+</html>
