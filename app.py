@@ -449,7 +449,7 @@ async def add_news_batch(request: Request) -> JSONResponse:
             links = links["links"]
         if not isinstance(links, list):
             raise ValueError
-    except ValueError:
+    except (ValueError, RecursionError):
         return JSONResponse({"detail": "send a JSON list: [{\"url\": \"https://...\", \"addedAt\": \"...\", \"note\": \"...\"}]"}, status_code=400)
     if len(links) > capture.MAX_LINKS:
         return JSONResponse({"detail": f"at most {capture.MAX_LINKS} links in one batch"}, status_code=413)

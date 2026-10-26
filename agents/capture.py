@@ -16,6 +16,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+import ipaddress
+import re
+from datetime import timedelta
 from urllib.parse import urlsplit
 
 try:
@@ -30,6 +33,31 @@ BACKLOG_TERM = "from your backlog"      # in items.relevance_terms; the Framer's
 BACKLOG_SCORE = 10                      # the top of the scale (2 to 10): Varun chose these, so they are fetched first and rank with the best
 MAX_LINKS = 100
 MAX_URL_CHARS = 250
+WINDOW = timedelta(days=8)              # reader.WINDOW: an item first seen longer ago than this is not in a weekly run's reach
+_HOST = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+")
+
+
+def address_problem(text: str):
+    """Why a link is not a public web address worth fetching, or None. No credentials, no odd ports, no local or numeric hosts."""
+    try:
+        parts = urlsplit(text)
+        host, port = (parts.hostname or "").lower().rstrip("."), parts.port
+    except ValueError:
+        return "not a valid address"
+    if parts.scheme not in ("http", "https") or not host:
+        return f"not an absolute http(s) address of at most {MAX_URL_CHARS} characters"
+    if parts.username is not None or parts.password is not None:
+        return "an address with a user name or password is not accepted"
+    if port not in (None, 80, 443):
+        return "only the standard web ports are accepted"
+    try:
+        ipaddress.ip_address(host.strip("[]"))
+        return "an address given as an IP number is not accepted"
+    except ValueError:
+        pass
+    if not _HOST.fullmatch(host) or host.endswith((".local", ".internal", ".localhost")):
+        return "the host name is not a public domain name"
+    return None
 
 
 def story_of(conn, item_id) -> dict | None:
@@ -41,6 +69,18 @@ def story_of(conn, item_id) -> dict | None:
     return {"week": row[0], "story": row[1]} if row else None
 
 
+def _flag_existing(conn, hit, now: datetime) -> str:
+    """A saved link an earlier feed already found: flag it and give it the backlog priority, if it can still be read this week."""
+    iid, _url, status, found = hit
+    reachable = status in ("discovered", "fetched") and now - found <= WINDOW
+    if reachable:
+        conn.execute("UPDATE items SET relevance_score = GREATEST(relevance_score, %s), "
+                     "relevance_terms = CASE WHEN %s = ANY(relevance_terms) THEN relevance_terms ELSE array_append(relevance_terms, %s) END "
+                     "WHERE id = %s", (BACKLOG_SCORE, BACKLOG_TERM, BACKLOG_TERM, iid))
+        return f"already held, status {status}; flagged from your backlog for this week"
+    return f"already held, status {status}; it is not within this week's reach, so it is not read again"
+
+
 def import_batch(conn, links, now: datetime) -> dict:
     """Add a list of `{url, addedAt, note}` to the week's candidates and report what happened to each. No fetch, no paid call."""
     if not isinstance(links, list):
@@ -49,20 +89,16 @@ def import_batch(conn, links, now: datetime) -> dict:
         raise ValueError(f"at most {MAX_LINKS} links in one batch")
     report, seen = [], set()
     blocked = sources.blocked_domains()
-    known = conn.execute("SELECT id, canonical_url, status FROM items").fetchall()
+    known = conn.execute("SELECT id, canonical_url, status, discovered_at FROM items").fetchall()
     by_url = {r[1]: r for r in known}
     for entry in links:
         raw = entry.get("url") if isinstance(entry, dict) else entry
         row = {"url": str(raw)[:MAX_URL_CHARS]}
         report.append(row)
-        try:
-            text = str(raw).strip()
-            parts = urlsplit(text)
-            ok = isinstance(raw, str) and parts.scheme in ("http", "https") and bool(parts.hostname) and len(text) <= MAX_URL_CHARS
-        except ValueError:
-            ok = False
-        if not ok:
-            row.update(outcome="rejected", detail=f"not an absolute http(s) address of at most {MAX_URL_CHARS} characters")
+        text = str(raw).strip() if isinstance(raw, str) else ""
+        problem = address_problem(text) if text and len(text) <= MAX_URL_CHARS else f"not an absolute http(s) address of at most {MAX_URL_CHARS} characters"
+        if problem:
+            row.update(outcome="rejected", detail=problem)
             continue
         try:
             canonical = excerpts.canonicalise(text)
@@ -79,7 +115,7 @@ def import_batch(conn, links, now: datetime) -> dict:
         seen.add(canonical)
         hit = by_url.get(canonical)
         if hit:
-            row.update(outcome="already-known", detail=f"already held, status {hit[2]}", item=str(hit[0]))
+            row.update(outcome="already-known", item=str(hit[0]), detail=_flag_existing(conn, hit, now))
             continue
         ident = dedupe.identity_of(canonical)
         twin = next((r for r in known if ident and dedupe.identity_of(r[1]) == ident), None)
@@ -95,8 +131,8 @@ def import_batch(conn, links, now: datetime) -> dict:
         if not created:                           # another request got there between the read and the write
             row.update(outcome="already-known", detail="already held", item=str(iid))
             continue
-        known.append((iid, canonical, "discovered"))
-        by_url[canonical] = (iid, canonical, "discovered")
+        known.append((iid, canonical, "discovered", now))
+        by_url[canonical] = (iid, canonical, "discovered", now)
         row.update(outcome="added", detail="joins this week's candidates, flagged from your backlog; it is fetched in the weekly run", item=str(iid))
     totals = {k: sum(1 for r in report if r["outcome"] == k) for k in ("added", "merged", "already-known", "rejected")}
     return {"received": len(report), **{k.replace("-", "_"): v for k, v in totals.items()}, "links": report}

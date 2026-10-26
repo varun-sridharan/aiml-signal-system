@@ -46,7 +46,7 @@ The scheduled entrypoint refuses to run outside Friday 19:00 Pacific, on purpose
   .venv/bin/python -m agents.weekly
   ```
   Add `--status` to see every attempt at the week without any model call.
-- Or, to exercise the Railway service itself, wait for the Friday hour and use the dashboard's run-now action on the cron service during that hour.
+- Or, to exercise the Railway service itself, redeploy or run it from the dashboard during the Friday hour (what Railway offers for a cron service is its own; outside the hour the job does nothing by design).
 
 A run that stopped (`scheduled: ... stopped: ...`) is not retried until next Friday. Read the reason, fix it if it needs fixing, and run the plain command by hand; it resumes where the stopped run left off.
 

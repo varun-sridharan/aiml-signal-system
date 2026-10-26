@@ -13,13 +13,14 @@ from __future__ import annotations
 from . import runs, style_check
 
 REVIEW_EDITIONS = 4              # the note stops growing after this many published editions (decision log, 2026-10-26)
-MAX_FIELD = 400                  # no field of an entry is longer than this, whatever the log held
+MAX_FIELD = 190                  # under the 200 characters the evidence scanner treats as copied text: no field can carry a copied passage, whatever the log held
 
 STAGE_NAMES = {"first_pass": "the first pass (each story's why and 90-second summary)", "composed": "the composed edition"}
 
 
 def clean(text) -> str:
-    return " ".join(style_check.plain(str(text or "")).split())[:MAX_FIELD]
+    flat = " ".join(style_check.plain(str(text or "")).split())
+    return flat if len(flat) <= MAX_FIELD else flat[:MAX_FIELD - 1].rstrip() + "…"
 
 
 def _where(path) -> str:

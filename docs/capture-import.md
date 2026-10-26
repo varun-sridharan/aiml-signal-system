@@ -10,7 +10,8 @@ You keep saving links with `/AGI-add-news`, which writes them to `news-backlog.m
 - **Free.** It fetches nothing and calls no model. The links join the week's candidates; the Friday run fetches them. A link you saved is fetched first, ranks with the best of the week, may surface on its own whatever site it is, is read even if its page is dated before the window, and is flagged **FROM YOUR BACKLOG** on its story if it makes the edition.
 - **Idempotent.** Posting the same batch twice changes nothing: the second answer reports every link as `already-known`.
 - Each link goes through the dedup layers that need no page: the address after safe clean-up (tracking parameters, `www.`, fragments, trailing slash, arXiv `abs`/`pdf` forms), the identity of a paper (the same arXiv or DOI id at another address is another sighting of the story already held), and the sites that refuse fetchers. The layers that compare text run in the Friday run over what was fetched.
-- At most 100 links and 64 KB per batch.
+- At most 100 links and 64 KB per batch; the task below sends 40 at a time.
+- Only public web addresses are accepted: no user name or password, no ports other than 80 and 443, no IP numbers, no local names. A link a feed already found this week is flagged from your backlog and moved up; one that is older than a week or was skipped is reported `already-known` and not read again.
 
 ### The payload
 
@@ -55,7 +56,7 @@ Include every entry that has a link. Do not include the same link twice. Do not 
 
 If the list is empty, stop and say "nothing to import this week". Otherwise POST the list as the JSON body to
   https://aiml-signal-system-production.up.railway.app/add-news/batch
-with the header  X-Add-News-Token: <ADD_NEWS_TOKEN>  and Content-Type: application/json (for example with curl --data @file). Send at most 100 links per request; if there are more, send them in several requests in order.
+with the header  X-Add-News-Token: <ADD_NEWS_TOKEN>  and Content-Type: application/json (for example with curl --data @file). Send at most 40 links per request; if there are more, send them in several requests in order.
 
 Then report, for each request, the answer's counts (received, added, merged, already_known, rejected) and list every rejected link with its detail. If the answer is not HTTP 200, say so and show the status and the detail; do not retry more than once. Do not post anything anywhere else.
 ```

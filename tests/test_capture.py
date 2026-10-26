@@ -83,6 +83,20 @@ class Route(unittest.TestCase):
         self.assertEqual(imp.call_args.args[1], [{"url": "https://example.org/a"}])
 
 
+class Addresses(unittest.TestCase):
+    def test_only_public_web_addresses_pass(self):
+        for good in ("https://example.com/a", "http://blog.example.co.uk/post?id=3", "https://example.com:443/x", "https://arxiv.org/abs/2610.00001"):
+            self.assertIsNone(capture.address_problem(good), good)
+        for bad in ("http://exa mple.com", "https://user:pw@host.com/a", "http://localhost/x", "http://169.254.169.254/latest", "https://example.com:0/",
+                    "https://a.b:abc", "https://[::1]/x", "http://printer.local/x", "https://intranet/x", "ftp://example.com/a", "mailto:a@b.com", "https:///nohost"):
+            self.assertIsNotNone(capture.address_problem(bad), bad)
+
+    def test_deeply_nested_json_is_a_400_not_a_500(self):
+        with unittest.mock.patch.dict(os.environ, {"ADD_NEWS_TOKEN": TOKEN}):
+            r = TestClient(site.app).post("/add-news/batch", content=b"[" * 30000, headers={"x-add-news-token": TOKEN})
+        self.assertEqual(r.status_code, 400)
+
+
 @needs_db
 class Import(unittest.TestCase):
     def setUp(self):
@@ -138,6 +152,24 @@ class Import(unittest.TestCase):
             self.skipTest("no item in the database")
         r = self.run_batch([{"url": known[0]}])
         self.assertEqual((r["links"][0]["outcome"], r["added"]), ("already-known", 0))
+
+    def test_a_link_a_feed_already_found_this_week_is_flagged_and_moved_up(self):
+        from agents import items
+        iid, _ = items.upsert(self.conn, "https://feed.example.org/post-9", "A post", self.now - timedelta(days=2), relevance=(3, ["evals"]))
+        r = self.run_batch([{"url": "https://feed.example.org/post-9"}])
+        self.assertEqual(r["links"][0]["outcome"], "already-known")
+        self.assertIn("flagged from your backlog", r["links"][0]["detail"])
+        _status, score, terms, _found = self.row("https://feed.example.org/post-9")
+        self.assertEqual((score, list(terms)), (capture.BACKLOG_SCORE, ["evals", capture.BACKLOG_TERM]))
+        self.run_batch([{"url": "https://feed.example.org/post-9"}])               # again: no second term
+        self.assertEqual(list(self.row("https://feed.example.org/post-9")[2]), ["evals", capture.BACKLOG_TERM])
+
+    def test_an_old_or_skipped_link_is_reported_not_revived(self):
+        from agents import items
+        items.upsert(self.conn, "https://feed.example.org/old-10", "Old", self.now - timedelta(days=30), relevance=(3, ["evals"]))
+        r = self.run_batch([{"url": "https://feed.example.org/old-10"}])
+        self.assertIn("not within this week's reach", r["links"][0]["detail"])
+        self.assertEqual(list(self.row("https://feed.example.org/old-10")[2]), ["evals"])
 
     def test_a_link_listed_twice_in_one_batch_is_added_once(self):
         r = self.run_batch([{"url": "https://example.org/backlog-post-4"}, {"url": "https://example.org/backlog-post-4/#frag"}])
