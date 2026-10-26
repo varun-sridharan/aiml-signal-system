@@ -253,11 +253,50 @@ class DocumentTables(unittest.TestCase):
         self.assertRegex(css, r"\.table-wrap\{[^}]*overflow-x:auto")
         self.assertIn('<table class="wide">', self.html["/design/System-Design.html"])
 
+    def test_status_values_in_a_status_column_use_the_pill(self):
+        html = self.html["/design/System-Design.html"]
+        seen = 0
+        for _attrs, head, rows in self.tables(html):
+            names = [re.sub("<[^>]+>", "", h).strip() for h in head]
+            for col, name in enumerate(names):
+                if name in ("Status", "Lands"):
+                    for row in rows:
+                        text = re.sub("<[^>]+>", "", row[col][1]).strip().upper()
+                        if text.split(" ")[0] in ("BUILT", "DESIGNED", "M1", "M2", "M3", "LATER"):
+                            seen += 1
+                            self.assertIn('class="pill', row[col][1], text)
+        self.assertGreater(seen, 10)
+
     def test_the_label_style_is_mono_micro_uppercase_nowrap_and_not_bold(self):
         css = (REPO / "static" / "site.css").read_text(encoding="utf-8")
         rule = re.search(r"td\.label\{([^}]*)\}", css).group(1)
         for part in ("var(--mono)", "var(--fs-micro)", "text-transform:uppercase", "font-weight:500", "white-space:nowrap"):
             self.assertIn(part, rule)
+
+
+class StaleFacts(unittest.TestCase):
+    """Run 7, Step E: smaller facts found stale in QA stay fixed."""
+    @classmethod
+    def setUpClass(cls):
+        client = TestClient(site.app)
+        cls.roadmap = client.get("/roadmap").text
+        cls.product = client.get("/application/Product.html").text
+
+    def test_the_roadmap_no_longer_says_the_signal_system_has_no_reader(self):
+        self.assertNotIn("has no reader at all", self.roadmap)
+        self.assertIn("19:00 Pacific", self.roadmap)
+        self.assertIn("keeps running until Varun decides", self.roadmap)
+
+    def test_the_roadmap_sidebar_numbers_every_top_level_entry_and_never_mixes_a_dot_with_a_number(self):
+        anchors = re.findall(r'<a data-toc="[^"]*" href="#[^"]*" style="[^"]*">(.*?)</a>', self.roadmap, re.S)
+        top = [a for a in anchors if "min-width:20px" in a]
+        self.assertGreaterEqual(len(top), 4)
+        for a in top:
+            self.assertNotIn("border-radius:50%", a, "a top-level entry carries both a number and a dot")
+
+    def test_the_product_cards_state_what_the_pages_are_today(self):
+        self.assertNotIn("sample data from a fixed date", self.product)
+        self.assertIn("latest published edition", self.product)
 
 
 class ThreadHeadlineSize(unittest.TestCase):

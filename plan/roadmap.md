@@ -25,7 +25,7 @@ can tell a considered deferral from a stray idea.
 
 # Where this is going
 
-Two systems are converging into one. The **AI Weekly News Digest** runs today as a scheduled cloud task — it knows what to say, has 91 tiered sources and a reader. The **AI/ML Signal System** knows how to prove what it says is true, and has no reader at all. The pivot is to move the Digest's job onto the Signal System's engine, hosted, and retire the Digest.
+Two systems are converging into one. The **AI Weekly News Digest** still runs as a scheduled cloud task, with 91 tiered sources and a reader. The **AI/ML Signal System** now reads, writes and checks its own edition, and is built to publish every Friday at 19:00 Pacific beside it; the Friday job and the capture import are built, and switching them on is Varun's step. The pivot is to move the Digest's job onto the Signal System's engine, hosted, and the old digest keeps running until Varun decides to retire it.
 
 **Cadence is weekly, and that is a decision rather than a default.** A daily brief optimises for missing nothing, and what it produces is a queue — the reason the previous daily digest was retired despite working as designed. Monthly is too slow to be useful in a field that moves weekly. **Ingestion runs continuously; publication is weekly.** Those are separate clocks: reading costs almost nothing because it is deterministic, while judgement is what costs money, and judgement happens once a week.
 

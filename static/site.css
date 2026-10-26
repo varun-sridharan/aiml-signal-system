@@ -145,6 +145,7 @@ body.layout-edition{background:var(--surface-surround);color:var(--text-body);fo
 .layout-doc td{padding:12px 14px 12px 0;border-bottom:var(--rule-w) solid var(--rule2);vertical-align:top;color:var(--soft);line-height:1.62;overflow-wrap:normal;word-break:normal}
 .layout-doc td.label{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:var(--track-label);text-transform:uppercase;font-weight:500;white-space:nowrap;width:1%;color:var(--ink)}
 .layout-doc table.wide{min-width:640px}
+.layout-doc .pill.ok{color:var(--ok);border-color:var(--ok-border)}
 .layout-doc .fig{margin:24px 0 0;background:var(--panel);border:var(--rule-w) solid var(--rule);border-radius:var(--radius-md);padding:22px}
 .layout-doc .fig svg{display:block;width:100%;height:auto;max-width:100%}
 .layout-doc .fig figcaption{font-size:var(--fs-small);color:var(--faint);line-height:1.55;margin-top:14px}

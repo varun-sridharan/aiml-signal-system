@@ -145,7 +145,7 @@
       {%- if b.kind == "prose" %}
         <a data-toc="{{ b.id }}" href="#{{ b.id }}" style="{{ TOC_TOP }}"><span style="{{ NUM }}">{{ n }}</span><span>{{ b.title | safe }}</span></a>
       {%- elif b.kind == "now" %}
-        <a data-toc="{{ b.id }}" href="#{{ b.id }}" style="{{ TOC_TOP }}">{{ dot(STATUS.NOW.c) }}<span style="{{ NUM }}">{{ n }}</span><span>{{ b.code }} · {{ b.theme | safe }}</span></a>
+        <a data-toc="{{ b.id }}" href="#{{ b.id }}" style="{{ TOC_TOP }}"><span style="{{ NUM }}">{{ n }}</span><span>{{ b.code }} · {{ b.theme | safe }}</span></a>
       {%- elif b.kind == "later" %}
         <a data-toc="{{ b.id }}" href="#{{ b.id }}" style="{{ TOC_TOP }}"><span style="{{ NUM }}">{{ n }}</span><span>Next milestones</span></a>
         {%- for ms in b.milestones %}
