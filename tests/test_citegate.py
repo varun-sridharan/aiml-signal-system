@@ -372,7 +372,8 @@ class AfterAHold(unittest.TestCase):
         c["counts"] = [{"path": "thread.line.1", "phrase": "Three of this week's five stories", "stories": ["s01", "s02", "s03"]}]
         ids = composer.story_ids(raw_day(5))
         out = composer_cited.hold_checks(c, ids, {"held": {"s01": ["x"]}})
-        self.assertTrue(any("s01" in line and "not in this edition" in line for line in out), out)
+        # the count's entry naming the held story is dropped with it, so the sentence now states a count nobody listed: still a failure
+        self.assertTrue(any("no entry in `counts`" in line for line in out), out)
         self.assertTrue(any("total of 5 but this edition has 4" in line for line in out), out)
         self.assertEqual(composer_cited.hold_checks(c, ids, {"held": {}}), [])
 
