@@ -254,6 +254,16 @@ class ReviewFixes(unittest.TestCase):
         self.assertEqual(len(log["unlocatable"]), 1)
 
 
+class StoredVerdict(unittest.TestCase):
+    def test_a_stored_verdict_keeps_only_supported_claims_and_counts_the_flags_it_resolved(self):
+        from agents import weekly
+        v = {"claims": [{"claim": "kept", "supported": True}, {"claim": "dropped", "supported": False}], "unsupported_claims": ["dropped"],
+             "possible_false_alarms": ["a"], "lifted_claims": ["b"]}
+        out = weekly._resolved(v, "s01")
+        self.assertEqual([c["claim"] for c in out["claims"]], ["kept"])
+        self.assertEqual((out["unsupported_claims"], out["possible_false_alarms"], out["lifted_claims"], out["flagged_then_resolved"]), ([], [], [], 1))
+
+
 class Stores(unittest.TestCase):
     def test_putting_a_composed_field_updates_its_split_and_the_text(self):
         c = valid(5)

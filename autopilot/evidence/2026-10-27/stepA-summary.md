@@ -13,11 +13,11 @@ interpretation is graded whole, for both the composed pass and the first pass.
 
 | case | planted claim kept out of the final text | flags first graded | dismissed by the second reader | rewritten | removed | held | clean text touched | cost per run |
 |---|---|---|---|---|---|---|---|---|
-| negative-01 | 2 of 2 runs | 1 | 1 (the known false flag on a clean thread claim) | 1 | 0 | 0 | 0 | $0.030 |
+| negative-01 | 2 of 2 runs | 2 (the planted claim and the known false flag on a clean thread claim) | 1 (the thread flag) | 1 | 0 | 0 | 0 | $0.030 |
 | negative-02 | 2 of 2 | 1 | 0 | 1 | 0 | 0 | 0 | $0.022 |
 | negative-03 | 2 of 2 | 1 | 0 | 1 | 0 | 0 | 0 | $0.022 |
 | negative-04 | 2 of 2 | 1 | 0 | 1 | 0 | 0 | 0 | $0.022 |
-| 2026-08-04 (clean) | none planted | 0 | 0 | 0 | 0 | 0 | 0 | $0.012 |
+| 2026-08-04 (clean; no flags, so "touched 0" is trivial) | none planted | 0 | 0 | 0 | 0 | 0 | 0 | $0.012 |
 
 "Kept out" means the sentence that carried the planted claim is no longer in the final text. In negative-02 and negative-03 the rewrite put the true
 figure and date back (58.4% belongs to Terminal-Ops; v1 stops on 2027-03-01, and 2026-12-01 is v2's default date), which the saved final sentences
