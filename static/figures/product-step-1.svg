@@ -11,10 +11,10 @@
     <path data-dc-tpl="272" d="M220 204 V228" stroke="#B5502A" stroke-width="1.3" marker-end="url(#p-ar-a)"></path>
     <rect data-dc-tpl="273" x="132" y="232" width="176" height="52" rx="6" fill="#F4E7DF" stroke="#B5502A" stroke-width="1.3"></rect>
     <circle data-dc-tpl="274" cx="162" cy="258" r="17" fill="#B5502A" fill-opacity="0.12"></circle><use data-dc-tpl="275" href="#i-inbox" x="152.5" y="248.5" width="19" height="19" fill="none" stroke="#B5502A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></use>
-    <text data-dc-tpl="276" x="188" y="254" text-anchor="start" font-family="'IBM Plex Mono',monospace" font-size="10.2" letter-spacing="1.6" fill="#B5502A">SEVEN ITEMS</text>
+    <text data-dc-tpl="276" x="188" y="254" text-anchor="start" font-family="'IBM Plex Mono',monospace" font-size="10.2" letter-spacing="1.6" fill="#B5502A">UP TO SEVEN</text>
     <text data-dc-tpl="277" x="188" y="270" text-anchor="start" font-family="'IBM Plex Mono',monospace" font-size="8.6" letter-spacing="1.6" fill="#B5502A">MEASURED</text>
     <path data-dc-tpl="278" d="M220 286 V310" stroke="#4C463D" stroke-width="1.2" marker-end="url(#p-ar)"></path>
     <rect data-dc-tpl="279" x="146" y="314" width="148" height="34" rx="17" fill="none" stroke="#DED7C6" stroke-width="1"></rect>
     <circle data-dc-tpl="280" cx="170" cy="331" r="17" fill="#8B8375" fill-opacity="0.12"></circle><use data-dc-tpl="281" href="#i-dumbbell" x="160.5" y="321.5" width="19" height="19" fill="none" stroke="#8B8375" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></use>
-    <text data-dc-tpl="282" x="194" y="335" text-anchor="start" font-family="'IBM Plex Mono',monospace" font-size="9.6" letter-spacing="1.6" fill="#8B8375">ONE EXERCISE</text>
+    <text data-dc-tpl="282" x="194" y="335" text-anchor="start" font-family="'IBM Plex Mono',monospace" font-size="9.6" letter-spacing="1.6" fill="#8B8375">EXERCISE · M3</text>
   </svg>

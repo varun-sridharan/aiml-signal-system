@@ -324,6 +324,12 @@ class ProductPage(unittest.TestCase):
         self.assertLess(self.html.index('id="where-this-is-going"'), self.html.index('id="where-to-go-next"'))
         self.assertGreater(self.html.index('id="where-this-is-going"'), self.html.index('id="the-solution"'))
 
+    def test_the_funnel_figure_does_not_show_the_coach_as_built_or_seven_as_exact(self):
+        self.assertIn(">UP TO SEVEN<", self.html)
+        self.assertIn(">EXERCISE · M3<", self.html)
+        self.assertNotIn(">ONE EXERCISE<", self.html)
+        self.assertNotIn(">SEVEN ITEMS<", self.html)
+
     def test_the_plan_card_says_what_the_plan_page_has(self):
         self.assertNotIn("archive of what is already finished", self.text)
         self.assertIn("every activity with its status and notes, and the decision log", self.text)
