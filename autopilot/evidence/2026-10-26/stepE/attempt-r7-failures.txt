@@ -1,0 +1,6 @@
+- style — essay paragraph 5: rule 1: the opening sentence carries no date
+- s03: unsupported (composed) — It takes plain video as its game-state input, with no engine G-buffers, per-object class labels, or low-poly proxies, and keeps the layout, camera, and every entity's position and timing intact.
+- s06: unsupported (composed) — It explores relevant files, proposes a fix, and reruns CodeQL to confirm the fix closes the alert before opening a pull request that includes a summary of the fix and the validation steps taken.
+- s06: unsupported (composed) — An enterprise administrator must enable the Agentic autofix policy, and runs consume AI Credits from the Code Security budget and GitHub Actions minutes.
+- s07: unsupported (composed) — Google Cloud customers will be able to purchase OpenAI frontier models via model garden, transacted through the Google Cloud Marketplace, with general availability planned in the coming weeks.
+MTD 28.037545

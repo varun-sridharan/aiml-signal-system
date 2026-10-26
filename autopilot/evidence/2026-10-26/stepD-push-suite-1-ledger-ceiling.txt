@@ -1,0 +1,61 @@
+.add-news failed: RuntimeError
+...add-news failed: RuntimeError
+.......................................................................................................................................................................................weekly digest: brief 1999-W22 cannot be shown (DigestMalformed)
+.....weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+.....................................................................E...E.E.........................................................................................................................................................................................
+======================================================================
+ERROR: test_llm_call_books_exactly_once_and_settles_at_actual (tests.test_ledger.LedgerInRolledBackTransaction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_ledger.py", line 175, in test_llm_call_books_exactly_once_and_settles_at_actual
+    text, got_usage, cost = llm.call(client, model="claude-haiku-4-5", max_tokens=1000,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 124, in call
+    message, usage, cost = call_message(client, model=model, max_tokens=max_tokens, user_id=user_id,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 98, in call_message
+    reservation = budget.reserve(conn, user_id=user_id, phase=phase, model=model, estimate_usd=estimate)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 229, in wrapper
+    return fn(conn, *args, **kwargs)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 276, in reserve
+    raise BudgetExceeded(
+agents.budget.BudgetExceeded: Refusing to call claude-haiku-4-5: month-to-date spend $26.24 plus this call's worst case $0.01 would exceed MONTHLY_BUDGET_USD ($20.00). Raise the ceiling in agents/budget.py or wait for the month to roll over. No API call made.
+
+======================================================================
+ERROR: test_request_that_raises_leaves_the_worst_case_reserved (tests.test_ledger.LedgerInRolledBackTransaction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_ledger.py", line 198, in test_request_that_raises_leaves_the_worst_case_reserved
+    llm.call(client, model="claude-haiku-4-5", max_tokens=1000, user_id="test",
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 124, in call
+    message, usage, cost = call_message(client, model=model, max_tokens=max_tokens, user_id=user_id,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 98, in call_message
+    reservation = budget.reserve(conn, user_id=user_id, phase=phase, model=model, estimate_usd=estimate)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 229, in wrapper
+    return fn(conn, *args, **kwargs)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 276, in reserve
+    raise BudgetExceeded(
+agents.budget.BudgetExceeded: Refusing to call claude-haiku-4-5: month-to-date spend $26.24 plus this call's worst case $0.01 would exceed MONTHLY_BUDGET_USD ($20.00). Raise the ceiling in agents/budget.py or wait for the month to roll over. No API call made.
+
+======================================================================
+ERROR: test_truncated_response_is_still_booked_before_the_run_exits (tests.test_ledger.LedgerInRolledBackTransaction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_ledger.py", line 190, in test_truncated_response_is_still_booked_before_the_run_exits
+    llm.call(client, model="claude-haiku-4-5", max_tokens=1000, user_id="test",
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 124, in call
+    message, usage, cost = call_message(client, model=model, max_tokens=max_tokens, user_id=user_id,
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/llm.py", line 98, in call_message
+    reservation = budget.reserve(conn, user_id=user_id, phase=phase, model=model, estimate_usd=estimate)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 229, in wrapper
+    return fn(conn, *args, **kwargs)
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/agents/budget.py", line 276, in reserve
+    raise BudgetExceeded(
+agents.budget.BudgetExceeded: Refusing to call claude-haiku-4-5: month-to-date spend $26.24 plus this call's worst case $0.01 would exceed MONTHLY_BUDGET_USD ($20.00). Raise the ceiling in agents/budget.py or wait for the month to roll over. No API call made.
+
+----------------------------------------------------------------------
+Ran 455 tests in 853.282s
+
+FAILED (errors=3)
+exit=1

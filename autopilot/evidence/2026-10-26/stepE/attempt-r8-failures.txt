@@ -1,0 +1,7 @@
+- coverage — 52a170e5-da2c-43cf-a29d-338757f3d5c8/example: split does not reconstruct the field
+- coverage — bcc3bd6b-f403-44d0-a048-5e1faacbde7c/example: split does not reconstruct the field
+- s02.featureParas: 4 paragraphs and 297 words, 3 to 5 paragraphs and 300 to 500 words are required
+- s03: unsupported (composed) — The authors report that group counts stay correct and entities appear and disappear on the right frame, across genres including tower defense, auto-battlers, kart racing, and crowd runners.
+- essay: unsupported (composed) — GitHub released agentic CLI customization metrics in September Copilot usage metrics: skills, custom agents, Model Context Protocol (MCP) servers, slash commands, and plugins
+- week: unsupported (composed) — Harness-Delta Attribution asks how much of a harness's measured gain survives outside the search set.
+MTD 29.310998
