@@ -65,6 +65,16 @@ class Pages(unittest.TestCase):
         self.assertIn("The Signal System", self.get("/design/System-Design.html"))
         self.assertEqual(self.client.get("/").history[0].status_code if self.client.get("/").history else 307, 307)
 
+    def test_the_product_hero_embeds_the_gap_video_and_it_is_served_seekable(self):
+        """The 60-second 'The gap' pitch sits under the hero; the file is served with byte ranges so the player can seek."""
+        html = self.get("/application/Product.html")
+        self.assertIn('<source src="/static/video/the-gap.mp4" type="video/mp4">', html)
+        self.assertIn('poster="/static/video/the-gap-poster.jpg"', html)
+        r = self.client.get("/static/video/the-gap.mp4", headers={"Range": "bytes=0-1023"})
+        self.assertEqual(r.status_code, 206)
+        self.assertEqual(len(r.content), 1024)
+        self.assertEqual(self.client.get("/static/video/the-gap-poster.jpg").status_code, 200)
+
     def test_no_page_serves_a_snapshot_bundle_or_the_old_runtime(self):
         for path in ("/application/Product.html", "/design/System-Design.html"):
             html = self.get(path)

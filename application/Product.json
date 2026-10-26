@@ -44,7 +44,13 @@
         "href": "../design/System-Design.html",
         "primary": false
       }
-    ]
+    ],
+    "video": {
+      "src": "/static/video/the-gap.mp4",
+      "poster": "/static/video/the-gap-poster.jpg",
+      "title": "The gap, in 60 seconds",
+      "caption": "Illustrative example. Maya, her company and the numbers on screen are invented to show the idea."
+    }
   },
   "sections": [
     {

@@ -26,6 +26,14 @@
       <div class="actions">
         {%- for a in h.actions %}<a class="btn{{ ' primary' if a.primary else '' }}" href="{{ a.href }}">{{ a.label | safe }}</a>{% endfor %}
       </div>
+      {%- if h.video %}
+      <figure class="hero-video" aria-label="{{ h.video.title }}">
+        <video controls preload="metadata" playsinline poster="{{ h.video.poster }}" title="{{ h.video.title }}">
+          <source src="{{ h.video.src }}" type="video/mp4">
+        </video>
+        <figcaption>{{ h.video.caption }}</figcaption>
+      </figure>
+      {%- endif %}
     </div>
   </section>
 
