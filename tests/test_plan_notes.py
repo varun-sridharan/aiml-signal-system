@@ -63,6 +63,28 @@ class PlantedBreaks(unittest.TestCase):
             p.write_text(text, encoding="utf-8")
             return [e.rule for e in pf.parse_plan(p)[1]]
 
+    def messages(self, mutate) -> str:
+        text = mutate(PLAN.read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "plan.md"
+            p.write_text(text, encoding="utf-8")
+            return " || ".join(e.message for e in pf.parse_plan(p)[1])
+
+    def test_each_row_note_rule_fails_on_its_own_message(self):
+        link = "(#note-reader-s-deduplication-gate)"
+        self.assertIn(link, PLAN.read_text(encoding="utf-8"))
+        self.assertIn("which has no '####' entry", self.messages(lambda t: t.replace(link, "(#note-missing)", 1)))
+        self.assertIn("which is not its own note", self.messages(lambda t: t.replace(link, "(#note-the-framer-writes-in-varun-s-style)", 1)))
+        self.assertIn("belongs to no row's Outcome link", self.messages(lambda t: t.replace("### Row notes\n", "### Row notes\n\n#### An orphan\n\nText.\n", 1)))
+
+    def test_a_why_cell_over_45_words_fails(self):
+        long = " ".join(["word"] * 46)
+        self.assertIn("the why cell is over 45 words", self.messages(lambda t: t.replace("| M1 ports this unchanged.", f"| {long} M1 ports this unchanged.", 1)))
+
+    def test_an_activity_cell_over_45_words_fails(self):
+        long = " ".join(["word"] * 46)
+        self.assertIn("the activity cell is over 45 words", self.messages(lambda t: t.replace("| The Framer agent |", f"| {long} |", 1)))
+
     def test_the_real_file_passes(self):
         self.assertEqual(self.errors(lambda t: t), [])
 

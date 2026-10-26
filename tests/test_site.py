@@ -267,6 +267,11 @@ class DocumentTables(unittest.TestCase):
                             self.assertIn('class="pill', row[col][1], text)
         self.assertGreater(seen, 10)
 
+    def test_every_label_head_makes_a_label_table(self):
+        for head in ("Agent", "Kind", "Concern", "Shape", "Status", ""):
+            self.assertTrue(pages.is_label_table([head, "x"]), head)
+        self.assertFalse(pages.is_label_table(["Constant", "Value"]))
+
     def test_the_label_style_is_mono_micro_uppercase_nowrap_and_not_bold(self):
         css = (REPO / "static" / "site.css").read_text(encoding="utf-8")
         rule = re.search(r"td\.label\{([^}]*)\}", css).group(1)

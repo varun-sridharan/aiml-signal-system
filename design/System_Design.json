@@ -184,7 +184,7 @@
             },
             {
               "at": "framer",
-              "label": "per-claim · second reader · hard gate"
+              "label": "second reader · hard gate"
             },
             {
               "at": "tl",
@@ -352,7 +352,7 @@
               "<span class=\"pill ok\">BUILT</span>"
             ],
             [
-              "INPUT<br><span style=\"color:var(--soft)\">= <span class=\"gloss\" data-term=\"gatekeeper\">Gatekeeper</span> output</span>",
+              "INPUT<br><span style=\"color:var(--soft)\">= the verified items</span>",
               "<code>data/verified/gatekeeper_&lt;date&gt;.json</code> — the shape of the Framer's input<br><span style=\"color:var(--soft)\">Shape: <code>date</code>, <code>items[]</code> → <code>id · category · headline · tags · source_excerpt · sources[]</code>. The hosted run builds this shape from the database (<code>agents/weekly.py</code> <code>build_raw_day</code>); the file is the fixture the command line and the golden case use. No <code>user_id</code>: the verified pool is shared across readers. <code>source_excerpt</code> is the only text the <span class=\"gloss\" data-term=\"framer\">Framer</span> may draw facts from.</span>",
               "<span class=\"pill ok\">BUILT</span> <span style=\"color:var(--soft)\">(fixture)</span>"
             ],
@@ -497,7 +497,7 @@
             [
               "4",
               "<span class=\"gloss\" data-term=\"build-check-payload\"><code>build_check_payload()</code></span>",
-              "Repackages the same day for auditing: <code>writing_under_test</code> first, <code>ground_truth_excerpt</code> second, headlines dropped entirely — the Gatekeeper wrote those, so they are not the Framer's burden. Order matters: with the excerpt first, the grader enumerated the <em>excerpt's</em> claims and never read the writing.",
+              "Repackages the same day for auditing: <code>writing_under_test</code> first, <code>ground_truth_excerpt</code> second, headlines dropped entirely in the first pass, since the sources wrote those; the weekly edition grades its composed headline separately. Order matters: with the excerpt first, the grader enumerated the <em>excerpt's</em> claims and never read the writing.",
               "local"
             ],
             [
@@ -768,7 +768,7 @@
         },
         {
           "t": "p",
-          "html": "The front door, and the only agent wired to a live API. <b>In:</b> whatever you do in the UI — a dropped URL, a question, a rating, an intent. <b>Process:</b> classify intent and route (URL → Scout, question → chat over the brief, feedback → Tuner), collate responses, run checks. <b>LLM-routed with deterministic fast-paths:</b> explicit button actions dispatch directly; only ambiguous natural language needs the model. <b>Out:</b> answers to you, and labelled feedback into the eval dataset."
+          "html": "The front door, and the only agent wired to a live API. <b>In:</b> whatever you do in the UI — a dropped URL, a question, a rating, an intent. <b>Process:</b> classify intent and route (URL → Reader, question → chat over the brief, feedback → Tuner), collate responses, run checks. <b>LLM-routed with deterministic fast-paths:</b> explicit button actions dispatch directly; only ambiguous natural language needs the model. <b>Out:</b> answers to you, and labelled feedback into the eval dataset."
         },
         {
           "t": "h3",
@@ -835,8 +835,8 @@
                 },
                 {
                   "id": "cron",
-                  "label": "Friday 19:00 PT",
-                  "sub": "built, not yet switched on",
+                  "label": "Fri 19:00",
+                  "sub": "built, not on",
                   "icon": "calendar"
                 }
               ]
@@ -1317,7 +1317,7 @@
           "rows": [
             [
               "<code>source_excerpt</code>",
-              "What the news actually said. The only ground truth; lives in the Gatekeeper file",
+              "What the news actually said. The only ground truth; lives in the verified items",
               "the sentence above"
             ],
             [
@@ -1824,7 +1824,7 @@
     {
       "date": "2026-09-15",
       "lead": "The Coach is built on the Claude Agent SDK; every other agent deliberately is not.",
-      "body": "The SDK runs the agent loop, tool dispatch and context management that power Claude Code, and the question was whether to adopt it across the system. <b>No — for five of the six agents.</b> Scout, Gatekeeper, Framer, Tuner and the eval harness are <em>pipelines</em>: their steps are known before the run starts, they call no tools, and they work in a closed world where every input arrives in the prompt. The SDK's core offer is that the model plans its own steps; this system's core claim, stated in every concept on the Agentic Concepts page, is that the guarantee comes from deterministic code <em>outside</em> the model. Handing the control flow to the model to save writing a five-step function would trade the argument for the convenience. There is a hard cost consequence too: the breaker gates on a <b>certain</b> bound — input tokens plus <code>max_tokens</code>, which the API enforces — and an agent loop has no bound, because its turn count is decided at run time. <b>Yes — for the Coach.</b> It is the first agent whose steps genuinely cannot be written in advance: grounding an exercise means searching a repository it has never seen, and prior-art reconciliation means searching it again for a different answer. Real tool use, a subagent for the second question, and hooks for the spend reserve — all of which the SDK provides and all of which would otherwise be re-implemented worse. The loop gets a second ceiling the other agents do not need: a hard cap on tool-call turns, with the reserve re-checked before each one. <b>Managed Agents was considered and refused</b> — it is for long-running asynchronous work you would rather not host, this is a once-a-day batch job, and it would move the spend ledger and the breaker outside the repo. The general rule, now recorded as its own concept: <em>an agent loop is for work whose steps can only be discovered at run time. Everything else is a pipeline, and should look like one.</em>"
+      "body": "The SDK runs the agent loop, tool dispatch and context management that power Claude Code, and the question was whether to adopt it across the system. <b>No — for most of the agents.</b> Reader, Framer, Tuner and the eval harness are <em>pipelines</em>: their steps are known before the run starts, they call no tools, and they work in a closed world where every input arrives in the prompt. The SDK's core offer is that the model plans its own steps; this system's core claim, stated in every concept on the Agentic Concepts page, is that the guarantee comes from deterministic code <em>outside</em> the model. Handing the control flow to the model to save writing a five-step function would trade the argument for the convenience. There is a hard cost consequence too: the breaker gates on a <b>certain</b> bound — input tokens plus <code>max_tokens</code>, which the API enforces — and an agent loop has no bound, because its turn count is decided at run time. <b>Yes — for the Coach.</b> It is the first agent whose steps genuinely cannot be written in advance: grounding an exercise means searching a repository it has never seen, and prior-art reconciliation means searching it again for a different answer. Real tool use, a subagent for the second question, and hooks for the spend reserve — all of which the SDK provides and all of which would otherwise be re-implemented worse. The loop gets a second ceiling the other agents do not need: a hard cap on tool-call turns, with the reserve re-checked before each one. <b>Managed Agents was considered and refused</b> — it is for long-running asynchronous work you would rather not host, this is a once-a-day batch job, and it would move the spend ledger and the breaker outside the repo. The general rule, now recorded as its own concept: <em>an agent loop is for work whose steps can only be discovered at run time. Everything else is a pipeline, and should look like one.</em>"
     },
     {
       "date": "2026-09-15",
@@ -1944,7 +1944,7 @@
     {
       "date": "2026-08-09",
       "lead": "New agent: Orchestrator (front door).",
-      "body": "Merges the original Interactive + Feedback agents. Sits between the UI and the agents: classifies user intent, routes (add-source → Scout, question → chat, feedback / \"explore X\" → Tuner), collates responses, runs checks, surfaces results. <b>LLM-routed with deterministic fast-paths</b> — explicit UI actions dispatch directly; the LLM handles only ambiguous natural-language input. It's the <b>single live-API agent</b> in front of the otherwise-batch pipeline (this bounds the hosting/backend work). Lands ~Phase 9; its v0 is the chatbot."
+      "body": "Merges the original Interactive + Feedback agents. Sits between the UI and the agents: classifies user intent, routes (add-source → Reader, question → chat, feedback / \"explore X\" → Tuner), collates responses, runs checks, surfaces results. <b>LLM-routed with deterministic fast-paths</b> — explicit UI actions dispatch directly; the LLM handles only ambiguous natural-language input. It's the <b>single live-API agent</b> in front of the otherwise-batch pipeline (this bounds the hosting/backend work). Lands ~Phase 9; its v0 is the chatbot."
     },
     {
       "date": "2026-08-09",
