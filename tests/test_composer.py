@@ -57,7 +57,7 @@ def valid(n=5):
                    "and it keeps a changelog entry for every release. The harder question is whether a review queue scales to repositories ten times larger, "
                    "and Helio has not yet published a measurement that answers it.")
     composed = {
-        "thread": {"lines": ["Two releases gave each agent its own branch.", "One review queue still merges every change."], "body": thread_body},
+        "thread": {"lines": ["Two releases gave agents branches.", "One review queue merges everything."], "body": thread_body},
         "learning": {
             "headline": "Helio Labs shipped 5 products in 5 days",
             "paras": [paragraph(i) + (" It uses a [[fn:queue|review queue]] for merges." if i == 1 else "") for i in range(1, 7)],

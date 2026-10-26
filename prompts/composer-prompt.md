@@ -32,19 +32,19 @@ When an excerpt is thin, write less. Do not say what kind of page a story came f
 ## The pieces
 
 **thread.lines** - exactly two short lines that name **one** shift connecting at least two of the week's stories. Line 1 states
-the shift, line 2 its consequence or counter-move. At most 9 words each and 16 in all. **No figures in the lines**: numbers belong in
-`thread.body`, the essay and the stories, and a number that appears in the thread, the essay headline or the stories headline must not appear
-in another of them. Each line still states a fact, never an abstraction. Put `[[hl|a phrase of at most five words]]` around the key
-phrase in at most one of the two lines, and only if it reads naturally; otherwise none.
+the shift, line 2 its consequence or counter-move. At most 8 words each, and at most 14 words and 90 characters in all. **No figures in the
+lines**: numbers belong in `thread.body`, the essay and the stories. Each line still states a fact, never an abstraction. Put `[[hl|a phrase
+of at most five words]]` around the key phrase in at most one of the two lines, and only if it reads naturally; otherwise none.
 Good (invented): "Agent scaffolding is now measured." / "Vendors keep shipping it regardless."
-Bad (a past edition's): "Two papers measured what agent scaffolding actually buys: 8.08 became 3.23 on one benchmark." / "GitHub shipped named telemetry and agentic autofix while deprecating models across Copilot." Two unrelated facts, far over the limits, with a figure the essay repeats.
+Bad (Edition 02's, 35 words): "Two papers measured what agent scaffolding actually buys: a task-completion score fell from 8.08 to 3.23 out of 10 under injected MCP faults." / "GitHub shipped named telemetry and agentic autofix while deprecating models across Copilot." Two unrelated facts, far over the cap, with a figure the essay repeats.
+**The cap on the four section headlines** (the thread, `learning.headline`, `stories.title` and, when there is one, the leaders headline): each is at most 14 words and 90 characters, which sets in two lines; the thread has no figure and each of the others at most one; and a number that appears in one of them must not appear in another. They sit over 18px body text, so write a headline a reader takes in at a glance, not a summary.
 
 **thread.body** - 80 to 120 words: one sentence naming how the week shifted, two or three stories as evidence, then
 the harder question the week raises. Link two or three stories with `[[#s02|short text]]` (the text is words of the
 sentence itself). Use only ids you were given.
 
 **learning** - the essay.
-- `headline`: a fact or a pair of facts (optional `[[hl|...]]`).
+- `headline`: a fact or a pair of facts (optional `[[hl|...]]`), under the cap on the section headlines above. Good (invented): "One study cut agent task success by half." Bad: a 21-word headline holding two results and two pairs of figures.
 - `paras`: 6 to 10 paragraphs. **Every paragraph opens on a dated, attributed fact carrying a number**: who did what, when,
   for how much, taken from an excerpt. The first sentence names a company or a person as its subject ("Anthropic", "GitHub", a
   paper's authors by their lab), gives the date (use the `Published` date at the start of that story's excerpt, or a date the excerpt
@@ -70,7 +70,7 @@ sentence itself). Use only ids you were given.
   other stories, null.
 - `tryIt`: two to four sentences of something the reader can try, for a story that is actionable; otherwise null. Advice is interpretation.
 - `tie`: `{to, text}` when this story genuinely relates to another in the edition (a contrast, a contradiction, a reinforcement); otherwise null.
-- The section's `title`: a fact or pair of facts about the week's stories (optional `[[hl|...]]`).
+- The section's `title`: a fact or pair of facts about the week's stories (optional `[[hl|...]]`), under the same cap.
 - `dividers`: when several adjacent stories share a theme, `{before: <id of the first story of the group>, label}`; none is fine.
 
 **closing** - mirrors the opening: `lines` (two contrasting lines), `summary` (two sentences), `oneThing` (one concrete thing to try).

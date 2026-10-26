@@ -1,0 +1,17 @@
+{
+  "thread": [
+    ["Benchmarks leave agent resilience untested.", "Copilot now shows custom agent usage."],
+    ["Benchmarks assume tools respond correctly.", "Copilot now names custom agents in metrics."],
+    ["Agent resilience to tool failures is untested.", "Copilot metrics now name custom agents."]
+  ],
+  "learning.headline": [
+    "Faults cut task-completion scores by 60%; overfitting explains a large share of gains.",
+    "Tool faults cut scores by 60%, and overfitting explains much of the harness gains.",
+    "Faults cut agent scores by 60%, and overfitting or test-time scaling explains many gains."
+  ],
+  "stories.title": [
+    "Two arXiv papers measured agent scaffolding. GitHub shipped four changes to Copilot.",
+    "Two arXiv papers measured agents. GitHub shipped four changes to Copilot.",
+    "Two arXiv papers tested agents. GitHub shipped four changes to Copilot."
+  ]
+}

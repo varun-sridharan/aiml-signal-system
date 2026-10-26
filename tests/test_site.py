@@ -61,7 +61,7 @@ class Pages(unittest.TestCase):
         self.assertIn('class="mark"', next(iter(headers.values())))
 
     def test_the_old_urls_still_work_and_show_the_content_files(self):
-        self.assertIn("I stopped trying to keep up.", self.get("/application/Product.html"))
+        self.assertIn("Four hundred things happened in AI last week.", self.get("/application/Product.html"))
         self.assertIn("The Signal System", self.get("/design/System-Design.html"))
         self.assertEqual(self.client.get("/").history[0].status_code if self.client.get("/").history else 307, 307)
 
@@ -279,6 +279,56 @@ class DocumentTables(unittest.TestCase):
             self.assertIn(part, rule)
 
 
+class ProductPage(unittest.TestCase):
+    """Run 8, Step C: the Product page says where the product is, and states as built only what is built."""
+    @classmethod
+    def setUpClass(cls):
+        cls.html = TestClient(site.app).get("/application/Product.html").text
+        cls.text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", cls.html))
+
+    def test_the_hero_matches_the_video_pitch(self):
+        for part in ("From AI news to a change your team can ship", "Four hundred things happened in AI last week.", "Which one matters to your business?",
+                     "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, "
+                     "and drafts the change for your engineers to review."):
+            self.assertIn(part, self.text)
+        self.assertIn('<source src="/static/video/the-gap.mp4"', self.html)
+        self.assertEqual(self.html.count('class="btn'), 2)
+
+    def test_no_sentence_says_the_page_has_no_illustrative_figure(self):
+        self.assertNotIn("Nothing on this page is an illustrative figure", self.text)
+        self.assertIn("Every figure in this section is measured", self.text)
+        self.assertIn("The only illustrative numbers on the page are in the video", self.text)
+
+    def test_seven_is_a_cap_not_a_promise(self):
+        for part in ("up to seven items", "at most seven items", "an edition carries at most seven"):
+            self.assertIn(part, self.text)
+        self.assertNotRegex(self.text, r"carries seven items|narrowed to seven items|Seven items, each")
+
+    def test_the_origin_story_is_labelled_and_the_coach_is_not_called_built(self):
+        self.assertIn("Why I built it", self.text)
+        self.assertNotIn("60-minute exercise", self.text)
+        self.assertIn("Next, it will go further: take one item into your own repository and draft the change (planned for M3).", self.text)
+        self.assertIn("A sentence the checks cannot support is removed, or its story is held back, and the rest of the week still publishes.", self.text)
+
+    def test_where_this_is_going_has_three_cards_with_the_roadmaps_statuses(self):
+        self.assertIn('id="where-this-is-going"', self.html)
+        sec = self.html.split('id="where-this-is-going"', 1)[1].split("</section>", 1)[0]
+        cards = re.findall(r'<div class="card"><div class="kicker">(.*?)</div><h3>(.*?)</h3>', sec)
+        self.assertEqual([c[1] for c in cards], ["Find the signal", "Connect it to your business", "A review-ready change"])
+        road = (REPO / "plan" / "roadmap.md").read_text(encoding="utf-8")
+        status = {m: s for m, s in re.findall(r"# (M\d) · .*?\n\n- \*\*Status:\*\* (NOW|NEXT|LATER)", road, re.S)}
+        word = {"NOW": "Live", "NEXT": "Next", "LATER": "Later"}
+        self.assertEqual(cards[0][0], f"{word[status['M1']]} · M1")
+        self.assertTrue(cards[1][0].startswith(word[status["M2"]]), cards[1][0])
+        self.assertEqual(cards[2][0], f"{word[status['M3']]} · M3")
+        self.assertLess(self.html.index('id="where-this-is-going"'), self.html.index('id="where-to-go-next"'))
+        self.assertGreater(self.html.index('id="where-this-is-going"'), self.html.index('id="the-solution"'))
+
+    def test_the_plan_card_says_what_the_plan_page_has(self):
+        self.assertNotIn("archive of what is already finished", self.text)
+        self.assertIn("every activity with its status and notes, and the decision log", self.text)
+
+
 class StaleFacts(unittest.TestCase):
     """Run 7, Step E: smaller facts found stale in QA stay fixed."""
     @classmethod
@@ -304,19 +354,47 @@ class StaleFacts(unittest.TestCase):
         self.assertIn("latest published edition", self.product)
 
 
-class ThreadHeadlineSize(unittest.TestCase):
-    """Run 7, Step A.4: the week's thread is set at the edition's section-headline size, not the 44px display size."""
-    def test_thread_lines_use_the_section_headline_size_and_a_measure(self):
-        t = (REPO / "templates" / "digest.template.html").read_text(encoding="utf-8")
-        block = re.search(r'<span class="([^"]*)"><span class="line">\{\{ runs\(digest\.thread\.lines\[0\]\)', t)
-        self.assertIsNotNone(block)
-        classes = block.group(1).split()
-        self.assertIn("big36", classes)
-        self.assertNotIn("big44", classes)
-        self.assertIn("thread-lines", classes)
-        self.assertRegex(t, r"\.thread-lines\{[^}]*max-width:22em[^}]*text-wrap:balance")
-        self.assertRegex(t, r"\.big36\{font-size:36px")
-        self.assertRegex(t, r"@media \(max-width:760px\)\{.*\.big36\{font-size:28px")
+class EditionTypeScale(unittest.TestCase):
+    """Run 8, Step A: the Edition's headlines use one scale of tokens: section 30 > feature 26 > story 22 > body 18 (24 / 22 / 20 at 760px and below)."""
+    @classmethod
+    def setUpClass(cls):
+        cls.t = (REPO / "templates" / "digest.template.html").read_text(encoding="utf-8")
+        cls.tokens = (REPO / "static" / "tokens.css").read_text(encoding="utf-8")
+
+    def token(self, name):
+        return int(re.search(rf"--{name}:\s*(\d+)px", self.tokens).group(1))
+
+    def test_the_tokens_are_the_scale_and_each_headline_is_no_more_than_1_7_times_the_body(self):
+        sizes = [self.token(n) for n in ("fs-ed-section", "fs-ed-feature", "fs-ed-story")]
+        self.assertEqual(sizes, [30, 26, 22])
+        self.assertGreater(sizes[0], sizes[1])
+        self.assertGreater(sizes[1], sizes[2])
+        self.assertGreater(sizes[2], 18)
+        self.assertLessEqual(max(sizes), 1.7 * 18)
+        self.assertEqual([self.token(n) for n in ("fs-ed-section-sm", "fs-ed-feature-sm", "fs-ed-story-sm", "fs-ed-closing-sm")], [24, 22, 20, 22])
+        self.assertEqual(self.token("fs-ed-closing"), 26)
+
+    def test_the_template_sets_every_headline_from_the_tokens_never_a_literal(self):
+        self.assertRegex(self.t, r"\.sec-headline\{font-size:var\(--fs-ed-section\);line-height:1\.15;[^}]*max-width:24em;text-wrap:balance\}")
+        self.assertRegex(self.t, r"\.story h3\{font-size:var\(--fs-ed-story\)")
+        self.assertRegex(self.t, r"\.feature h3\{font-size:var\(--fs-ed-feature\)")
+        self.assertRegex(self.t, r"\.closing \.cl\{font-size:var\(--fs-ed-closing\)")
+        small = re.search(r"@media \(max-width:760px\)\{(.*)\}\n", self.t).group(1)
+        for part in ("--fs-ed-section-sm", "--fs-ed-story-sm", "--fs-ed-feature-sm", "--fs-ed-closing-sm"):
+            self.assertIn(part, small)
+        for old in ("big44", "big36"):
+            self.assertNotIn(old, self.t)
+
+    def test_the_thread_the_essay_and_the_stories_headlines_carry_the_section_headline_class(self):
+        for expr in (r"digest\.thread\.lines\[0\]", r"digest\.learning\.headline", r"digest\.stories\.title"):
+            m = re.search(r'<span class="([^"]*)">(?:<span class="line">)?\{\{ runs\(' + expr, self.t)
+            self.assertIsNotNone(m, expr)
+            self.assertIn("sec-headline", m.group(1).split(), expr)
+
+    @needs_db
+    def test_the_rendered_edition_has_the_headline_class_on_each_headline(self):
+        html = TestClient(site.app).get("/weekly-digest").text
+        self.assertGreaterEqual(len(re.findall(r'class="big sec-headline', html)), 2)
 
 
 if __name__ == "__main__":

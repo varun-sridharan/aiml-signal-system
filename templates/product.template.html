@@ -91,8 +91,11 @@
     {%- elif s.layout == "cards" %}
       <div class="kicker">{{ s.kicker }}</div>
       <h2 class="sec-title">{{ s.title }}</h2>
-      <div class="cards4 links">
-        {%- for b in s.blocks %}<a class="card" href="{{ b.href }}"><h3>{{ b.title | safe }} <span aria-hidden="true">&rarr;</span></h3><p>{{ b.body | safe }}</p></a>{% endfor %}
+      <div class="cards4 links{{ ' three' if s.blocks | length == 3 else '' }}">
+        {%- for b in s.blocks %}
+        {%- if b.href %}<a class="card" href="{{ b.href }}"><h3>{{ b.title | safe }} <span aria-hidden="true">&rarr;</span></h3><p>{{ b.body | safe }}</p></a>
+        {%- else %}<div class="card">{% if b.status %}<div class="kicker">{{ b.status }}</div>{% endif %}<h3>{{ b.title | safe }}</h3><p>{{ b.body | safe }}</p></div>{% endif %}
+        {%- endfor %}
       </div>
     {%- endif %}
     </div>

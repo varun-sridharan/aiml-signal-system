@@ -1,0 +1,144 @@
+{
+ "week": "2026-W44",
+ "fields": {
+  "thread": {
+   "old": [
+    " Two papers measured what agent scaffolding actually buys: a task-completion score fell from 8.08 to 3.23 out of 10 under injected MCP faults.",
+    "GitHub shipped [[hl|named telemetry and agentic autofix]] while deprecating models across Copilot."
+   ],
+   "attempts": [
+    {
+     "attempt": 1,
+     "text": [
+      "Benchmarks leave agent resilience untested.",
+      "Copilot now shows custom agent usage."
+     ],
+     "claims": [
+      {
+       "claim": "Benchmarks leave agent resilience untested",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "Copilot now shows custom agent usage",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "verdict": "passed"
+    }
+   ],
+   "result": "passed on attempt 1"
+  },
+  "learning.headline": {
+   "old": "One study cut agent task completion from 8.08 to 3.23 out of 10. Another found 54% of harness gains were overfitting.",
+   "attempts": [
+    {
+     "attempt": 1,
+     "text": "Faults cut task-completion scores by 60%; overfitting explains a large share of gains.",
+     "claims": [
+      {
+       "claim": "Faults cut task-completion scores by 60%",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "overfitting explains a large share of gains",
+       "supported": true,
+       "span_verified": true
+      }
+     ],
+     "unsupported_claims": [],
+     "verdict": "passed"
+    }
+   ],
+   "result": "passed on attempt 1"
+  },
+  "stories.title": {
+   "old": "Two arXiv papers measured what agent scaffolding buys. GitHub shipped four changes to Copilot.",
+   "attempts": [
+    {
+     "attempt": 1,
+     "text": "Two arXiv papers measured agent scaffolding. GitHub shipped four changes to Copilot.",
+     "claims": [
+      {
+       "claim": "Two arXiv papers measured agent scaffolding",
+       "supported": false,
+       "span_verified": false
+      },
+      {
+       "claim": "GitHub shipped four changes to Copilot",
+       "supported": false,
+       "span_verified": false
+      }
+     ],
+     "unsupported_claims": [
+      "Two arXiv papers measured agent scaffolding",
+      "GitHub shipped four changes to Copilot"
+     ],
+     "verdict": "failed"
+    },
+    {
+     "attempt": 2,
+     "text": "Two arXiv papers measured agents. GitHub shipped four changes to Copilot.",
+     "claims": [
+      {
+       "claim": "Two arXiv papers measured agents",
+       "supported": true,
+       "span_verified": true
+      },
+      {
+       "claim": "GitHub shipped four changes to Copilot",
+       "supported": false,
+       "span_verified": false
+      }
+     ],
+     "unsupported_claims": [
+      "GitHub shipped four changes to Copilot"
+     ],
+     "verdict": "failed"
+    },
+    {
+     "attempt": 3,
+     "text": "Two arXiv papers tested agents. GitHub shipped four changes to Copilot.",
+     "claims": [
+      {
+       "claim": "Two arXiv papers tested agents",
+       "supported": false,
+       "span_verified": false
+      },
+      {
+       "claim": "GitHub shipped four changes to Copilot",
+       "supported": false,
+       "span_verified": false
+      }
+     ],
+     "unsupported_claims": [
+      "Two arXiv papers tested agents",
+      "GitHub shipped four changes to Copilot"
+     ],
+     "verdict": "failed"
+    }
+   ],
+   "result": "kept the old text"
+  }
+ },
+ "ledger_before_usd": 31.149,
+ "ledger_after_usd": 31.1705,
+ "spent_usd": 0.0215,
+ "dropped_counts": [
+  {
+   "path": "thread.line.1",
+   "phrase": "Two papers",
+   "stories": [
+    "s01",
+    "s03"
+   ]
+  }
+ ],
+ "apply_blocked": "RestrictViolation: briefs is append-only: rows are never updated or deleted",
+ "rule_findings_after": [
+  "stories headline: 94 characters, at most 90"
+ ]
+}

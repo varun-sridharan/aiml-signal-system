@@ -221,14 +221,21 @@ def prose_failures(text: str, label: str, *, opening: bool = False) -> list[str]
     return out
 
 
-THREAD_LINE_WORDS = 9
-THREAD_WORDS = 16
+THREAD_LINE_WORDS = 8
+HEADLINE_WORDS = 14
+HEADLINE_CHARS = 90
+HEADLINE_FIGURES = 1
 _FIGURE = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
-def thread_findings(edition: dict) -> list[tuple[str, str]]:
-    """(path, failure) for the week's thread headline (Run 7): two short lines, no figures, and no number repeated in the
-    essay headline or the stories headline. A finding sends the field back for the one rewrite; it never holds an edition."""
+def headline_findings(edition: dict) -> list[tuple[str, str]]:
+    """(path, failure) for the four section headlines (Run 8, widening Run 7's thread rule): the week's thread (two lines), the essay
+    headline, the stories headline and the leaders headline.
+
+    Each is at most 14 words and 90 characters (the thread: its two lines together, each line at most 8 words); the thread carries no
+    figure and the others at most one; and no number appears in two of them. A finding sends the field back for the one rewrite; it never
+    holds an edition.
+    """
     out: list[tuple[str, str]] = []
     lines = [plain(x) for x in ((edition.get("thread") or {}).get("lines") or [])]
     for n, line in enumerate(lines, start=1):
@@ -237,18 +244,36 @@ def thread_findings(edition: dict) -> list[tuple[str, str]]:
             out.append((f"thread.line.{n}", f"thread line {n}: {words} words, at most {THREAD_LINE_WORDS}"))
         if _NUMBER.search(line):
             out.append((f"thread.line.{n}", f"thread line {n}: carries a figure; the thread names one shift in words, and numbers belong in the body, the essay and the stories"))
-    total = sum(len(x.split()) for x in lines)
-    if total > THREAD_WORDS:
-        out.append(("thread.line.2", f"thread lines: {total} words in all, at most {THREAD_WORDS}"))
-    fields = [(f"thread.line.{n}", x) for n, x in enumerate(lines, start=1)]
-    fields += [("learning.headline", plain((edition.get("learning") or {}).get("headline", ""))), ("stories.title", plain(edition.get("storiesTitle", "")))]
+    if lines:
+        joined = " ".join(lines)
+        if len(joined.split()) > HEADLINE_WORDS:
+            out.append(("thread.line.2", f"thread lines: {len(joined.split())} words in all, at most {HEADLINE_WORDS}"))
+        if len(joined) > HEADLINE_CHARS:
+            out.append(("thread.line.2", f"thread lines: {len(joined)} characters in all, at most {HEADLINE_CHARS}"))
+    singles = [("learning.headline", "essay headline", plain((edition.get("learning") or {}).get("headline", ""))),
+               ("stories.title", "stories headline", plain(edition.get("storiesTitle", ""))),
+               ("leaders.headline", "leaders headline", plain((edition.get("leaders") or {}).get("headline", "")) if isinstance(edition.get("leaders"), dict) else "")]
+    for path, label, text in singles:
+        if not text:
+            continue
+        if len(text.split()) > HEADLINE_WORDS:
+            out.append((path, f"{label}: {len(text.split())} words, at most {HEADLINE_WORDS}"))
+        if len(text) > HEADLINE_CHARS:
+            out.append((path, f"{label}: {len(text)} characters, at most {HEADLINE_CHARS}"))
+        figures = {f.rstrip(",") for f in _FIGURE.findall(text)}
+        if len(figures) > HEADLINE_FIGURES:
+            out.append((path, f"{label}: {len(figures)} figures, at most {HEADLINE_FIGURES}"))
+    fields = [(f"thread.line.{n}", "thread", x) for n, x in enumerate(lines, start=1)] + [(p, lab.split()[0], t) for p, lab, t in singles]
     seen: dict = {}
-    for path, text in fields:
+    for path, label, text in fields:
         for fig in {f.rstrip(",") for f in _FIGURE.findall(text)}:
             if fig in seen and seen[fig] != path:
-                out.append((path, f"{path.split('.')[0]} headline: the figure {fig} already appears in {seen[fig]}; a number is stated once across the thread, essay and stories headlines"))
+                out.append((path, f"{label} headline: the figure {fig} already appears in {seen[fig]}; a number is stated once across the four section headlines"))
             seen.setdefault(fig, path)
     return out
+
+
+thread_findings = headline_findings
 
 
 def edition_style_findings(edition: dict) -> list[tuple[str, str]]:
@@ -265,7 +290,7 @@ def edition_style_findings(edition: dict) -> list[tuple[str, str]]:
     for n, line in enumerate(thread.get("lines") or [], start=1):
         check(f"thread.line.{n}", line, f"thread line {n}")
     check("thread.body", thread.get("body", ""), "thread body")
-    out.extend(thread_findings(edition))
+    out.extend(headline_findings(edition))
     learning = edition.get("learning") or {}
     check("learning.headline", learning.get("headline", ""), "essay headline")
     for n, para in enumerate(learning.get("paras") or [], start=1):

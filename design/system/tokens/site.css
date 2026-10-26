@@ -10,6 +10,10 @@
   --shadow-tip:0 4px 16px rgba(32,28,23,.12);     /* a tooltip */
   --scrollbar:#D2CBBA;                   /* scrollbar thumb */
   --fs-doc-title:clamp(36px,5.4vw,52px);  /* a Document page's title (Run 6, 2026-10-26: 52px at desktop widths; Product keeps --fs-hero) */
+  --fs-ed-section:30px; --fs-ed-section-sm:24px;     /* an Edition section headline (Run 8): section 30 > feature 26 > story 22 > body 18; the -sm values apply at 760px and below */
+  --fs-ed-feature:26px; --fs-ed-feature-sm:22px;     /* the featured story's title */
+  --fs-ed-story:22px; --fs-ed-story-sm:20px;         /* a story's title */
+  --fs-ed-closing:26px; --fs-ed-closing-sm:22px;     /* the closing lines */
   --fs-section:28px;                     /* a numbered section heading in a Document page */
   --radius-btn:8px;                      /* Product's buttons */
   --on-accent:#FFFDF8;                   /* text on an accent button */

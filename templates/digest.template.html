@@ -159,10 +159,8 @@
   .kick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--ink2)}
   .big{display:block;font-weight:600;margin:14px 0 0;text-wrap:balance}
-  .big44{font-size:44px;line-height:1.08;letter-spacing:-.022em}
-  .big36{font-size:36px;line-height:1.14;letter-spacing:-.018em}
+  .sec-headline{font-size:var(--fs-ed-section);line-height:1.15;letter-spacing:-.018em;max-width:24em;text-wrap:balance}
   .line{display:block}
-  .thread-lines{max-width:22em;text-wrap:balance}
   .rule{display:block;width:48px;height:2px;background:var(--c);margin:16px 0 10px}
   .preview{display:block;font-size:17px;line-height:1.5;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .preview[hidden]{display:none}
@@ -217,8 +215,8 @@
   .feature-mark{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink);border-bottom:1px solid var(--ink)}
   .backlog{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);display:inline-flex;align-items:center;gap:5px}
   .backlog .flag{width:0;height:0;border-left:6px solid var(--accent);border-top:4px solid transparent;border-bottom:4px solid transparent}
-  .story h3{font-size:25px;line-height:1.24;font-weight:600;letter-spacing:-.01em;margin:14px 0;text-wrap:pretty}
-  .feature h3{font-size:34px;line-height:1.14;letter-spacing:-.018em}
+  .story h3{font-size:var(--fs-ed-story);line-height:1.24;font-weight:600;letter-spacing:-.01em;margin:14px 0;text-wrap:pretty}
+  .feature h3{font-size:var(--fs-ed-feature);line-height:1.14;letter-spacing:-.018em}
   .hashtags{display:flex;gap:4px 12px;flex-wrap:wrap;margin:-4px 0 16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--faint)}
   .story-p{font-size:18px;line-height:1.6;margin:0;color:var(--text);text-wrap:pretty}
   .feature-p{margin:0 0 18px}
@@ -254,7 +252,7 @@
   .held ul{margin:10px 0 0;padding-left:18px} .held li{font-size:15px;line-height:1.5;margin:6px 0}
   .closing{margin:44px 0 0;padding-top:28px;border-top:2px solid var(--ink)}
   .closing .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}
-  .closing .cl{font-size:34px;line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
+  .closing .cl{font-size:var(--fs-ed-closing);line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
   .closing .cl span{display:block} .closing .cl span+span{color:var(--accent)}
   .closing p{font-size:18px;line-height:1.6;margin:18px 0 0;color:var(--text)}
   .closing .try{margin-top:18px;display:flex;gap:14px;align-items:baseline}
@@ -271,7 +269,7 @@
   .archive .t1{display:block;font-size:21px;line-height:1.25;font-weight:600} .archive .t1 span{color:var(--accent)}
   .archive .t2{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--soft);margin-top:6px}
   .archive .rd{font-family:var(--mono);font-size:11px;letter-spacing:.1em}
-  @media (max-width:760px){.big44{font-size:34px}.big36{font-size:28px}.story.feature{padding:22px 18px}.feature h3{font-size:28px}.closing .cl{font-size:28px}}
+  @media (max-width:760px){.sec-headline{font-size:var(--fs-ed-section-sm)}.story.feature{padding:22px 18px}.story h3{font-size:var(--fs-ed-story-sm)}.feature h3{font-size:var(--fs-ed-feature-sm)}.closing .cl{font-size:var(--fs-ed-closing-sm)}}
   @media (max-width:560px){.wrap{padding-top:24px}}
 </style>
 <noscript><style>
@@ -318,7 +316,7 @@
 
     {{ sec_open("thread", "THE WEEK IN ONE THREAD", digest.thread.count) }}
         {%- if digest.thread.lines %}
-        <span class="big big36 thread-lines"><span class="line">{{ runs(digest.thread.lines[0]) }}</span><span class="line">{{ runs(digest.thread.lines[1]) }}</span></span>
+        <span class="big sec-headline thread-lines"><span class="line">{{ runs(digest.thread.lines[0]) }}</span><span class="line">{{ runs(digest.thread.lines[1]) }}</span></span>
         {%- endif %}
     {{ sec_mid("thread", digest.thread.preview) }}
       <div class="copy">
@@ -329,7 +327,7 @@
 
     {%- if digest.learning %}
     {{ sec_open("learning", "LEARNING FOR THE WEEK", digest.learning.count) }}
-        <span class="big big36">{{ runs(digest.learning.headline, "var(--sec-learning-ink)") }}</span>
+        <span class="big sec-headline">{{ runs(digest.learning.headline, "var(--sec-learning-ink)") }}</span>
     {{ sec_mid("learning", digest.learning.preview) }}
       <div class="essay">
         <div class="essay-main">
@@ -361,7 +359,7 @@
     {%- endif %}
 
     {{ sec_open("stories", "THIS WEEK'S STORIES", digest.stories.count) }}
-        <span class="big big36">{{ runs(digest.stories.title, "var(--sec-stories-ink)") }}</span>
+        <span class="big sec-headline">{{ runs(digest.stories.title, "var(--sec-stories-ink)") }}</span>
     {{ sec_mid("stories", digest.stories.preview) }}
       <div class="copy">
         {%- for r in digest.stories.rows %}

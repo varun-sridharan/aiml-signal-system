@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "lastUpdated": "2026-09-17",
+  "lastUpdated": "2026-10-26",
   "note": "Content source for the Product page, the landing page and front door. Audience is a product or executive reader, not a specialist. Keys beginning with an underscore are authoring notes and are never rendered.",
   "nav": {
     "current": "Product",
@@ -29,10 +29,10 @@
   },
   "hero": {
     "layout": "hero",
-    "kicker": "A weekly AI/ML brief that can prove it isn't making things up",
-    "title": "I stopped trying to keep up.",
-    "titleAccent": "So I built something that decides what's worth knowing.",
-    "lede": "One read a week, built around a single question: what would I regret not knowing? Seven items, each with the reason it matters and the evidence checked by code.",
+    "kicker": "From AI news to a change your team can ship",
+    "title": "Four hundred things happened in AI last week.",
+    "titleAccent": "Which one matters to your business?",
+    "lede": "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, and drafts the change for your engineers to review.",
     "actions": [
       {
         "label": "See a real brief",
@@ -56,7 +56,7 @@
     {
       "id": "the-problem",
       "layout": "prose-figure",
-      "kicker": "The problem",
+      "kicker": "Why I built it",
       "title": "Twenty minutes a day, and I was still behind",
       "blocks": [
         {
@@ -112,10 +112,10 @@
         },
         {
           "value": "7",
-          "label": "items in one edition of this brief"
+          "label": "items in the latest edition (an edition carries at most seven)"
         }
       ],
-      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of a real edition. <b>Nothing on this page is an illustrative figure.</b> A system whose entire claim is that it does not invent numbers cannot open with invented ones.",
+      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video and the headline above it, which echoes the video, and the video's caption says so.</b>",
       "blocks": [
         {
           "t": "p",
@@ -127,7 +127,7 @@
         },
         {
           "t": "p",
-          "html": "All of that is before a single product launch, benchmark result, funding round or policy move. Research is only the part with a public counter on it. <b>An edition of this brief carries seven items</b>: a decision about the week rather than a summary of it, with the reasoning attached and the sources checked by code."
+          "html": "All of that is before a single product launch, benchmark result, funding round or policy move. Research is only the part with a public counter on it. <b>An edition of this brief carries up to seven items</b>: a decision about the week rather than a summary of it, with the reasoning attached and the sources checked by code."
         }
       ]
     },
@@ -167,19 +167,19 @@
       "_layout": "Mirrors the numbered-steps pattern at trajectory.ai: kicker, one H2, then three numbered steps stacked down the left, each a short bold label plus two or three sentences. A single visual panel sits to the right and changes with the active step. On narrow screens the visual drops under its own step. Numerals are large, set in the display face, and use --faint so they read as structure rather than content.",
       "kicker": "The solution",
       "title": "Three moves, in order, each one holding the next up",
-      "lede": "Everything reachable is narrowed to seven items, every line in them is traceable to a real source, and the thing doing the checking is graded too.",
+      "lede": "Everything reachable is narrowed to at most seven items, every line in them is traceable to a real source, and the thing doing the checking is graded too.",
       "steps": [
         {
           "n": "1",
           "title": "Narrow hard, then explain the choice",
-          "body": "Everything reachable gets cut down to a handful of items. Each one carries the single reason it matters and the tradeoff it implies, plus the thread connecting the week, which is usually the part worth knowing. Once a week it goes further and turns one item into a 60-minute exercise grounded in my own repositories, so reading becomes doing.",
+          "body": "Everything reachable gets cut down to a handful of items. Each one carries the single reason it matters and the tradeoff it implies, plus the thread connecting the week, which is usually the part worth knowing. Next, it will go further: take one item into your own repository and draft the change (planned for M3).",
           "figureSpec": "A funnel in three bands, widest at the top. Top band labelled EVERYTHING REACHABLE, middle band noticeably narrower labelled WORTH A LOOK, bottom band a small block labelled SEVEN ITEMS. Under the bottom band, one further tag reading ONE EXERCISE. Only the final count is measured; label the upper bands as design targets so the figure does not overclaim.",
           "_refSvg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 208\" role=\"img\" aria-label=\"A funnel narrowing everything reachable down to a handful of items\"><rect x=\"0\" y=\"0\" width=\"640\" height=\"208\" fill=\"none\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">EACH MORNING</text><rect x=\"8\" y=\"44\" width=\"512\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.12\"/><text x=\"8\" y=\"82\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">everything reachable</text><rect x=\"8\" y=\"100\" width=\"98\" height=\"18\" rx=\"2\" fill=\"#201c17\" opacity=\"0.28\"/><text x=\"8\" y=\"138\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#5f584c\">corroborated, not duplicated, material to me</text><rect x=\"8\" y=\"156\" width=\"19\" height=\"18\" rx=\"2\" fill=\"#b5502a\"/><text x=\"37\" y=\"170\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"11\" fill=\"#b5502a\">7 items</text><text x=\"8\" y=\"196\" font-family=\"Georgia,serif\" font-size=\"13\" fill=\"#201c17\">framed into the brief, with the thread connecting them</text></svg>"
         },
         {
           "n": "2",
           "title": "Never let the writer mark its own work",
-          "body": "A summariser that occasionally invents a figure is not mildly flawed, it makes you confidently wrong in public. So three layers check the output, each catching something the one before it cannot. A model writes. A second model audits. Code proves the quoted evidence exists in the source, character for character.",
+          "body": "A summariser that occasionally invents a figure is not mildly flawed, it makes you confidently wrong in public. So three layers check the output, each catching something the one before it cannot. A model writes. A second model audits. Code proves the quoted evidence exists in the source, character for character. A sentence the checks cannot support is removed, or its story is held back, and the rest of the week still publishes.",
           "figureSpec": "Three horizontal lanes labelled WRITES, AUDITS, PROVES. The first two lanes are drawn as model steps in the accent colour, the third in a plainer weight to signal that it is code rather than judgement. A short caption underneath: a model can invent a quote, a substring check cannot be talked into agreeing.",
           "_refSvg": "<svg style=\"width:100%;height:auto;display:block\" viewBox=\"0 0 640 172\" role=\"img\" aria-label=\"Three layers: a model writes, a second model checks, code proves the evidence is real\"><line x1=\"8\" y1=\"44\" x2=\"632\" y2=\"44\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"8\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">WRITES</text><text x=\"8\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A model drafts the brief</text><text x=\"8\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Given only each item's source</text><text x=\"8\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">excerpt to draw facts from.</text><line x1=\"222\" y1=\"34\" x2=\"222\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"244\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#8a8071\">CHECKS</text><text x=\"244\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#201c17\">A second model audits it</text><text x=\"244\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Lists every factual claim and</text><text x=\"244\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">must quote what supports it.</text><line x1=\"432\" y1=\"34\" x2=\"432\" y2=\"152\" stroke=\"#201c17\" stroke-opacity=\"0.12\"/><text x=\"454\" y=\"26\" font-family=\"ui-monospace,Menlo,monospace\" font-size=\"10\" letter-spacing=\"1.8\" fill=\"#b5502a\">PROVES</text><text x=\"454\" y=\"74\" font-family=\"Georgia,serif\" font-size=\"14.5\" fill=\"#b5502a\">Code verifies the quote</text><text x=\"454\" y=\"96\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">Not literally in the source?</text><text x=\"454\" y=\"113\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">The claim is rejected — whatever</text><text x=\"454\" y=\"130\" font-family=\"Georgia,serif\" font-size=\"12.5\" fill=\"#5f584c\">the auditor concluded.</text></svg>"
         },
@@ -195,6 +195,33 @@
         "label": "false flags on a real edition, after one fix",
         "note": "Measured across five runs before and after, not estimated. The other half of that result is still open and is named on the Roadmap rather than hidden here."
       }
+    },
+    {
+      "id": "where-this-is-going",
+      "layout": "cards",
+      "_layout": "Three cards without links, mirroring the video's closing card. Each carries its honest status, taken from plan/roadmap.md (M1 is NOW, M2 is NEXT, M3 is LATER). A card is a plain block, not a link, so it has no arrow.",
+      "kicker": "Where this is going",
+      "title": "From the signal to a change your team can ship",
+      "blocks": [
+        {
+          "t": "item",
+          "status": "Live · M1",
+          "title": "Find the signal",
+          "body": "The weekly brief: up to seven items, every fact checked against its source."
+        },
+        {
+          "t": "item",
+          "status": "Next · M2, then M3",
+          "title": "Connect it to your business",
+          "body": "Which item matters to your roadmap, and why."
+        },
+        {
+          "t": "item",
+          "status": "Later · M3",
+          "title": "A review-ready change",
+          "body": "A draft pull request in your codebase, for your engineers to review and ship."
+        }
+      ]
     },
     {
       "id": "where-to-go-next",
@@ -224,7 +251,7 @@
           "t": "item",
           "title": "Plan &amp; Progress",
           "href": "../plan/Plan.html",
-          "body": "The one live milestone in detail, and the archive of what is already finished, decisions intact."
+          "body": "The one live milestone in detail, every activity with its status and notes, and the decision log, decisions intact."
         }
       ]
     }

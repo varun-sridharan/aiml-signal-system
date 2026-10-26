@@ -166,30 +166,46 @@ class Rule5StageDirections(unittest.TestCase):
             self.assertEqual(sc.stage_direction_failures(s), [], s)
 
 
-class ThreadHeadline(unittest.TestCase):
-    """Run 7, Step A: two short lines, no figures, no number repeated across the thread, essay and stories headlines."""
-    def ed(self, lines, learning="Helio cut conflicts sharply", stories="Helio shipped a queue"):
-        return {"thread": {"lines": lines, "body": ""}, "learning": {"headline": learning, "paras": []}, "storiesTitle": stories}
+class SectionHeadlines(unittest.TestCase):
+    """Run 8, Step A: the four section headlines (thread, essay, stories, leaders) share one cap, and no number repeats across them."""
+    def ed(self, lines=("Scaffolding is now measured.", "Vendors keep shipping it."), learning="Helio cut merge conflicts sharply", stories="Helio shipped a queue", leaders=None):
+        e = {"thread": {"lines": list(lines), "body": ""}, "learning": {"headline": learning, "paras": []}, "storiesTitle": stories}
+        if leaders is not None:
+            e["leaders"] = {"headline": leaders}
+        return e
 
-    def test_two_short_figure_free_lines_pass(self):
-        self.assertEqual(sc.thread_findings(self.ed(["Scaffolding is now measured.", "Vendors keep shipping it anyway."])), [])
+    def paths(self, e):
+        return [p for p, _ in sc.headline_findings(e)]
 
-    def test_a_line_over_nine_words_is_flagged(self):
-        got = sc.thread_findings(self.ed(["Two papers measured what agent scaffolding actually buys here today.", "Vendors ship."]))
-        self.assertEqual([p for p, _ in got], ["thread.line.1"])
+    def test_short_figure_free_headlines_pass(self):
+        self.assertEqual(sc.headline_findings(self.ed()), [])
 
-    def test_sixteen_words_in_all_is_the_limit(self):
-        nine = "one two three four five six seven eight nine"
-        self.assertEqual(sc.thread_findings(self.ed([nine, "a b c d e f g"])), [])
-        self.assertEqual([p for p, _ in sc.thread_findings(self.ed([nine, "a b c d e f g h"]))], ["thread.line.2"])
+    def test_a_thread_line_over_eight_words_is_flagged(self):
+        self.assertEqual(self.paths(self.ed(lines=("one two three four five six seven eight nine", "Vendors ship."))), ["thread.line.1"])
+        self.assertEqual(self.paths(self.ed(lines=("one two three four five six seven eight", "Vendors ship."))), [])
 
-    def test_a_figure_in_a_line_is_flagged(self):
-        got = sc.thread_findings(self.ed(["Cost fell from 8.08 to 3.23.", "Vendors ship."]))
+    def test_the_thread_is_at_most_14_words_and_90_characters_in_all(self):
+        self.assertEqual(self.paths(self.ed(lines=("a b c d e f g h", "i j k l m n"))), [])
+        self.assertEqual(self.paths(self.ed(lines=("a b c d e f g h", "i j k l m n o"))), ["thread.line.2"])
+        long = "w" * 44
+        self.assertEqual(self.paths(self.ed(lines=(long, "x" * 47))), ["thread.line.2"])
+
+    def test_a_figure_in_the_thread_is_flagged_but_one_in_another_headline_is_allowed(self):
+        got = sc.headline_findings(self.ed(lines=("Cost fell by 8 percent.", "Vendors ship.")))
         self.assertTrue(any(p == "thread.line.1" and "figure" in m for p, m in got))
+        self.assertEqual(sc.headline_findings(self.ed(learning="Helio cut conflicts by 31 percent")), [])
 
-    def test_a_number_shared_by_the_essay_and_stories_headlines_is_flagged_on_the_later_one(self):
-        got = sc.thread_findings(self.ed(["Scaffolding is measured.", "Vendors ship it."], learning="Cost fell from 8.08 to 3.23", stories="Scaffolding cut 8.08 to 3.23"))
-        self.assertEqual({p for p, _ in got}, {"stories.title"})
+    def test_essay_stories_and_leaders_headlines_have_the_word_and_character_cap_and_one_figure(self):
+        fifteen = "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen"
+        for field, kw in (("learning.headline", "learning"), ("stories.title", "stories"), ("leaders.headline", "leaders")):
+            self.assertIn(field, self.paths(self.ed(**{kw: fifteen})), field)
+            self.assertIn(field, self.paths(self.ed(**{kw: "w" * 91})), field)
+            self.assertIn(field, self.paths(self.ed(**{kw: "from 8.08 to 3.23"})), field)
+            self.assertNotIn(field, self.paths(self.ed(**{kw: "one two three four five six seven eight nine ten eleven twelve thirteen fourteen"})), field)
+
+    def test_a_number_shared_between_any_two_of_the_headlines_is_flagged_on_the_later_one(self):
+        self.assertEqual(set(self.paths(self.ed(learning="Cost fell by 8 percent", stories="Scaffolding cut 8 percent"))), {"stories.title"})
+        self.assertEqual(set(self.paths(self.ed(stories="Helio shipped 5 products", leaders="Leaders said 5 things"))), {"leaders.headline"})
 
     def test_it_is_part_of_the_edition_findings_and_sends_the_field_back(self):
         ed = WholeEdition().edition()
@@ -200,9 +216,9 @@ class ThreadHeadline(unittest.TestCase):
 class WholeEdition(unittest.TestCase):
     def edition(self, **over):
         base = {
-            "thread": {"lines": ["Four releases cut the cost of running a model.", "Three decisions restricted who may inspect one."],
+            "thread": {"lines": ["Four releases cut running costs.", "Three decisions limited inspection."],
                        "body": "Helio Labs released Orbit on October 14, 2026."},
-            "learning": {"headline": "Helio cut conflicts from 31 percent to 9 percent", "paras": [GOOD_OPENING], "doDifferently": "Run your agents on separate branches."},
+            "learning": {"headline": "Helio cut merge conflicts across 212 repositories", "paras": [GOOD_OPENING], "doDifferently": "Run your agents on separate branches."},
             "stories": [{"id": "s01", "body": "Helio released Orbit 1.0.", "tryIt": "Try the SDK on a small repository.", "featureParas": ["Helio released Orbit 1.0."]}],
             "closing": {"lines": ["One lab shipped a queue.", "Another shipped a fix."], "summary": "Helio shipped a queue.", "oneThing": "Try Orbit on one repository."},
         }
