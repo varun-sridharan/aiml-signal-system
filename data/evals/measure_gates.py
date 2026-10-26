@@ -50,7 +50,9 @@ CITER_SYSTEM = (
     "finished writing, each as a `@@ path` section. Reproduce every field EXACTLY, word for word, in the same `@@ path` sections, "
     "answering through the citations feature: a sentence that states a fact carries a citation to the passage it rests on. "
     "Do not add, drop, fix or reword anything, even if the writing looks wrong: if a sentence is not supported by any document, "
-    "reproduce it unchanged and leave it uncited. Start a sentence that is only judgement, with no figure, name or date, with `~ `. "
+    "reproduce it unchanged and leave it uncited. A sentence that only reasons, compares, advises or explains consequences, with no "
+    "figure, date or version in it, starts with `~ ` (reproduce the sentence itself unchanged after the mark) and needs no citation; "
+    "a sentence that states a fact is cited, not marked. "
     "Write nothing outside the sections."
 )
 
@@ -68,7 +70,8 @@ def unit_fields(framing: dict) -> tuple[list[dict], dict]:
                     if text:
                         fields[f"story.s{n:02d}.ninety.{sub}"] = text
             elif isinstance(value, str):
-                fields[f"story.s{n:02d}.{key}"] = value
+                # the first pass's `connection` is what the digest calls a tie: it relates this story to another, so it may cite either
+                fields[f"story.s{n:02d}.{'tie' if key == 'connection' else key}"] = value
         units.append({"id": item["id"], "sid": f"s{n:02d}", "fields": fields})
     units.append({"id": "thread", "sid": None, "fields": {"thread.body": framing["thread"]}})
     return units, {}

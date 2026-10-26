@@ -78,6 +78,8 @@ def compose_request(system_prompt: str, profile: dict, raw_day: dict, framing: d
     if revise:
         payload["revise"] = [{"path": p, "current_text": revise["texts"][p], "problems": msgs} for p, msgs in revise["problems"].items() if p in revise["texts"]]
         payload["instruction"] = REVISE_NOTE
+    payload["answer_through_citations"] = ("Write the sections now. Every sentence that states a fact must carry a citation to the passage it rests on; "
+                                            "an answer with factual sentences and no citations is rejected whole.")
     content.append({"type": "text", "text": json.dumps(payload, indent=2, ensure_ascii=False)})
     return dict(model=llm.FRAMER_MODEL, max_tokens=MAX_TOKENS, stream=True,
                 system=[{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}],
@@ -202,16 +204,43 @@ def apply_revision(draft: dict, new_draft: dict, paths) -> list[str]:
 
 
 def all_sentences(draft: dict, docs: list[dict]) -> list[dict]:
-    """Every sentence of every section with its code failures. Essay sentences may cite only the stories the essay lists."""
+    """Every sentence of every section with its code failures, and each label that reaches the page (a divider, a footnote term, a
+    hashtag) as a line that must state no fact. Essay sentences may cite only the stories the essay lists."""
     drawn = [d for d in HASHTAG_SPLIT.split(field_text(draft["fields"].get("learning.drawnFrom", []))) if d]
     out = []
     for path, sents in draft["fields"].items():
-        if path == "learning.drawnFrom" or path.endswith((".hashtags", ".tie.to", ".term")) or path.startswith("divider."):
-            continue                        # labels, ids and lists: not sentences that state facts
+        if path in ("learning.drawnFrom",) or path.endswith(".tie.to"):
+            continue                                            # ids, checked as ids by the slot rules
+        labelled = path.endswith((".hashtags", ".term")) or path.startswith("divider.")
         for s in sents:
-            s["code_failures"] = citegate.code_failures(s, docs, drawn_from=drawn)
+            if labelled:
+                s["label"], s["interpretation"] = True, True
+                s["text"] = s["text"].lstrip("~ ").strip()
+            s["code_failures"] = citegate.code_failures(s, docs, drawn_from=drawn) if not labelled else []
             out.append(s)
     return out
+
+
+def hold_checks(composed: dict, ids: dict, decision: dict) -> list[str]:
+    """After stories are held, the rest must still stand on its own: counts, totals and slot limits are rechecked on what is kept."""
+    held = set(decision["held"])
+    if not held:
+        return []
+    kept = without_held(composed, held)
+    kept_ids = {sid: item for sid, item in ids.items() if sid not in held}
+    out = [f"after holding {', '.join(sorted(held))}: {line}" for line in counts.count_failures(kept, kept_ids, composer.prose_fields(kept))]
+    out += [f"after holding {', '.join(sorted(held))}: {line}" for line in composer.slot_failures(kept, kept_ids)]
+    return out
+
+
+MIN_CITED_SHARE = 0.3
+
+
+def cited_share(draft: dict) -> float:
+    """The share of sentences that carry a citation among those not marked as judgement."""
+    sents = [s for p, v in draft["fields"].items() if not p.endswith((".hashtags", ".term", ".tie.to")) and p != "learning.drawnFrom" and not p.startswith("divider.")
+             for s in v if not s["interpretation"]]
+    return sum(1 for s in sents if s["citations"]) / len(sents) if sents else 0.0
 
 
 def compose_and_check(client, system_prompt, profile, raw_day, framing, window_label, published, *, conn=None):
@@ -220,7 +249,15 @@ def compose_and_check(client, system_prompt, profile, raw_day, framing, window_l
     docs = documents(raw_day, published)
     text, spans, cost = write(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn)
     draft = draft_from(text, spans)
-    record = {"rounds": [], "replaced": [], "first_text_chars": len(text)}
+    record = {"rounds": [], "replaced": [], "first_text_chars": len(text), "rewrites_for_no_citations": 0}
+    # The feature lets the model choose whether to cite. An answer that hardly cites is the writer not following the protocol,
+    # not a verdict on the facts, so it is asked once more; nothing is loosened, and the second answer is checked like any other.
+    if cited_share(draft) < MIN_CITED_SHARE:
+        text, spans, extra = write(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn)
+        cost += extra
+        draft = draft_from(text, spans)
+        record["rewrites_for_no_citations"] = 1
+        record["first_text_chars"] = len(text)
     composed, missing = build_composed(draft, ids)
     for number in range(MAX_REVISIONS):
         problems = revise_problems(composed, ids) if not missing else {}
@@ -234,12 +271,23 @@ def compose_and_check(client, system_prompt, profile, raw_day, framing, window_l
         record["rounds"].append({"problems": problems, "replaced": replaced})
         record["replaced"] += [p for p in replaced if p not in record["replaced"]]
         composed, missing = build_composed(draft, ids)
+    result = check_draft(client, profile, draft, composed, missing, ids, docs, conn=conn)
+    result.update(revision=record, writer_cost_usd=cost, cost_usd=cost + result["verify_cost_usd"])
+    return result
+
+
+def check_draft(client, profile, draft, composed, missing, ids, docs, *, conn=None):
+    """Everything after the writing: structure, every sentence, the judgement lines, the verdict. Pure of the writer, so a stored draft can be checked later."""
     structural = structural_failures(composed, ids, missing)
     sentences = all_sentences(draft, docs)
-    sentences, vcost = citegate.verify(client, sentences, user_id=profile["user_id"], conn=conn)
-    decision = citegate.evaluate(sentences, list(ids))
+    vcost = citegate.check_marked(client, sentences, user_id=profile["user_id"], conn=conn)
+    sentences, c2 = citegate.verify(client, sentences, user_id=profile["user_id"], conn=conn)
+    decision = citegate.evaluate(sentences, list(ids), structural)
+    after = hold_checks(composed, ids, decision)
+    decision["blockers"] += after
+    decision["publishable"] = decision["publishable"] and not after
     return {"composed": composed, "draft": draft, "sentences": sentences, "structural": structural, "decision": decision,
-            "cost_usd": cost + vcost, "writer_cost_usd": cost, "verify_cost_usd": vcost, "revision": record, "docs": docs, "ids": ids}
+            "verify_cost_usd": vcost + c2, "docs": docs, "ids": ids}
 
 
 # ---------------------------------------------------------------- the edition

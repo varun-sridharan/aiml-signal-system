@@ -1,0 +1,29 @@
+.add-news failed: RuntimeError
+...add-news failed: RuntimeError
+........................F.................................................................................F....................................weekly digest: brief 1999-W22 cannot be shown (DigestMalformed)
+...weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+weekly digest: brief 1999-W20 cannot be shown (DigestMalformed)
+..weekly digest: database unavailable (LedgerUnavailable)
+.................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_the_set_has_planted_near_duplicates_and_is_marked_draft (tests.test_canonical_gate.CanonicalGate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_canonical_gate.py", line 38, in test_the_set_has_planted_near_duplicates_and_is_marked_draft
+    self.assertIn("draft, awaiting Varun's review", data["status"])
+AssertionError: "draft, awaiting Varun's review" not found in 'signed off by Varun on 2026-10-25'
+
+======================================================================
+FAIL: test_the_set_is_a_marked_draft_with_the_required_kinds (tests.test_dedupe.ContentPairsGate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/varun/Desktop/Projects/AI News, Learning & Backlog/aiml-signal-system/tests/test_dedupe.py", line 54, in test_the_set_is_a_marked_draft_with_the_required_kinds
+    self.assertIn("draft, awaiting Varun's review", data["status"])
+AssertionError: "draft, awaiting Varun's review" not found in 'signed off by Varun on 2026-10-25'
+
+----------------------------------------------------------------------
+Ran 409 tests in 969.138s
+
+FAILED (failures=2)
+exit=1

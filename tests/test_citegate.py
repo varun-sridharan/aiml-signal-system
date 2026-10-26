@@ -274,5 +274,145 @@ class WholeRun(unittest.TestCase):
         self.assertEqual(missing, ["closing.summary: the section is missing or empty"])
 
 
+class ReviewFixes(unittest.TestCase):
+    def spans(self, text):
+        return [text[a:b] for a, b in citegate.sentence_spans(text)]
+
+    def test_sentence_splitting_keeps_abbreviations_decimals_and_versions_together(self):
+        self.assertEqual(self.spans("Dr. Smith said so. Acme bought it."), ["Dr. Smith said so.", "Acme bought it."])
+        self.assertEqual(self.spans("U.S. labs shipped v1.5 today. It ran 3.5x faster."), ["U.S. labs shipped v1.5 today.", "It ran 3.5x faster."])
+        self.assertEqual(self.spans("One thing.\n\nAnother thing."), ["One thing.", "Another thing."])
+
+    def test_a_marked_sentence_that_cites_is_still_held_to_its_citations(self):
+        bad = NS(type="char_location", document_index=0, cited_text="Helio Labs raised 965 billion dollars.", start_char_index=0, end_char_index=38)
+        out = citegate.code_failures(sentence("story.s01.body", "That is useful.", bad, interpretation=True), DOCS)
+        self.assertTrue(any("not in s01's stored excerpt" in f for f in out), out)
+
+    def test_a_spelled_out_count_in_a_marked_sentence_fails(self):
+        out = citegate.code_failures(sentence("thread.body", "Nine labs agreed.", interpretation=True), DOCS)
+        self.assertTrue(any("carries a figure" in f for f in out))
+        self.assertEqual(citegate.code_failures(sentence("thread.body", "Teams should try the first step.", interpretation=True), DOCS), [])
+
+    def test_a_tie_may_cite_the_other_story_but_a_story_field_may_not(self):
+        self.assertEqual(citegate.code_failures(sentence("story.s01.tie", "Atlas ships too.", cite(1, 0)), DOCS), [])
+        self.assertTrue(citegate.code_failures(sentence("story.s01.body", "Atlas ships too.", cite(1, 0)), DOCS))
+
+    def test_an_essay_with_no_drawn_from_may_cite_nothing(self):
+        self.assertTrue(citegate.code_failures(sentence("learning.para.1", "Atlas ships.", cite(1, 0)), DOCS, drawn_from=[]))
+
+    def test_a_one_character_passage_supports_nothing(self):
+        c = NS(type="char_location", document_index=0, cited_text="H", start_char_index=0, end_char_index=1)
+        self.assertTrue(citegate.code_failures(sentence("story.s01.body", "Helio released Orbit.", c), DOCS))
+
+    def marked(self, answers, sentences):
+        def call(client, **kw):
+            qs = json.loads(kw["messages"][0]["content"])["questions"]
+            return json.dumps({"answers": [{"id": q["id"], "states_fact": answers.get(q["line"], True)} for q in qs]}), NS(), 0.0
+        with unittest.mock.patch.object(citegate.llm, "call", call):
+            citegate.check_marked(object(), sentences, user_id="t")
+        return sentences
+
+    def test_a_marked_sentence_that_states_a_fact_is_an_uncited_fact(self):
+        a = sentence("story.s01.body", "Acme was acquired by Helio.", interpretation=True)
+        b = sentence("story.s01.body", "Teams should try this.", interpretation=True)
+        self.marked({"Acme was acquired by Helio.": True, "Teams should try this.": False}, [a, b])
+        self.assertTrue(a.get("code_failures"))
+        self.assertFalse(b.get("code_failures"))
+
+    def test_an_unreadable_judgement_check_fails_closed(self):
+        a = sentence("story.s01.body", "Teams should try this.", interpretation=True)
+        with unittest.mock.patch.object(citegate.llm, "call", lambda client, **kw: ("not json", NS(), 0.0)):
+            citegate.check_marked(object(), [a], user_id="t")
+        self.assertTrue(a.get("code_failures"))
+
+    def test_the_second_check_is_a_different_model_from_the_first(self):
+        models = []
+
+        def call(client, **kw):
+            models.append(kw["model"])
+            qs = json.loads(kw["messages"][0]["content"])["questions"]
+            if "second" in kw["system"]:
+                return json.dumps({"answers": [{"id": q["id"], "unsupported": []} for q in qs]}), NS(), 0.0
+            return json.dumps({"answers": [{"id": q["id"], "supports": False, "why": "w"} for q in qs]}), NS(), 0.0
+        s = sentence("story.s01.body", "Helio released Orbit.", cite(0, 0))
+        with unittest.mock.patch.object(citegate.llm, "call", call):
+            citegate.verify(object(), [s], user_id="t")
+        self.assertEqual(models, [citegate.llm.CHECK_MODEL, citegate.llm.FRAMER_MODEL])
+
+    def test_a_garbled_verifier_answer_holds_the_story_and_does_not_crash(self):
+        s = sentence("story.s01.body", "Helio released Orbit.", cite(0, 0))
+        with unittest.mock.patch.object(citegate.llm, "call", lambda client, **kw: (json.dumps({"answers": [{"nope": 1}]}), NS(), 0.0)):
+            out, _ = citegate.verify(object(), [s], user_id="t")
+        self.assertFalse(out[0]["verdict"]["supported"])
+
+    def test_structural_failures_block_the_edition_even_when_every_story_passes(self):
+        sents = Holding().sents()
+        d = citegate.evaluate(sents, Holding.IDS, structural=["thread.body: 70 words, 80 to 120 are required"])
+        self.assertFalse(d["publishable"])
+        self.assertEqual(len(d["passing"]), 5)
+
+
+class AfterAHold(unittest.TestCase):
+    def test_a_count_that_names_a_held_story_or_totals_the_old_edition_blocks_the_edition(self):
+        c = valid(5)
+        c["thread"]["lines"][0] = "Three of this week's five stories shipped products."
+        c["counts"] = [{"path": "thread.line.1", "phrase": "Three of this week's five stories", "stories": ["s01", "s02", "s03"]}]
+        ids = composer.story_ids(raw_day(5))
+        out = composer_cited.hold_checks(c, ids, {"held": {"s01": ["x"]}})
+        self.assertTrue(any("s01" in line and "not in this edition" in line for line in out), out)
+        self.assertTrue(any("total of 5 but this edition has 4" in line for line in out), out)
+        self.assertEqual(composer_cited.hold_checks(c, ids, {"held": {}}), [])
+
+    def test_a_held_label_state_fact_blocks_through_the_judgement_check(self):
+        c = valid(5)
+        c["dividers"] = [{"before": "s03", "label": "Acme fraud scandal"}]
+        day = raw_day(5)
+        blocks = sections(c)
+        profile = {"user_id": "t"}
+
+        def call(client, **kw):
+            qs = json.loads(kw["messages"][0]["content"])["questions"]
+            if "judgement" in kw["system"]:
+                return json.dumps({"answers": [{"id": q["id"], "states_fact": "scandal" in q["line"]} for q in qs]}), NS(), 0.0
+            return json.dumps({"answers": [{"id": q["id"], "supports": True, "why": "w"} for q in qs]}), NS(), 0.0
+        blocks.insert(0, block("@@ divider.s03\nAcme fraud scandal\n"))
+        draft = composer_cited.draft_from(*citegate.read_blocks(blocks))
+        docs = composer_cited.documents(day)
+        composed, missing = composer_cited.build_composed(draft, composer.story_ids(day))
+        with unittest.mock.patch.object(citegate.llm, "call", call):
+            result = composer_cited.check_draft(object(), profile, draft, composed, missing, composer.story_ids(day), docs)
+        self.assertFalse(result["decision"]["publishable"])
+        self.assertTrue(any("divider.s03" in b and "marked as judgement but states a checkable fact" in b for b in result["decision"]["blockers"]), result["decision"]["blockers"])
+
+
+class NoCitations(unittest.TestCase):
+    def test_an_answer_that_hardly_cites_is_asked_for_once_more(self):
+        day, c = raw_day(5), valid(5)
+        calls = []
+
+        def call_message(client, **kw):
+            calls.append(kw)
+            blocks = sections(c)
+            if len(calls) == 1:
+                blocks = [block(b.text) for b in blocks]          # the same text, no citations at all
+            return NS(content=blocks, stop_reason="end_turn", usage=NS()), NS(), 0.5
+
+        def call(client, **kw):
+            qs = json.loads(kw["messages"][0]["content"])["questions"]
+            return json.dumps({"answers": [{"id": q["id"], "supports": True, "why": "w"} for q in qs]}), NS(), 0.0
+        with unittest.mock.patch.object(composer_cited.llm, "call_message", call_message), unittest.mock.patch.object(citegate.llm, "call", call):
+            r = composer_cited.compose_and_check(object(), "SYSTEM", {"user_id": "t", "role": "r", "goals": [], "interests": [], "preferences": {}}, day,
+                                                 {"items": [{"id": f"item-{i}", "why": "W", "ninety": None} for i in range(1, 6)]}, "Oct 10 – Oct 18, 2026", None)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(r["revision"]["rewrites_for_no_citations"], 1)
+        self.assertTrue(r["decision"]["publishable"])
+
+    def test_the_request_asks_for_citations_and_sends_documents(self):
+        req = composer_cited.compose_request("SYSTEM", {"role": "r", "goals": [], "interests": []}, raw_day(5), {"items": []}, "L", None)
+        self.assertIn("answer_through_citations", req["messages"][0]["content"][-1]["text"])
+        self.assertNotIn("format", req["output_config"])
+        self.assertEqual(sum(1 for b in req["messages"][0]["content"] if b["type"] == "document"), 5)
+
+
 if __name__ == "__main__":
     unittest.main()

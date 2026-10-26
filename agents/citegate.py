@@ -41,6 +41,8 @@ _FIELD = re.compile(r"^@@ ([A-Za-z0-9_.\-]+)[ \t]*$", re.M)
 _SENTENCE_END = re.compile(r"(?<=[.!?])[\"')\]]*\s+(?=[~A-Z0-9\"'(\[$])")
 _ABBREV = style_check._ABBREV
 _FIGURE = re.compile(r"\d")
+_NUMBER_WORD = re.compile(r"\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|hundred|thousand|million|billion|trillion|dozen|twice|thrice|percent)\b", re.I)
+MIN_PASSAGE = 12                      # a shorter run of characters supports nothing
 _STORY_FIELD = re.compile(r"^(?:story|why|ninety)\.(s\d+)\b")
 _WEEK_FIELD = re.compile(r"^(?:thread|learning|closing|stories\.title|divider)")
 
@@ -77,10 +79,10 @@ def sentence_spans(text: str, base: int = 0) -> list[tuple[int, int]]:
     """Offsets of each sentence in `text` (shifted by `base`), keeping abbreviations together. Blank lines also end a sentence."""
     cuts, last = [], 0
     for m in re.finditer(_SENTENCE_END, text):
-        piece = text[last:m.start() + 1]
+        piece = text[last:m.start()]
         if _ABBREV.search(piece):
             continue
-        cuts.append((last, m.start() + 1))
+        cuts.append((last, m.start()))
         last = m.end()
     cuts.append((last, len(text)))
     out = []
@@ -125,18 +127,18 @@ def code_failures(sent: dict, docs: list[dict], drawn_from: list[str] | None = N
     out = []
     plain = style_check.plain(text)
     if sent["interpretation"]:
-        if _FIGURE.search(plain):
-            out.append(f"{path}: a sentence marked as interpretation carries a figure or date: {plain[:90]!r}")
-        if sent["citations"]:
-            return out                               # a marked sentence that cites anyway is judged on its citations below
+        if _FIGURE.search(plain) or _NUMBER_WORD.search(plain):
+            out.append(f"{path}: a sentence marked as interpretation carries a figure, date or count: {plain[:90]!r}")
     elif not sent["citations"]:
         out.append(f"{path}: uncited factual sentence: {plain[:90]!r}")
     allowed = None
     own = story_of(path)
-    if own:
+    if path.endswith(".tie"):
+        allowed = None                                  # a tie relates two stories, so it may cite either
+    elif own:
         allowed = {own}
     elif path.startswith("learning.para") or path.startswith("learning.note") or path in ("learning.headline", "learning.doDifferently"):
-        allowed = set(drawn_from) if drawn_from else None
+        allowed = set(drawn_from or [])
     for c in sent["citations"]:
         i = c.get("document_index")
         if not isinstance(i, int) or not 0 <= i < len(docs):
@@ -144,7 +146,7 @@ def code_failures(sent: dict, docs: list[dict], drawn_from: list[str] | None = N
             continue
         doc = docs[i]
         passage = c.get("cited_text") or ""
-        if not passage or passage not in doc["text"]:
+        if len(passage.strip()) < MIN_PASSAGE or passage not in doc["text"]:
             out.append(f"{path}: cited passage is not in {doc['id']}'s stored excerpt: {passage[:60]!r}")
         elif c.get("start") is not None and doc["text"][c["start"]:c["end"]] != passage:
             out.append(f"{path}: cited passage is not where the citation says it is in {doc['id']}")
@@ -176,18 +178,28 @@ SECOND_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "
     "required": ["id", "unsupported"], "additionalProperties": False}}}, "required": ["answers"], "additionalProperties": False}
 
 
-def _ask(client, system: str, schema: dict, questions: list[dict], *, user_id: str, conn=None):
-    """One verification call over a list of questions. Returns ({id: answer}, usage cost)."""
+def _ask(client, system: str, schema: dict, questions: list[dict], *, user_id: str, conn=None, second: bool = False):
+    """One verification call over a list of questions. Returns ({id: answer}, cost).
+
+    The first check is the cheap grader at temperature 0. The second check is a different, stronger model with its own framing, so
+    it is a second opinion and not the first one asked twice. An answer that cannot be read is no answer, and no answer is a no.
+    """
     cost, answers = 0.0, {}
     for i in range(0, len(questions), BATCH):
         chunk = questions[i:i + BATCH]
+        if second:
+            extra = dict(model=llm.FRAMER_MODEL, max_tokens=12_000, output_config={"format": {"type": "json_schema", "schema": schema}, "effort": "low"})
+        else:
+            extra = dict(model=llm.CHECK_MODEL, max_tokens=8000, temperature=0, output_config={"format": {"type": "json_schema", "schema": schema}})
         text, usage, c = llm.call(
-            client, model=llm.CHECK_MODEL, max_tokens=8000, user_id=user_id, phase=VERIFY_PHASE, conn=conn, system=system,
-            messages=[{"role": "user", "content": json.dumps({"questions": chunk}, indent=1, ensure_ascii=False)}],
-            temperature=0, output_config={"format": {"type": "json_schema", "schema": schema}})
+            client, user_id=user_id, phase=VERIFY_PHASE + ("-second" if second else ""), conn=conn, system=system,
+            messages=[{"role": "user", "content": json.dumps({"questions": chunk}, indent=1, ensure_ascii=False)}], **extra)
         cost += c
-        for a in json.loads(text)["answers"]:
-            answers[a["id"]] = a
+        try:
+            for a in json.loads(text)["answers"]:
+                answers[a["id"]] = a
+        except (KeyError, ValueError, TypeError):
+            continue                                    # unreadable: those questions stay unanswered
     return answers, cost
 
 
@@ -204,7 +216,7 @@ def verify(client, sentences: list[dict], *, user_id: str, conn=None) -> tuple[l
         s["verdict"] = {"supported": False, "first": [], "second": None}
     for qid, (si, ci) in enumerate(owners):
         a = answers.get(qid)
-        ok = bool(a and a["supports"])
+        ok = bool(a and a.get("supports") is True)
         todo[si]["verdict"]["first"].append({"citation": ci, "supports": ok, "why": (a or {}).get("why", "no answer")})
     rejected = []
     for s in todo:
@@ -214,18 +226,53 @@ def verify(client, sentences: list[dict], *, user_id: str, conn=None) -> tuple[l
             rejected.append(s)
     if rejected:
         second_q = [{"id": n, "sentence": style_check.plain(s["text"]), "passages": [c["cited_text"] for c in s["citations"]]} for n, s in enumerate(rejected)]
-        second, c2 = _ask(client, SECOND_SYSTEM, SECOND_SCHEMA, second_q, user_id=user_id, conn=conn)
+        second, c2 = _ask(client, SECOND_SYSTEM, SECOND_SCHEMA, second_q, user_id=user_id, conn=conn, second=True)
         cost += c2
         for n, s in enumerate(rejected):
             a = second.get(n)
             s["verdict"]["second"] = {"unsupported": (a or {}).get("unsupported", ["no answer"])}
-            s["verdict"]["supported"] = bool(a and not a["unsupported"])
+            s["verdict"]["supported"] = bool(a and isinstance(a.get("unsupported"), list) and not a["unsupported"])
     return sentences, cost
+
+
+# ---------------------------------------------------------------- the writer's own judgement is checked too
+
+MARKED_SYSTEM = (
+    "A writer marked some lines of a news digest as its own judgement, which needs no source. For each LINE (shown with the other "
+    "sentences of its field as CONTEXT), answer states_fact=true only if the line itself ASSERTS a specific new fact that is not in the "
+    "context and that a source page could confirm or contradict: a named party doing, buying, owning, releasing or announcing something; "
+    "a quantity, date or version; a capability or an event. Answer states_fact=false for opinion, advice, a question, an evaluation or "
+    "characterisation of facts the context already gives, a consequence drawn from them, a heading or a label that names a topic, or a "
+    "plain definition of a word. 'Acme was acquired by Helio' is true; 'Teams should try this', 'That is the part of the stack you control' "
+    "and 'A held-out split is named here as inadequate' are false. If a line only comments on what the context says, it is false."
+)
+MARKED_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "items": {
+    "type": "object", "properties": {"id": {"type": "integer"}, "states_fact": {"type": "boolean"}}, "required": ["id", "states_fact"],
+    "additionalProperties": False}}}, "required": ["answers"], "additionalProperties": False}
+
+
+def check_marked(client, sentences: list[dict], *, user_id: str, conn=None) -> float:
+    """A sentence marked `~` (and every label that reaches the page) carries no citation, so it must state no fact. A model says;
+    one that does is recorded in `code_failures` as uncited, and holds its story like any other uncited fact."""
+    todo = [s for s in sentences if (s["interpretation"] or s.get("label")) and not s["citations"]]
+    if not todo:
+        return 0.0
+    by_path: dict = {}
+    for s in sentences:
+        by_path.setdefault(s["path"], []).append(style_check.plain(s["text"]))
+    questions = [{"id": n, "line": style_check.plain(s["text"]), "context": [t for t in by_path.get(s["path"], []) if t != style_check.plain(s["text"])][:8]}
+                 for n, s in enumerate(todo)]
+    answers, cost = _ask(client, MARKED_SYSTEM, MARKED_SCHEMA, questions, user_id=user_id, conn=conn)
+    for n, s in enumerate(todo):
+        a = answers.get(n)
+        if a is None or a.get("states_fact") is not False:
+            s.setdefault("code_failures", []).append(f"{s['path']}: marked as judgement but states a checkable fact (or could not be read): {style_check.plain(s['text'])[:90]!r}")
+    return cost
 
 
 # ---------------------------------------------------------------- holding stories
 
-def evaluate(sentences: list[dict], story_ids: list[str]) -> dict:
+def evaluate(sentences: list[dict], story_ids: list[str], structural: list[str] | None = None) -> dict:
     """From checked sentences to the decision: which stories pass, which are held (and why), what blocks the week.
 
     Returns {passing, held: {sid: [reasons]}, blockers: [reasons], publishable}.
@@ -246,5 +293,6 @@ def evaluate(sentences: list[dict], story_ids: list[str]) -> dict:
         else:
             blockers.extend(reasons)
     passing = [sid for sid in story_ids if sid not in held]
+    blockers += list(structural or [])           # a style, slot or count failure is the whole edition's: no story can be dropped to remove it
     return {"passing": passing, "held": held, "blockers": blockers,
             "publishable": not blockers and len(passing) >= MIN_STORIES}

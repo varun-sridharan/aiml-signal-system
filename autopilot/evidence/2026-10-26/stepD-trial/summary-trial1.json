@@ -1,0 +1,50 @@
+[
+ {
+  "gate": "claims",
+  "case": "negative-02",
+  "run": 1,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 0,
+  "units_flagged": 1,
+  "cost": 0.004444,
+  "seconds": 9.0,
+  "error": null
+ },
+ {
+  "gate": "claims",
+  "case": "2026-08-04",
+  "run": 1,
+  "caught": {},
+  "false_alarms": 0,
+  "units_flagged": 0,
+  "cost": 0.010342,
+  "seconds": 11.4,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "negative-02",
+  "run": 1,
+  "caught": {
+   "negative-02-atlas:58.4%": true
+  },
+  "false_alarms": 1,
+  "units_flagged": 2,
+  "cost": 0.025147000000000003,
+  "seconds": 12.6,
+  "error": null
+ },
+ {
+  "gate": "citations",
+  "case": "2026-08-04",
+  "run": 1,
+  "caught": {},
+  "false_alarms": 14,
+  "units_flagged": 8,
+  "cost": 0.12470400000000001,
+  "seconds": 56.0,
+  "error": null
+ }
+]
