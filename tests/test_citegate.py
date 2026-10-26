@@ -374,8 +374,11 @@ class AfterAHold(unittest.TestCase):
         out = composer_cited.hold_checks(c, ids, {"held": {"s01": ["x"]}})
         # the count's entry naming the held story is dropped with it, so the sentence now states a count nobody listed: still a failure
         self.assertTrue(any("no entry in `counts`" in line for line in out), out)
-        self.assertTrue(any("total of 5 but this edition has 4" in line for line in out), out)
         self.assertEqual(composer_cited.hold_checks(c, ids, {"held": {}}), [])
+        # a count whose stories all survive, but whose total is the old edition's, is a failure of its own
+        c["counts"] = [{"path": "thread.line.1", "phrase": "Three of this week's five stories", "stories": ["s02", "s03", "s04"]}]
+        out = composer_cited.hold_checks(c, ids, {"held": {"s01": ["x"]}})
+        self.assertTrue(any("total of 5 but this edition has 4" in line for line in out), out)
 
     def test_a_held_label_state_fact_blocks_through_the_judgement_check(self):
         c = valid(5)
