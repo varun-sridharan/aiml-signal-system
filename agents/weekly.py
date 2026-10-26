@@ -6,6 +6,7 @@
     python -m agents.weekly --week 2026-W43 --new-attempt                       # a fresh attempt, 2026-W43-r2, from the Reader
     python -m agents.weekly --week 2026-W43 --reuse-reader 2026-W43             # ...reframing what that attempt's Reader found
     python -m agents.weekly --week 2026-W43 --status                            # every attempt at the week
+    python -m agents.weekly --scheduled        # the Friday job: runs only in Friday 19:00-19:59 Pacific, once per week, resuming (docs/go-live.md)
 
 Each stage is checkpointed in the `runs` tables (agents/runs.py). A rerun of an attempt loads
 every stage that already finished and continues at the first that did not, so a failed
@@ -15,8 +16,8 @@ the earlier attempt's Reader output. A week publishes at most one edition. The F
 are the ones that shipped (agents/framer.py), ported without change; this module only
 feeds them verified items from the database and stores what they produce.
 
-NOT scheduled. The scheduled Weekly Digest keeps running in parallel (decision 2026-10-17);
-see README.md for how to put this on a Railway cron when it has earned the switch.
+`--scheduled` is the one entrypoint for the Railway cron service Varun creates (docs/go-live.md). The old Weekly Digest keeps running in parallel
+(decision 2026-10-17) until he switches it off.
 """
 
 from __future__ import annotations
@@ -27,6 +28,7 @@ import os
 import re
 import sys
 from datetime import date, datetime, timezone
+from zoneinfo import ZoneInfo
 
 try:
     from . import briefs, budget, composer, composer_cited, counts, excerpts, framer, gates, items, llm, reader, repair, runs, style_check
@@ -88,6 +90,68 @@ def gate_mode() -> str:
 def week_key(now: datetime) -> str:
     year, week, _ = now.isocalendar()
     return f"{year}-W{week:02d}"
+
+
+# The Friday job (Run 6, Step B). Two UTC cron entries, Saturday 02:00 and 03:00, one of which is Friday 19:00 Pacific whichever side of daylight
+# saving the year is on; the job runs only when the Pacific clock says Friday between 19:00 and 19:59, so the other entry does nothing.
+PACIFIC = ZoneInfo("America/Los_Angeles")
+SCHEDULE_WEEKDAY = 4          # Friday
+SCHEDULE_HOUR = 19
+
+
+def pacific(now: datetime) -> datetime:
+    return now.astimezone(PACIFIC)
+
+
+def in_friday_window(now: datetime) -> bool:
+    local = pacific(now)
+    return local.weekday() == SCHEDULE_WEEKDAY and local.hour == SCHEDULE_HOUR
+
+
+def scheduled_week(now: datetime) -> str:
+    """The ISO week of the Pacific date: the week the Friday belongs to."""
+    return week_key(pacific(now))
+
+
+def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:
+    """The Friday job. Returns the process exit code and writes one status line.
+
+    Does nothing outside the window. Does nothing, cleanly, when the week already has a published edition (the second cron entry, or a
+    manual rerun). Otherwise resumes the week's latest unfinished attempt, or starts the first (agents/runs.py checkpoints), so a run that
+    died after the Reader pays for the Reader once.
+    """
+    connect, build_client, run = connect or budget.connect, build_client or llm.build_client, run or run_week
+    local = pacific(now)
+    week = scheduled_week(now)
+    if not in_friday_window(now):
+        out(f"scheduled: {local:%a %H:%M %Z} is outside Friday {SCHEDULE_HOUR}:00 to {SCHEDULE_HOUR}:59 Pacific; nothing done")
+        return 0
+    try:
+        with connect() as conn:
+            held = briefs.get(conn, week)
+            if held is not None:
+                out(f"scheduled: {week} is already published ({held[2]:%Y-%m-%d %H:%M} UTC); nothing done")
+                return 0
+            client = build_client()
+            run_id = resolve_run(conn, week)
+            exists = conn.execute("SELECT 1 FROM runs WHERE id = %s", (run_id,)).fetchone()
+            start = "reader" if not exists else runs.next_stage(conn, run_id)
+            result = run(conn, client, now, run_id, clock=lambda: datetime.now(timezone.utc))
+            row = briefs.get(conn, week)
+    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, AlreadyPublished, runs.StageBusy, runs.RunRefused) as stop:
+        out(f"scheduled: {week} stopped: {str(stop)[:300]}")
+        return 1
+    except SystemExit as e:                       # llm.build_client exits when the API key is missing
+        out(f"scheduled: {week} stopped: {e}")
+        return 1
+    except Exception as e:                        # a stage that died: its checkpoint says where, and the next run resumes there
+        out(f"scheduled: {week} stopped: {type(e).__name__}: {str(e)[:300]}")
+        return 1
+    if row is None:
+        out(f"scheduled: {week} ran ({run_id}, from {start or 'nothing'}) but no edition was published")
+        return 1
+    out(f"scheduled: {week} published ({run_id}, from {start or 'publish'}) at {row[2]:%Y-%m-%d %H:%M} UTC; stages {', '.join(result)}")
+    return 0
 
 
 def week_start(week: str) -> date:
@@ -203,6 +267,7 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
         "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (item_ids,)).fetchall()
     chosen, per_domain, do_this_left = [], {}, MAX_DO_THIS
     for iid, url, domain, title, _score, topics, eid in rows:
+        backlog = "from your backlog" in (topics or [])
         if per_domain.get(domain, 0) >= MAX_PER_DOMAIN or not items.surfaceable(conn, iid):
             continue
         # The first pass is shown, and graded against, the same plain rendering of the page the composing pass is (straight_quotes):
@@ -224,7 +289,7 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
                        "SELECT s.name, i2.url, i2.role FROM item_sources i2 JOIN sources s ON s.id = i2.source_id "
                        "WHERE i2.item_id = %s ORDER BY (i2.role = 'primary') DESC, s.name", (iid,)).fetchall()]
         chosen.append({"id": str(iid), "category": "AI", "headline": title, "tags": tags,
-                       "source_excerpt": excerpt, "sources": sources})
+                       "source_excerpt": excerpt, "sources": sources, **({"fromBacklog": True} if backlog else {})})
         if len(chosen) >= MAX_BRIEF_ITEMS:
             break
     # The edition is dated the day it was made: what a run reads is the last days up to now,
@@ -613,9 +678,14 @@ def main() -> int:
     parser.add_argument("--status", action="store_true", help="print every attempt at the week and exit; no model call")
     parser.add_argument("--stop-after", choices=runs.STAGES, help="stop cleanly after this stage")
     parser.add_argument("--new-attempt", action="store_true", help="start the week's next attempt (-r2, -r3...) from the Reader")
+    parser.add_argument("--scheduled", action="store_true", help="the Friday job: run only in Friday 19:00-19:59 Pacific, once per week, resuming (docs/go-live.md)")
     parser.add_argument("--reuse-reader", metavar="RUN_ID", help="start a new attempt from this attempt's finished Reader output (no re-fetch)")
     args = parser.parse_args()
     now = datetime.now(timezone.utc)
+    if args.scheduled:
+        if args.week or args.status or args.stop_after or args.new_attempt or args.reuse_reader:
+            parser.error("--scheduled takes no other option: it works out the week itself")
+        return scheduled(now)
     if args.status:
         with budget.connect() as conn:
             print("\n".join(status(conn, args.week or week_key(now))))

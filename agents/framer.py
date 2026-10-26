@@ -762,6 +762,8 @@ def assemble_day(
         if framed.get("connection"):
             item["connection"] = framed["connection"]
         item["sources"] = raw_item["sources"]
+        if raw_item.get("fromBacklog"):
+            item["fromBacklog"] = True          # a link Varun saved (agents/capture.py): the page flags the story
         item["faithfulness"] = {
             "confidence": verdict.get("confidence"),
             "unsupported_claims": verdict.get("unsupported_claims", []),

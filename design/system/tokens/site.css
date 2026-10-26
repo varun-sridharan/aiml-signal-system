@@ -9,6 +9,7 @@
   --shadow-tile:0 1px 2px rgba(32,28,23,.04);     /* Product's stat tile */
   --shadow-tip:0 4px 16px rgba(32,28,23,.12);     /* a tooltip */
   --scrollbar:#D2CBBA;                   /* scrollbar thumb */
+  --fs-doc-title:clamp(36px,5.4vw,52px);  /* a Document page's title (Run 6, 2026-10-26: 52px at desktop widths; Product keeps --fs-hero) */
   --fs-section:28px;                     /* a numbered section heading in a Document page */
   --radius-btn:8px;                      /* Product's buttons */
   --on-accent:#FFFDF8;                   /* text on an accent button */

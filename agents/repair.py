@@ -183,7 +183,7 @@ def settle(store, verdicts: dict, client, *, user_id: str, conn=None) -> tuple:
                 ok, locs, cost = second_check(client, claim, cands, store.truth(unit), user_id=user_id, conn=conn)
                 log["cost_usd"] += cost
                 if not ok:
-                    log["dismissed"].append({"unit": unit, "claim": claim})
+                    log["dismissed"].append({"unit": unit, "claim": claim, "reader": "found the claim in the excerpt"})
                 elif not locs:
                     log["unlocatable"].append({"unit": unit, "claim": claim})
                 else:
@@ -206,7 +206,7 @@ def settle(store, verdicts: dict, client, *, user_id: str, conn=None) -> tuple:
             elif new:
                 t2, r2 = replace_span(text, runs, span[0], span[1], new, new_runs)
                 store.put(path, t2, r2)
-                log["rewritten"].append({"path": path, "unit": unit, "claim": claim})
+                log["rewritten"].append({"path": path, "unit": unit, "claim": claim, "before": sentence, "after": new, "reader": "did not find the claim in the excerpt"})
             else:
                 _drop(store, path, sentence, claim, log, why="the writer could find nothing true to say")
     verdicts, cost = store.grade()
@@ -247,7 +247,7 @@ def _drop(store, path: str, sentence: str, claim: str, log: dict, *, why: str) -
         log["held"].setdefault(owner, []).append(f"{path}: {why}: {claim[:80]}")
         return
     store.put(path, new_text, new_runs)
-    log["removed"].append({"path": path, "claim": claim, "why": why})
+    log["removed"].append({"path": path, "claim": claim, "why": why, "sentence": sentence})
 
 
 # ---------------------------------------------------------------- the two stores
@@ -405,7 +405,8 @@ def drop_failing_counts(store: "ComposedStore", ids: dict, log: dict) -> None:
                 if phrase in re.sub(r"\s+", " ", style_check.plain(text[a:b]).lower()):
                     new_text, new_runs = remove_span(text, runs, a, b)
                     store.put(path, new_text, new_runs)
-                    log["removed"].append({"path": path, "claim": f"a count across stories: {m.group(2)}", "why": "the count could not be checked"})
+                    log["removed"].append({"path": path, "claim": f"a count across stories: {m.group(2)}", "why": "the count could not be checked",
+                                       "sentence": text[a:b]})
                     changed = True
                     break
         if not changed:

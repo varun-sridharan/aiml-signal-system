@@ -1,0 +1,60 @@
+{#
+  The review note for the first editions (Run 6, Step A3): what the claim gate held, removed or rewrote, and why. Unlinked, noindex,
+  not in the nav. Built from agents/review.py, which keeps our own text only. Document layout, no contents sidebar.
+#}
+{%- from "_site.html" import site_header %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Review note</title>
+{% include "_head.html" %}
+<style>
+  .edition-note{margin:44px 0 0;padding-top:28px;border-top:var(--rule-w) solid var(--rule)}
+  .edition-note h2{font-family:var(--serif);font-size:var(--fs-section);font-weight:600;margin:0}
+  .edition-note .tally{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.08em;color:var(--faint);margin:8px 0 0}
+  .entry{margin:20px 0 0;padding:14px 18px;background:var(--panel);border:var(--rule-w) solid var(--rule);border-radius:var(--radius-lg)}
+  .entry .what{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .entry p{margin:8px 0 0;color:var(--soft);line-height:1.6}
+  .entry q{color:var(--ink)}
+  .entry .label{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .none{color:var(--soft);margin:14px 0 0}
+</style>
+</head>
+<body class="layout-doc">
+{{ site_header("") }}
+<div class="doc solo"><main><article>
+  <div class="kicker">Review note</div>
+  <h1 class="page">What the claim gate changed</h1>
+  <p class="lede">For each of the first {{ limit }} published editions: the sentences the gate held, removed or rewrote, and why. Only our own text appears here, never text copied from an article.</p>
+  {%- if error %}
+  <p class="none">{{ error }}</p>
+  {%- elif not notes %}
+  <p class="none">No edition has been published yet.</p>
+  {%- endif %}
+  {%- for n in notes %}
+  <section class="edition-note" id="{{ n.week }}">
+    <h2>Edition {{ "%02d"|format(n.number) }} · {{ n.week }}</h2>
+    <div class="tally">{{ n.flags }} flagged by the grader · {{ n.counts.dismissed }} dismissed · {{ n.counts.rewritten }} rewritten · {{ n.counts.removed }} removed · {{ n.counts.held }} story holds · {{ n.warnings }} warnings</div>
+    {%- if not n.detailed %}
+    <p class="none">This edition was published before the log kept sentence text; only the counts above were kept.</p>
+    {%- endif %}
+    {%- for e in n.entries %}
+    <div class="entry">
+      <div class="what">{{ e.kind }} · {{ e.stage }}{% if e.where %} · {{ e.where }}{% endif %}</div>
+      {%- if e.claim %}<p><span class="label">The grader's verdict</span><br>{{ e.claim }}</p>{% endif %}
+      {%- if e.reader %}<p><span class="label">{{ "Second reader" if e.kind in ("dismissed", "rewritten") else "Reason" }}</span><br>{{ e.reader }}</p>{% endif %}
+      {%- if e.before %}<p><span class="label">{{ "The sentence" if e.kind == "removed" else "Before" }}</span><br><q>{{ e.before }}</q></p>{% endif %}
+      {%- if e.after %}<p><span class="label">After the rewrite</span><br><q>{{ e.after }}</q></p>{% endif %}
+    </div>
+    {%- else %}
+    <p class="none">The gate changed nothing in this edition.</p>
+    {%- endfor %}
+  </section>
+  {%- endfor %}
+</article></main></div>
+<script src="/static/site.js" defer></script>
+</body>
+</html>

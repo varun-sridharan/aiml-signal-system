@@ -88,6 +88,7 @@ def _item(raw) -> dict:
         "ninety": ninety_rows,
         "sources": sources,
         "checked": not faith.get("unsupported_claims") and faith.get("confidence") is not None,
+        "fromBacklog": raw.get("fromBacklog") is True,
     }
 
 
@@ -326,7 +327,7 @@ def _composed_sections(edition: dict, by_item: dict) -> dict:
         rows.append({
             "divider": dividers.get(s["id"]),
             "id": s["id"], "item_id": item["id"], "num": numbers[s["id"]], "tag": s.get("tag") if s.get("tag") in PILLS else "KNOW",
-            "feature": bool(s.get("feature")) and bool(feature_paras), "from_backlog": bool(s.get("fromBacklog")),
+            "feature": bool(s.get("feature")) and bool(feature_paras), "from_backlog": bool(s.get("fromBacklog")) or bool(item.get("fromBacklog")),
             "headline": _text(s.get("headline"), f"{s['id']}/headline", required=True),
             "hashtags": [h for h in _str_list(s.get("hashtags"), f"{s['id']}/hashtags", 4, clip=True) if re.fullmatch(r"#[A-Za-z][A-Za-z0-9]*", h)],
             "feature_paras": feature_paras, "body": _text(s.get("body"), f"{s['id']}/body"),

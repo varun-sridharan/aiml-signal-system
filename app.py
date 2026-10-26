@@ -16,6 +16,7 @@ and the app refuses to start if either file breaks that format.
 """
 
 import hmac
+import json
 import os
 import re
 import sys
@@ -32,7 +33,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from agents import briefs, budget, digest, llm, pages, reader
+from agents import briefs, budget, capture, digest, llm, pages, reader, review
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -130,6 +131,9 @@ def health() -> JSONResponse:
     # CONCEPT: no figures and no URL, because /health is public. An unreachable ledger
     # is still a 200: the site is serving, and paid calls are refused on their own.
     body["ledger"] = "ok" if _ledger_ok() else "unavailable"
+    # WHAT: the newest published edition's week and the time it was published (Run 6, Step B), so the Friday job can be checked from outside.
+    # CONCEPT: null when there is none or the database does not answer; the answer is cached with the ledger's, so the page costs no query per hit.
+    body["last_edition"] = _last_edition()
     return JSONResponse(body)
 
 
@@ -140,6 +144,24 @@ _LEDGER_TTL_S = 15
 # process, and a zero would read as "checked just now" for the first 15 seconds, which
 # is exactly when the deploy healthcheck asks.
 _ledger_cache = {"at": None, "ok": False}
+
+
+_edition_cache = {"at": None, "value": None}
+
+
+def _last_edition():
+    now = time.monotonic()
+    if _edition_cache["at"] is None or now - _edition_cache["at"] > _LEDGER_TTL_S:
+        value = None
+        try:
+            with _connect() as conn:
+                row = conn.execute("SELECT id, published_at FROM briefs ORDER BY published_at DESC, id DESC LIMIT 1").fetchone()
+            if row is not None:
+                value = {"week": row[0], "published_at": row[1].astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
+        except Exception:                      # a database that does not answer is a null, never a failed health check
+            value = None
+        _edition_cache.update(at=now, value=value)
+    return _edition_cache["value"]
 
 
 def _ledger_ok() -> bool:
@@ -276,6 +298,23 @@ def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional
     return templates.TemplateResponse(request=request, name="digest.template.html", context=context)
 
 
+# WHAT: the review note, an unlinked page of what the claim gate held, removed or rewrote in the first editions (Run 6, Step A3).
+# CONCEPT: not in the nav, not in the archive, noindex in the page and in the header. It shows our own text only (agents/review.py)
+# and stops growing after REVIEW_EDITIONS published editions. Registered before the mount like every other route.
+@app.get("/weekly-digest/review")
+def weekly_digest_review(request: Request):
+    notes, error = [], None
+    try:
+        with _connect() as conn:
+            notes = review.entries(conn)
+    except Exception as e:
+        print(f"review note: database unavailable ({type(e).__name__})", file=sys.stderr)
+        error = "The database that holds the editions did not answer. Try again in a minute."
+    return templates.TemplateResponse(request=request, name="review.template.html", status_code=503 if error else 200,
+                                      context={"notes": notes, "error": error, "limit": review.REVIEW_EDITIONS},
+                                      headers={"X-Robots-Tag": "noindex, nofollow"})
+
+
 @app.get(SAMPLE_EDITION_URL)
 def weekly_digest_sample() -> HTMLResponse:
     return HTMLResponse(SAMPLE_EDITION_PATH.read_text(encoding="utf-8"))
@@ -385,6 +424,43 @@ async def add_news(request: Request) -> JSONResponse:
         print(f"add-news failed: {type(e).__name__}", file=sys.stderr)
         return JSONResponse({"detail": "the page could not be added"}, status_code=502)
     return JSONResponse(result)
+
+
+# WHAT: /add-news/batch, the Friday capture import (Run 6, Step C; docs/capture-import.md).
+# CONCEPT: the scheduled task in the Claude app posts the week's saved links, a JSON list of {url, addedAt, note}, and they join the week's
+# candidates flagged "from your backlog". It is FREE: nothing is fetched and no model is called here (the weekly run fetches), so there is no
+# per-hour limit, only a size limit. Same token, same 503-until-configured as /add-news. Posting a batch twice changes nothing.
+MAX_BATCH_BYTES = 64_000
+
+
+@app.post("/add-news/batch")
+async def add_news_batch(request: Request) -> JSONResponse:
+    token = os.environ.get("ADD_NEWS_TOKEN", "")
+    if not token:
+        return JSONResponse({"detail": "add-news is not configured"}, status_code=503)
+    if not hmac.compare_digest(request.headers.get("x-add-news-token", "").encode("utf-8"), token.encode("utf-8")):
+        return JSONResponse({"detail": "Forbidden"}, status_code=403)
+    raw = await request.body()
+    if len(raw) > MAX_BATCH_BYTES:
+        return JSONResponse({"detail": f"a batch is at most {MAX_BATCH_BYTES} bytes"}, status_code=413)
+    try:
+        links = json.loads(raw)
+        if isinstance(links, dict) and isinstance(links.get("links"), list):
+            links = links["links"]
+        if not isinstance(links, list):
+            raise ValueError
+    except ValueError:
+        return JSONResponse({"detail": "send a JSON list: [{\"url\": \"https://...\", \"addedAt\": \"...\", \"note\": \"...\"}]"}, status_code=400)
+    if len(links) > capture.MAX_LINKS:
+        return JSONResponse({"detail": f"at most {capture.MAX_LINKS} links in one batch"}, status_code=413)
+    try:
+        def work():
+            with budget.connect() as conn:
+                return capture.import_batch(conn, links, datetime.now(timezone.utc))
+        return JSONResponse(await run_in_threadpool(work))
+    except Exception as e:
+        print(f"add-news batch failed: {type(e).__name__}", file=sys.stderr)
+        return JSONResponse({"detail": "the batch could not be stored; nothing is lost, post it again"}, status_code=502)
 
 
 def _add_news(url: str) -> dict:

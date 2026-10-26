@@ -29,6 +29,19 @@ class Tokens(unittest.TestCase):
         self.assertNotIn("a{color", css)            # variables only: the kit's element rules belong to a layout, not to every page
 
 
+class Titles(unittest.TestCase):
+    """Run 6, Step A1: Document pages have 52px titles through a Document-layout token; Product keeps its 68px display title."""
+
+    def test_the_document_title_is_a_52px_token_and_the_landing_title_is_still_68px(self):
+        tokens = (REPO / "static" / "tokens.css").read_text()
+        self.assertRegex(tokens, r"--fs-doc-title:\s*clamp\(\d+px,\s*[\d.]+vw,\s*52px\)")
+        self.assertRegex(tokens, r"--fs-hero:\s*clamp\(\d+px,\s*[\d.]+vw,\s*68px\)")
+        css = (REPO / "static" / "site.css").read_text()
+        self.assertRegex(css, r"\.layout-doc h1\.page\{[^}]*font-size:var\(--fs-doc-title\)")
+        self.assertRegex(css, r"\.layout-landing \.hero-title\{[^}]*font-size:var\(--fs-hero\)")
+        self.assertNotIn("52px", css)                  # the number lives in the token file, not in a layout
+
+
 class Pages(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

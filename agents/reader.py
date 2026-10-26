@@ -655,13 +655,16 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
         int(FETCH_MAX_CONTENT_TOKENS * 1.25))
     chosen = select_for_fetch(conn, now, min(limit, int(RUN_COST_CEILING_USD // worst_case)))
     stats.left_for_later = len({iid for iid, _ in kept}) - len({iid for iid, _ in chosen})
+    # A link Varun saved himself is read even if its page is dated before the window, as /add-news does: he decides what is worth reading.
+    backlog = {r[0] for r in conn.execute("SELECT id FROM items WHERE id = ANY(%s::uuid[]) AND 'from your backlog' = ANY(relevance_terms)",
+                                          ([str(i) for i, _ in chosen],)).fetchall()}
     last_domain = None
     for iid, url in chosen:
         domain = sources.domain_of(url)
         if domain == last_domain:
             time.sleep(FETCH_PAUSE_SECONDS)
         last_domain = domain
-        fetch_and_store(conn, client, iid, url, now, stats)
+        fetch_and_store(conn, client, iid, url, now, stats, enforce_window=iid not in backlog)
     # Only what passed the relevance filter and was fetched is compared; a duplicate is folded into the
     # earlier item and left out of the output, and the merge is recorded so it can be undone.
     report = dedupe.dedupe_fetched(conn, client, [i for i, _ in window_fetched(conn, now)], now, judge_fn=judge_fn)

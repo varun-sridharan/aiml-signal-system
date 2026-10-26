@@ -112,7 +112,12 @@ def surfaceable(conn, item_id: uuid.UUID) -> bool:
     unrated domains are discovery and corroboration only, never surfaced alone. So:
     a high-prior source reports it, or at least two distinct sources do and one of
     them is not low-prior or unrated.
+
+    One exception: a link Varun saved himself (agents/capture.py, flagged "from your backlog") may always surface. The rules above are for
+    what feeds throw at us; he decides what is worth reading, as with /add-news.
     """
+    if conn.execute("SELECT 'from your backlog' = ANY(relevance_terms) FROM items WHERE id = %s", (item_id,)).fetchone() == (True,):
+        return True
     rows = conn.execute(
         "SELECT DISTINCT s.id, s.tier FROM item_sources i JOIN sources s ON s.id = i.source_id "
         "WHERE i.item_id = %s", (item_id,)).fetchall()
