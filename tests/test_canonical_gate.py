@@ -33,9 +33,10 @@ class CanonicalGate(unittest.TestCase):
     def test_the_real_canonicaliser_passes(self):
         self.assertEqual(gate.evaluate(), [])
 
-    def test_the_set_has_planted_near_duplicates_and_is_marked_draft(self):
+    def test_the_set_has_planted_near_duplicates_and_carries_its_review_state(self):
         data = gate.load_pairs()
-        self.assertIn("draft, awaiting Varun's review", data["status"])
+        # the set carries its review state: a draft until Varun reviewed it, then his sign-off with the date
+        self.assertTrue("draft, awaiting Varun's review" in data["status"] or data["status"].startswith("signed off by Varun on 20"), data["status"])
         planted = [p for p in data["pairs"] if p.get("planted")]
         self.assertGreaterEqual(len(planted), 1)
         self.assertTrue(all(p["expect"] == "different" for p in planted))

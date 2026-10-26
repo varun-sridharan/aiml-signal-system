@@ -49,9 +49,10 @@ class ContentPairsGate(unittest.TestCase):
     def test_the_real_layers_behave_as_labelled(self):
         self.assertEqual(gate.evaluate(), [])
 
-    def test_the_set_is_a_marked_draft_with_the_required_kinds(self):
+    def test_the_set_is_a_reviewed_or_draft_set_with_the_required_kinds(self):
         data = gate.load_pairs()
-        self.assertIn("draft, awaiting Varun's review", data["status"])
+        # the set carries its review state: a draft until Varun reviewed it, then his sign-off with the date
+        self.assertTrue("draft, awaiting Varun's review" in data["status"] or data["status"].startswith("signed off by Varun on 20"), data["status"])
         self.assertGreaterEqual(len(data["pairs"]), 10)
         for needed in ("same-article-fetched-twice", "ga-post-from-preview-template", "two-papers-one-lab-shared-boilerplate",
                        "short-fetch-against-full", "article-updated-after-publication", "syndicated-copy"):
