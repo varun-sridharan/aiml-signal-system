@@ -31,7 +31,7 @@ Two systems are converging into one. The **AI Weekly News Digest** still runs as
 
 > **Sunset criterion**
 >
-> **The old Digest retires on a criterion, not a date:** when M3 has run clean for two to three consecutive weeks. Not feature parity — M2 alone replaces the debrief but not the predictions and drafts, so switching off earlier costs a Friday read.
+> **The old Digest retires on a criterion, not a date:** when M3 has run clean for two to three consecutive weeks: every edition published, and every draft change it opened passing the grounding gate. Not feature parity — M2 alone replaces the debrief but not the predictions and drafts, so switching off earlier costs a Friday read.
 
 # M1 · Reading and writing, hosted
 
@@ -72,33 +72,35 @@ Two systems are converging into one. The **AI Weekly News Digest** still runs as
 - Distinguishing *not yet* from *never* for an unresolved prediction — in the backlog, revisited after the ledger has real entries
 - Prediction originality scoring, which is subjective and stays reported
 
-# M3 · Practice
+# M3 · From signal to a review-ready change
 
 - **Status:** LATER
-- **One line:** Coach reads the configured GitHub repository and writes homework that fits a real spot in it.
-- **Why:** The highest hallucination risk in the system, which is why it comes after trust is built — and the first agent whose steps genuinely cannot be written in advance, so it is the one place an agent loop earns its keep.
+- **One line:** Reads your repository and your roadmap, matches the week's item to the right roadmap item, and drafts the change as a draft pull request for an engineer to review and ship.
+- **Why:** The highest hallucination risk in the system, which is why it comes after trust is built — and the first agent whose steps genuinely cannot be written in advance, so it is the one place an agent loop earns its keep. An item only matters once it is tied to work a team already plans, so the output is a change an engineer can review, not one more thing to read.
 - **Depends on:** M2 — and on several weeks of real editions existing
 - **Live plan:** arrives when M2 completes — Same reason as M2. A plan written three milestones ahead is a guess wearing a schedule.
 
 ### Scope
 
 - **Concept triage, first.** Before this milestone's plan is written, run `build-plan-concepts` against the shared backlog in `Knowledge Hub/AI-Concepts.html`: a verdict for this project on every open concept, and each adopted one becomes a row in the plan, named by its backlog id.
-- **Coach on the Claude Agent SDK.** Real tool use over a repository it has not seen, with Read, Grep and Glob scoped to declared paths. The only agent here that gets a loop; every other one is a pipeline.
-- **Repo grounding as a hard gate, with no model involved.** Every named file path exists, every named symbol appears in it, every command parses. Deterministic.
-- **Practice surface.** A *How it Works* sub-tab, and *Open Exercises* with a gear for the repository setting.
-- **Per-exercise tile:** status dropdown (To Start / In Progress / Complete), learning goal, estimated duration — **60 minutes or less** — and steps detailed enough that pasting one into a fresh chat is sufficient context to continue.
-- **Time logging.** A timestamp when status moves to In Progress; actual minutes recorded at close, optional.
+- **The agent, on the Claude Agent SDK.** Real tool use over a repository it has not seen, with Read, Grep and Glob scoped to declared paths. The only agent here that gets a loop; every other one is a pipeline.
+- **A roadmap input.** A file in the configured repository that says what the team plans to build; its format is decided in the M3 plan, not here.
+- **A match step.** From the week's edition item to the right roadmap item, with the reason written down. No match is a result, not a failure.
+- **A draft pull request.** The system never merges it and never pushes to a default branch; it opens the change only on a branch the configured repository allows, for an engineer to review and ship.
+- **Repo grounding as a hard gate, with no model involved.** Every named file path exists, every named symbol appears in it, every command parses. Deterministic, and applied to the draft pull request and to the homework alike.
+- **Homework as the fallback.** When no roadmap item matches, the output is the Coach's exercise as before: a *How it Works* sub-tab and *Open Exercises* with a gear for the repository setting, each tile with a status dropdown (To Start / In Progress / Complete), a learning goal, an estimated duration of **60 minutes or less** and steps detailed enough to paste into a fresh chat, with time logged when status moves and minutes recorded at close.
 - **Spend and scope enforced by SDK hooks** — the reserve re-checked before every tool call, path allowlist as a permission rule. A loop has no natural cost bound, so it gets a turn cap the pipelines do not need.
 
 ### Exit
 
-- Homework lands in Practice, generated from the configured repository
-- Every named path and symbol is verified in code before the exercise ships
-- Status dropdown and time logging work, and estimated-versus-actual is recorded
+- A draft pull request from a real edition item lands in a configured test repository, and every path, symbol and command in it passes the grounding gate
+- A human reviews it
+- Homework still lands in Practice when nothing matches, with the status dropdown and time logging working and estimated-versus-actual recorded
 - The story video's M3 chapter is written from this milestone's plan, approved, and live on the Product page
 
 ### Not in
 
+- Auto-merge, or any write outside the allowed branch
 - Prior-art reconciliation — same repo access, opposite question; backlog
 - Completion rate as a target. It is a diagnostic only: a completion rate you optimise for is a generator that writes easy homework.
 

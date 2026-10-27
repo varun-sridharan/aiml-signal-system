@@ -33,7 +33,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-from agents import briefs, budget, capture, digest, llm, pages, reader, review
+from agents import briefs, budget, capture, digest, llm, pages, reach, reader, review, revisions
 from scripts.plan_format import check, load_plan, load_roadmap
 
 # WHAT: the repository root is the static root, and that is load-bearing.
@@ -206,7 +206,8 @@ def roadmap(request: Request):
 # repository as they were (they are not served). The content is the JSON's; the templates only lay it out.
 @app.get("/application/Product.html")
 def product_page(request: Request):
-    return templates.TemplateResponse(request=request, name="product.template.html", context={"page": pages.product()})
+    # the hero's number is the Reader's own count for the latest edition's window (agents/reach.py); None means "Hundreds", with no note
+    return templates.TemplateResponse(request=request, name="product.template.html", context={"page": pages.product(), "reach": reach.hero(_connect)})
 
 
 @app.get("/design/System-Design.html")
@@ -262,7 +263,8 @@ def _archive(conn) -> tuple[list, dict]:
         "CASE WHEN jsonb_typeof(body -> 'items') = 'array' THEN jsonb_array_length(body -> 'items') ELSE 0 END, "
         "body -> 'window', published_at FROM briefs WHERE id <> ALL(%s) ORDER BY published_at ASC, id ASC", (briefs.withdrawn(),)).fetchall()
     numbers = {r[0]: n for n, r in enumerate(rows, start=1)}
-    entries = [digest.archive_entry(r[0], numbers[r[0]], r[1], r[2], r[3], r[4], r[5]) for r in reversed(rows)]
+    fixed = revisions.latest_thread_lines(conn)                      # an edition's corrected thread lines show in the archive too
+    entries = [digest.archive_entry(r[0], numbers[r[0]], fixed.get(r[0], r[1]), r[2], r[3], r[4], r[5]) for r in reversed(rows)]
     return entries + [dict(digest.SAMPLE)], numbers
 
 
@@ -274,7 +276,7 @@ def weekly_digest(request: Request, week: Optional[str] = None, notice: Optional
     try:
         with _connect() as conn:
             archive, numbers = _archive(conn)
-            row = briefs.get(conn, week) if week else briefs.latest(conn)
+            row = revisions.corrected(conn, briefs.get(conn, week) if week else briefs.latest(conn))
     except Exception as e:  # database down or unreachable: say so on the page, with the right status
         print(f"weekly digest: database unavailable ({type(e).__name__})", file=sys.stderr)
         return _panel(request, "The digest is unavailable right now", "The database that holds it did not answer. "

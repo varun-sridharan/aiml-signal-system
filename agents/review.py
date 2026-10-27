@@ -10,7 +10,7 @@ are not kept by the log and are not shown; and every string is cut to a length t
 
 from __future__ import annotations
 
-from . import briefs, runs, style_check
+from . import briefs, revisions, runs, style_check
 
 REVIEW_EDITIONS = 4              # the note stops growing after this many published editions (decision log, 2026-10-26)
 MAX_FIELD = 190                  # under the 200 characters the evidence scanner treats as copied text: no field can carry a copied passage, whatever the log held
@@ -57,10 +57,22 @@ def entries_from_repairs(repairs: dict) -> list:
     return out
 
 
-def edition_note(week: str, number: int, published_at, gates: dict) -> dict:
+def revision_entries(rows: list) -> list:
+    """The corrections made to one published edition, oldest first: the field, when, why and the corrected text (never the old text)."""
+    out = []
+    for r in rows:
+        value = r["new_value"]
+        text = " / ".join(value) if isinstance(value, list) else value
+        verdict = r.get("gate_verdict") or {}
+        out.append({"field": clean(r["field"]), "when": revisions.when(r["created_at"]), "reason": clean(r["reason"]), "value": clean(text),
+                    "claims": len(verdict.get("claims") or []), "unsupported": len(verdict.get("unsupported_claims") or [])})
+    return out
+
+
+def edition_note(week: str, number: int, published_at, gates: dict, corrections: list | None = None) -> dict:
     repairs = (gates or {}).get("repairs") or {}
     items = entries_from_repairs(repairs)
-    return {"week": week, "number": number, "published_at": published_at, "entries": items,
+    return {"week": week, "number": number, "published_at": published_at, "entries": items, "revisions": corrections or [],
             "flags": sum(int(r.get("flags", 0)) for r in repairs.values() if isinstance(r, dict)),
             "warnings": len((gates or {}).get("warnings") or []),
             "detailed": all("sentence" in r or "before" in r for r in (x for log in repairs.values() if isinstance(log, dict)
@@ -78,5 +90,5 @@ def entries(conn, limit: int | None = None) -> list:
             gates = runs.load_artifact(conn, run_id, "gates")
         except KeyError:
             gates = {}
-        notes.append(edition_note(brief_id, number, published_at, gates))
+        notes.append(edition_note(brief_id, number, published_at, gates, revision_entries(revisions.rows_for(conn, brief_id))))
     return list(reversed(notes))

@@ -48,7 +48,7 @@
           "blocks": [
             {
               "t": "p",
-              "html": "<b>Kill FOMO, don't feed it.</b> Success is the fewest items you'd regret missing — not the most items covered. The system is explicitly allowed to say \"quiet day, go build.\" Two jobs: <b>(a)</b> be aware and understand <em>why it matters</em> (conversational currency), and <b>(b)</b> get hands-on and understand tradeoffs (weekly homework grounded in your repos)."
+              "html": "<b>Kill FOMO, don't feed it.</b> Success is the fewest items you'd regret missing — not the most items covered. The system is explicitly allowed to say \"quiet day, go build.\" Two jobs: <b>(a)</b> be aware and understand <em>why it matters</em> (conversational currency), and <b>(b)</b> get hands-on and understand tradeoffs (a draft change in your repository, or weekly homework grounded in it when nothing matches)."
             }
           ]
         }
@@ -110,7 +110,7 @@
             {
               "id": "coach",
               "label": "Coach",
-              "sub": "repo → homework",
+              "sub": "repo → draft PR",
               "icon": "code",
               "kind": "agent",
               "status": "M3",
@@ -235,7 +235,7 @@
             ],
             [
               "<span class=\"gloss\" data-term=\"coach\">Coach</span>",
-              "Read the configured repository and write homework that fits a real spot in it. Sixty minutes or less, with every path and symbol verified before it ships.",
+              "Read the configured repository and the team’s roadmap, match the week’s item to a roadmap item, and draft the change as a draft pull request for an engineer to review. When nothing matches, write homework of sixty minutes or less. Every path, symbol and command is verified before either ships.",
               "<b>agent loop</b>",
               "<span class=\"pill\">M3</span>"
             ],
@@ -744,11 +744,11 @@
         },
         {
           "t": "p",
-          "html": "Turns the week into practice. <b>In:</b> the week’s briefs + your GitHub repos. <b>Process:</b> pick one or two coherent concepts, design a 60-minute exercise (setup excluded), ground it in a real module or propose a new repo; runs Friday evening / Saturday morning so the expensive repo reasoning is batched. <b>Out:</b> backlog items in <code>data/state/backlog.json</code>. <b>Graded on:</b> code-grounding (assertion-checkable — does the module it names exist?) plus behavioural signals: completion rate, actual time, later reuse. <b>Refactor due here:</b> lift the faithfulness grader out of <code>framer.py</code> into a shared module rather than copying it."
+          "html": "Turns the week into a change a team can ship (M3, designed). <b>In:</b> the week’s edition, your GitHub repository and a roadmap file in it. <b>Process:</b> match the week’s item to the right roadmap item and write down why; draft the change as a draft pull request on a branch the repository allows, never merged and never pushed to a default branch by the system; when no roadmap item matches, fall back to one 60-minute exercise (setup excluded) grounded in a real module. It runs Friday evening / Saturday morning so the expensive repo reasoning is batched. <b>Out:</b> a draft pull request, or a backlog item in <code>data/state/backlog.json</code>. <b>Graded on:</b> repo grounding (assertion-checkable — does every path, symbol and command it names exist and parse?) plus a human review of the draft, and for the homework behavioural signals: completion rate, actual time, later reuse. <b>Refactor due here:</b> lift the faithfulness grader out of <code>framer.py</code> into a shared module rather than copying it."
         },
         {
           "t": "p",
-          "html": "<b>Practice, as the reader meets it.</b> A <em>How it Works</em> sub-tab explains the mechanism. <em>Open Exercises</em> carries one tile per piece of homework, with a gear beside the label for the repository setting — configurable at the start and changeable later, because a system that hard-codes the repo it was born with is a demo. Each tile collapses and holds: a status dropdown (To Start / In Progress / Complete), the learning goal, an estimated duration — <b>sixty minutes or less</b> — and steps detailed enough that pasting one into a fresh chat is sufficient context to continue. A timestamp is written when status moves to In Progress, and actual minutes are recorded at close, optional. <b>Estimated versus actual is the Coach's calibration signal:</b> if actuals run at three times the estimate, the Coach is bad at scoping, and that is measurable rather than felt. It is a diagnostic and never a target — a completion rate you optimise for is a generator that writes easy homework."
+          "html": "<b>Practice, the fallback output, as the reader meets it.</b> A <em>How it Works</em> sub-tab explains the mechanism. <em>Open Exercises</em> carries one tile per piece of homework, with a gear beside the label for the repository setting — configurable at the start and changeable later, because a system that hard-codes the repo it was born with is a demo. Each tile collapses and holds: a status dropdown (To Start / In Progress / Complete), the learning goal, an estimated duration — <b>sixty minutes or less</b> — and steps detailed enough that pasting one into a fresh chat is sufficient context to continue. A timestamp is written when status moves to In Progress, and actual minutes are recorded at close, optional. <b>Estimated versus actual is the Coach's calibration signal:</b> if actuals run at three times the estimate, the Coach is bad at scoping, and that is measurable rather than felt. It is a diagnostic and never a target — a completion rate you optimise for is a generator that writes easy homework."
         },
         {
           "t": "h3",

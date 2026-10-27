@@ -424,6 +424,41 @@ CREATE OR REPLACE TRIGGER feedback_append_only
     BEFORE UPDATE OR DELETE ON feedback
     FOR EACH ROW EXECUTE FUNCTION append_only();
 
+-- Corrections to a published edition (Run 9, Varun's decision of 2026-10-26). A brief is never edited: a headline that must change gets a row
+-- here instead, and the page shows the latest row per field over the brief's body. Append-only like the brief it corrects. A row is written only
+-- by agents/revisions.revise, after the style caps and the claim gate have passed the new value, and the gate's verdict is kept with it.
+CREATE TABLE IF NOT EXISTS edition_revisions (
+    id            bigserial    PRIMARY KEY,
+    brief_id      text         NOT NULL REFERENCES briefs (id) ON DELETE RESTRICT,
+    field         text         NOT NULL CHECK (field IN ('thread.lines', 'learning.headline', 'stories.title')),
+    old_value     jsonb        NOT NULL,
+    new_value     jsonb        NOT NULL,
+    reason        text         NOT NULL CHECK (char_length(reason) BETWEEN 1 AND 200),
+    gate_verdict  jsonb        NOT NULL,
+    created_at    timestamptz  NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS edition_revisions_brief_idx ON edition_revisions (brief_id, field, id);
+-- The verdict must be a pass: at least one claim checked and none unsupported. Written with COALESCE because a CHECK that evaluates to NULL
+-- passes, and a verdict with no `claims` key would give NULL. (The first version of the table had an inline check without it.)
+DO $$
+BEGIN
+    ALTER TABLE edition_revisions DROP CONSTRAINT IF EXISTS edition_revisions_gate_verdict_check;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'edition_revisions_verdict_passes'
+                   AND conrelid = 'edition_revisions'::regclass) THEN
+        ALTER TABLE edition_revisions ADD CONSTRAINT edition_revisions_verdict_passes
+            CHECK (COALESCE(jsonb_typeof(gate_verdict -> 'claims') = 'array' AND jsonb_array_length(gate_verdict -> 'claims') > 0
+                            AND jsonb_typeof(gate_verdict -> 'unsupported_claims') = 'array'
+                            AND jsonb_array_length(gate_verdict -> 'unsupported_claims') = 0, false));
+    END IF;
+END $$;
+
+CREATE OR REPLACE TRIGGER edition_revisions_append_only
+    BEFORE UPDATE OR DELETE ON edition_revisions
+    FOR EACH ROW EXECUTE FUNCTION append_only();
+CREATE OR REPLACE TRIGGER edition_revisions_no_truncate
+    BEFORE TRUNCATE ON edition_revisions
+    FOR EACH STATEMENT EXECUTE FUNCTION append_only();
+
 -- Work products a stage hands to the next one. run_stages.output holds POINTERS only, so
 -- the Framer's writing (text, not an id) lives here, and the stage's output names it.
 -- Append-only: an attempt's product is a record of what that attempt made.

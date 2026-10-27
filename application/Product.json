@@ -30,7 +30,7 @@
   "hero": {
     "layout": "hero",
     "kicker": "From AI news to a change your team can ship",
-    "title": "Four hundred things happened in AI last week.",
+    "title": "{count} things happened in AI last week.",
     "titleAccent": "Which one matters to your business?",
     "lede": "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, and drafts the change for your engineers to review.",
     "actions": [
@@ -50,7 +50,10 @@
       "poster": "/static/video/the-gap-poster.jpg",
       "title": "The gap, in 60 seconds",
       "caption": "Illustrative example. Maya, her company and the numbers on screen are invented to show the idea."
-    }
+    },
+    "titleFallback": "Hundreds of things happened in AI last week.",
+    "countNote": "Counted by the Reader across {sources} sources, {dates}.",
+    "_title": "The number is measured at request time: the Reader's own count of items discovered in the latest published edition's window (agents/reach.py). Under 50, or with the database unreachable, the fallback title shows and there is no note. Never an illustrative number."
   },
   "sections": [
     {
@@ -115,7 +118,7 @@
           "label": "items in the latest edition (an edition carries at most seven)"
         }
       ],
-      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video and the headline above it, which echoes the video, and the video's caption says so.</b>",
+      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.</b>",
       "blocks": [
         {
           "t": "p",

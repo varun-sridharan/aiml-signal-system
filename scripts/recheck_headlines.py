@@ -1,15 +1,14 @@
-"""Rewrite a stored edition's section headlines and recheck each alone with the claim gate (Run 8, Step B; Run 7's recheck_thread.py, widened).
+"""Recheck candidate section headlines for a stored edition, each alone, with the claim gate (Run 8, Step B; Run 7's recheck_thread.py, widened).
 
-    python scripts/recheck_headlines.py 2026-W44 candidates.json out_dir [--dry-run] [--apply]
+    python scripts/recheck_headlines.py 2026-W44 candidates.json out_dir [--dry-run]
 
 candidates.json maps a field to its attempts, best first: {"thread": [["line 1", "line 2"], ...], "learning.headline": ["text", ...],
 "stories.title": ["text", ...]}. For each field, in that order: an attempt that breaks the headline rule (agents/style_check.headline_findings, with
 the fields accepted so far in place) is skipped for free; otherwise one grader call (agents/llm.py, booked in the ledger) grades the text
 against every story's excerpt, as the week unit of the claim gate does. The first attempt with every claim supported and a verified span
-wins; the field is tried at most MAX_ATTEMPTS times. Total spend is capped (SPEND_CAP_USD above the ledger at the start). With --apply, only
-the winning fields are written (thread.lines, learning.headline, storiesTitle) and a count entry whose phrase is no longer in its field is
-dropped; every other field stays as it is. A published brief is append-only in the database (agents/schema.sql, briefs_append_only), so the write is
-refused and recorded as apply_blocked; the winning texts stay in the log. Every attempt and verdict is written to out_dir.
+wins; a field is tried at most MAX_ATTEMPTS times; total spend is capped (SPEND_CAP_USD above the ledger at the start). Every attempt and
+verdict is written to out_dir/headline-recheck.json. Nothing is written to the database: a published brief is append-only, and a winning text
+becomes a correction through `python -m agents.revisions ... --from-recheck out_dir/headline-recheck.json` (Run 9).
 """
 
 from __future__ import annotations
@@ -55,7 +54,6 @@ def main() -> int:
     ap.add_argument("candidates")
     ap.add_argument("out_dir")
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
     cands = json.loads(Path(args.candidates).read_text(encoding="utf-8"))
     out = Path(args.out_dir)
@@ -108,28 +106,7 @@ def main() -> int:
                     break
         log["ledger_after_usd"] = round(float(budget.month_to_date_spend(conn)), 4)
         log["spent_usd"] = round(log["ledger_after_usd"] - log["ledger_before_usd"], 4)
-        if args.apply and won:
-            for field, value in won.items():
-                set_field(body["edition"], field, value)
-            path = {"thread": "thread.line.", "learning.headline": "learning.headline", "stories.title": "stories.title"}
-            fresh = []
-            for entry in body["edition"].get("counts", []):
-                p = entry.get("path", "")
-                touched = [f for f in won if p.startswith(path[f])]
-                if touched:
-                    f = touched[0]
-                    if entry.get("phrase", "") not in style_check.plain(text_of(get_field(body["edition"], f))):
-                        log.setdefault("dropped_counts", []).append(entry)
-                        continue
-                fresh.append(entry)
-            body["edition"]["counts"] = fresh
-            try:
-                conn.execute("UPDATE briefs SET body = %s WHERE id = %s", (json.dumps(body, ensure_ascii=False), args.week))
-                conn.commit()
-                log["applied"] = sorted(won)
-            except Exception as err:      # a published brief is append-only by design (briefs_append_only in agents/schema.sql); the trigger is not touched
-                log["apply_blocked"] = f"{type(err).__name__}: {str(err).splitlines()[0]}"
-        final = json.loads(json.dumps(body["edition"] if args.apply else trial))
+        final = json.loads(json.dumps(trial))
         log["rule_findings_after"] = [m for _, m in style_check.headline_findings(final)]
     (out / "headline-recheck.json").write_text(json.dumps(log, indent=1, ensure_ascii=False))
     print(json.dumps({k: v for k, v in log.items() if k != "fields"}, indent=1, ensure_ascii=False))

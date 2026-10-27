@@ -317,6 +317,7 @@
     {{ sec_open("thread", "THE WEEK IN ONE THREAD", digest.thread.count) }}
         {%- if digest.thread.lines %}
         <span class="big sec-headline thread-lines"><span class="line">{{ runs(digest.thread.lines[0]) }}</span><span class="line">{{ runs(digest.thread.lines[1]) }}</span></span>
+        {%- if digest.thread.correction %}<span class="corrected">{{ digest.thread.correction }}</span>{% endif %}
         {%- endif %}
     {{ sec_mid("thread", digest.thread.preview) }}
       <div class="copy">
@@ -328,6 +329,7 @@
     {%- if digest.learning %}
     {{ sec_open("learning", "LEARNING FOR THE WEEK", digest.learning.count) }}
         <span class="big sec-headline">{{ runs(digest.learning.headline, "var(--sec-learning-ink)") }}</span>
+        {%- if digest.learning.correction %}<span class="corrected">{{ digest.learning.correction }}</span>{% endif %}
     {{ sec_mid("learning", digest.learning.preview) }}
       <div class="essay">
         <div class="essay-main">
@@ -360,6 +362,7 @@
 
     {{ sec_open("stories", "THIS WEEK'S STORIES", digest.stories.count) }}
         <span class="big sec-headline">{{ runs(digest.stories.title, "var(--sec-stories-ink)") }}</span>
+        {%- if digest.stories.correction %}<span class="corrected">{{ digest.stories.correction }}</span>{% endif %}
     {{ sec_mid("stories", digest.stories.preview) }}
       <div class="copy">
         {%- for r in digest.stories.rows %}

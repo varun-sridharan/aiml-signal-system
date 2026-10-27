@@ -1,0 +1,62 @@
+[
+ {
+  "id": 33,
+  "brief_id": "2026-W44",
+  "field": "thread.lines",
+  "old_value": [
+   " Two papers measured what agent scaffolding actually buys: a task-completion score fell from 8.08 to 3.23 out of 10 under injected MCP faults.",
+   "GitHub shipped [[hl|named telemetry and agentic autofix]] while deprecating models across Copilot."
+  ],
+  "new_value": [
+   "Benchmarks leave agent resilience untested.",
+   "Copilot now shows custom agent usage."
+  ],
+  "reason": "headline shortened to the 14-word cap",
+  "gate_verdict": {
+   "how": "recorded by the claim gate in autopilot/evidence/2026-10-30/stepB-headlines/headline-recheck.json before this revision, for exactly this text",
+   "model": "claude-haiku-4-5",
+   "claims": [
+    {
+     "claim": "Benchmarks leave agent resilience untested",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "Copilot now shows custom agent usage",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "grader_errors": [],
+   "unsupported_claims": []
+  },
+  "created_at": "2026-10-27T02:35:39.590112+00:00"
+ },
+ {
+  "id": 34,
+  "brief_id": "2026-W44",
+  "field": "learning.headline",
+  "old_value": "One study cut agent task completion from 8.08 to 3.23 out of 10. Another found 54% of harness gains were overfitting.",
+  "new_value": "Faults cut task-completion scores by 60%; overfitting explains a large share of gains.",
+  "reason": "headline shortened to the 14-word cap",
+  "gate_verdict": {
+   "how": "recorded by the claim gate in autopilot/evidence/2026-10-30/stepB-headlines/headline-recheck.json before this revision, for exactly this text",
+   "model": "claude-haiku-4-5",
+   "claims": [
+    {
+     "claim": "Faults cut task-completion scores by 60%",
+     "supported": true,
+     "span_verified": true
+    },
+    {
+     "claim": "overfitting explains a large share of gains",
+     "supported": true,
+     "span_verified": true
+    }
+   ],
+   "grader_errors": [],
+   "unsupported_claims": []
+  },
+  "created_at": "2026-10-27T02:35:40.653956+00:00"
+ }
+]

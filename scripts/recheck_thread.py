@@ -1,11 +1,11 @@
 """Rewrite one stored edition's thread lines and recheck only them with the claim gate (Run 7, Step A.3).
 
-    python scripts/recheck_thread.py 2026-W44 out_dir --lines "line one" "line two" [--apply]
+    python scripts/recheck_thread.py 2026-W44 out_dir --lines "line one" "line two"
 
 Free part: checks the new lines against the thread rule (agents/style_check.thread_findings) and prints what the paid call would send.
 Paid part (only without --dry-run): one grader call (agents/llm.py, booked in the ledger) grading the two lines against every story's
 excerpt, as the week unit of the claim gate does. Refused when month-to-date spend is above SPEND_LIMIT.
-With --apply and a clean verdict, only brief.body.edition.thread.lines is replaced; no other field is touched.
+Nothing is written to the database (a published brief is append-only); a passing pair becomes a correction through agents/revisions.
 """
 
 from __future__ import annotations
@@ -29,7 +29,6 @@ def main() -> int:
     ap.add_argument("out_dir")
     ap.add_argument("--lines", nargs=2, required=True)
     ap.add_argument("--dry-run", action="store_true")
-    ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -68,11 +67,6 @@ def main() -> int:
             summary["ledger_after_usd"] = round(float(budget.month_to_date_spend(conn)), 4)
             ok = bool(verdict.get("claims")) and not verdict.get("unsupported_claims") and not verdict.get("grader_errors")
             summary["result"] = "passed" if ok else "failed: the old lines are kept"
-            if ok and args.apply:
-                body["edition"]["thread"]["lines"] = list(args.lines)
-                conn.execute("UPDATE briefs SET body = %s WHERE id = %s", (json.dumps(body, ensure_ascii=False), args.week))
-                conn.commit()
-                summary["applied"] = True
     (out / "thread-recheck.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False))
     print(json.dumps(summary, indent=1, ensure_ascii=False))
     return 0

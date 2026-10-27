@@ -282,6 +282,10 @@ def edition_view(brief_id: str, body: dict, published_at, number: int | None) ->
         view.update(_legacy_sections(body, items))
     else:
         view.update(_composed_sections(edition, by_item))
+    corrections = body.get("_corrections") if isinstance(body.get("_corrections"), dict) else {}
+    for field, section in (("thread.lines", "thread"), ("learning.headline", "learning"), ("stories.title", "stories")):
+        if corrections.get(field) and isinstance(view.get(section), dict):
+            view[section]["correction"] = _text(corrections[field], "correction")      # when and why a headline was corrected, never the old text
     view["leaders"] = {"count": 0, "preview": "Nothing quotable surfaced this week.", "empty": True}
     view["sections"] = [k for k in ("thread", "learning", "stories", "leaders") if view.get(k)]
     labels = {"thread": "THE WEEK IN ONE THREAD", "learning": "LEARNING FOR THE WEEK", "stories": "THIS WEEK'S STORIES",

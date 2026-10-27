@@ -66,6 +66,8 @@ class FakeConn:
         self.rows, self.sql, self.args = rows, None, None
 
     def execute(self, sql, args=()):
+        if "edition_revisions" in sql:
+            return mock.Mock(fetchall=lambda: [])
         self.sql, self.args = sql, args
         return mock.Mock(fetchall=lambda: self.rows[: args[-1]])
 

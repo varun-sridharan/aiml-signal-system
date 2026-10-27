@@ -21,7 +21,10 @@
   <section class="band hero">
     <div class="wrap">
       <div class="kicker">{{ h.kicker }}</div>
-      <h1 class="hero-title">{{ h.title }} <span>{{ h.titleAccent }}</span></h1>
+      <h1 class="hero-title">{% if reach %}{{ h.title | replace("{count}", "{:,}".format(reach.count)) }}{% else %}{{ h.titleFallback }}{% endif %} <span>{{ h.titleAccent }}</span></h1>
+      {%- if reach %}
+      <p class="hero-note">{{ h.countNote | replace("{sources}", reach.sources | string) | replace("{dates}", reach.dates) }}</p>
+      {%- endif %}
       <p class="hero-lede">{{ h.lede | safe }}</p>
       <div class="actions">
         {%- for a in h.actions %}<a class="btn{{ ' primary' if a.primary else '' }}" href="{{ a.href }}">{{ a.label | safe }}</a>{% endfor %}

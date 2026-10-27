@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Digest &middot; Oct 12 – Oct 20, 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/site.css">
+<style>
+  :root{--edge:var(--rule-strong); --text:var(--ink-2); --wash:var(--inset); --hdr:var(--header-h)}
+  html{scroll-behavior:smooth} @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+  a:hover{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+  .wrap{padding:24px 16px 96px}
+  main{max-width:1080px;margin:14px auto 0;background:var(--paper);border:1px solid var(--rule);padding:0 clamp(18px,5.7vw,62px) 72px}
+  .titlebar{display:flex;justify-content:space-between;align-items:baseline;gap:10px 20px;flex-wrap:wrap;padding:26px 0 16px;border-bottom:1px solid var(--ink)}
+  .titlebar h1{font-size:24px;font-weight:600;letter-spacing:-.012em;margin:0}
+  .editionline{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--soft)}
+  .tabs{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:1px solid var(--rule)}
+  .tabs::-webkit-scrollbar,.subscroll::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;display:flex;align-items:center;gap:8px;background:transparent;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:14px 14px 12px;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;font-weight:600;color:var(--soft)}
+  .tabs button.on{border-bottom-color:var(--accent);color:var(--ink)}
+  [role=tabpanel][hidden]{display:none}
+  .notice{border:1px solid var(--rule);border-radius:4px;background:var(--panel);padding:12px 16px;margin:16px 0 0;font-size:15px;color:var(--soft)}
+  .notice.good{border-color:var(--ok-notice-border);background:var(--ok-notice-bg);color:var(--ok)}
+  .panel{border:1px solid var(--rule);border-left:3px solid var(--accent);background:var(--panel);padding:16px 20px;margin:28px 0 0}
+  .panel h2{margin:0;font-size:22px} .panel p{margin:8px 0 0;color:var(--soft)}
+  .lede{font-size:20px;line-height:1.5;margin:56px 0 0;max-width:680px;color:var(--text)}
+
+  nav.subnav{position:sticky;top:var(--hdr);z-index:6;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:stretch;gap:14px}
+  .subwrap{position:relative;flex:1;min-width:0;display:flex}
+  .subscroll{flex:1;min-width:0;display:flex;gap:4px 16px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding-right:28px}
+  .subfade{position:absolute;top:0;right:0;bottom:1px;width:36px;pointer-events:none;background:linear-gradient(to right,var(--paper-clear),var(--paper))}
+  nav.subnav a{flex:none;display:flex;align-items:center;gap:8px;padding:13px 0 11px;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;font-weight:600;color:var(--soft);white-space:nowrap}
+  nav.subnav a[aria-current=true]{color:var(--ink)}
+  .sw{width:8px;height:8px;border-radius:2px;flex:none}
+  .subpill,.pill{font-family:var(--mono);border:1px solid var(--edge);border-radius:999px;color:var(--soft)}
+  .subpill{font-size:10px;padding:1px 7px} .pill{font-size:10.5px;letter-spacing:.06em;padding:1px 8px}
+  #toggle-all{flex:none;align-self:center;background:transparent;border:1px solid var(--edge);border-radius:3px;padding:5px 10px;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;color:var(--ink);white-space:nowrap}
+
+  .s-thread{--c:var(--sec-thread);--ink2:var(--sec-thread-ink)} .s-learning{--c:var(--sec-learning);--ink2:var(--sec-learning-ink)} .s-stories{--c:var(--sec-stories);--ink2:var(--sec-stories-ink)} .s-leaders{--c:var(--sec-leaders);--ink2:var(--sec-leaders-ink)}
+  .news-sec{scroll-margin-top:calc(var(--hdr) + 56px);padding:34px 0 34px 26px;border-top:1px solid var(--rule);border-left:3px solid transparent;transition:border-color .15s ease}
+  .news-sec:first-of-type{padding-top:40px;border-top:0}
+  .news-sec.open{border-left-color:var(--c)}
+  .news-sec h2{margin:0;font-weight:400}
+  .sec-toggle{display:flex;gap:8px;align-items:flex-start;width:calc(100% + 26px);margin:0 0 0 -26px;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:var(--ink);font-family:inherit}
+  .arrow{flex:none;width:18px;font-size:14px;line-height:18px;color:var(--c);text-align:center}
+  .head{display:block;flex:1;min-width:0;max-width:760px}
+  .kick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--ink2)}
+  .big{display:block;font-weight:600;margin:14px 0 0;text-wrap:balance}
+  .sec-headline{font-size:var(--fs-ed-section);line-height:1.15;letter-spacing:-.018em;max-width:24em;text-wrap:balance}
+  .line{display:block}
+  .rule{display:block;width:48px;height:2px;background:var(--c);margin:16px 0 10px}
+  .preview{display:block;font-size:17px;line-height:1.5;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview[hidden]{display:none}
+  .sec-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .15s ease,visibility 0s linear .15s}
+  .sec-body[data-open=true]{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .15s ease,visibility 0s linear 0s}
+  .sec-clip{overflow:hidden;min-height:0} .sec-pad{padding-top:24px}
+  .sec-body[data-open=true] .sec-clip{overflow:visible}              /* an open section lets a footnote definition rise above its first line */
+  .tabs button:focus-visible,nav.subnav a:focus-visible{outline-offset:-3px}
+  @media (prefers-reduced-motion:reduce){.sec-body,.news-sec{transition:none}}
+
+  .copy{max-width:680px}
+  .thread-body{font-size:18px;line-height:1.6;margin:24px 0 0;color:var(--text);text-wrap:pretty}
+  .signals{display:flex;align-items:center;gap:12px;margin-top:26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--soft)}
+  .signals:before{content:"";width:28px;height:1px;background:var(--accent)}
+  .essay{display:flex;flex-wrap:wrap;gap:44px 56px;align-items:flex-start}
+  .essay-main{flex:1 1 460px;max-width:680px;min-width:0}
+  .essay-p{font-size:18px;line-height:1.6;margin:0 0 20px;color:var(--text);text-wrap:pretty}
+  .fn{position:relative} .fn sup{line-height:0}
+  .fn-mark{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);text-decoration:none;padding:0 2px}
+  .fn-tip{display:none;position:absolute;left:0;bottom:calc(100% + 10px);z-index:10;width:270px;background:var(--ink);color:var(--paper);font-size:14.5px;line-height:1.5;padding:11px 14px;border-radius:4px;text-indent:0;font-style:normal}
+  .fn:hover .fn-tip,.fn:focus-within .fn-tip{display:block}
+  .notes{list-style:none;margin:28px 0 0;padding:16px 0 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:9px}
+  .notes li{display:flex;gap:12px;font-size:15px;line-height:1.5;color:var(--soft);scroll-margin-top:70px}
+  .notes .n{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);min-width:18px;padding-top:3px}
+  .notes b,.fn-tip b{font-weight:600} .notes b{color:var(--ink)}
+  .do{margin-top:32px;background:var(--wash);border-left:2px solid var(--accent);padding:18px 22px}
+  .do .lab{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);font-weight:600}
+  .do p{font-size:18px;line-height:1.55;margin:8px 0 0;color:var(--ink)}
+  aside.method{flex:0 1 220px;min-width:200px;display:flex;flex-direction:column;gap:30px;padding-top:4px}
+  .lab3{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600}
+  .drawn .lab3{padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .drawn ul{list-style:none;margin:0;padding:0}
+  .drawn li{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid var(--rule2);font-size:15px;line-height:1.4}
+  .drawn .dn{font-family:var(--mono);font-size:10.5px;color:var(--faint);padding-top:3px}
+  .numbers{display:flex;flex-direction:column;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--soft)}
+  .numbers div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted var(--rule-dotted);padding-bottom:6px}
+  .numbers b{color:var(--ink);font-weight:600}
+  .made p{font-size:14.5px;line-height:1.55;color:var(--soft);margin:8px 0 0}
+
+  .divider{display:flex;align-items:center;gap:16px;margin:40px 0 4px}
+  .divider span:first-child,.divider span:last-child{flex:1;height:1px;background:var(--edge)}
+  .divider span:nth-child(2){font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--soft);text-align:center}
+  .story{scroll-margin-top:64px;padding:32px 0;border-top:1px solid var(--rule)}
+  .story.feature{margin:28px 0 8px;padding:30px 32px;background:var(--panel);border:1px solid var(--rule);border-top:2px solid var(--ink)}
+  .story-meta{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+  .num{font-family:var(--mono);font-size:24px;font-weight:500;line-height:1;color:var(--faint);min-width:46px}
+  .feature .num{font-size:34px;color:var(--accent);min-width:64px}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;font-weight:600;border-radius:999px;padding:2px 9px}
+  .tag-do-this{color:var(--paper);background:var(--accent);border:1px solid var(--accent)}
+  .tag-know{color:var(--ink);background:transparent;border:1px solid var(--ink)}
+  .tag-radar{color:var(--soft);background:transparent;border:1px dashed var(--faint)}
+  .feature-mark{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink);border-bottom:1px solid var(--ink)}
+  .backlog{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);display:inline-flex;align-items:center;gap:5px}
+  .backlog .flag{width:0;height:0;border-left:6px solid var(--accent);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .story h3{font-size:var(--fs-ed-story);line-height:1.24;font-weight:600;letter-spacing:-.01em;margin:14px 0;text-wrap:pretty}
+  .feature h3{font-size:var(--fs-ed-feature);line-height:1.14;letter-spacing:-.018em}
+  .hashtags{display:flex;gap:4px 12px;flex-wrap:wrap;margin:-4px 0 16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--faint)}
+  .story-p{font-size:18px;line-height:1.6;margin:0;color:var(--text);text-wrap:pretty}
+  .feature-p{margin:0 0 18px}
+  .why{font-size:17px;line-height:1.55;margin:18px 0 0;color:var(--text)}
+  .why .lab,.lab2{font-family:var(--mono);letter-spacing:.14em;font-weight:600}
+  .why .lab{font-size:11px;color:var(--accent)}
+  .lab2{font-size:10.5px;letter-spacing:.16em;color:var(--soft)}
+  .connection{font-size:16px;line-height:1.5;margin:14px 0 0;color:var(--soft);font-style:italic}
+  .tryit{margin:18px 0 0 18px;padding:14px 18px;background:var(--wash);border-left:1px solid var(--edge)}
+  .tryit p{font-size:16.5px;line-height:1.55;margin:6px 0 0;color:var(--text)}
+  .ninety{margin-top:18px} .ninety .lab2{margin-bottom:6px}
+  .ninety table{width:100%;border-collapse:collapse;font-size:15.5px;line-height:1.5}
+  .ninety th{text-align:left;vertical-align:top;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;font-weight:600;color:var(--soft);padding:9px 16px 9px 0;border-top:1px solid var(--rule);width:76px}
+  .ninety td{padding:9px 0;border-top:1px solid var(--rule);color:var(--text)}
+  .tie{font-size:16px;line-height:1.5;margin:16px 0 0;color:var(--soft)} .tie span{color:var(--accent)}
+  .srcs{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--soft)}
+  .checked{color:var(--ok);display:inline-flex;align-items:center;gap:5px}
+  .vote{margin-top:16px;padding-top:14px;border-top:1px dotted var(--rule-dotted);scroll-margin-top:calc(var(--hdr) + 56px)}
+  .thumbs{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+  .thumbs form{margin:0}
+  .thumb{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--edge);color:var(--soft);list-style:none}
+  .thumb::-webkit-details-marker{display:none}
+  .thumb:hover,.down[open] summary{border-color:var(--sec-stories);color:var(--sec-stories)}
+  .down[open]{flex-basis:100%}
+  .down-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-width:460px}
+  .down-form label{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--soft)}
+  .down-form .opt{letter-spacing:.02em;color:var(--faint)}
+  .down-form input[type=text]{font-family:var(--serif);font-size:16px;letter-spacing:0;color:var(--ink);background:var(--panel);border:1px solid var(--edge);border-radius:3px;padding:8px 10px}
+  .send{align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.14em;font-weight:600;color:var(--paper);background:var(--ink);border:0;border-radius:3px;padding:9px 14px;cursor:pointer}
+  .held{margin:40px 0 0;padding:18px 20px;border:1px dashed var(--edge);border-radius:6px}
+  .held .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--accent)}
+  .held p{font-size:15px;line-height:1.55;margin:10px 0 0}
+  .held ul{margin:10px 0 0;padding-left:18px} .held li{font-size:15px;line-height:1.5;margin:6px 0}
+  .closing{margin:44px 0 0;padding-top:28px;border-top:2px solid var(--ink)}
+  .closing .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:600}
+  .closing .cl{font-size:var(--fs-ed-closing);line-height:1.12;font-weight:600;letter-spacing:-.018em;margin:14px 0 0}
+  .closing .cl span{display:block} .closing .cl span+span{color:var(--accent)}
+  .closing p{font-size:18px;line-height:1.6;margin:18px 0 0;color:var(--text)}
+  .closing .try{margin-top:18px;display:flex;gap:14px;align-items:baseline}
+  .closing .try .lab{white-space:nowrap;letter-spacing:.14em}
+  .closing .try span:last-child{font-size:18px;line-height:1.55;color:var(--ink)}
+  .empty{font-size:18px;margin:0;color:var(--text)}
+
+  .archive{padding:44px 0 0}
+  .archive h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--soft);font-weight:600;margin:0;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+  .archive ul{list-style:none;margin:0;padding:0}
+  .archive li{display:flex;align-items:baseline;gap:10px 24px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .archive .el{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ink);font-weight:600;min-width:84px}
+  .archive .et{flex:1 1 340px;min-width:0}
+  .archive .t1{display:block;font-size:21px;line-height:1.25;font-weight:600} .archive .t1 span{color:var(--accent)}
+  .archive .t2{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--soft);margin-top:6px}
+  .archive .rd{font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+  @media (max-width:760px){.sec-headline{font-size:var(--fs-ed-section-sm)}.story.feature{padding:22px 18px}.story h3{font-size:var(--fs-ed-story-sm)}.feature h3{font-size:var(--fs-ed-feature-sm)}.closing .cl{font-size:var(--fs-ed-closing-sm)}}
+  @media (max-width:560px){.wrap{padding-top:24px}}
+</style>
+<noscript><style>
+  .sec-body{grid-template-rows:1fr!important;visibility:visible!important} .preview{display:none} .tabs,#toggle-all{display:none}
+  [role=tabpanel][hidden]{display:block} .news-sec{border-left-color:var(--c)}
+</style></noscript>
+</head>
+<body class="layout-edition">
+
+  <header class="site-header">
+    <div class="in">
+      <a class="mark" href="/application/Product.html">AI/ML Signal<span>.</span></a>
+      <nav aria-label="Site">
+        <a href="/application/Product.html">Product</a>
+        <span aria-current="page">Weekly Digest</span>
+        <a href="/design/System-Design.html">System Design</a>
+        <a href="/roadmap">Roadmap &amp; Backlog</a>
+        <a href="/plan">Plan &amp; Progress</a>
+      </nav>
+    </div>
+    <div class="bar"><div data-scrollfill=""></div></div>
+  </header>
+<div class="wrap">
+<main>
+  <div class="titlebar">
+    <h1>Weekly Digest</h1>
+    <span class="editionline">EDITION 01 &middot; OCT-12-2026 TO OCT-20-2026</span>
+  </div>
+
+  <div role="tablist" aria-label="Edition sections" class="tabs">
+    <button role="tab" id="tab-news" aria-selected="true" aria-controls="panel-news" tabindex="0" class="on" type="button"><span>NEWS</span></button>
+    <button role="tab" id="tab-archive" aria-selected="false" aria-controls="panel-archive" tabindex="-1" class="" type="button"><span>ARCHIVE</span></button>
+  </div>
+
+  <section role="tabpanel" id="panel-news" aria-labelledby="tab-news" tabindex="0">
+    <nav class="subnav" aria-label="In this edition">
+      <div class="subwrap">
+        <div class="subscroll">
+          <a href="#sec-thread" data-go="thread" aria-current="true"><span class="sw" style="background:var(--sec-thread)" aria-hidden="true"></span><span>THE WEEK IN ONE THREAD</span></a>
+          <a href="#sec-learning" data-go="learning"><span class="sw" style="background:var(--sec-learning)" aria-hidden="true"></span><span>LEARNING FOR THE WEEK</span></a>
+          <a href="#sec-stories" data-go="stories"><span class="sw" style="background:var(--sec-stories)" aria-hidden="true"></span><span>THIS WEEK&#39;S STORIES</span><span class="subpill">5</span></a>
+          <a href="#sec-leaders" data-go="leaders"><span class="sw" style="background:var(--sec-leaders)" aria-hidden="true"></span><span>WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="subpill">0</span></a>
+        </div>
+        <span class="subfade" aria-hidden="true"></span>
+      </div>
+      <button type="button" id="toggle-all">EXPAND ALL</button>
+    </nav>
+
+    
+<section id="sec-thread" class="news-sec s-thread" data-news-sec="thread" aria-labelledby="h-thread">
+  <h2 id="h-thread">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-thread">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THE WEEK IN ONE THREAD</span><span class="pill">5 signals</span></span>
+        <span class="big sec-headline thread-lines"><span class="line">Two releases gave agents branches.</span><span class="line">One review queue merges everything.</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">On October 11, 2026, Helio Labs released product 1 to 201 repositories, and on October 12, 2026 it released product 2 to 202 more.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-thread" class="sec-body" role="region" aria-labelledby="h-thread" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy">
+        <p class="thread-body">On October 11, 2026, <a href="#s01">Helio Labs released product 1</a> to 201 repositories, and on October 12, 2026 <a href="#s02">it released product 2</a> to 202 more. Both releases give each agent its own branch and merge the results through a review queue, so a person reviews one combined change. The company says it measured only repositories under 2 million lines of code, and it keeps a changelog entry for every release. The harder question is whether a review queue scales to repositories ten times larger, and Helio has not yet published a measurement that answers it.</p>
+        <div class="signals">5 SIGNALS WORTH YOUR ATTENTION</div>
+      </div>
+    
+  </div></div></div>
+</section>
+    
+<section id="sec-learning" class="news-sec s-learning" data-news-sec="learning" aria-labelledby="h-learning">
+  <h2 id="h-learning">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-learning">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">LEARNING FOR THE WEEK</span><span class="pill">2 sources</span></span>
+        <span class="big sec-headline">Helio Labs shipped 5 products in 5 days</span>
+    
+        <span class="rule"></span>
+        <span class="preview">On October 11, 2026, Helio Labs released product 1 to 201 repositories.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-learning" class="sec-body" role="region" aria-labelledby="h-learning" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="essay">
+        <div class="essay-main"><p class="essay-p">On October 11, 2026, Helio Labs released product 1 to 201 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation. It uses a <span class="fn"><span>review queue</span><sup><a class="fn-mark" href="#note-queue" aria-describedby="tip-queue">1</a></sup><span role="tooltip" id="tip-queue" class="fn-tip"><b>review queue</b>. A review queue merges each agent&#39;s branch into one change.</span></span> for merges.</p><p class="essay-p">On October 12, 2026, Helio Labs released product 2 to 202 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation.</p><p class="essay-p">On October 13, 2026, Helio Labs released product 3 to 203 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation.</p><p class="essay-p">On October 14, 2026, Helio Labs released product 4 to 204 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation.</p><p class="essay-p">On October 15, 2026, Helio Labs released product 5 to 205 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation.</p><p class="essay-p">On October 16, 2026, Helio Labs released product 6 to 206 repositories. The company keeps a changelog entry for every release and publishes its rules in the documentation.</p>
+          <ol class="notes" aria-label="Notes"><li id="note-queue"><span class="n">1</span><span><b>review queue</b>. A review queue merges each agent&#39;s branch into one change.</span></li>
+          </ol>
+          <div class="do"><div class="lab">WHAT TO DO DIFFERENTLY THIS WEEK</div><p>Give each agent its own branch before you let two of them edit one repository.</p></div>
+        </div>
+        <aside class="method" aria-label="Sources and method">
+          <div class="drawn"><div class="lab3">WHAT IT WAS DRAWN FROM</div>
+            <ul><li><span class="dn">01</span><a href="#s01">Helio Labs released product 1 to 201 repositories</a></li><li><span class="dn">02</span><a href="#s02">Helio Labs released product 2 to 202 repositories</a></li></ul>
+          </div>
+          <div class="numbers"><div><span>CANDIDATE LINKS CONSIDERED</span><b>1700</b></div><div><span>STORIES SYNTHESISED</span><b>5</b></div><div><span>MINUTES OF SOURCE READING</span><b>34</b></div></div>
+          <div class="made"><div class="lab3">HOW THIS EDITION WAS MADE</div><p>The Reader looked at 1700 candidate links from 17 places, fetched 12 pages in full, and kept 5 stories. About 34 minutes of reading stand behind them. Every clause the writer marked as a fact was checked by a second model against the page it came from; a count across stories and a figure the writer computed are its own and are not. A story marked checked had no unsupported claim.</p></div>
+        </aside>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-stories" class="news-sec s-stories" data-news-sec="stories" aria-labelledby="h-stories">
+  <h2 id="h-stories">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-stories">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">THIS WEEK&#39;S STORIES</span><span class="pill">5</span></span>
+        <span class="big sec-headline">Helio Labs released products on every day of the week</span>
+    
+        <span class="rule"></span>
+        <span class="preview">Lead: Helio Labs released product 1 to 201 repositories</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-stories" class="sec-body" role="region" aria-labelledby="h-stories" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <div class="copy">
+        
+<article id="s01" class="story feature" aria-labelledby="h-s01">
+  <div class="story-meta">
+    <span class="num">01/</span>
+    <span class="tag tag-do-this">DO THIS</span><span class="feature-mark">FEATURE</span>
+  </div>
+  <h3 id="h-s01">Helio Labs released product 1 to 201 repositories</h3>
+  <div class="hashtags"><span>#Agents</span><span>#DevTools</span></div><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Why item-1.</p>
+  <div class="tryit"><div class="lab2">TRY IT</div><p>Try the queue on one small repository. Compare the merged change with your last manual merge.</p></div>
+  <p class="tie"><span aria-hidden="true">&harr; </span><a href="#s02">Ties to 02</a>: Helio Labs shipped product 2 the following day.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://helio.example/1" target="_blank" rel="noopener noreferrer" aria-label="Helio Labs (opens in a new tab)">Helio Labs &#8599;</a> · Also: <a href="https://other.example/1" target="_blank" rel="noopener noreferrer" aria-label="Corroborator (opens in a new tab)">Corroborator &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-item-1">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-1"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Helio Labs released product 1 to 201 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Helio Labs released product 1 to 201 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-1"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s02" class="story feature" aria-labelledby="h-s02">
+  <div class="story-meta">
+    <span class="num">02/</span>
+    <span class="tag tag-know">KNOW</span><span class="feature-mark">FEATURE</span>
+  </div>
+  <h3 id="h-s02">Helio Labs released product 2 to 202 repositories</h3>
+  <div class="hashtags"><span>#Agents</span><span>#DevTools</span></div><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="story-p feature-p">Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single repository. Helio also reports that the trial covered only repositories under 2 million lines of code. Helio Labs says the queue merges each agent&#39;s branch through a review step so that a person sees one combined change. The company keeps a changelog entry for every release and publishes its scoping rules in the documentation. Developers can switch the queue off for any single.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Why item-2.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://helio.example/2" target="_blank" rel="noopener noreferrer" aria-label="Helio Labs (opens in a new tab)">Helio Labs &#8599;</a> · Also: <a href="https://other.example/2" target="_blank" rel="noopener noreferrer" aria-label="Corroborator (opens in a new tab)">Corroborator &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-item-2">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-2"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Helio Labs released product 2 to 202 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Helio Labs released product 2 to 202 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-2"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article><div role="separator" aria-label="Smaller releases" class="divider"><span></span><span>Smaller releases</span><span></span></div>
+        
+<article id="s03" class="story" aria-labelledby="h-s03">
+  <div class="story-meta">
+    <span class="num">03/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s03">Helio Labs released product 3 to 203 repositories</h3>
+  <div class="hashtags"><span>#Agents</span><span>#DevTools</span></div><p class="story-p">Helio Labs released product 3 on October 13, 2026. It reached 203 repositories. The company measured only small repositories.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Why item-3.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://helio.example/3" target="_blank" rel="noopener noreferrer" aria-label="Helio Labs (opens in a new tab)">Helio Labs &#8599;</a> · Also: <a href="https://other.example/3" target="_blank" rel="noopener noreferrer" aria-label="Corroborator (opens in a new tab)">Corroborator &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-item-3">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-3"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Helio Labs released product 3 to 203 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Helio Labs released product 3 to 203 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-3"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s04" class="story" aria-labelledby="h-s04">
+  <div class="story-meta">
+    <span class="num">04/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s04">Helio Labs released product 4 to 204 repositories</h3>
+  <div class="hashtags"><span>#Agents</span><span>#DevTools</span></div><p class="story-p">Helio Labs released product 4 on October 14, 2026. It reached 204 repositories. The company measured only small repositories.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Why item-4.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://helio.example/4" target="_blank" rel="noopener noreferrer" aria-label="Helio Labs (opens in a new tab)">Helio Labs &#8599;</a> · Also: <a href="https://other.example/4" target="_blank" rel="noopener noreferrer" aria-label="Corroborator (opens in a new tab)">Corroborator &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-item-4">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-4"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Helio Labs released product 4 to 204 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Helio Labs released product 4 to 204 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-4"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        
+<article id="s05" class="story" aria-labelledby="h-s05">
+  <div class="story-meta">
+    <span class="num">05/</span>
+    <span class="tag tag-know">KNOW</span>
+  </div>
+  <h3 id="h-s05">Helio Labs released product 5 to 205 repositories</h3>
+  <div class="hashtags"><span>#Agents</span><span>#DevTools</span></div><p class="story-p">Helio Labs released product 5 on October 15, 2026. It reached 205 repositories. The company measured only small repositories.</p><p class="why"><span class="lab">WHY IT MATTERS / </span>Why item-5.</p>
+  <div class="srcs">
+    <span>Primary: <a href="https://helio.example/5" target="_blank" rel="noopener noreferrer" aria-label="Helio Labs (opens in a new tab)">Helio Labs &#8599;</a> · Also: <a href="https://other.example/5" target="_blank" rel="noopener noreferrer" aria-label="Corroborator (opens in a new tab)">Corroborator &#8599;</a></span><span class="checked"><span aria-hidden="true">&#10003;</span>checked against source</span>
+  </div>
+  <div class="vote" id="item-item-5">
+    <div role="group" aria-label="Was this story useful?" class="thumbs">
+      <form method="post" action="/weekly-digest/vote">
+        <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-5"><input type="hidden" name="vote" value="up">
+        <button type="submit" class="thumb" aria-label="Useful: Helio Labs released product 5 to 205 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></svg></button>
+      </form>
+      <details class="down">
+        <summary class="thumb" aria-label="Not useful: Helio Labs released product 5 to 205 repositories"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(180 12 12)"><path d="M3.5 10.5h3.5v10H3.5z"></path><path d="M7 10.5 10.6 3.2a1.9 1.9 0 0 1 3.5 1.3l-.8 4.6h5.4a2 2 0 0 1 2 2.4l-1.3 7.2a2 2 0 0 1-2 1.8H7z"></path></g></svg></summary>
+        <form method="post" action="/weekly-digest/vote" class="down-form">
+          <input type="hidden" name="brief" value="1998-W20"><input type="hidden" name="item" value="item-5"><input type="hidden" name="vote" value="down">
+          <label>WHAT WAS WRONG WITH IT? <span class="opt">(optional)</span>
+            <input type="text" name="comment" maxlength="2000" placeholder="One line is enough"></label>
+          <button type="submit" class="send">SEND</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</article>
+        <div class="closing">
+          <div class="lab">THE THREAD THROUGH IT ALL</div>
+          <div class="cl"><span>One lab shipped a queue.</span><span>Another lab still merges by hand.</span></div>
+          <p>Helio Labs released 5 products in 5 days. Each one gives an agent its own branch.</p>
+          <div class="try"><span class="lab">TRY THIS WEEK /</span><span>Try the queue on one repository this week.</span></div>
+        </div>
+      </div>
+    
+  </div></div></div>
+</section>
+
+    
+<section id="sec-leaders" class="news-sec s-leaders" data-news-sec="leaders" aria-labelledby="h-leaders">
+  <h2 id="h-leaders">
+    <button type="button" class="sec-toggle" aria-expanded="false" aria-controls="body-leaders">
+      <span class="arrow" aria-hidden="true">&#9656;</span>
+      <span class="head">
+        <span class="kick-row"><span class="kicker">WHAT ARE INDUSTRY LEADERS TALKING?</span><span class="pill">0</span></span>
+    
+        <span class="rule"></span>
+        <span class="preview">Nothing quotable surfaced this week.</span>
+      </span>
+    </button>
+  </h2>
+  <div id="body-leaders" class="sec-body" role="region" aria-labelledby="h-leaders" data-open="false"><div class="sec-clip"><div class="sec-pad">
+      <p class="empty">Nothing quotable surfaced this week.</p>
+    
+  </div></div></div>
+</section>
+  </section>
+
+  <section role="tabpanel" id="panel-archive" aria-labelledby="tab-archive" tabindex="0" class="archive" hidden>
+    <h2>PAST EDITIONS &middot; NEWEST FIRST</h2>
+    
+    <ul>
+      <li>
+        <span class="el">ED 01</span>
+        <span class="et"><span class="t1"></span><span class="t2"> &middot; 0 STORIES</span></span>
+        <a class="rd" href="/weekly-digest?week=1998-W20">READ &#8599;</a>
+      </li>
+    </ul>
+  </section>
+</main>
+</div>
+<script src="/static/site.js" defer></script>
+<script src="/static/digest.js" defer></script>
+</body>
+</html>

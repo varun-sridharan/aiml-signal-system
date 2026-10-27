@@ -1,0 +1,19 @@
+{
+ "brief": "2026-W44",
+ "field": "stories.title",
+ "cap_usd": 0.05,
+ "attempts": [
+  {
+   "attempt": 1,
+   "text": "Papers test agent faults and harness overfitting; Copilot adds custom agent metrics.",
+   "words": 12,
+   "chars": 84,
+   "verdict": "passed",
+   "written": true,
+   "revision_id": 51
+  }
+ ],
+ "ledger_before_usd": 31.1705,
+ "ledger_after_usd": 31.1755,
+ "spent_usd": 0.005
+}

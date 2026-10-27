@@ -52,6 +52,17 @@
     {%- else %}
     <p class="none">The gate changed nothing in this edition.</p>
     {%- endfor %}
+    {%- if n.revisions %}
+    <h3>Corrections after publication</h3>
+    {%- for r in n.revisions %}
+    <div class="entry">
+      <div class="what">corrected · {{ r.field }} · {{ r.when }}</div>
+      <p><span class="label">Reason</span><br>{{ r.reason }}</p>
+      <p><span class="label">The corrected text</span><br><q>{{ r.value }}</q></p>
+      <p><span class="label">The claim gate</span><br>{{ r.claims }} claim{{ "" if r.claims == 1 else "s" }} checked, {{ r.unsupported }} unsupported</p>
+    </div>
+    {%- endfor %}
+    {%- endif %}
   </section>
   {%- endfor %}
 </article></main></div>

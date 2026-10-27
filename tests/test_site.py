@@ -61,7 +61,7 @@ class Pages(unittest.TestCase):
         self.assertIn('class="mark"', next(iter(headers.values())))
 
     def test_the_old_urls_still_work_and_show_the_content_files(self):
-        self.assertIn("Four hundred things happened in AI last week.", self.get("/application/Product.html"))
+        self.assertRegex(self.get("/application/Product.html"), r"(\d[\d,]* things|Hundreds of things) happened in AI last week\.")
         self.assertIn("The Signal System", self.get("/design/System-Design.html"))
         self.assertEqual(self.client.get("/").history[0].status_code if self.client.get("/").history else 307, 307)
 
@@ -287,7 +287,8 @@ class ProductPage(unittest.TestCase):
         cls.text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", cls.html))
 
     def test_the_hero_matches_the_video_pitch(self):
-        for part in ("From AI news to a change your team can ship", "Four hundred things happened in AI last week.", "Which one matters to your business?",
+        self.assertRegex(self.text, r"(\d[\d,]* things|Hundreds of things) happened in AI last week\.")
+        for part in ("From AI news to a change your team can ship", "Which one matters to your business?",
                      "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, "
                      "and drafts the change for your engineers to review."):
             self.assertIn(part, self.text)
@@ -297,7 +298,7 @@ class ProductPage(unittest.TestCase):
     def test_no_sentence_says_the_page_has_no_illustrative_figure(self):
         self.assertNotIn("Nothing on this page is an illustrative figure", self.text)
         self.assertIn("Every figure in this section is measured", self.text)
-        self.assertIn("The only illustrative numbers on the page are in the video", self.text)
+        self.assertIn("The only illustrative numbers on the page are in the video, and they are labelled.", self.text)
 
     def test_seven_is_a_cap_not_a_promise(self):
         for part in ("up to seven items", "at most seven items", "an edition carries at most seven"):
