@@ -67,7 +67,7 @@ class FakeConn:
 
     def execute(self, sql, args=()):
         self.sql, self.args = sql, args
-        return mock.Mock(fetchall=lambda: self.rows[: args[0]])
+        return mock.Mock(fetchall=lambda: self.rows[: args[-1]])
 
 
 class Selection(unittest.TestCase):
