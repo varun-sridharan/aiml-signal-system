@@ -79,7 +79,8 @@ class Selection(unittest.TestCase):
             notes = review.entries(conn)
         self.assertEqual(review.REVIEW_EDITIONS, 4)
         self.assertEqual([n["number"] for n in notes], [4, 3, 2, 1])
-        self.assertEqual(conn.args, (4,))
+        self.assertEqual(conn.args[-1], 4)
+        self.assertEqual(conn.args[0], ["1999-W20"])
         self.assertIn("ORDER BY published_at ASC", conn.sql)       # the first editions published, not the latest
 
     def test_the_setting_controls_how_many(self):
