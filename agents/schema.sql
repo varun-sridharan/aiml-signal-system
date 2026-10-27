@@ -438,15 +438,22 @@ CREATE TABLE IF NOT EXISTS edition_revisions (
     created_at    timestamptz  NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS edition_revisions_brief_idx ON edition_revisions (brief_id, field, id);
--- The verdict must be a pass: at least one claim checked and none unsupported. Written with COALESCE because a CHECK that evaluates to NULL
--- passes, and a verdict with no `claims` key would give NULL. (The first version of the table had an inline check without it.)
+-- The verdict must be a pass: at least one claim, every claim supported with a verified span, and no unsupported claim listed. Written with
+-- COALESCE because a CHECK that evaluates to NULL passes, and a verdict with no `claims` key would give NULL. The first version of the table had
+-- an inline check without it, and the second one did not test the claims' own flags; each is replaced here (the table's rows satisfy all three).
 DO $$
 BEGIN
     ALTER TABLE edition_revisions DROP CONSTRAINT IF EXISTS edition_revisions_gate_verdict_check;
+    IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'edition_revisions_verdict_passes'
+               AND conrelid = 'edition_revisions'::regclass AND pg_get_constraintdef(oid) NOT LIKE '%span_verified%') THEN
+        ALTER TABLE edition_revisions DROP CONSTRAINT edition_revisions_verdict_passes;
+    END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'edition_revisions_verdict_passes'
                    AND conrelid = 'edition_revisions'::regclass) THEN
         ALTER TABLE edition_revisions ADD CONSTRAINT edition_revisions_verdict_passes
             CHECK (COALESCE(jsonb_typeof(gate_verdict -> 'claims') = 'array' AND jsonb_array_length(gate_verdict -> 'claims') > 0
+                            AND jsonb_array_length(gate_verdict -> 'claims')
+                                = jsonb_array_length(jsonb_path_query_array(gate_verdict, '$.claims[*] ? (@.supported == true && @.span_verified == true)'))
                             AND jsonb_typeof(gate_verdict -> 'unsupported_claims') = 'array'
                             AND jsonb_array_length(gate_verdict -> 'unsupported_claims') = 0, false));
     END IF;

@@ -31,7 +31,7 @@ Two systems are converging into one. The **AI Weekly News Digest** still runs as
 
 > **Sunset criterion**
 >
-> **The old Digest retires on a criterion, not a date:** when M3 has run clean for two to three consecutive weeks: every edition published, and every draft change it opened passing the grounding gate. Not feature parity — M2 alone replaces the debrief but not the predictions and drafts, so switching off earlier costs a Friday read.
+> **The old Digest retires on a criterion, not a date:** when M3 has run clean for two to three consecutive weeks: every edition published, and every draft change it opened passing the grounding gate. Not feature parity — M2 alone replaces the debrief but not the old Digest's predictions and drafts, so switching off earlier costs a Friday read.
 
 # M1 · Reading and writing, hosted
 

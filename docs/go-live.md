@@ -10,10 +10,11 @@ What you do, in order. Nothing here has been done for you: the repository only h
 - It is **idempotent**. If the week already has a published edition it prints `already published` and exits 0 without a database write, a model call or a fetch.
 - It **resumes**. Every stage is checkpointed; if a run died after the Reader, the next run in the window starts at the Framer and does not pay for the Reader again. A week whose gates failed is a failed stage, and the next run retries it.
 - It writes **one status line** to the log:
-  - `scheduled: 2026-W44 published (2026-W44, from reader) at 2026-10-31 02:41 UTC; stages reader, framer, gates, publish`
-  - `scheduled: 2026-W44 is already published (2026-10-31 02:41 UTC); nothing done`
+  - `scheduled: 2026-W46 published (2026-W46, from reader) at 2026-11-14 02:41 UTC; stages reader, framer, gates, publish`
+  - `scheduled: 2026-W46 is already published (2026-11-14 02:41 UTC); nothing done`
   - `scheduled: 2026-W44 stopped: <reason>` (exit code 1)
 - It takes no other option; it works out the week itself.
+- **Known collision, first Friday only (found in Run 9).** The edition's key is the ISO week of the Pacific date, and Friday 2026-10-30 is in `2026-W44`, which Edition 02 already holds (it was keyed by its UTC run date, Monday 2026-10-26). The job will print `already published` and do nothing that night. Varun decides the remedy; see the Run 9 debrief, section 10.
 
 `/health` shows the result from outside: `"last_edition": {"week": "2026-W44", "published_at": "2026-10-31T02:41:07Z"}`.
 

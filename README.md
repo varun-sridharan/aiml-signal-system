@@ -1,6 +1,6 @@
 # aiml-signal-system
 
-A multi-agent system that turns the AI/ML firehose into a **weekly** signal brief and hands-on exercises grounded in your own repository. The goal is to kill FOMO rather than feed it: success is the fewest things you'd regret not understanding, not the most items covered — the system is explicitly allowed to declare a quiet week and tell you to go build.
+A multi-agent system that turns the AI/ML firehose into a **weekly** signal brief and, later, a draft change in your own repository for an engineer to review (hands-on exercises when nothing matches). The goal is to kill FOMO rather than feed it: success is the fewest things you'd regret not understanding, not the most items covered — the system is explicitly allowed to declare a quiet week and tell you to go build.
 
 **Weekly is a decision, not a default.** A nightly predecessor ran for weeks and worked exactly as designed. It was retired anyway, in its reader's words: *“I am not finding this AI news useful as I have to react every time I see a news.”* A daily brief optimises for missing nothing, and what it produces is a queue. Reading still runs continuously — it is deterministic and nearly free. Judgement runs weekly, because judgement is what costs money.
 
@@ -74,7 +74,7 @@ Everything below this line is **architecture and roadmap**, not shipped code. It
 | **Scout** | Discover and ingest candidates across the interest graph | designed |
 | **Gatekeeper** | Verify provenance, corroboration, dedup, reputation, materiality; kill noise | designed |
 | **Framer** | Write the daily brief | **built** |
-| **Coach** | Design weekly 60-minute exercises grounded in your own repos | designed |
+| **Coach** | Read your repository and roadmap, match the week's item to a roadmap item and draft the change as a draft pull request (M3); 60-minute exercises when nothing matches | designed |
 | **Tuner** | Learn taste over time and recalibrate the other agents | designed |
 | **Orchestrator** | Front door — classify the request and route it, collate the answer | designed |
 

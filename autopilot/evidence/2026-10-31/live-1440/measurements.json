@@ -1,0 +1,130 @@
+{
+ "edition": {
+  "url": "/weekly-digest",
+  "viewport": 1440,
+  "page_scrolls_sideways": false,
+  "body_font_size": "18px",
+  "headlines": [
+   {
+    "key": "thread",
+    "found": true,
+    "text": "Benchmarks leave agent resilience untested. Copilot now shows custom agent usage.",
+    "words": 11,
+    "chars": 81,
+    "figures": 0,
+    "font_size": "30px",
+    "line_height": "34.5px",
+    "max_width": "720px",
+    "text_wrap": "balance",
+    "width": 720,
+    "height": 69,
+    "lines": 2
+   },
+   {
+    "key": "learning",
+    "found": true,
+    "text": "Faults cut task-completion scores by 60%; overfitting explains a large share of gains.",
+    "words": 13,
+    "chars": 86,
+    "figures": 1,
+    "font_size": "30px",
+    "line_height": "34.5px",
+    "max_width": "720px",
+    "text_wrap": "balance",
+    "width": 720,
+    "height": 69,
+    "lines": 2
+   },
+   {
+    "key": "stories",
+    "found": true,
+    "text": "Papers test agent faults and harness overfitting; Copilot adds custom agent metrics.",
+    "words": 12,
+    "chars": 84,
+    "figures": 0,
+    "font_size": "30px",
+    "line_height": "34.5px",
+    "max_width": "720px",
+    "text_wrap": "balance",
+    "width": 720,
+    "height": 69,
+    "lines": 2
+   }
+  ],
+  "story_title": {
+   "key": "story",
+   "found": true,
+   "text": "Copilot usage metrics now name the skills, agents and MCP servers your org built, instead of bucketing them as other",
+   "words": 20,
+   "chars": 116,
+   "figures": 0,
+   "font_size": "22px",
+   "line_height": "27.28px",
+   "max_width": "none",
+   "text_wrap": "pretty",
+   "width": 680,
+   "height": 55,
+   "lines": 2
+  },
+  "feature_title": {
+   "key": "feature",
+   "found": true,
+   "text": "Injected MCP faults cut agent task completion from 8.08 to 3.23 out of 10, and bigger backbones did not help",
+   "words": 20,
+   "chars": 108,
+   "figures": 3,
+   "font_size": "26px",
+   "line_height": "29.64px",
+   "max_width": "none",
+   "text_wrap": "pretty",
+   "width": 614,
+   "height": 59,
+   "lines": 2
+  },
+  "closing": {
+   "key": "closing",
+   "found": true,
+   "text": "Two papers put numbers on scaffolding: 8.08 to 3.23 under faults, 54% of gains from overfitting.GitHub made adoption countable and one agent's fixes self-validating.",
+   "words": 24,
+   "chars": 165,
+   "figures": 3,
+   "font_size": "26px",
+   "line_height": "29.12px",
+   "max_width": "none",
+   "text_wrap": "wrap",
+   "width": 680,
+   "height": 116,
+   "lines": 4
+  },
+  "thread_body": {
+   "key": "thread-body",
+   "found": true,
+   "text": "The week put measurement where scaffolding used to sit. A fault-injection study found task completion falling from 8.08 to 3.23 out of 10 when MCP tools misbehave, and a second protocol attributed 54% of harness-evolution gains to overfitting on average across 21 significant settings. At the same time GitHub made internal skills, custom agents and MCP servers visible by name in usage metrics, and turned agentic autofix for code scanning alerts generally available. So the harder question: if adoption counts are now easy to see and fault tolerance is not, which one will teams optimize?",
+   "words": 95,
+   "chars": 590,
+   "figures": 5,
+   "font_size": "18px",
+   "line_height": "28.8px",
+   "max_width": "none",
+   "text_wrap": "pretty",
+   "width": 680,
+   "height": 202,
+   "lines": 7
+  },
+  "top_clip": {
+   "y": 187.28125,
+   "h": 966.78125
+  }
+ },
+ "product": {
+  "hero": {
+   "y": 57.890625,
+   "h": 1313.65625
+  },
+  "where": {
+   "y": 5924.78125,
+   "h": 523.5625
+  },
+  "page_scrolls_sideways": false
+ }
+}

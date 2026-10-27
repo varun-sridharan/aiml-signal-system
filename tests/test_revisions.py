@@ -53,6 +53,8 @@ class Database(unittest.TestCase):
             self.assertEqual(counts(check), self.before, "a test leaked into the live tables")
 
     def revise(self, field="stories.title", value=NEW_TITLE, reason="headline shortened", verdict=PASS, **kw):
+        if isinstance(verdict, dict) and "text" not in verdict:
+            verdict = dict(verdict, text=revisions.verdict_text(value))       # a verdict names the text it was given for
         return revisions.revise(self.conn, WEEK, field, value, reason, verdict=verdict, **kw)
 
     # the table ------------------------------------------------------------------------
@@ -75,6 +77,19 @@ class Database(unittest.TestCase):
                     with self.conn.transaction():
                         self.conn.execute("INSERT INTO edition_revisions (brief_id, field, old_value, new_value, reason, gate_verdict) "
                                           "VALUES (%s, 'stories.title', '\"a\"', '\"b\"', %s, %s::jsonb)", (WEEK, reason, verdict))
+
+    def test_the_table_refuses_a_verdict_whose_claims_are_not_all_supported_with_a_verified_span(self):
+        bad = [("a claim marked unsupported but not listed", {"claims": [{"claim": "c", "supported": False, "span_verified": True}], "unsupported_claims": []}),
+               ("a span not verified", {"claims": [{"claim": "c", "supported": True, "span_verified": False}], "unsupported_claims": []}),
+               ("a claim with no flags", {"claims": [{"claim": "c"}], "unsupported_claims": []}),
+               ("one good claim and one bad", {"claims": [{"claim": "c", "supported": True, "span_verified": True}, {"claim": "d", "supported": False, "span_verified": True}],
+                                               "unsupported_claims": []})]
+        for label, verdict in bad:
+            with self.subTest(label):
+                with self.assertRaises(psycopg.errors.CheckViolation):
+                    with self.conn.transaction():
+                        self.conn.execute("INSERT INTO edition_revisions (brief_id, field, old_value, new_value, reason, gate_verdict) "
+                                          "VALUES (%s, 'stories.title', '\"a\"', '\"b\"', 'r', %s::jsonb)", (WEEK, json.dumps(verdict)))
 
     def test_the_table_refuses_a_field_that_is_not_a_headline(self):
         with self.assertRaises(psycopg.errors.CheckViolation):
@@ -117,6 +132,47 @@ class Database(unittest.TestCase):
         with self.assertRaises(revisions.RevisionRefused):
             revisions.revise(self.conn, "1998-W41", "stories.title", NEW_TITLE, "r", verdict=PASS)
         self.assertEqual(counts(self.conn)[2], self.before[2])
+
+    def test_a_recorded_verdict_must_be_for_exactly_this_text(self):
+        for verdict in (PASS, dict(PASS, text="some other headline"), dict(PASS, text=revisions.verdict_text(NEW_TITLE) + " extra")):
+            with self.subTest(verdict.get("text")):
+                with self.assertRaises(revisions.RevisionRefused) as why:
+                    revisions.revise(self.conn, WEEK, "stories.title", NEW_TITLE, "r", verdict=verdict)
+                self.assertIn("not for this text", str(why.exception))
+        self.assertEqual(counts(self.conn)[2], self.before[2])
+
+    def test_without_a_recorded_verdict_the_claim_gate_runs_and_its_answer_decides(self):
+        with unittest.mock.patch.object(revisions, "grade", return_value=dict(PASS, text=revisions.verdict_text(NEW_TITLE))) as gate:
+            out = revisions.revise(self.conn, WEEK, "stories.title", NEW_TITLE, "headline shortened")
+        gate.assert_called_once()
+        self.assertEqual(gate.call_args.args[3], NEW_TITLE)           # it graded the new value
+        self.assertTrue(out["written"])
+        with unittest.mock.patch.object(revisions, "grade", return_value=dict(FAIL, text="x")) as gate:
+            with self.assertRaises(revisions.RevisionRefused) as why:
+                revisions.revise(self.conn, WEEK, "stories.title", "Helio shipped a queue", "headline shortened")
+        gate.assert_called_once()
+        self.assertIn("claim gate", str(why.exception))
+        self.assertEqual(counts(self.conn)[2], self.before[2] + 1)    # only the first one was written
+
+    def test_grade_sends_the_value_alone_against_every_stories_excerpts_and_returns_what_the_grader_found(self):
+        sent = {}
+
+        def fake_call(client, **kw):
+            sent.update(kw)
+            raw = json.dumps({"thread": {"claims": [{"claim": "Helio shipped a queue", "supported": True, "supporting_span": "Helio shipped a queue today"}],
+                                         "unsupported_claims": [], "confidence": 0.9}})
+            return raw, {}, 0.001
+        items = [{"id": "s01", "excerpt": "Helio shipped a queue today and more."}, {"id": "s02", "excerpt": "Other text."}]
+        with unittest.mock.patch.object(revisions.runs, "load_artifact", lambda *a, **k: {"raw_day": {}}), \
+                unittest.mock.patch.object(revisions.weekly, "composer_day", lambda conn, raw: ({}, {}, 0)), \
+                unittest.mock.patch.object(revisions.composer, "composer_items", lambda wide, pub: items), \
+                unittest.mock.patch.object(revisions.llm, "call", fake_call):
+            verdict = revisions.grade(self.conn, WEEK, WEEK, "Helio shipped a queue", client=object(), user_id="u")
+        body = json.loads(sent["messages"][0]["content"])
+        self.assertEqual(body["thread"]["writing_under_test"], "Helio shipped a queue")
+        self.assertEqual([e["id"] for e in body["thread"]["ground_truth_excerpt_union"]], ["s01", "s02"])
+        self.assertEqual(verdict["text"], "Helio shipped a queue")
+        self.assertTrue(revisions.verdict_passes(verdict))
 
     def test_a_dry_run_runs_only_the_free_checks_and_writes_nothing(self):
         out = revisions.revise(self.conn, WEEK, "stories.title", NEW_TITLE, "headline shortened", dry_run=True)       # no verdict and no client: nothing is paid

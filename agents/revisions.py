@@ -95,6 +95,11 @@ def free_findings(body: dict, field: str, value) -> list[str]:
     return [message for path, message in style_check.headline_findings(trial) if path.startswith(own)]
 
 
+def verdict_text(value) -> str:
+    """The text a verdict is about, as the gate sees it: the plain words, the thread's two lines joined."""
+    return style_check.plain(" ".join(value) if isinstance(value, list) else value)
+
+
 def verdict_passes(verdict) -> bool:
     return (isinstance(verdict, dict) and bool(verdict.get("claims")) and not verdict.get("unsupported_claims") and not verdict.get("grader_errors")
             and all(c.get("supported") and c.get("span_verified") for c in verdict["claims"] if isinstance(c, dict)))
@@ -114,7 +119,7 @@ def grade(conn, brief_id: str, run_id: str, value, *, client=None, user_id: str 
     client = client or llm.build_client()
     raw, _used, _cost = llm.call(client, user_id=user_id or profile["user_id"], phase=composer.CHECK_PHASE, conn=conn, **framer.check_request(part))
     verdict = framer.normalise_verdict(json.loads(raw)["thread"], "\n".join(u["source_excerpt"] for u in union), text)
-    return {"claims": [{"claim": c.get("claim"), "supported": c.get("supported"), "span_verified": c.get("span_verified")} for c in verdict.get("claims", [])],
+    return {"text": text, "claims": [{"claim": c.get("claim"), "supported": c.get("supported"), "span_verified": c.get("span_verified")} for c in verdict.get("claims", [])],
             "unsupported_claims": verdict.get("unsupported_claims", []), "grader_errors": verdict.get("grader_errors", []),
             "model": llm.CHECK_MODEL, "checked_at": datetime.now(timezone.utc).isoformat(), "how": "the claim gate on the new value alone"}
 
@@ -133,7 +138,8 @@ def effective_body(conn, brief_id: str) -> tuple:
 def revise(conn, brief_id: str, field: str, new_value, reason: str, *, client=None, verdict: dict | None = None, dry_run: bool = False) -> dict:
     """Correct one field of a published brief. Writes a row only if the free checks and the claim gate pass; raises RevisionRefused otherwise.
 
-    `verdict` may carry a passing verdict already recorded for exactly this value (Run 8's rechecks of Edition 02); without it the gate runs.
+    `verdict` may carry a passing verdict already recorded for exactly this value (Run 8's rechecks of Edition 02): it must name the text it was given for
+    and match the new value word for word, and the database refuses a verdict with any claim unsupported or any span unverified. Without a verdict the gate runs.
     With dry_run only the free checks run, and nothing is paid or written.
     """
     reason = (reason or "").strip()
@@ -151,6 +157,8 @@ def revise(conn, brief_id: str, field: str, new_value, reason: str, *, client=No
         raise RevisionRefused("the headline cap: " + "; ".join(findings))
     if dry_run:
         return {"brief": brief_id, "field": field, "old": old_value, "new": new_value, "free_checks": "passed", "written": False}
+    if verdict is not None and verdict.get("text") != verdict_text(new_value):
+        raise RevisionRefused("the recorded verdict is not for this text (a verdict carries the exact words it was given for)")
     gate = verdict if verdict is not None else grade(conn, brief_id, _run_id(conn, brief_id), new_value, client=client)
     if not verdict_passes(gate):
         raise RevisionRefused("the claim gate did not pass the new value: " + "; ".join(map(str, gate.get("unsupported_claims") or ["no verified claim"])), verdict=gate)
@@ -247,7 +255,7 @@ def main(argv=None) -> int:
             print("that recheck has no passing attempt for this field", file=sys.stderr)
             return 1
         value = passed[-1]["text"]
-        verdict = {"claims": passed[-1]["claims"], "unsupported_claims": passed[-1].get("unsupported_claims", []), "grader_errors": [],
+        verdict = {"text": verdict_text(value), "claims": passed[-1]["claims"], "unsupported_claims": passed[-1].get("unsupported_claims", []), "grader_errors": [],
                    "model": llm.CHECK_MODEL, "how": f"recorded by the claim gate in {args.from_recheck} before this revision, for exactly this text"}
     elif args.value is None:
         print("give --value or --from-recheck", file=sys.stderr)
