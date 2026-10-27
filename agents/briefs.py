@@ -55,12 +55,25 @@ def publish(conn, brief_id: str, run_id: str, body: dict, now: datetime) -> None
                      (brief_id, run_id, Jsonb(body), now))
 
 
+# Weeks that are not editions. A brief is append-only, so a row written by mistake cannot be removed without disabling the database's own
+# protection, which only Varun may decide. The public views leave these out instead, and say why here.
+WITHDRAWN = {
+    "1999-W20": "a test fixture a Run 9 helper committed to the live database on 2026-10-26 by mistake; not an edition",
+}
+
+
+def withdrawn() -> list:
+    return sorted(WITHDRAWN)
+
+
 def latest(conn):
     """The most recent published brief as (id, body, published_at), or None."""
-    return conn.execute("SELECT id, body, published_at FROM briefs ORDER BY id DESC LIMIT 1").fetchone()
+    return conn.execute("SELECT id, body, published_at FROM briefs WHERE id <> ALL(%s) ORDER BY id DESC LIMIT 1", (withdrawn(),)).fetchone()
 
 
 def get(conn, brief_id: str):
+    if brief_id in WITHDRAWN:
+        return None
     return conn.execute("SELECT id, body, published_at FROM briefs WHERE id = %s", (brief_id,)).fetchone()
 
 

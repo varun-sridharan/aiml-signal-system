@@ -26,7 +26,7 @@ from agents import briefs, budget, digest, runs  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 
 NOW = datetime(2026, 10, 18, 9, 0, tzinfo=timezone.utc)
-WEEK = "1999-W20"
+WEEK = "1998-W20"
 GOLDEN = json.loads((REPO / "data" / "evals" / "golden" / "2026-08-04" / "output.json").read_text())
 
 
@@ -355,14 +355,14 @@ class Routes(unittest.TestCase):
 
     def test_d2c_the_archive_lists_every_edition_newest_first_with_the_sample_and_every_link_opens(self):
         self.publish(composed_body(), WEEK)
-        self.publish(GOLDEN, "1999-W21")
+        self.publish(GOLDEN, "1998-W21")
         text = self.client.get("/weekly-digest?tab=archive").text
         self.assertIn('id="tab-archive" aria-selected="true"', text)
         panel = text[text.index('id="panel-archive"'):]
         self.assertIn("PAST EDITIONS", panel)
         import re
         hrefs = [h.replace("&amp;", "&") for h in re.findall(r'class="rd" href="([^"]+)"', panel)]
-        mine = [hrefs.index(f"/weekly-digest?week={w}") for w in ("1999-W21", "1999-W20")]
+        mine = [hrefs.index(f"/weekly-digest?week={w}") for w in ("1998-W21", "1998-W20")]
         self.assertLess(mine[0], mine[1])                                                         # published later, listed first
         self.assertEqual(hrefs[-1], site.SAMPLE_EDITION_URL)                                      # the sample edition is the last row
         numbers = [int(n) for n in re.findall(r'class="el">ED (\d+)<', panel)]
@@ -576,7 +576,7 @@ class Routes(unittest.TestCase):
         self.assertEqual(r.status_code, 413)
 
     def test_v10_a_week_key_with_a_trailing_newline_is_not_a_week(self):
-        self.assertEqual(self.client.get("/weekly-digest?week=1999-W20%0A").status_code, 404)
+        self.assertEqual(self.client.get("/weekly-digest?week=1998-W20%0A").status_code, 404)
 
     def test_v11_notes_survive_a_browsers_line_endings_and_refuse_nul(self):
         self.publish()

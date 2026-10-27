@@ -156,7 +156,7 @@ def _last_edition():
         value = None
         try:
             with _connect() as conn:
-                row = conn.execute("SELECT id, published_at FROM briefs ORDER BY published_at DESC, id DESC LIMIT 1").fetchone()
+                row = conn.execute("SELECT id, published_at FROM briefs WHERE id <> ALL(%s) ORDER BY published_at DESC, id DESC LIMIT 1", (briefs.withdrawn(),)).fetchone()
             if row is not None:
                 value = {"week": row[0], "published_at": row[1].astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}
         except Exception:                      # a database that does not answer is a null, never a failed health check
@@ -260,7 +260,7 @@ def _archive(conn) -> tuple[list, dict]:
     rows = conn.execute(
         "SELECT id, body #> '{edition,thread,lines}', body -> 'thread', "
         "CASE WHEN jsonb_typeof(body -> 'items') = 'array' THEN jsonb_array_length(body -> 'items') ELSE 0 END, "
-        "body -> 'window', published_at FROM briefs ORDER BY published_at ASC, id ASC").fetchall()
+        "body -> 'window', published_at FROM briefs WHERE id <> ALL(%s) ORDER BY published_at ASC, id ASC", (briefs.withdrawn(),)).fetchall()
     numbers = {r[0]: n for n, r in enumerate(rows, start=1)}
     entries = [digest.archive_entry(r[0], numbers[r[0]], r[1], r[2], r[3], r[4], r[5]) for r in reversed(rows)]
     return entries + [dict(digest.SAMPLE)], numbers

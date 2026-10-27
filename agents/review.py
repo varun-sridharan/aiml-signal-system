@@ -10,7 +10,7 @@ are not kept by the log and are not shown; and every string is cut to a length t
 
 from __future__ import annotations
 
-from . import runs, style_check
+from . import briefs, runs, style_check
 
 REVIEW_EDITIONS = 4              # the note stops growing after this many published editions (decision log, 2026-10-26)
 MAX_FIELD = 190                  # under the 200 characters the evidence scanner treats as copied text: no field can carry a copied passage, whatever the log held
@@ -70,8 +70,8 @@ def edition_note(week: str, number: int, published_at, gates: dict) -> dict:
 
 def entries(conn, limit: int | None = None) -> list:
     """The note for the first `limit` published editions (REVIEW_EDITIONS by default), newest first."""
-    rows = conn.execute("SELECT id, run_id, published_at FROM briefs ORDER BY published_at ASC, id ASC LIMIT %s",
-                        (REVIEW_EDITIONS if limit is None else limit,)).fetchall()
+    rows = conn.execute("SELECT id, run_id, published_at FROM briefs WHERE id <> ALL(%s) ORDER BY published_at ASC, id ASC LIMIT %s",
+                        (briefs.withdrawn(), REVIEW_EDITIONS if limit is None else limit)).fetchall()
     notes = []
     for number, (brief_id, run_id, published_at) in enumerate(rows, start=1):
         try:
