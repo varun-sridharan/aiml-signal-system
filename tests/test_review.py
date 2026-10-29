@@ -10,7 +10,7 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
-from agents import article_text as A, review
+from agents import briefs, article_text as A, review
 from tests._db import needs_db
 
 REPO = Path(__file__).resolve().parent.parent
@@ -82,7 +82,7 @@ class Selection(unittest.TestCase):
         self.assertEqual(review.REVIEW_EDITIONS, 4)
         self.assertEqual([n["number"] for n in notes], [4, 3, 2, 1])
         self.assertEqual(conn.args[-1], 4)
-        self.assertEqual(conn.args[0], ["1999-W20"])
+        self.assertEqual(conn.args[0], briefs.withdrawn())          # the weeks that are not editions are left out of the query
         self.assertIn("ORDER BY published_at ASC", conn.sql)       # the first editions published, not the latest
 
     def test_the_setting_controls_how_many(self):
