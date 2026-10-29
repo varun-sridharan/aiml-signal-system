@@ -297,6 +297,13 @@ class ProductPage(unittest.TestCase):
         self.assertIn('<source src="/static/video/the-gap.mp4"', self.html)
         self.assertEqual(self.html.count('class="btn'), 2)
 
+    def test_the_video_caption_discloses_the_cloned_voice(self):
+        cap = pages.product()["hero"]["video"]["caption"]
+        self.assertLess(len(cap), 190)
+        self.assertIn("AI-cloned from his own recording", cap)
+        self.assertIn("Maya, her company and the numbers on screen are invented", cap)
+        self.assertIn("AI-cloned from his own recording", self.text.replace("&#39;", "'"))
+
     def test_the_hero_title_is_at_most_8_words(self):
         title = self.html.split('<h1 class="hero-title">', 1)[1].split("</h1>", 1)[0]
         self.assertLessEqual(len(re.sub(r"<[^>]+>", " ", title).split()), 8, title)

@@ -48,7 +48,7 @@
       "src": "/static/video/the-gap.mp4",
       "poster": "/static/video/the-gap-poster.jpg",
       "title": "The gap, in 60 seconds",
-      "caption": "Illustrative example. Maya, her company and the numbers on screen are invented to show the idea."
+      "caption": "Narrated in Varun's voice, AI-cloned from his own recording. Illustrative example: Maya, her company and the numbers on screen are invented to show the idea."
     },
     "_title": "No number and no date in the title: the measured count lives in the stats band (agents/reach.py). At most 8 words and two lines at 1440px, enforced in tests/test_site.py."
   },
