@@ -57,7 +57,6 @@ body.layout-edition{background:var(--surface-surround);color:var(--text-body);fo
 .layout-landing .kicker{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:var(--track-kicker);text-transform:uppercase;font-weight:500;color:var(--accent-ink)}
 .layout-landing .hero-title{font-family:var(--serif);font-weight:600;font-size:var(--fs-hero);line-height:1.03;letter-spacing:-.028em;margin:20px 0 0;max-width:12.2em}
 .layout-landing .hero-title span{display:block;color:var(--accent-ink)}
-.layout-landing .hero-note{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:var(--track-tag);color:var(--faint);margin:18px 0 0;line-height:1.5}
 .layout-landing .hero-lede{font-family:var(--serif);font-size:var(--fs-h3);line-height:1.5;color:var(--soft);margin:32px 0 0;max-width:32em}
 .layout-landing .hero-video{margin:48px 0 0;max-width:880px}
 .layout-landing .hero-video video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;border:var(--rule-w) solid var(--rule);border-radius:var(--radius-md)}

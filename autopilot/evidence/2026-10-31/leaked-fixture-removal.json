@@ -1,0 +1,45 @@
+{
+ "what": "remove the mistakenly committed fixture week 1999-W20 (approved by Varun in the goal of 2026-10-28)",
+ "steps": [
+  "DISABLE TRIGGER briefs_append_only",
+  "DELETE FROM briefs WHERE id='1999-W20' AND run_id='1999-W20': 1 row",
+  "DELETE FROM runs WHERE id='1999-W20' AND status='running': 1 row",
+  "ENABLE TRIGGER briefs_append_only"
+ ],
+ "counts_before": {
+  "briefs": 3,
+  "runs": 13,
+  "run_stages": 37,
+  "run_artifacts": 22,
+  "feedback": 0,
+  "edition_revisions": 3
+ },
+ "counts_after": {
+  "briefs": 2,
+  "runs": 12,
+  "run_stages": 37,
+  "run_artifacts": 22,
+  "feedback": 0,
+  "edition_revisions": 3
+ },
+ "committed": true,
+ "trigger_after": {
+  "UPDATE briefs SET body = body WHERE id = '2026-W44'": "refused: briefs is append-only: rows are never updated or deleted",
+  "DELETE FROM briefs WHERE id = '2026-W44'": "refused: briefs is append-only: rows are never updated or deleted"
+ },
+ "final": {
+  "trigger_enabled": "O",
+  "counts": {
+   "briefs": 2,
+   "runs": 12,
+   "run_stages": 37,
+   "run_artifacts": 22,
+   "feedback": 0,
+   "edition_revisions": 3
+  },
+  "remaining_1999": [
+   0,
+   0
+  ]
+ }
+}

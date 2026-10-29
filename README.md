@@ -168,7 +168,7 @@ Each stage is checkpointed in the `runs` tables, so a rerun of an attempt loads 
 
 **A published edition is corrected, never edited.** A brief is append-only in the database; a headline that has to change gets a row in `edition_revisions` (field, old and new value, a reason of at most 200 characters, the claim gate's passing verdict), written only by `python -m agents.revisions --brief 2026-W44 --field stories.title --value "..." --reason "..." [--dry-run]` after the headline cap and the gate pass the new value. The page shows the latest row per field with a "Corrected Oct 26: reason" note (never the old text), the archive shows corrected thread lines, and `/weekly-digest/review` lists each correction. A week listed in `agents/briefs.py` `WITHDRAWN` is not an edition and stays out of every public view.
 
-**The Product hero's number is measured.** `agents/reach.py` counts the items the Reader discovered inside the latest edition's window (one cached query, no model call); under 50, or with the database unreachable, the page says "Hundreds" and shows no note.
+**The Product page's measured card.** `agents/reach.py` counts the items the Reader discovered inside the latest edition's window and shows "read by the Reader last week → published" in the stats band (one query per edition, no model call); under 50, or with the database unreachable, the card shows the fixed "7". The hero asks a question and carries no number.
 
 `/add-news` fetches a URL handed to it (`POST` JSON `{"url": "..."}` with an `X-Add-News-Token` header). It is off until `ADD_NEWS_TOKEN` is set in the environment. Voting on the digest needs no setting; it hashes the voter's address with a salt derived from `DATABASE_URL`, or from `VOTE_SALT` if you set one.
 

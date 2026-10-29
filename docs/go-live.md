@@ -4,7 +4,7 @@ What you do, in order. Nothing here has been done for you: the repository only h
 
 ## What the job is
 
-`python -m agents.weekly --scheduled` runs the whole weekly edition (Reader, Framer, gates, publish) for the current ISO week. It is built to be started by a cron that fires twice and to do the right thing both times:
+`python -m agents.weekly --scheduled` runs the whole weekly edition (Reader, Framer, gates, publish) for the week that starts on the Monday after the Friday it runs on. It is built to be started by a cron that fires twice and to do the right thing both times:
 
 - It runs **only** when the Pacific clock says Friday, 19:00 to 19:59. Railway cron is in UTC, so you give it two entries, Saturday 02:00 and Saturday 03:00 UTC. Whichever side of daylight saving the year is on, exactly one of them is Friday 19:00 Pacific; the other one prints `outside Friday 19:00 to 19:59 Pacific; nothing done` and exits 0. (Summer: 02:00 UTC. Winter: 03:00 UTC.)
 - It is **idempotent**. If the week already has a published edition it prints `already published` and exits 0 without a database write, a model call or a fetch.
@@ -12,11 +12,11 @@ What you do, in order. Nothing here has been done for you: the repository only h
 - It writes **one status line** to the log:
   - `scheduled: 2026-W46 published (2026-W46, from reader) at 2026-11-14 02:41 UTC; stages reader, framer, gates, publish`
   - `scheduled: 2026-W46 is already published (2026-11-14 02:41 UTC); nothing done`
-  - `scheduled: 2026-W44 stopped: <reason>` (exit code 1)
+  - `scheduled: 2026-W46 stopped: <reason>` (exit code 1)
 - It takes no other option; it works out the week itself.
-- **Known collision, first Friday only (found in Run 9).** The edition's key is the ISO week of the Pacific date, and Friday 2026-10-30 is in `2026-W44`, which Edition 02 already holds (it was keyed by its UTC run date, Monday 2026-10-26). The job will print `already published` and do nothing that night. Varun decides the remedy; see the Run 9 debrief, section 10.
+- **The key is the week after the Friday.** The edition is keyed by the ISO week of the Monday that follows the Pacific Friday it runs on (Friday 2026-10-30 is `2026-W45`, Friday 2026-11-06 is `2026-W46`), because a Friday edition is the one a reader opens at the start of the next week and so no Friday's key can ever be the week it falls in. The key is only a name: the Reader's window is the eight days ending at the moment the job runs, and the brief's date is that day, never the key's Monday. A story already in a published edition is not offered again, even though the window reaches back over the last days of the edition before it.
 
-`/health` shows the result from outside: `"last_edition": {"week": "2026-W44", "published_at": "2026-10-31T02:41:07Z"}`.
+`/health` shows the result from outside: `"last_edition": {"week": "2026-W45", "published_at": "2026-10-31T02:41:07Z"}` for the first Friday. Until then it shows Edition 02, `2026-W44`.
 
 ## Steps in Railway
 
@@ -35,7 +35,7 @@ What you do, in order. Nothing here has been done for you: the repository only h
    - `DATABASE_URL`: the reference to the Postgres service's private URL (`${{Postgres.DATABASE_URL}}`), the same value the web service uses.
    - `ANTHROPIC_API_KEY`: the same key as the web service (reference it from the web service, `${{<web service>.ANTHROPIC_API_KEY}}`, or paste it once).
 
-   Do **not** set `ADD_NEWS_TOKEN` or `VOTE_SALT` here; they belong to the web service. `GATE` is optional and defaults to `claims`, the gate this system ships with.
+   Do **not** set `ADD_NEWS_TOKEN` or `VOTE_SALT` here; they belong to the web service. (`ADD_NEWS_TOKEN` is set on the web service as of 2026-10-26.) `GATE` is optional and defaults to `claims`, the gate this system ships with.
 5. **Deploy it.** The service builds and then waits for its schedule. It does not run on deploy.
 
 ## Trigger one run by hand
@@ -53,10 +53,10 @@ A run that stopped (`scheduled: ... stopped: ...`) is not retried until next Fri
 
 ## What success looks like
 
-Within about 15 minutes of Friday 19:00 Pacific:
+Within about 15 minutes of Friday 19:00 Pacific (the first one is Friday 2026-10-30):
 
 1. The service log has the line `scheduled: 2026-Wnn published (...)` and the deployment shows as completed (exit 0).
-2. `https://aiml-signal-system-production.up.railway.app/health` shows `last_edition.week` as the current ISO week, and `published_at` a few minutes after 02:00 (summer) or 03:00 (winter) UTC.
+2. `https://aiml-signal-system-production.up.railway.app/health` shows `last_edition.week` as the ISO week of the Monday after that Friday (`2026-W45` the first time), and `published_at` a few minutes after 02:00 (summer) or 03:00 (winter) UTC.
 3. `/weekly-digest` shows the new edition at the top of the archive.
 4. For the first four editions, `/weekly-digest/review` lists what the claim gate held, removed or rewrote. Each run costs about $1.30 to $1.80; the month's ceiling is $40 and the stop line is $35.
 
@@ -66,4 +66,4 @@ The second cron entry of the same night (or any rerun) logs `outside ... nothing
 
 The old scheduled Weekly Digest keeps running in parallel. Switching it off, the story video and the citation gate are separate decisions.
 
-The Friday capture import (reading `news-backlog.md` and posting it to `/add-news/batch` at 18:30 Pacific, before this job starts) is set up in [capture-import.md](capture-import.md).
+Saved links reach the app as you save them: `/AGI-add-news` posts each link to `/add-news/batch` at capture time, so by Friday they are already candidates. The 18:30 scheduled task that was planned is not used. How it works is in [capture-import.md](capture-import.md).

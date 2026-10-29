@@ -1,6 +1,6 @@
 # The weekly capture import
 
-You keep saving links with `/AGI-add-news`, which writes them to `news-backlog.md` in the "AI/ML Latest News" project. The old digest empties that file in its own Friday run, so the import has to read it **before 19:00 Pacific on Friday**. A scheduled task in the Claude app does that at 18:30 and posts the week's links to the app. The app side is built; the task is yours to create (below). Nothing has been created for you.
+Links reach the app **when you save them**. `/AGI-add-news` writes the link to `news-backlog.md` in the "AI/ML Latest News" project (the old digest still reads and empties that file in its own Friday run) and, in the same step, posts it to the app's `/add-news/batch` as a list of one. By Friday the week's links are already candidates, so nothing has to read the file before the old digest empties it, and **the 18:30 Friday scheduled task that this page used to describe is not used**. `ADD_NEWS_TOKEN` is set on the web service (Varun, 2026-10-26).
 
 ## What the app does with a batch
 
@@ -43,28 +43,16 @@ An object `{"links": [ ... ]}` is accepted as well.
 
 Outcomes: `added`, `merged` (the same paper as an item already held; `story` appears when that item is already in a published edition), `already-known`, `rejected` (with why).
 
-## The scheduled task to create in the Claude app
+## How a link is sent, at capture time
 
-Create a scheduled task in the Claude app, **every Friday at 18:30 Pacific**, in the "AI/ML Latest News" project (so it can read `news-backlog.md`), with this prompt. Put the real token in the prompt where it says `<ADD_NEWS_TOKEN>` inside the Claude app only; never in this repository.
+`/AGI-add-news` is the only sender. Each time you use it, it posts `[{"url": "<the link>", "addedAt": "<when>", "note": "<your note>"}]` to the endpoint above with the `X-Add-News-Token` header, and tells you the app's answer for that link: `added`, `merged`, `already-known` or `rejected` with why. The token lives in the skill's own setup, never in the repository. Saving the same link twice is harmless (the second answer is `already-known`).
 
-```
-Read the file news-backlog.md in this project. Do not change it, move anything out of it or empty it: the old digest does that in its own Friday run.
-
-Every entry in it is a link I saved with /AGI-add-news. Make a JSON list with one object per entry, in file order:
-  {"url": "<the link, exactly as saved>", "addedAt": "<the date and time it was saved, ISO 8601, or an empty string if the entry has none>", "note": "<my note on it, or an empty string>"}
-Include every entry that has a link. Do not include the same link twice. Do not summarise, fetch or open any link.
-
-If the list is empty, stop and say "nothing to import this week". Otherwise POST the list as the JSON body to
-  https://aiml-signal-system-production.up.railway.app/add-news/batch
-with the header  X-Add-News-Token: <ADD_NEWS_TOKEN>  and Content-Type: application/json (for example with curl --data @file). Send at most 40 links per request; if there are more, send them in several requests in order.
-
-Then report, for each request, the answer's counts (received, added, merged, already_known, rejected) and list every rejected link with its detail. If the answer is not HTTP 200, say so and show the status and the detail; do not retry more than once. Do not post anything anywhere else.
-```
+A batch of many links still works (at most 100 links and 64 KB, 40 at a time is comfortable), for example to send a whole backlog once by hand; the rules above are the same for one link or many.
 
 ### What success looks like
 
-- The task's last message shows `received` equal to the number of entries in the file, with each link `added`, `merged` or `already-known`, and any `rejected` explained.
-- Running it again at once reports `added: 0` and every link `already-known`.
-- After the Friday run, the stories that came from the file show **FROM YOUR BACKLOG**.
+- Saving a link shows `received: 1` and `added`, `merged` or `already-known` (or `rejected` with the reason) in the same reply.
+- Saving it again at once reports `already-known`.
+- After a Friday run, the stories that came from your saved links show **FROM YOUR BACKLOG**.
 
-If the task cannot read the file, or the app answers 503 (token not set) or 403 (token wrong), nothing was imported; fix that and run the task by hand before 19:00. The Friday job is in [go-live.md](go-live.md).
+If the app answers 503 (token not set) or 403 (token wrong), the link was not sent; it is still in `news-backlog.md`, and you can send it again. The Friday job is in [go-live.md](go-live.md).

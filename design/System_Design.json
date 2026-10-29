@@ -217,7 +217,7 @@
           "rows": [
             [
               "<span class=\"gloss\" data-term=\"reader\">Reader</span>",
-              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 17 feeds and index pages, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
+              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 17 feeds and index pages{window_sources}, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
               "pipeline",
               "<span class=\"pill ok\">BUILT</span>"
             ],

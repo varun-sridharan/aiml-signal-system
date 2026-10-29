@@ -1,9 +1,15 @@
-"""How many things the Reader found in the latest edition's window: the number in the Product page's hero (Run 9, Step C; Varun's decision).
+"""How many things the Reader read for the latest edition, and how many it published: the measured card in the Product page's stats band.
 
-The count is the Reader's own: the items it discovered, from `items.discovered_at`, inside the dates the latest published edition covers
-(`body.window`), and the number of distinct sources they came from. One query, cached for the edition's lifetime (a new edition has a new
-id). No model is called. If the database cannot answer, or the count is under MIN_COUNT, there is no number: the page says "Hundreds" and
-shows no note, and never an invented figure.
+Run 9 put this number in the hero; Run 9's follow-up (2026-10-28) moved it into the stats band and took the number out of the title. The count
+is the Reader's own: the items it discovered, from `items.discovered_at`, inside the dates the latest published edition covers (`body.window`),
+the number of distinct sources that produced them, and the number of stories the edition published. One query per edition (a new edition has a
+new id), no model call. If the database cannot answer, or the count is under MIN_COUNT, there is no result and the page shows the fixed card
+("7 items in the latest edition"): never an invented figure.
+
+Three source counts exist and mean different things, and every page that gives one says which: `feeds` (the feeds and index pages the Reader reads
+each run, a constant in agents/reader.py), `listed` (the rows of the `sources` table: every source it knows, which grows as it finds new domains)
+and `sources` (the listed sources that produced items inside this window). The Product page's stats note and System Design's Reader row take
+all three from here, so they cannot disagree.
 """
 
 from __future__ import annotations
@@ -41,7 +47,7 @@ def count_window(conn, start, end) -> tuple:
 
 
 def for_latest(conn) -> dict | None:
-    """{"count", "sources", "dates"} for the latest published edition, or None when there is nothing honest to say."""
+    """{"count", "sources", "listed", "published", "feeds", "dates"} for the latest published edition, or None when there is nothing honest to say."""
     row = briefs.latest(conn)
     if row is None:
         return None
@@ -51,7 +57,11 @@ def for_latest(conn) -> dict | None:
     body = body if isinstance(body, dict) else json.loads(body)
     start, end = window_of(body, published_at)
     n, sources = count_window(conn, start, end)
-    result = {"count": n, "sources": sources, "dates": digest.edition_label(body, published_at) or ""} if n >= MIN_COUNT else None
+    stories = len(body["items"]) if isinstance(body.get("items"), list) else 0
+    listed = int(conn.execute("SELECT count(*) FROM sources").fetchone()[0])
+    result = ({"count": n, "sources": sources, "listed": listed, "published": stories, "feeds": len(reader.FEEDS),
+               "dates": digest.edition_label(body, published_at) or ""}
+              if n >= MIN_COUNT and stories else None)
     _cache.clear()
     _cache[brief_id] = result
     return result
@@ -70,3 +80,10 @@ def hero(connect) -> dict | None:
     except Exception:
         _failed_at[0] = now
         return None
+
+
+def window_clause(result) -> str:
+    """The clause System Design's Reader row adds after "17 feeds and index pages", from the same numbers as the Product page's note."""
+    if not result:
+        return ""
+    return f"; of the {result['listed']} sources it lists, {result['sources']} produced items in the latest edition's window"

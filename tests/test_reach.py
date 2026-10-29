@@ -1,4 +1,4 @@
-"""The measured number in the Product hero (Run 9, Step C): the Reader's count for the latest edition's window, never an invented figure."""
+"""The Reader's measured count for the latest edition: the Product page's stats card (Run 9 put it in the hero; 2026-10-28 moved it), never an invented figure."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 import app as site
-from agents import briefs, budget, reach
+from agents import briefs, budget, reach, reader
 from tests import _page
 from tests._db import needs_db
 
@@ -49,7 +49,7 @@ class Count(unittest.TestCase):
             self.assertEqual(check.execute("SELECT count(*) FROM items").fetchone()[0], self.items, "a test leaked into the live tables")
 
     def latest(self, brief_id="1997-W10"):
-        body = {"window": WINDOW}
+        body = {"window": WINDOW, "items": [{"id": f"item-{n}"} for n in range(7)]}
         return unittest.mock.patch.object(briefs, "latest", lambda conn: (brief_id, body, END))
 
     def test_the_count_is_the_items_discovered_inside_the_window_and_their_distinct_sources(self):
@@ -64,7 +64,8 @@ class Count(unittest.TestCase):
         seed(self.conn, 60, sources=3)
         with self.latest():
             got = reach.for_latest(self.conn)
-        self.assertEqual(got, {"count": 60, "sources": 3, "dates": "Mar 2 – Mar 10, 1997"})
+        listed = self.conn.execute("SELECT count(*) FROM sources").fetchone()[0]             # every source it lists, the three seeded here included
+        self.assertEqual(got, {"count": 60, "sources": 3, "listed": listed, "published": 7, "feeds": len(reader.FEEDS), "dates": "Mar 2 \u2013 Mar 10, 1997"})
 
     def test_under_the_minimum_there_is_no_number(self):
         seed(self.conn, reach.MIN_COUNT - 1)
@@ -119,33 +120,75 @@ class Fallback(unittest.TestCase):
 
 
 class Page(unittest.TestCase):
+    """The hero has no number and no date; the measured count is the fourth card of the stats band, with a fixed card as the fallback."""
+    RESULT = {"count": 1234, "sources": 7, "listed": 99, "published": 6, "feeds": 17, "dates": "Oct 1 \u2013 Oct 8, 2026"}
+
     def get(self, hero):
         with unittest.mock.patch.object(reach, "hero", lambda connect: hero):
             return TestClient(site.app).get("/application/Product.html").text
 
-    def test_with_a_count_the_title_has_the_number_with_a_separator_and_the_note_names_sources_and_dates(self):
-        html = self.get({"count": 1234, "sources": 7, "dates": "Oct 1 – Oct 8, 2026"})
-        self.assertIn("1,234 things happened in AI last week.", html)
-        self.assertIn('<p class="hero-note">Counted by the Reader across 7 sources, Oct 1 – Oct 8, 2026.</p>', html)
-        self.assertNotIn("Hundreds of things", html)
+    def hero_of(self, html):
+        return html.split('<section class="band hero">', 1)[1].split("</section>", 1)[0]
 
-    def test_without_one_the_title_says_hundreds_and_there_is_no_note(self):
+    def test_the_hero_has_the_question_for_a_title_and_no_number_date_or_note(self):
+        for hero in (self.RESULT, None):
+            hero_html = self.hero_of(self.get(hero))
+            self.assertIn('<h1 class="hero-title">Which AI news matters to your business?</h1>', hero_html)
+            self.assertNotIn("hero-note", hero_html)
+            title = hero_html.split('<h1 class="hero-title">', 1)[1].split("</h1>", 1)[0]
+            self.assertNotRegex(title, r"\d|Oct|<span")
+            self.assertIn("From AI news to a change your team can ship", hero_html)
+            self.assertIn("Today it is one weekly brief of up to seven items", hero_html)
+
+    def test_with_a_count_the_fourth_card_reads_read_to_published_with_its_label_and_note(self):
+        html = self.get(self.RESULT)
+        self.assertIn('<div class="value">1,234 &rarr; 6</div>', html)
+        self.assertIn('<div class="label">read by the Reader last week \u2192 published</div>', html)
+        self.assertIn('<div class="source">Latest edition \u00b7 updates every Friday</div>', html)
+        self.assertIn("the Reader's own count for the latest edition: it read 1,234 items from 7 of the 99 sources it lists, and 6 were published.", html)
+        self.assertNotIn('<div class="value">7</div>', html)
+
+    def test_without_one_the_card_shows_the_fixed_7_as_before_and_the_note_does_not_name_a_count(self):
         html = self.get(None)
-        self.assertIn("Hundreds of things happened in AI last week.", html)
-        self.assertNotIn("hero-note", html)
+        self.assertIn('<div class="value">7</div>', html)
+        self.assertIn("items in the latest edition (an edition carries at most seven)", html)
+        self.assertNotIn("read by the Reader last week", html)
+        self.assertIn("The fourth is the size of the latest edition, which carries at most seven items.", html)
+        self.assertNotRegex(html.split('class="stats-note"', 1)[1].split("</p>", 1)[0], r"\{read\}|\{sources\}|\{published\}")
 
-    def test_the_content_file_holds_no_number_of_its_own(self):
+    def test_the_content_file_holds_no_number_of_its_own_in_the_hero(self):
         text = (REPO / "application" / "Product.json").read_text(encoding="utf-8")
         self.assertNotIn("Four hundred", text)
-        self.assertNotIn("four hundred", text.lower())
         h = json.loads(text)["hero"]
-        self.assertEqual(h["title"], "{count} things happened in AI last week.")
-        self.assertEqual(h["countNote"], "Counted by the Reader across {sources} sources, {dates}.")
+        self.assertEqual(h["title"], "Which AI news matters to your business?")
+        self.assertFalse({"titleAccent", "titleFallback", "countNote"} & set(h))
 
-    def test_no_sentence_calls_the_headline_illustrative(self):
-        html = self.get({"count": 1234, "sources": 7, "dates": "x"})
-        self.assertIn("The only illustrative numbers on the page are in the video, and they are labelled.", html)
-        self.assertNotIn("the headline above it", html)
+    def test_the_stats_note_says_the_only_illustrative_numbers_are_in_the_video_in_both_cases(self):
+        for hero in (self.RESULT, None):
+            html = self.get(hero)
+            self.assertIn("Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.", html)
+
+    def system_design(self, hero):
+        with unittest.mock.patch.object(reach, "hero", lambda connect: hero):
+            return TestClient(site.app).get("/design/System-Design.html").text
+
+    def test_the_source_counts_are_labelled_and_the_two_pages_use_the_same_numbers(self):
+        note = self.get(self.RESULT).split('class="stats-note"', 1)[1].split("</p>", 1)[0]
+        self.assertIn("from 7 of the 99 sources it lists", note)                  # 7 produced items in the window; 99 are listed in the sources table
+        sd = self.system_design(self.RESULT)
+        self.assertIn("Reads 17 feeds and index pages; of the 99 sources it lists, 7 produced items in the latest edition's window", sd)
+        from agents import reader
+        self.assertEqual(len(reader.FEEDS), 17)                                    # the constant behind "17 feeds and index pages"
+
+    def test_system_design_without_a_count_drops_the_clause_and_leaves_no_placeholder(self):
+        sd = self.system_design(None)
+        self.assertIn("Reads 17 feeds and index pages, seeded from", sd)
+        self.assertNotIn("{window_sources}", sd)
+        self.assertNotIn("sources it lists", sd)
+
+    def test_the_window_clause_is_empty_without_a_result(self):
+        self.assertEqual(reach.window_clause(None), "")
+        self.assertEqual(reach.window_clause(self.RESULT), "; of the 99 sources it lists, 7 produced items in the latest edition's window")
 
 
 if __name__ == "__main__":

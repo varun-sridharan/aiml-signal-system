@@ -21,6 +21,9 @@ def utc(*a):
     return datetime(*a, tzinfo=timezone.utc)
 
 
+FRIDAY = utc(1999, 3, 6, 3, 0)             # Friday 1999-03-05 19:00 PST: the Monday after is 03-08, 1999-W10 = the fixture week
+
+
 class Window(unittest.TestCase):
     def test_summer_friday_19_pacific_is_saturday_02_utc_and_winter_is_03_utc(self):
         self.assertTrue(weekly.in_friday_window(utc(2026, 7, 11, 2, 0)))        # Fri 19:00 PDT
@@ -53,10 +56,40 @@ class Window(unittest.TestCase):
         self.assertEqual(len(hits), 2)                                          # one Friday hour per week
         self.assertTrue(all(weekly.pacific(h).weekday() == 4 and weekly.pacific(h).hour == 19 for h in hits))
 
-    def test_the_week_is_the_iso_week_of_the_pacific_friday(self):
-        self.assertEqual(weekly.scheduled_week(utc(2026, 10, 24, 2, 0)), "2026-W43")      # Fri Oct 23 19:00 PDT
-        self.assertEqual(weekly.scheduled_week(utc(2027, 1, 2, 3, 0)), "2026-W53")        # Fri Jan 1 2027 19:00 PST: still last year's week 53
-        self.assertEqual(weekly.scheduled_week(utc(1999, 3, 13, 3, 0)), WEEK)
+    def test_the_week_is_the_iso_week_of_the_monday_after_the_pacific_friday(self):
+        self.assertEqual(weekly.scheduled_week(utc(2026, 10, 24, 2, 0)), "2026-W44")      # Fri Oct 23 19:00 PDT: the Monday after is Oct 26
+        self.assertEqual(weekly.scheduled_week(utc(2026, 10, 31, 2, 30)), "2026-W45")     # Fri Oct 30 19:30 PDT, the first scheduled edition
+        self.assertEqual(weekly.scheduled_week(utc(2026, 11, 7, 3, 0)), "2026-W46")       # Fri Nov 6 19:00 PST, the Saturday after the clocks went back
+        self.assertEqual(weekly.scheduled_week(utc(2026, 12, 26, 3, 0)), "2026-W53")      # Fri Dec 25: the Monday after is Dec 28, still ISO week 53 of 2026
+        self.assertEqual(weekly.scheduled_week(utc(2027, 1, 2, 3, 0)), "2027-W01")        # Fri Jan 1 2027 19:00 PST: the Monday after is Jan 4, week 1 of 2027
+        self.assertEqual(weekly.scheduled_week(FRIDAY), WEEK)
+
+    def test_every_fridays_key_is_the_week_after_its_own_and_none_repeats_in_two_years(self):
+        friday = datetime(2026, 1, 2, 12, 0, tzinfo=weekly.PACIFIC)
+        keys = []
+        for n in range(104):
+            day = friday + timedelta(days=7 * n)
+            saturday = utc(day.year, day.month, day.day, 3, 0) + timedelta(days=1)       # 03:00 UTC is inside the window in winter, and an hour past it in summer
+            for hour in (2, 3):
+                moment = utc(saturday.year, saturday.month, saturday.day, hour, 30)
+                if weekly.in_friday_window(moment):
+                    own = weekly.week_key(day)
+                    nxt = weekly.week_key(day + timedelta(days=3))                       # the Monday after
+                    self.assertEqual(weekly.scheduled_week(moment), nxt)
+                    self.assertNotEqual(nxt, own, f"Friday {day.date()}")
+                    keys.append(nxt)
+        self.assertEqual(len(keys), 104)
+        self.assertEqual(len(set(keys)), 104)
+
+    def test_the_window_and_the_briefs_date_come_from_the_run_time_not_from_the_keys_monday(self):
+        from agents import reader, runs as runs_module
+        moment = utc(2026, 10, 31, 2, 30)                                           # Fri 2026-10-30 19:30 PDT
+        self.assertEqual(weekly.scheduled_week(moment), "2026-W45")                  # whose Monday is Nov 2, three days after the run
+        window = reader.window_of(moment)
+        self.assertEqual(window["to"], moment.isoformat())                           # the window ends at the run time, not at the Monday
+        self.assertEqual(window["from"], (moment - reader.WINDOW).isoformat())
+        self.assertEqual(runs_module._at(moment).date().isoformat(), "2026-10-31")  # the brief's date (as_of) is the run's own date
+        self.assertNotEqual(weekly.week_start("2026-W45").isoformat(), "2026-10-31")  # which the key's Monday (Nov 2) would not give
 
 
 class Quiet(unittest.TestCase):
@@ -83,17 +116,60 @@ class Quiet(unittest.TestCase):
         @contextmanager
         def connect():
             yield object()
-        with unittest.mock.patch.object(briefs, "get", return_value=("2026-W43", {}, utc(2026, 10, 24, 2, 5))):
+        with unittest.mock.patch.object(briefs, "get", return_value=("2026-W44", {}, utc(2026, 10, 24, 2, 5))):
             code = weekly.scheduled(utc(2026, 10, 24, 2, 0), connect=connect, build_client=self.client, run=self.run, out=self.lines.append)
         self.assertEqual(code, 0)
-        self.assertEqual(self.lines, ["scheduled: 2026-W43 is already published (2026-10-24 02:05 UTC); nothing done"])
+        self.assertEqual(self.lines, ["scheduled: 2026-W44 is already published (2026-10-24 02:05 UTC); nothing done"])
+
+    FIRST_FRIDAY = utc(2026, 10, 31, 2, 30)          # Fri 2026-10-30 19:30 PDT
+
+    @contextmanager
+    def ok(self):
+        yield unittest.mock.Mock(execute=lambda *a: unittest.mock.Mock(fetchone=lambda: None))      # a connection that finds no run row
+
+    def test_the_first_scheduled_friday_is_week_45_is_not_already_published_and_is_run_at_its_own_time(self):
+        seen = {}
+
+        def run(conn, client, now, run_id, **kw):
+            seen.update(now=now, run_id=run_id)
+            return {"reader": {}, "framer": {}, "gates": {}, "publish": {}}
+        asked = []
+
+        def get(conn, week):
+            asked.append(week)
+            return None if len(asked) == 1 else ("2026-W45", {}, self.FIRST_FRIDAY)        # absent before the run, published after it
+        with unittest.mock.patch.object(briefs, "get", get), unittest.mock.patch.object(weekly, "resolve_run", return_value="2026-W45"), \
+                unittest.mock.patch.object(runs, "next_stage", return_value=None):
+            code = weekly.scheduled(self.FIRST_FRIDAY, connect=self.ok, build_client=lambda: object(), run=run, out=self.lines.append)
+        self.assertEqual(code, 0)
+        self.assertEqual(asked[0], "2026-W45")
+        self.assertEqual(seen["run_id"], "2026-W45")
+        self.assertEqual(seen["now"], self.FIRST_FRIDAY)                                    # the run is handed its own time, which sets the Reader's window
+        self.assertNotIn("already published", self.lines[-1])
+        self.assertIn("2026-W45 published", self.lines[-1])
+
+    def test_a_second_run_the_same_night_says_already_published(self):
+        again = utc(2026, 10, 31, 3, 30)                                                    # the other cron entry: Fri 20:30 PDT, outside the window
+        self.assertEqual(weekly.scheduled(again, connect=self.ok, build_client=lambda: self.fail("no client"), out=self.lines.append), 0)
+        self.assertIn("outside Friday", self.lines[-1])
+        with unittest.mock.patch.object(briefs, "get", return_value=("2026-W45", {}, utc(2026, 10, 31, 2, 41))):
+            self.assertEqual(weekly.scheduled(utc(2026, 10, 31, 2, 50), connect=self.ok, build_client=lambda: self.fail("no client"),
+                                              run=lambda *a, **k: self.fail("no run"), out=self.lines.append), 0)
+        self.assertEqual(self.lines[-1], "scheduled: 2026-W45 is already published (2026-10-31 02:41 UTC); nothing done")
+
+    def test_the_first_friday_after_the_clock_change_is_week_46(self):
+        saturday_03 = utc(2026, 11, 7, 3, 0)                                                # Fri 2026-11-06 19:00 PST
+        self.assertTrue(weekly.in_friday_window(saturday_03))
+        with unittest.mock.patch.object(briefs, "get", return_value=("2026-W46", {}, saturday_03)):
+            weekly.scheduled(saturday_03, connect=self.ok, build_client=lambda: self.fail("no client"), out=self.lines.append)
+        self.assertIn("2026-W46 is already published", self.lines[-1])
 
     def test_a_stopped_run_writes_one_line_and_exits_nonzero(self):
         @contextmanager
         def connect():
             yield unittest.mock.Mock()
         client = lambda: object()          # noqa: E731
-        with unittest.mock.patch.object(briefs, "get", return_value=None), unittest.mock.patch.object(weekly, "resolve_run", return_value="2026-W43"), \
+        with unittest.mock.patch.object(briefs, "get", return_value=None), unittest.mock.patch.object(weekly, "resolve_run", return_value="2026-W44"), \
                 unittest.mock.patch.object(runs, "next_stage", return_value="reader"):
             for boom in (budget.BudgetExceeded("month ceiling"), weekly.GateFailed("2 hard failures"), RuntimeError("model returned no text")):
                 self.lines.clear()
@@ -101,7 +177,7 @@ class Quiet(unittest.TestCase):
                                         out=self.lines.append)
                 self.assertEqual(code, 1)
                 self.assertEqual(len(self.lines), 1)
-                self.assertIn("scheduled: 2026-W43 stopped:", self.lines[0])
+                self.assertIn("scheduled: 2026-W44 stopped:", self.lines[0])
 
     def test_scheduled_takes_no_other_option(self):
         with unittest.mock.patch.object(sys, "argv", ["weekly", "--scheduled", "--week", "2026-W43"]), self.assertRaises(SystemExit) as e:
@@ -137,7 +213,6 @@ class Health(unittest.TestCase):
         self.assertEqual((r.status_code, r.json()["last_edition"]), (200, None))
 
 
-FRIDAY = utc(1999, 3, 13, 3, 0)            # Friday 1999-03-12 19:00 PST, which is 1999-W10 = the fixture week
 
 
 @needs_db

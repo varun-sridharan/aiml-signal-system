@@ -64,10 +64,6 @@ class Withdrawn(unittest.TestCase):
         self.assertNotEqual(value and value["week"], GHOST)
         site._edition_cache.update(at=None, value=None)
 
-    def test_the_mistaken_fixture_week_is_on_the_list_and_not_visible(self):
-        with unittest.mock.patch.object(briefs, "WITHDRAWN", {"1999-W20": "x"}):
-            self.assertIsNone(briefs.get(self.conn, "1999-W20"))
-
 
 class _Borrow:
     def __init__(self, conn):
@@ -80,7 +76,18 @@ class _Borrow:
         return False
 
 
-class ListIsKept(unittest.TestCase):
-    def test_the_real_list_names_the_leaked_week_and_says_why(self):
-        self.assertIn("1999-W20", briefs.WITHDRAWN)
-        self.assertIn("by mistake", briefs.WITHDRAWN["1999-W20"])
+@needs_db
+class FixtureIsGone(unittest.TestCase):
+    def test_the_leaked_fixture_week_was_removed_and_nothing_is_withdrawn_now(self):
+        self.assertEqual(briefs.WITHDRAWN, {})
+        with budget.connect() as conn:
+            self.assertEqual(conn.execute("SELECT (SELECT count(*) FROM briefs WHERE id = '1999-W20'), (SELECT count(*) FROM runs WHERE id = '1999-W20')").fetchone(), (0, 0))
+            self.assertEqual(conn.execute("SELECT tgenabled FROM pg_trigger WHERE tgname = 'briefs_append_only'").fetchone()[0], "O")      # the protection is on
+
+    def test_the_mechanism_still_works_for_a_week_that_is_listed(self):
+        with budget.connect(autocommit=False) as conn, unittest.mock.patch.object(briefs, "WITHDRAWN", {"1998-W32": "test"}):
+            conn.execute("SELECT 1")
+            runs.open_run(conn, "1998-W32", NOW)
+            briefs.publish(conn, "1998-W32", "1998-W32", composed_body(), NOW)
+            self.assertIsNone(briefs.get(conn, "1998-W32"))
+            conn.rollback()

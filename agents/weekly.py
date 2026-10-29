@@ -27,7 +27,7 @@ import json
 import os
 import re
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 try:
@@ -109,8 +109,16 @@ def in_friday_window(now: datetime) -> bool:
 
 
 def scheduled_week(now: datetime) -> str:
-    """The ISO week of the Pacific date: the week the Friday belongs to."""
-    return week_key(pacific(now))
+    """The ISO week of the Monday after the Pacific date: the week the Friday edition is for.
+
+    A Friday's edition is the one a reader opens at the start of the next week, so it is keyed by that week (Fri 2026-10-30 is 2026-W45, Fri
+    2026-11-06 is 2026-W46). Keyed by the Friday's own week it collided with Edition 02, which a manual run had published as 2026-W44 on a
+    Sunday evening; no later key can collide, because every Friday's key is the week after its own. The key is only a name: the Reader's
+    window and the brief's date come from the run time (`now`), never from the key's Monday.
+    """
+    local = pacific(now).date()
+    monday = local + timedelta(days=7 - local.weekday())           # the next Monday, strictly after `local` (a Friday: three days on)
+    return week_key(datetime(monday.year, monday.month, monday.day))
 
 
 def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:

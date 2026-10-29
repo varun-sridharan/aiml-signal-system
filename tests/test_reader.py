@@ -20,7 +20,7 @@ from types import SimpleNamespace
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from agents import budget, excerpts, items, llm, reader, runs, sources  # noqa: E402
+from agents import briefs, budget, excerpts, items, llm, reader, runs, sources  # noqa: E402
 from tests._db import needs_db  # noqa: E402
 
 # Earlier on 2026-10-18 than the first real run, so that run's items (all discovered later) are outside this window.
@@ -277,6 +277,34 @@ class ReaderAgainstDatabase(unittest.TestCase):
             return reader.run(self.conn, client, NOW, fetch=fetch, **kw)
         finally:
             reader.FEEDS = original
+
+    def test_r1a_an_item_already_in_a_published_edition_is_not_offered_again(self):
+        """A Friday's window reaches back eight days, over the last days of the edition before it; those items are fetched already."""
+        client = FakeClient(unique=True, text="MCP went stateless. " * 20)
+        first = self.run_reader(client)
+        self.assertEqual(len(first["items"]), 2)
+        self.assertEqual(first["stats"]["already_published"], 0)
+        published, kept = first["items"][0], first["items"][1]
+        runs.open_run(self.conn, "1996-W10", NOW)
+        briefs.publish(self.conn, "1996-W10", "1996-W10", {"items": [{"id": published}]}, NOW)
+        self.assertEqual(reader.published_item_ids(self.conn) & {published, kept}, {published})
+        second = self.run_reader(client)                                 # the same window, the next week's run
+        self.assertNotIn(published, second["items"])                     # a story is not published twice
+        self.assertIn(kept, second["items"])                             # an item no edition has used is still offered
+        self.assertEqual(len(second["excerpts"]), 1)
+        self.assertEqual(second["stats"]["already_published"], 1)
+        self.assertEqual(len(client.requests), 2)                        # and nothing was fetched again
+
+    def test_r1b_a_new_copy_of_a_published_story_is_still_folded_into_it(self):
+        """The published item stays in the comparison, so a copy of it that arrives later is folded away rather than offered as a new story."""
+        client = FakeClient(unique=False, text="MCP went stateless. " * 20)       # every page has the same text: the second is a copy of the first
+        first = self.run_reader(client)
+        self.assertEqual(len(first["items"]), 1)                                  # the fingerprint layer folded the two pages into one
+        published = first["items"][0]
+        runs.open_run(self.conn, "1996-W11", NOW)
+        briefs.publish(self.conn, "1996-W11", "1996-W11", {"items": [{"id": published}]}, NOW)
+        second = self.run_reader(client)
+        self.assertEqual(second["items"], [])                                     # the survivor is published; its folded copy is not offered either
 
     def test_r1_filters_by_window_and_relevance_then_fetches_what_may_surface(self):
         client = FakeClient(unique=True, text="MCP went stateless. " * 20)

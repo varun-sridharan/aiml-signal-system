@@ -21,10 +21,7 @@
   <section class="band hero">
     <div class="wrap">
       <div class="kicker">{{ h.kicker }}</div>
-      <h1 class="hero-title">{% if reach %}{{ h.title | replace("{count}", "{:,}".format(reach.count)) }}{% else %}{{ h.titleFallback }}{% endif %} <span>{{ h.titleAccent }}</span></h1>
-      {%- if reach %}
-      <p class="hero-note">{{ h.countNote | replace("{sources}", reach.sources | string) | replace("{dates}", reach.dates) }}</p>
-      {%- endif %}
+      <h1 class="hero-title">{{ h.title }}{% if h.titleAccent %} <span>{{ h.titleAccent }}</span>{% endif %}</h1>
       <p class="hero-lede">{{ h.lede | safe }}</p>
       <div class="actions">
         {%- for a in h.actions %}<a class="btn{{ ' primary' if a.primary else '' }}" href="{{ a.href }}">{{ a.label | safe }}</a>{% endfor %}
@@ -55,14 +52,22 @@
         <div class="glass">
           <div class="stats">
             {%- for st in s.stats %}
+            {%- if st.measured and reach %}
+            <div class="stat">
+              <div class="value">{{ "{:,}".format(reach.count) }} &rarr; {{ reach.published }}</div>
+              <div class="label">{{ st.measured.label }}</div>
+              <div class="source">{{ st.measured.note }}</div>
+            </div>
+            {%- else %}
             <div class="stat">
               <div class="value">{{ st.value }}</div>
               <div class="label">{{ st.label }}</div>
               {%- if st.source %}<div class="source"><a href="{{ st.source.href }}" target="_blank" rel="noopener noreferrer">{{ st.source.label }}</a></div>{% endif %}
             </div>
+            {%- endif %}
             {%- endfor %}
           </div>
-          <p class="stats-note">{{ s.statsNote | safe }}</p>
+          <p class="stats-note">{% if reach and s.statsNoteFallback %}{{ s.statsNote | replace("{read}", "{:,}".format(reach.count)) | replace("{sources}", reach.sources | string) | replace("{listed}", reach.listed | string) | replace("{published}", reach.published | string) | safe }}{% elif s.statsNoteFallback %}{{ s.statsNoteFallback | safe }}{% else %}{{ s.statsNote | safe }}{% endif %}</p>
         </div>
         <div>
           <h2 class="sec-title">{{ s.title }}</h2>

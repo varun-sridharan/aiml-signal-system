@@ -30,8 +30,7 @@
   "hero": {
     "layout": "hero",
     "kicker": "From AI news to a change your team can ship",
-    "title": "{count} things happened in AI last week.",
-    "titleAccent": "Which one matters to your business?",
+    "title": "Which AI news matters to your business?",
     "lede": "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, and drafts the change for your engineers to review.",
     "actions": [
       {
@@ -51,9 +50,7 @@
       "title": "The gap, in 60 seconds",
       "caption": "Illustrative example. Maya, her company and the numbers on screen are invented to show the idea."
     },
-    "titleFallback": "Hundreds of things happened in AI last week.",
-    "countNote": "Counted by the Reader across {sources} sources, {dates}.",
-    "_title": "The number is measured at request time: the Reader's own count of items discovered in the latest published edition's window (agents/reach.py). Under 50, or with the database unreachable, the fallback title shows and there is no note. Never an illustrative number."
+    "_title": "No number and no date in the title: the measured count lives in the stats band (agents/reach.py). At most 8 words and two lines at 1440px, enforced in tests/test_site.py."
   },
   "sections": [
     {
@@ -115,10 +112,14 @@
         },
         {
           "value": "7",
-          "label": "items in the latest edition (an edition carries at most seven)"
+          "label": "items in the latest edition (an edition carries at most seven)",
+          "measured": {
+            "label": "read by the Reader last week → published",
+            "note": "Latest edition · updates every Friday"
+          }
         }
       ],
-      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.</b>",
+      "statsNote": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the Reader's own count for the latest edition: it read {read} items from {sources} of the {listed} sources it lists, and {published} were published. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.</b>",
       "blocks": [
         {
           "t": "p",
@@ -132,7 +133,9 @@
           "t": "p",
           "html": "All of that is before a single product launch, benchmark result, funding round or policy move. Research is only the part with a public counter on it. <b>An edition of this brief carries up to seven items</b>: a decision about the week rather than a summary of it, with the reasoning attached and the sources checked by code."
         }
-      ]
+      ],
+      "statsNoteFallback": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition, which carries at most seven items. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.</b>",
+      "_stats": "The fourth card is measured at request time (agents/reach.py): '{read} → {published}', with the fixed '7' as the fallback when the database cannot answer or the count is under 50. Three source counts exist and are labelled as what they are: 17 feeds and index pages are read each run (agents/reader.py FEEDS), {listed} sources are listed (the sources table), and {sources} of those produced items in the edition's window. System Design's Reader row uses the same numbers."
     },
     {
       "id": "why-the-obvious-fixes-failed",

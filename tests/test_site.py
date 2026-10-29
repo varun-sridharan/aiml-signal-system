@@ -10,6 +10,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from agents import pages, site_check
+from tests import _browser as browser
 from tests._db import needs_db
 
 REPO = Path(__file__).resolve().parent.parent
@@ -61,7 +62,7 @@ class Pages(unittest.TestCase):
         self.assertIn('class="mark"', next(iter(headers.values())))
 
     def test_the_old_urls_still_work_and_show_the_content_files(self):
-        self.assertRegex(self.get("/application/Product.html"), r"(\d[\d,]* things|Hundreds of things) happened in AI last week\.")
+        self.assertIn("Which AI news matters to your business?", self.get("/application/Product.html"))
         self.assertIn("The Signal System", self.get("/design/System-Design.html"))
         self.assertEqual(self.client.get("/").history[0].status_code if self.client.get("/").history else 307, 307)
 
@@ -287,13 +288,26 @@ class ProductPage(unittest.TestCase):
         cls.text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", cls.html))
 
     def test_the_hero_matches_the_video_pitch(self):
-        self.assertRegex(self.text, r"(\d[\d,]* things|Hundreds of things) happened in AI last week\.")
-        for part in ("From AI news to a change your team can ship", "Which one matters to your business?",
+        self.assertIn("Which AI news matters to your business?", self.text)
+        self.assertNotRegex(self.html.split('<h1 class="hero-title">', 1)[1].split("</h1>", 1)[0], r"\d")        # no number in the title
+        for part in ("From AI news to a change your team can ship",
                      "Today it is one weekly brief of up to seven items, each fact checked against its source. Next it connects them to your roadmap and your codebase, "
                      "and drafts the change for your engineers to review."):
             self.assertIn(part, self.text)
         self.assertIn('<source src="/static/video/the-gap.mp4"', self.html)
         self.assertEqual(self.html.count('class="btn'), 2)
+
+    def test_the_hero_title_is_at_most_8_words(self):
+        title = self.html.split('<h1 class="hero-title">', 1)[1].split("</h1>", 1)[0]
+        self.assertLessEqual(len(re.sub(r"<[^>]+>", " ", title).split()), 8, title)
+
+    @unittest.skipUnless(browser.available(), "needs Google Chrome and websockets to measure a layout")
+    def test_the_hero_title_sets_in_two_lines_or_fewer_at_1440px(self):
+        with browser.served(site.app) as base:
+            lines = browser.measure(base, "/application/Product.html", 1440,
+                                    "(() => { const h = document.querySelector('.hero-title'); return Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight)); })()")
+        self.assertLessEqual(lines, 2)
+        self.assertGreaterEqual(lines, 1)
 
     def test_no_sentence_says_the_page_has_no_illustrative_figure(self):
         self.assertNotIn("Nothing on this page is an illustrative figure", self.text)
@@ -301,7 +315,7 @@ class ProductPage(unittest.TestCase):
         self.assertIn("The only illustrative numbers on the page are in the video, and they are labelled.", self.text)
 
     def test_seven_is_a_cap_not_a_promise(self):
-        for part in ("up to seven items", "at most seven items", "an edition carries at most seven"):
+        for part in ("up to seven items", "at most seven items"):
             self.assertIn(part, self.text)
         self.assertNotRegex(self.text, r"carries seven items|narrowed to seven items|Seven items, each")
 

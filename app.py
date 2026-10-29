@@ -212,7 +212,9 @@ def product_page(request: Request):
 
 @app.get("/design/System-Design.html")
 def system_design_page(request: Request):
-    return templates.TemplateResponse(request=request, name="system_design.template.html", context={"page": pages.system_design()})
+    # the Reader row takes its source counts from the same query as the Product page's stats note (agents/reach.py); no data, no clause
+    page = pages.fill(pages.system_design(), {"window_sources": reach.window_clause(reach.hero(_connect))})
+    return templates.TemplateResponse(request=request, name="system_design.template.html", context={"page": page})
 
 
 @app.get("/plan/Plan.html")

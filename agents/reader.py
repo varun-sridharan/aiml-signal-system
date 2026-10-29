@@ -31,8 +31,9 @@ from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin, urlsplit
 
 try:
-    from . import budget, dedupe, excerpts, graph, items, llm, runs, sources
+    from . import briefs, budget, dedupe, excerpts, graph, items, llm, runs, sources
 except ImportError:  # pragma: no cover
+    import briefs
     import budget
     import dedupe
     import excerpts
@@ -168,6 +169,7 @@ class Stats:
     left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
     dated_out: int = 0        # fetched, and the page's own date put it outside the window
     merged: int = 0           # fetched, and the deduplication gate folded it into another item (agents/dedupe.py)
+    already_published: int = 0   # fetched inside the window but already in a published edition, so not offered again
     judged: int = 0           # pairs the gate's model judged (layer 4)
     dedup_cost_usd: float = 0.0
     fetch_cost_usd: float = 0.0
@@ -636,6 +638,14 @@ def prepare(conn, profile: dict | None = None) -> None:
     graph.sync(conn, profile)
 
 
+def published_item_ids(conn) -> set:
+    """The ids of every item already in a published edition. A story is not published twice: a Friday's window reaches back eight days, over the
+    last days of the edition before it, and those items are fetched already, so without this they would be offered to the Framer again."""
+    rows = conn.execute("SELECT jsonb_array_elements(body -> 'items') ->> 'id' FROM briefs WHERE id <> ALL(%s) AND jsonb_typeof(body -> 'items') = 'array'",
+                        (briefs.withdrawn(),)).fetchall()
+    return {r[0] for r in rows if r[0]}
+
+
 def window_fetched(conn, now: datetime) -> list[tuple]:
     """(item id, excerpt id) of every fetched item first seen inside the window, best first."""
     return conn.execute(
@@ -670,7 +680,10 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
     report = dedupe.dedupe_fetched(conn, client, [i for i, _ in window_fetched(conn, now)], now, judge_fn=judge_fn)
     stats.merged, stats.judged, stats.dedup_cost_usd = len(report["merged"]), report["judged"], report["cost_usd"]
     folded = dedupe.merged_away(conn, [i for i, _ in window_fetched(conn, now)])
-    fetched = [(i, e) for i, e in window_fetched(conn, now) if i not in folded]
+    published = published_item_ids(conn)       # compared above (a new copy of a published story is folded into it), but not offered again
+    in_window = [(i, e) for i, e in window_fetched(conn, now) if i not in folded]
+    fetched = [(i, e) for i, e in in_window if str(i) not in published]
+    stats.already_published = len(in_window) - len(fetched)
     return {
         "items": [str(i) for i, _ in fetched],
         "excerpts": [str(e) for _, e in fetched],

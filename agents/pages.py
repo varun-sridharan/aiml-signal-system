@@ -121,6 +121,24 @@ def is_wide_table(head: list, rows: list) -> bool:
     return len(head) >= WIDE_COLUMNS or longest > WIDE_CELL_WORDS
 
 
+def fill(page, tokens: dict):
+    """A copy of a page's content with `{token}` placeholders replaced in every string: the numbers a page takes from the database at request time.
+
+    Content files are cached and shared, so this never changes the original; a token with no value is replaced by the empty string.
+    """
+    def go(obj):
+        if isinstance(obj, str):
+            for key, value in tokens.items():
+                obj = obj.replace("{" + key + "}", value)
+            return obj
+        if isinstance(obj, list):
+            return [go(x) for x in obj]
+        if isinstance(obj, dict):
+            return {k: go(v) for k, v in obj.items()}
+        return obj
+    return go(page)
+
+
 def _walk(obj, fn):
     if isinstance(obj, str):
         return fn(obj)
