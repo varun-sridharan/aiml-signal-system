@@ -238,6 +238,13 @@ Nothing in the current plan uses MCP, which makes it the only entry in the conce
 
 The healthcheck path now lives only in Railway's service settings, so a change to it leaves no trace in the repo. Railway's replacement for config files is `.railway/railway.ts`, which describes the whole project and deletes on apply anything it omits, the database included. Adopt it when there is more than one setting to keep, starting from `railway config pull` rather than `railway config migrate`, and review every `railway config plan` before an apply.
 
+### bk-sdk-upgrade · Upgrade the Anthropic SDK deliberately
+
+- **Size:** S
+- **Origin:** Oct-30-2026 — the first scheduled Friday run stopped because Railway's rebuild installed `anthropic` 2.x, which has no `temperature` argument
+
+`requirements.txt` is now pinned to `anthropic==0.121.0`, the version the suite and every paid run so far used. Moving to 2.3.0 or later is its own change: take `temperature=0` out of the calls in `agents/dedupe.py`, `agents/framer.py` and `agents/citegate.py` (and the notes beside them), check the cheap grader still answers the same on the golden cases, run the whole suite on the new version, and only then change the pin. Do it on a weekday, not on a Friday before a scheduled run.
+
 ## Product feature backlog
 
 ### bk-email-summary · An email summary of each edition
