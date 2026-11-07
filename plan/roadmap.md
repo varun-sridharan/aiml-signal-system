@@ -245,6 +245,13 @@ The healthcheck path now lives only in Railway's service settings, so a change t
 
 `requirements.txt` is now pinned to `anthropic==0.121.0`, the version the suite and every paid run so far used. Moving to 2.3.0 or later is its own change: take `temperature=0` out of the calls in `agents/dedupe.py`, `agents/framer.py` and `agents/citegate.py` (and the notes beside them), check the cheap grader still answers the same on the golden cases, run the whole suite on the new version, and only then change the pin. Do it on a weekday, not on a Friday before a scheduled run.
 
+### bk-empty-composer-reply · Retry the cited writer once when its first answer has no stories
+
+- **Size:** S
+- **Origin:** Nov-07-2026 — the second scheduled run (2026-W46) stopped in the gates because the cited writer's first answer was 120 tokens and held no sections
+
+`compose_draft` in `agents/composer_cited.py` asks again only when an answer is under `MIN_CITED_SHARE` cited, and an empty answer has no sentences to be under it. A first answer with no story sections should count as the writer not following the protocol and be asked once more, as an uncited one is, and the raw text's length should be kept in the artifact so the next one can be diagnosed. A new attempt (`--new-attempt --reuse-reader`) recovered W46 on its first try, so the failure is rare, but it costs the Friday run.
+
 ## Product feature backlog
 
 ### bk-email-summary · An email summary of each edition

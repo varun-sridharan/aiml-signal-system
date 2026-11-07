@@ -26,6 +26,7 @@ import argparse
 import json
 import os
 import re
+import signal
 import sys
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -122,6 +123,15 @@ def scheduled_week(now: datetime) -> str:
 
 
 def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:
+    """The Friday job (see _scheduled), with every stage's start and end written to `out` as it happens (agents/runs.py)."""
+    runs.emit = out
+    try:
+        return _scheduled(now, connect=connect, build_client=build_client, run=run, out=out)
+    finally:
+        runs.emit = None
+
+
+def _scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:
     """The Friday job. Returns the process exit code and writes one status line.
 
     Does nothing outside the window. Does nothing, cleanly, when the week already has a published edition (the second cron entry, or a
@@ -160,6 +170,32 @@ def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=p
         return 1
     out(f"scheduled: {week} published ({run_id}, from {start or 'publish'}) at {row[2]:%Y-%m-%d %H:%M} UTC; stages {', '.join(result)}")
     return 0
+
+
+def sigterm_handler(week: str, out, connect, clock):
+    """The handler for SIGTERM, which Railway sends before it stops a job. It says where the job was, marks that stage failed from a
+    connection of its own (the job's may be mid-query), and raises Terminated so the job unwinds. 2026-11-06: a job whose log ended at
+    the Reader left nothing to say whether it was killed or had stopped."""
+    def handle(signum, frame):
+        act = runs.active()
+        out(f"scheduled: {week} killed by SIGTERM during {act[1] if act else 'no stage'}")
+        if act:
+            try:
+                with connect() as conn:
+                    runs.fail_stage(conn, act[0], act[1], act[2], "killed by SIGTERM", clock())
+            except Exception as e:
+                out(f"scheduled: {week} could not mark {act[1]} failed: {type(e).__name__}")
+        raise runs.Terminated("SIGTERM")
+    return handle
+
+
+def prepare_scheduled_process(week: str, out=print) -> None:
+    """Line-buffer the job's output (a pipe buffers by default, so a killed job's last lines never reached Railway's log) and install the
+    SIGTERM handler. Called once, at the start of the scheduled entrypoint."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(line_buffering=True)
+    signal.signal(signal.SIGTERM, sigterm_handler(week, out, budget.connect, lambda: datetime.now(timezone.utc)))
 
 
 def week_start(week: str) -> date:
@@ -693,7 +729,11 @@ def main() -> int:
     if args.scheduled:
         if args.week or args.status or args.stop_after or args.new_attempt or args.reuse_reader:
             parser.error("--scheduled takes no other option: it works out the week itself")
-        return scheduled(now)
+        prepare_scheduled_process(scheduled_week(now))
+        try:
+            return scheduled(now)
+        except runs.Terminated:
+            return 143
     if args.status:
         with budget.connect() as conn:
             print("\n".join(status(conn, args.week or week_key(now))))

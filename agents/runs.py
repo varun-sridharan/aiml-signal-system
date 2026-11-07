@@ -21,7 +21,9 @@ there is no hidden clock, so a test can put an attempt three hours in the past.
 from __future__ import annotations
 
 import re
-from datetime import datetime, timedelta
+import resource
+import sys
+from datetime import datetime, timedelta, timezone
 from typing import NamedTuple
 
 import psycopg
@@ -59,6 +61,10 @@ class RunRefused(ValueError):
 
 class StageBusy(RuntimeError):
     """Another worker is running this stage, and its attempt is not yet stale."""
+
+
+class Terminated(BaseException):
+    """The process was told to stop (SIGTERM). Not an Exception, so no `except Exception` swallows it on the way out."""
 
 
 class Run(NamedTuple):
@@ -277,6 +283,30 @@ def _at(now) -> datetime:
     return now() if callable(now) else now
 
 
+# WHAT: one line at the start and end of every stage, in the job's own log.
+# CONCEPT: observability. On 2026-11-06 the Friday job's Railway log stopped at the Reader and the run's real
+# end (a gate failure, four minutes later) was visible only in the database. `emit` is set by the scheduled job
+# (agents/weekly.py) to its output function, so the stage lines come out through the same, line-buffered stream
+# as the job's own status lines; it is None, and silent, everywhere else.
+emit = None
+_active: tuple | None = None          # (run_id, stage, attempt) of the stage running in this process, for the SIGTERM handler
+
+
+def active() -> tuple | None:
+    return _active
+
+
+def peak_rss_mb() -> int:
+    """This process's peak resident memory in MB (ru_maxrss is bytes on macOS, kilobytes on Linux)."""
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return round(peak / (1024 * 1024 if sys.platform == "darwin" else 1024))
+
+
+def _line(run_id: str, stage: str, attempt: int, what: str) -> None:
+    if emit is not None:
+        emit(f"stage {run_id} {stage} attempt {attempt} {what} at {datetime.now(timezone.utc):%H:%M:%S}Z, peak RSS {peak_rss_mb()} MB")
+
+
 def checkpointed(conn, run_id: str, stage: str, now, work):
     """Run one stage of a run, once: load its checkpoint if it is done, else do the work.
 
@@ -285,15 +315,26 @@ def checkpointed(conn, run_id: str, stage: str, now, work):
     STALE_AFTER, and then re-raises. The stage's predecessor must be done (the database
     refuses otherwise).
     """
+    global _active
     if stage in _done_stages(conn, run_id):
         return stage_output(conn, run_id, stage)
     attempt = start_stage(conn, run_id, stage, _at(now))
+    _active = (run_id, stage, attempt)
+    began = datetime.now(timezone.utc)
+    _line(run_id, stage, attempt, "started")
     try:
         output = work(attempt)
     except BaseException as e:  # including KeyboardInterrupt: the attempt must not stay 'running'
-        fail_stage(conn, run_id, stage, attempt, f"{type(e).__name__}: {e}", _at(now))
+        try:
+            fail_stage(conn, run_id, stage, attempt, f"{type(e).__name__}: {e}", _at(now))
+        except RunRefused:
+            pass                # already marked failed: the SIGTERM handler does it from its own connection
+        _active = None
+        _line(run_id, stage, attempt, f"failed after {(datetime.now(timezone.utc) - began).total_seconds():.0f}s ({type(e).__name__})")
         raise
+    _active = None
     finish_stage(conn, run_id, stage, attempt, output, _at(now))
+    _line(run_id, stage, attempt, f"done in {(datetime.now(timezone.utc) - began).total_seconds():.0f}s")
     return output
 
 
