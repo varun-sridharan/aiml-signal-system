@@ -370,7 +370,8 @@ class ReaderAgainstDatabase(unittest.TestCase):
 
     def test_r6_the_ceiling_stops_the_reader_before_it_spends(self):
         original = budget.MONTHLY_BUDGET_USD
-        budget.MONTHLY_BUDGET_USD = budget.month_to_date_spend(self.conn, NOW) + budget.Decimal("0.0001")
+        # The Reader's calls are booked against the real clock's month (llm.call_message passes no `now`), not NOW's: the ceiling must come from the same month.
+        budget.MONTHLY_BUDGET_USD = budget.month_to_date_spend(self.conn, datetime.now(timezone.utc)) + budget.Decimal("0.0001")
         try:
             client = FakeClient(text="x" * 50)
             with self.assertRaises(budget.BudgetExceeded):
