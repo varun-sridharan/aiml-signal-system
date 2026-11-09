@@ -640,7 +640,7 @@ class ConfidenceWeek(Pipeline, unittest.TestCase):
         self.assertEqual(code, 0, text)
         self.assertEqual(self.job_slept, [300])                           # the job's one resume, five minutes after the framer failed
         self.assertEqual(self.backoffs, [5])                              # the one overload backoff
-        self.assertEqual([r["max_tokens"] for r in client.composing_requests], [composer.COMPOSE_MAX_TOKENS] * 3 + [composer.COMPOSE_MAX_TOKENS * 2, composer.COMPOSE_MAX_TOKENS])      # the empty-reply retry is a fresh ask at the original cap
+        self.assertEqual([r["max_tokens"] for r in client.composing_requests], [composer.COMPOSE_MAX_TOKENS] * 3 + [composer.COMPOSE_MAX_TOKENS * 2] * 2)      # the empty-reply retry keeps the doubled cap
         self.assertEqual(client.outcomes, [])                             # every injected outcome was used, in order
         self.assertEqual(self.composing_rows(), [("composing", "error 529"), ("composing-retry", "refusal"), ("composing-retry", "max_tokens"),
                                                  ("composing-retry", "end_turn"), ("composing-retry", "end_turn")])
