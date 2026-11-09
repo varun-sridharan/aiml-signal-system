@@ -389,6 +389,11 @@ class EveryOutcomeSettles(LedgerCase):
         request = {"messages": [{"role": "user", "content": "x" * 15_033}]}
         self.assertGreaterEqual(budget.estimate_input_tokens(request), 6_000)
 
+    def test_an_unexpected_error_is_closed_at_its_input_cost_as_it_may_have_come_after_billing(self):
+        with self.assertRaises(RuntimeError):
+            self.ask(Script(RuntimeError("could not parse the reply")), model=llm.FRAMER_MODEL, max_tokens=40_000, user_id="t-odd")
+        self.assert_closed("unexpected error; output unknown", 0.01, user="t-odd")
+
     def test_a_client_side_error_before_send(self):
         def broken(request):
             raise ValueError("max_tokens is too large for a non-streamed request")

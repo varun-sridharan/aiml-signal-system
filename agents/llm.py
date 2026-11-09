@@ -235,8 +235,11 @@ def _request(client, conn, *, model, max_tokens, user_id, phase, stream, extra_i
         except (anthropic.APITimeoutError, anthropic.APIConnectionError) as e:
             kind, last = ("timed out" if isinstance(e, anthropic.APITimeoutError) else "connection failed"), e
             _close_unknown(conn, reservation, model, request, extra_input_tokens, kind)
-        except Exception:       # an error on our side before the request left (the SDK refusing a parameter, a bad argument): nothing was sent
+        except (ValueError, TypeError):       # the SDK refusing a parameter or a bad argument: raised before the request leaves, so nothing was billed
             budget.settle_unbilled(conn, reservation, "client error before send")
+            raise
+        except Exception:       # anything else may have come after the API billed (a reply that would not parse): closed at the input cost, output unknown
+            _close_unknown(conn, reservation, model, request, extra_input_tokens, "unexpected error")
             raise
         else:
             cost = budget.settle(conn, reservation, model, message.usage, stop_reason=message.stop_reason, request_id=getattr(message, "_request_id", None))

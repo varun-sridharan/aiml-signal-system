@@ -215,15 +215,18 @@ class LedgerInRolledBackTransaction(unittest.TestCase):
                          "a billed-but-truncated call went unrecorded")
 
     @live_headroom
-    def test_request_that_raises_leaves_the_worst_case_reserved(self):
+    def test_request_that_raises_is_closed_at_its_input_cost_not_left_reserved(self):
+        # 2026-11-09: it used to stay reserved at the worst case for ever. An unexpected error may have come after the API billed, so it is
+        # closed at the input cost (the part known), and the reason says the output is unknown.
         client = FakeClient(raises=ConnectionError("network dropped mid-call"))
         with self.assertRaises(ConnectionError):
             llm.call(client, model="claude-haiku-4-5", max_tokens=1000, user_id="test",
                      phase="test-raised", conn=self.conn, messages=[])
         row = self.conn.execute(
-            "SELECT state, estimated_cost_usd FROM spend_ledger WHERE phase='test-raised'").fetchone()
-        self.assertEqual(row[0], "reserved")
+            "SELECT state, estimated_cost_usd, stop_reason FROM spend_ledger WHERE phase='test-raised'").fetchone()
+        self.assertEqual((row[0], row[2]), ("settled", "unexpected error; output unknown"))
         self.assertGreater(row[1], 0)
+        self.assertLess(row[1], Decimal("0.001"))          # the 1,000-token worst case would be $0.005
 
     def test_refused_call_never_reaches_the_client(self):
         self.seed("19.99", now=datetime.now(timezone.utc))  # llm.call books in the real month
@@ -400,7 +403,9 @@ class EstimateIsAnUpperBound(unittest.TestCase):
             if phase != "eval-usefulness":
                 continue
             recorded = inp + cr + cw
-            est = min(rebuilt, key=lambda e: abs(e - recorded))
+            # The two golden cases rebuild to different sizes; the recorded calls fall in two groups the same way (about 1,300 and about 2,500
+            # tokens). Match by group, not by nearest number: the estimate is deliberately above the count, so "nearest" picks the wrong case.
+            est = min(rebuilt) if recorded < 1_900 else max(rebuilt)
             self.assertGreaterEqual(est, recorded, f"{phase}: {est} < {recorded} input tokens")
             checked += 1
         self.assertGreaterEqual(checked, 7)  # the seven imported; later runs add more
