@@ -245,12 +245,12 @@ The healthcheck path now lives only in Railway's service settings, so a change t
 
 `requirements.txt` is now pinned to `anthropic==0.121.0`, the version the suite and every paid run so far used. Moving to 2.3.0 or later is its own change: take `temperature=0` out of the calls in `agents/dedupe.py`, `agents/framer.py` and `agents/citegate.py` (and the notes beside them), check the cheap grader still answers the same on the golden cases, run the whole suite on the new version, and only then change the pin. Do it on a weekday, not on a Friday before a scheduled run.
 
-### bk-empty-composer-reply · Retry the cited writer once when its first answer has no stories
+### bk-empty-composer-reply · Retry the composing call once when its reply has no stories (closed in 50ec01d)
 
 - **Size:** S
-- **Origin:** Nov-07-2026 — the second scheduled run (2026-W46) stopped in the gates because the cited writer's first answer was 120 tokens and held no sections
+- **Origin:** Nov-07-2026 — the second scheduled run (2026-W46) stopped in the gates because the composing pass's first answer was 120 tokens of empty fields
 
-`compose_draft` in `agents/composer_cited.py` asks again only when an answer is under `MIN_CITED_SHARE` cited, and an empty answer has no sentences to be under it. A first answer with no story sections should count as the writer not following the protocol and be asked once more, as an uncited one is, and the raw text's length should be kept in the artifact so the next one can be diagnosed. A new attempt (`--new-attempt --reuse-reader`) recovered W46 on its first try, so the failure is rare, but it costs the Friday run.
+Closed Nov-08-2026 in `50ec01d`. `composer.compose_with_revision` (the default `GATE=claims` path) now detects a reply with no stories or no thread, essay or closing text, asks once more under the `composing-retry` phase, and on a second empty reply raises `EmptyComposerReply`, which fails the framer stage (not the gates) so a resume composes again. The cited writer already re-asked an answer that hardly cites; it now also fails the framer stage after two answers with no sections. This item first blamed the cited writer; the run used `GATE=claims`, so the empty answer came from the claims composer, whose revise step then spent a call on an empty draft.
 
 ## Product feature backlog
 
