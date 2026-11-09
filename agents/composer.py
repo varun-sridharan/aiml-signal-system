@@ -62,37 +62,42 @@ MAX_FEATURES = 2
 
 _NULLABLE_STRING = {"anyOf": [{"type": "string"}, {"type": "null"}]}
 _STRINGS = {"type": "array", "items": {"type": "string"}}
+# What a reply may not leave empty (Run 10, 2026-11-08): the 2026-W46 composing call answered with every array and string empty, which a
+# schema of bare `string` and `array` accepts. minItems 1 and minLength 1 are the two bounds the API supports for them (it refuses a
+# minItems above 1); agents/llm.py checks them again on the reply, so they bind whatever the API does with them.
+_TEXT = {"type": "string", "minLength": 1}
+_LINES = {"type": "array", "minItems": 1, "items": _TEXT}
 
 COMPOSE_SCHEMA = {
     "type": "object",
     "properties": {
         "thread": {
             "type": "object",
-            "properties": {"lines": _STRINGS, "body": {"type": "string"}},
+            "properties": {"lines": _LINES, "body": _TEXT},
             "required": ["lines", "body"], "additionalProperties": False,
         },
         "learning": {
             "type": "object",
             "properties": {
-                "headline": {"type": "string"},
-                "paras": _STRINGS,
+                "headline": _TEXT,
+                "paras": _LINES,
                 "notes": {"type": "array", "items": {
                     "type": "object",
                     "properties": {"key": {"type": "string"}, "term": {"type": "string"}, "definition": {"type": "string"}},
                     "required": ["key", "term", "definition"], "additionalProperties": False}},
-                "drawnFrom": _STRINGS,
-                "doDifferently": {"type": "string"},
+                "drawnFrom": _LINES,
+                "doDifferently": _TEXT,
             },
             "required": ["headline", "paras", "notes", "drawnFrom", "doDifferently"], "additionalProperties": False,
         },
-        "storiesTitle": {"type": "string"},
-        "stories": {"type": "array", "items": {
+        "storiesTitle": _TEXT,
+        "stories": {"type": "array", "minItems": 1, "items": {
             "type": "object",
             "properties": {
-                "id": {"type": "string"},
-                "headline": {"type": "string"},
+                "id": _TEXT,
+                "headline": _TEXT,
                 "hashtags": _STRINGS,
-                "body": {"type": "string"},
+                "body": _TEXT,
                 "featureParas": {"anyOf": [_STRINGS, {"type": "null"}]},
                 "tryIt": _NULLABLE_STRING,
                 "tie": {"anyOf": [{"type": "object", "properties": {"to": {"type": "string"}, "text": {"type": "string"}},
@@ -104,10 +109,10 @@ COMPOSE_SCHEMA = {
             "required": ["before", "label"], "additionalProperties": False}},
         "closing": {
             "type": "object",
-            "properties": {"lines": _STRINGS, "summary": {"type": "string"}, "oneThing": {"type": "string"}},
+            "properties": {"lines": _LINES, "summary": _TEXT, "oneThing": _TEXT},
             "required": ["lines", "summary", "oneThing"], "additionalProperties": False,
         },
-        "splits": {"type": "array", "items": {
+        "splits": {"type": "array", "minItems": 1, "items": {
             "type": "object", "properties": {"path": {"type": "string"}, "runs": framer.SPLIT_SCHEMA},
             "required": ["path", "runs"], "additionalProperties": False}},
         "counts": {"type": "array", "items": {
@@ -439,7 +444,8 @@ def check_faithfulness(client, composed: dict, raw_day: dict, published: dict | 
                "_grading_note": GRADER_NOTE} if essay else None)
     verdicts, week, usage = {}, None, None
     for number, part in enumerate(p for p in (first, second) if p):
-        text, used, _cost = llm.call(client, user_id=user_id, phase=CHECK_PHASE, conn=conn, **framer.check_request(part))
+        text, used, _cost = llm.call(client, user_id=user_id, phase=CHECK_PHASE, conn=conn, validate=lambda g, part=part: framer._missing_units(g, part),
+                                     **framer.check_request(part))
         usage = used if usage is None else framer._add_usage(usage, used)
         graded = json.loads(text)
         truth = {u["id"]: u["ground_truth_excerpt"] for u in part["items"]}
@@ -584,9 +590,9 @@ def edition_failures(composed: dict, raw_day: dict, payload: dict, verdicts: dic
 
 REVISE_SCHEMA = {
     "type": "object",
-    "properties": {"fields": {"type": "array", "items": {
+    "properties": {"fields": {"type": "array", "minItems": 1, "items": {
         "type": "object",
-        "properties": {"path": {"type": "string"}, "text": {"type": "string"}, "runs": framer.SPLIT_SCHEMA},
+        "properties": {"path": _TEXT, "text": _TEXT, "runs": {**framer.SPLIT_SCHEMA, "minItems": 1}},
         "required": ["path", "text", "runs"], "additionalProperties": False}}},
     "required": ["fields"], "additionalProperties": False,
 }
@@ -693,6 +699,9 @@ def revise(client, system_prompt: str, profile: dict, raw_day: dict, framing: di
     Only listed paths are taken from the answer; a field that does not exist, or one the writer was not asked about, is ignored.
     The gates then run on the result exactly as they would have on the first draft.
     """
+    why = empty_reply(composed)
+    if why:      # 2026-11-06: $0.116 was spent rewriting an empty draft. A draft that fails the structural check is never revised.
+        raise EmptyComposerReply(f"refusing to revise a structurally empty draft ({why})")
     text, usage, cost = llm.call(client, user_id=profile["user_id"], phase=COMPOSE_PHASE + "-revise", conn=conn,
                                  **revise_request(system_prompt, profile, raw_day, framing, window_label, published, composed, problems))
     answer = json.loads(text)
@@ -713,11 +722,10 @@ def revise(client, system_prompt: str, profile: dict, raw_day: dict, framing: di
     return out, usage, cost, replaced
 
 
-class EmptyComposerReply(RuntimeError):
+class EmptyComposerReply(llm.ModelEmptyReply):
     """The composing call answered with no stories or no required sections, twice. `cost` is what both calls cost."""
     def __init__(self, message: str, cost: float = 0.0):
-        super().__init__(message)
-        self.cost = cost
+        super().__init__(message, cost=cost)
 
 
 def empty_reply(composed) -> str:

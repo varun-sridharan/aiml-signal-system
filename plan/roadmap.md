@@ -252,6 +252,13 @@ The healthcheck path now lives only in Railway's service settings, so a change t
 
 Closed Nov-08-2026 in `50ec01d`. `composer.compose_with_revision` (the default `GATE=claims` path) now detects a reply with no stories or no thread, essay or closing text, asks once more under the `composing-retry` phase, and on a second empty reply raises `EmptyComposerReply`, which fails the framer stage (not the gates) so a resume composes again. The cited writer already re-asked an answer that hardly cites; it now also fails the framer stage after two answers with no sections. This item first blamed the cited writer; the run used `GATE=claims`, so the empty answer came from the claims composer, whose revise step then spent a call on an empty draft.
 
+### bk-failure-alert · Tell Varun when the Friday run fails for good
+
+- **Size:** S
+- **Origin:** Nov-08-2026 — Run 10, step 3e: a final failure should reach Varun by email, and this app has no outbound mail path
+
+The scheduled job now ends a final failure with one log line carrying the week, the failed stage, the named reason and the exact resume command (`weekly.failure_line`), and Railway's log is the only place it appears. Nobody is emailed. A sender needs a decision first: which provider, where its key lives (a Railway variable, which this repo does not set), and whether the alert may also carry the stage line's first 500 characters of the model's reply. Once it exists, `weekly._scheduled` calls it where it now writes `failure_line`, and `tests/test_resilience.py` gets a test that the message is sent once and never on success.
+
 ## Product feature backlog
 
 ### bk-email-summary · An email summary of each edition

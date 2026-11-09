@@ -97,10 +97,8 @@ REVISE_NOTE = (
 
 def write(client, system_prompt, profile, raw_day, framing, window_label, published, *, revise=None, conn=None):
     """One writer call. Returns (full text, block spans, cost)."""
-    message, _usage, cost = llm.call_message(client, user_id=profile["user_id"], phase=PHASE + ("-revise" if revise else ""), conn=conn,
+    message, _usage, cost = llm.call_message(client, user_id=profile["user_id"], phase=PHASE + ("-revise" if revise else ""), conn=conn, stop_policy=True,
                                              **compose_request(system_prompt, profile, raw_day, framing, window_label, published, revise))
-    if message.stop_reason == "max_tokens":
-        raise RuntimeError("the cited writer hit max_tokens; the answer is truncated")
     text, spans = citegate.read_blocks(message.content)
     return text, spans, cost
 

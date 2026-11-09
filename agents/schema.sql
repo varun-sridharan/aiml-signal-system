@@ -23,6 +23,11 @@ CREATE TABLE IF NOT EXISTS spend_ledger (
     state               text           NOT NULL CHECK (state IN ('reserved', 'settled'))
 );
 
+-- What the API said about each settled call (Run 10, 2026-11-08): why it stopped and which request it was. Nullable, so every
+-- earlier row stays valid; a row written before these columns, or one still reserved, has neither.
+ALTER TABLE spend_ledger ADD COLUMN IF NOT EXISTS stop_reason text;
+ALTER TABLE spend_ledger ADD COLUMN IF NOT EXISTS request_id  text;
+
 -- Month-to-date is a range scan on ts.
 CREATE INDEX IF NOT EXISTS spend_ledger_ts_idx ON spend_ledger (ts);
 

@@ -166,6 +166,7 @@ class Stats:
     corroborated: int = 0
     fetched: int = 0
     fetch_failed: int = 0
+    refused: list[dict] = field(default_factory=list)   # pages the model refused to read, twice: {item, domain, why}; each one drops that story (Run 10)
     left_for_later: int = 0   # relevant and not fetched this run: over the per-run or per-domain cap
     dated_out: int = 0        # fetched, and the page's own date put it outside the window
     merged: int = 0           # fetched, and the deduplication gate folded it into another item (agents/dedupe.py)
@@ -177,6 +178,7 @@ class Stats:
     def as_dict(self) -> dict:
         d = dict(self.__dict__)
         d["feed_errors"] = self.feed_errors[:10]
+        d["refused"] = self.refused[:20]
         return d
 
 
@@ -518,17 +520,23 @@ def extract_fetch_result(message, expect_domain: str | None = None) -> tuple[str
     return None, error or "no_fetch_result"
 
 
+REFUSED = "model_refused_twice"
+
+
 def fetch_text(client, url: str, *, conn=None, phase: str = FETCH_PHASE, user_id: str = USER_ID) -> Fetched:
     """Fetch one article through Claude's web fetch. Booked in the ledger like any call."""
     tool = {"type": WEB_FETCH_TOOL, "name": "web_fetch", "max_uses": 1,
             "max_content_tokens": FETCH_MAX_CONTENT_TOKENS, "allowed_domains": fetch_domains(url)}
-    message, _usage, cost = llm.call_message(
-        client, model=FETCH_MODEL, max_tokens=FETCH_MAX_TOKENS, user_id=user_id, phase=phase, conn=conn,
-        # The fetched page counts as input the request does not contain: bound it by its cap.
-        extra_input_tokens=int(FETCH_MAX_CONTENT_TOKENS * 1.25),
-        tools=[tool],
-        messages=[{"role": "user", "content": f"Fetch this page and reply with only the word DONE: {url}"}],
-    )
+    try:
+        message, _usage, cost = llm.call_message(
+            client, model=FETCH_MODEL, max_tokens=FETCH_MAX_TOKENS, user_id=user_id, phase=phase, conn=conn, stop_policy=True,
+            # The fetched page counts as input the request does not contain: bound it by its cap.
+            extra_input_tokens=int(FETCH_MAX_CONTENT_TOKENS * 1.25),
+            tools=[tool],
+            messages=[{"role": "user", "content": f"Fetch this page and reply with only the word DONE: {url}"}],
+        )
+    except llm.ModelRefusal as e:       # refused twice: this story is dropped, the week goes on (agents/weekly.py names it in the review note)
+        return Fetched(None, REFUSED, e.cost)
     text, error = extract_fetch_result(message, sources.domain_of(url))
     if text is not None and not text.strip():
         text, error = None, "empty_page"
@@ -583,6 +591,8 @@ def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats
     if got.text is None:
         items.mark(conn, item_id, "failed", error=got.error)
         stats.fetch_failed += 1
+        if got.error == REFUSED:
+            stats.refused.append({"item": str(item_id), "domain": sources.domain_of(url), "why": "the model refused to read this page, twice"})
         return False
     dated = page_date(got.text) if enforce_window else None
     if dated is not None and now - dated > WINDOW:

@@ -202,7 +202,7 @@ Give a one-sentence reason that names what is the same or what differs."""
 
 JUDGE_SCHEMA = {
     "type": "object",
-    "properties": {"same": {"type": "boolean"}, "reason": {"type": "string"}},
+    "properties": {"same": {"type": "boolean"}, "reason": {"type": "string", "minLength": 1}},
     "required": ["same", "reason"],
     "additionalProperties": False,
 }
@@ -223,7 +223,12 @@ def judge_request(a: Doc, b: Doc) -> dict:
 
 def judge(client, a: Doc, b: Doc, *, conn=None, user_id: str = USER_ID, phase: str = JUDGE_PHASE) -> tuple[Decision, float]:
     """Layer 4. Returns (decision, cost). Any answer that is not a clean 'same' is 'different'."""
-    text, _, cost = llm.call(client, user_id=user_id, phase=phase, conn=conn, **judge_request(a, b))
+    try:
+        text, _, cost = llm.call(client, user_id=user_id, phase=phase, conn=conn, **judge_request(a, b))
+    except (budget.BudgetExceeded, budget.LedgerUnavailable):
+        raise
+    except llm.ModelCallError as e:      # a judgement that cannot be had is "different": nothing is merged on a guess. The reason is named.
+        return Decision("different", "default", f"the model's answer could not be used ({e.reason}: {str(e)[:120]})"), e.cost
     try:
         answer = json.loads(text)
         same, reason = answer["same"], str(answer["reason"]).strip()

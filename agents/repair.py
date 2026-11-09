@@ -108,7 +108,7 @@ SECOND_SYSTEM = (
     "part. Judge the excerpt, not how plausible the claim is."
 )
 SECOND_SCHEMA = {"type": "object", "properties": {
-    "supported": {"type": "boolean"}, "sentence_ids": {"type": "array", "items": {"type": "integer"}}, "why": {"type": "string"}},
+    "supported": {"type": "boolean"}, "sentence_ids": {"type": "array", "items": {"type": "integer"}}, "why": {"type": "string", "minLength": 1}},
     "required": ["supported", "sentence_ids", "why"], "additionalProperties": False}
 
 REWRITE_SYSTEM = (
@@ -118,6 +118,8 @@ REWRITE_SYSTEM = (
     "sentence as `text` and its fact/interpretation split as `runs` (runs concatenate to text exactly; a clause one span of the excerpt "
     "could settle is a fact). If nothing true can be said, return an empty text and no runs."
 )
+# REWRITE_SCHEMA keeps `text` unbounded below on purpose: "if nothing true can be said, return an empty text" is the instruction, so an empty
+# text is a valid answer and the caller removes the sentence. It is the one reply in the repo that may be empty and valid.
 REWRITE_SCHEMA = {"type": "object", "properties": {"text": {"type": "string"}, "runs": framer.SPLIT_SCHEMA},
                   "required": ["text", "runs"], "additionalProperties": False}
 
@@ -130,10 +132,15 @@ def _overlap(a: str, b: str) -> int:
 def second_check(client, claim: str, candidates: list, excerpt: str, *, user_id: str, conn=None) -> tuple:
     """(agrees_unsupported, [(path, sentence)], cost). `candidates` is [(path, sentence text)] for the unit's fact sentences."""
     payload = {"claim": claim, "excerpt": excerpt, "sentences": [{"id": n, "text": style_check.plain(s)} for n, (_, s) in enumerate(candidates)]}
-    text, _usage, cost = llm.call(
-        client, model=llm.FRAMER_MODEL, max_tokens=4000, user_id=user_id, phase=SECOND_PHASE, conn=conn, system=SECOND_SYSTEM,
-        messages=[{"role": "user", "content": json.dumps(payload, indent=1, ensure_ascii=False)}],
-        output_config={"format": {"type": "json_schema", "schema": SECOND_SCHEMA}, "effort": "low"})
+    try:
+        text, _usage, cost = llm.call(
+            client, model=llm.FRAMER_MODEL, max_tokens=4000, user_id=user_id, phase=SECOND_PHASE, conn=conn, system=SECOND_SYSTEM,
+            messages=[{"role": "user", "content": json.dumps(payload, indent=1, ensure_ascii=False)}],
+            output_config={"format": {"type": "json_schema", "schema": SECOND_SCHEMA}, "effort": "low"})
+    except (budget.BudgetExceeded, budget.LedgerUnavailable):
+        raise
+    except llm.ModelCallError as e:      # named (e.reason) and treated as an unreadable second reader: the first verdict stands
+        text, cost = "", e.cost
     try:
         answer = json.loads(text)
         supported = answer["supported"] is True
@@ -150,10 +157,15 @@ def second_check(client, claim: str, candidates: list, excerpt: str, *, user_id:
 def rewrite_sentence(client, sentence: str, field_text: str, claim: str, excerpt: str, *, user_id: str, conn=None) -> tuple:
     """(new text, new runs, cost) or (None, None, cost) when the answer is unusable."""
     payload = {"sentence": sentence, "problem": claim, "field": field_text, "excerpt": excerpt}
-    text, _usage, cost = llm.call(
-        client, model=llm.FRAMER_MODEL, max_tokens=4000, user_id=user_id, phase=REWRITE_PHASE, conn=conn, system=REWRITE_SYSTEM,
-        messages=[{"role": "user", "content": json.dumps(payload, indent=1, ensure_ascii=False)}],
-        output_config={"format": {"type": "json_schema", "schema": REWRITE_SCHEMA}, "effort": "low"})
+    try:
+        text, _usage, cost = llm.call(
+            client, model=llm.FRAMER_MODEL, max_tokens=4000, user_id=user_id, phase=REWRITE_PHASE, conn=conn, system=REWRITE_SYSTEM,
+            messages=[{"role": "user", "content": json.dumps(payload, indent=1, ensure_ascii=False)}],
+            output_config={"format": {"type": "json_schema", "schema": REWRITE_SCHEMA}, "effort": "low"})
+    except (budget.BudgetExceeded, budget.LedgerUnavailable):
+        raise
+    except llm.ModelCallError as e:      # no usable rewrite (named: e.reason): the caller removes the sentence
+        return None, None, e.cost
     try:
         new = json.loads(text)["text"].strip()
     except (ValueError, KeyError, TypeError, AttributeError):

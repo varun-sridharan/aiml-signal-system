@@ -170,10 +170,10 @@ SECOND_SYSTEM = (
     "who-did-what) that the passages do NOT establish, quoting the statement. If every factual statement is established, "
     "return an empty list. Ignore opinions and advice. Do not excuse a statement because it is plausible."
 )
-SINGLE_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "items": {
-    "type": "object", "properties": {"id": {"type": "integer"}, "supports": {"type": "boolean"}, "why": {"type": "string"}},
+SINGLE_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "minItems": 1, "items": {
+    "type": "object", "properties": {"id": {"type": "integer"}, "supports": {"type": "boolean"}, "why": {"type": "string", "minLength": 1}},
     "required": ["id", "supports", "why"], "additionalProperties": False}}}, "required": ["answers"], "additionalProperties": False}
-SECOND_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "items": {
+SECOND_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "minItems": 1, "items": {
     "type": "object", "properties": {"id": {"type": "integer"}, "unsupported": {"type": "array", "items": {"type": "string"}}},
     "required": ["id", "unsupported"], "additionalProperties": False}}}, "required": ["answers"], "additionalProperties": False}
 
@@ -191,9 +191,18 @@ def _ask(client, system: str, schema: dict, questions: list[dict], *, user_id: s
             extra = dict(model=llm.FRAMER_MODEL, max_tokens=12_000, output_config={"format": {"type": "json_schema", "schema": schema}, "effort": "low"})
         else:
             extra = dict(model=llm.CHECK_MODEL, max_tokens=8000, temperature=0, output_config={"format": {"type": "json_schema", "schema": schema}})
-        text, usage, c = llm.call(
-            client, user_id=user_id, phase=VERIFY_PHASE + ("-second" if second else ""), conn=conn, system=system,
-            messages=[{"role": "user", "content": json.dumps({"questions": chunk}, indent=1, ensure_ascii=False)}], **extra)
+        wanted = {q["id"] for q in chunk}
+        try:
+            text, usage, c = llm.call(
+                client, user_id=user_id, phase=VERIFY_PHASE + ("-second" if second else ""), conn=conn, system=system,
+                validate=lambda parsed, wanted=wanted: ("no answer for question(s) " + ", ".join(map(str, sorted(wanted - {a.get("id") for a in parsed["answers"]}))))
+                if wanted - {a.get("id") for a in parsed["answers"]} else "",
+                messages=[{"role": "user", "content": json.dumps({"questions": chunk}, indent=1, ensure_ascii=False)}], **extra)
+        except (llm.budget.BudgetExceeded, llm.budget.LedgerUnavailable):
+            raise
+        except llm.ModelCallError as e:     # named (e.reason); those questions stay unanswered, which fails their sentences closed
+            cost += e.cost
+            continue
         cost += c
         try:
             for a in json.loads(text)["answers"]:
@@ -246,7 +255,7 @@ MARKED_SYSTEM = (
     "plain definition of a word. 'Acme was acquired by Helio' is true; 'Teams should try this', 'That is the part of the stack you control' "
     "and 'A held-out split is named here as inadequate' are false. If a line only comments on what the context says, it is false."
 )
-MARKED_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "items": {
+MARKED_SCHEMA = {"type": "object", "properties": {"answers": {"type": "array", "minItems": 1, "items": {
     "type": "object", "properties": {"id": {"type": "integer"}, "states_fact": {"type": "boolean"}}, "required": ["id", "states_fact"],
     "additionalProperties": False}}}, "required": ["answers"], "additionalProperties": False}
 

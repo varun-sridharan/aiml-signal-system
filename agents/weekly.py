@@ -28,7 +28,9 @@ import os
 import re
 import signal
 import sys
+import time
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 try:
@@ -122,54 +124,124 @@ def scheduled_week(now: datetime) -> str:
     return week_key(datetime(monday.year, monday.month, monday.day))
 
 
-def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:
+RESUME_WAIT_S = 300                  # a failed stage is tried once more, this long after it failed (Run 10, step 3d)
+RUN_SPEND_CAP_USD = Decimal("4")     # a run's model spend, reserved worst cases included, stays under this; the job does not resume past it
+# Stops that resuming cannot mend: the ledger, a published week, a stage another process holds, a refused run, and a gates stage that failed
+# on the framer's stored answer (it replays the same answer; the remedy is a new attempt, which is a person's call).
+NOT_RESUMED = (budget.BudgetExceeded, budget.LedgerUnavailable, AlreadyPublished, runs.StageBusy, runs.RunRefused)
+
+
+def scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print, sleep=None, clock=None) -> int:
     """The Friday job (see _scheduled), with every stage's start and end written to `out` as it happens (agents/runs.py)."""
     runs.emit = out
     try:
-        return _scheduled(now, connect=connect, build_client=build_client, run=run, out=out)
+        return _scheduled(now, connect=connect, build_client=build_client, run=run, out=out, sleep=sleep, clock=clock)
     finally:
         runs.emit = None
 
 
-def _scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print) -> int:
+def failure_line(week: str, run_id: str, stage: str, error: BaseException) -> str:
+    """The text of a final failure: the week, the failed stage, the named reason and the exact resume command. There is no outbound mail
+    path in this app (bk-failure-alert), so this is the job's last line in Railway's log."""
+    reason = error.reason if isinstance(error, llm.ModelCallError) else type(error).__name__
+    resume = f".venv/bin/python -m agents.weekly --week {week}"
+    if isinstance(error, GateFailed):
+        resume = f".venv/bin/python -m agents.weekly --week {week} --new-attempt --reuse-reader {run_id}"
+    return (f"scheduled: {week} FAILED at stage {stage}: {reason} ({str(error)[:200]}). Nobody was emailed. "
+            f"To resume, open the Railway tunnel and run: {resume}")
+
+
+def _failed_stage(connect, run_id: str) -> str:
+    try:
+        with connect() as conn:
+            row = conn.execute("SELECT stage FROM run_stages WHERE run_id = %s AND status = 'failed' ORDER BY started_at DESC LIMIT 1", (run_id,)).fetchone()
+        return row[0] if row else "unknown"
+    except Exception:
+        return "unknown"
+
+
+def _may_resume(connect, now_fn, started: datetime):
+    """(True, '') when the job may resume once: the wait ends inside Friday 19:00 to 19:59 Pacific, the month has room for a run, and this
+    run's own spend is under the cap. Otherwise (False, why)."""
+    if not in_friday_window(now_fn() + timedelta(seconds=RESUME_WAIT_S)):
+        return False, "the 5-minute wait would end outside Friday 19:00 to 19:59 Pacific"
+    try:
+        with connect() as conn:
+            spent = budget.spend_since(conn, started)
+            month = budget.month_to_date_spend(conn)
+    except Exception as e:
+        return False, f"the ledger could not be read ({type(e).__name__})"
+    if spent >= RUN_SPEND_CAP_USD:
+        return False, f"this run has already spent ${spent:.2f} of its ${RUN_SPEND_CAP_USD} cap"
+    if month + RUN_SPEND_CAP_USD - spent > budget.MONTHLY_BUDGET_USD:
+        return False, f"month-to-date ${month:.2f} leaves no room for the rest of a run under the ${budget.MONTHLY_BUDGET_USD} ledger"
+    return True, ""
+
+
+def _scheduled(now: datetime, *, connect=None, build_client=None, run=None, out=print, sleep=None, clock=None) -> int:
     """The Friday job. Returns the process exit code and writes one status line.
 
     Does nothing outside the window. Does nothing, cleanly, when the week already has a published edition (the second cron entry, or a
     manual rerun). Otherwise resumes the week's latest unfinished attempt, or starts the first (agents/runs.py checkpoints), so a run that
-    died after the Reader pays for the Reader once.
+    died after the Reader pays for the Reader once. A stage that fails is resumed once more, 5 minutes later, if that is still inside the
+    window and within the ledger and the run's $4; a second failure writes the failure line and exits 1.
     """
     connect, build_client, run = connect or budget.connect, build_client or llm.build_client, run or run_week
+    sleep, clock = sleep or time.sleep, clock or (lambda: datetime.now(timezone.utc))
     local = pacific(now)
     week = scheduled_week(now)
     if not in_friday_window(now):
         out(f"scheduled: {local:%a %H:%M %Z} is outside Friday {SCHEDULE_HOUR}:00 to {SCHEDULE_HOUR}:59 Pacific; nothing done")
         return 0
-    try:
-        with connect() as conn:
-            held = briefs.get(conn, week)
-            if held is not None:
-                out(f"scheduled: {week} is already published ({held[2]:%Y-%m-%d %H:%M} UTC); nothing done")
-                return 0
-            client = build_client()
-            run_id = resolve_run(conn, week)
-            exists = conn.execute("SELECT 1 FROM runs WHERE id = %s", (run_id,)).fetchone()
-            start = "reader" if not exists else runs.next_stage(conn, run_id)
-            result = run(conn, client, now, run_id, clock=lambda: datetime.now(timezone.utc))
-            row = briefs.get(conn, week)
-    except (budget.BudgetExceeded, budget.LedgerUnavailable, GateFailed, AlreadyPublished, runs.StageBusy, runs.RunRefused) as stop:
-        out(f"scheduled: {week} stopped: {str(stop)[:300]}")
-        return 1
-    except SystemExit as e:                       # llm.build_client exits when the API key is missing
-        out(f"scheduled: {week} stopped: {e}")
-        return 1
-    except Exception as e:                        # a stage that died: its checkpoint says where, and the next run resumes there
-        out(f"scheduled: {week} stopped: {type(e).__name__}: {str(e)[:300]}")
-        return 1
-    if row is None:
-        out(f"scheduled: {week} ran ({run_id}, from {start or 'nothing'}) but no edition was published")
-        return 1
-    out(f"scheduled: {week} published ({run_id}, from {start or 'publish'}) at {row[2]:%Y-%m-%d %H:%M} UTC; stages {', '.join(result)}")
-    return 0
+    started = clock()
+
+    def attempt():
+        """One go at the week. Returns (exit code, the error that stopped it or None, the run id)."""
+        run_id = week
+        try:
+            with connect() as conn:
+                held = briefs.get(conn, week)
+                if held is not None:
+                    out(f"scheduled: {week} is already published ({held[2]:%Y-%m-%d %H:%M} UTC); nothing done")
+                    return 0, None, run_id
+                client = build_client()
+                run_id = resolve_run(conn, week)
+                exists = conn.execute("SELECT 1 FROM runs WHERE id = %s", (run_id,)).fetchone()
+                start = "reader" if not exists else runs.next_stage(conn, run_id)
+                result = run(conn, client, now, run_id, clock=lambda: datetime.now(timezone.utc))
+                row = briefs.get(conn, week)
+        except (*NOT_RESUMED, GateFailed) as stop:
+            out(f"scheduled: {week} stopped: {str(stop)[:300]}")
+            return 1, stop, run_id
+        except SystemExit as e:                       # llm.build_client exits when the API key is missing
+            out(f"scheduled: {week} stopped: {e}")
+            return 1, e, run_id
+        except Exception as e:                        # a stage that died: its checkpoint says where, and a resume starts there
+            out(f"scheduled: {week} stopped: {type(e).__name__}: {str(e)[:300]}")
+            return 1, e, run_id
+        if row is None:
+            out(f"scheduled: {week} ran ({run_id}, from {start or 'nothing'}) but no edition was published")
+            return 1, None, run_id
+        out(f"scheduled: {week} published ({run_id}, from {start or 'publish'}) at {row[2]:%Y-%m-%d %H:%M} UTC; stages {', '.join(result)}")
+        return 0, None, run_id
+
+    code, error, run_id = attempt()
+    if error is None:
+        return code
+    if not isinstance(error, (*NOT_RESUMED, GateFailed, SystemExit)):
+        ok, why = _may_resume(connect, clock, started)
+        if ok:
+            out(f"scheduled: {week} will resume once in {RESUME_WAIT_S // 60} minutes")
+            sleep(RESUME_WAIT_S)
+            out(f"scheduled: {week} resuming the same run")
+            code, error, run_id = attempt()
+            if error is None:
+                return code
+        else:
+            out(f"scheduled: {week} not resumed: {why}")
+    if not isinstance(error, SystemExit):
+        out(failure_line(week, run_id, _failed_stage(connect, run_id), error))
+    return 1
 
 
 def sigterm_handler(week: str, out, connect, clock):
@@ -402,7 +474,7 @@ def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
             else:
                 composed, revision, composer_cost = composer.compose_with_revision(
                     client, composer.load_system_prompt(), profile, wide_day, framing, label, published)
-        except (budget.BudgetExceeded, budget.LedgerUnavailable, composer.EmptyComposerReply):
+        except (budget.BudgetExceeded, budget.LedgerUnavailable, llm.ModelCallError):
             raise
         except Exception as e:     # noqa: BLE001
             composer_error = f"{type(e).__name__}: {str(e)[:200]}"
@@ -452,7 +524,8 @@ def cited_gates(conn, client, week: str, art: dict, attempt: int, now: datetime,
         check_cost = float(result["verify_cost_usd"])
     if reader_out.get("window"):
         day["window"] = reader_out["window"]
-    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures}, runs._at(now))
+    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": failures,
+                                                       "refused": (reader_out.get("stats") or {}).get("refused") or []}, runs._at(now))
     if failures:
         raise GateFailed(f"{len(failures)} hard-gate failure(s): " + "; ".join(failures)[:350])
     return {"artifact": "gates", "items": len(day["items"]), "check_cost_usd": round(check_cost, 4), "gate": "citations",
@@ -487,6 +560,10 @@ def claims_gates(conn, client, week: str, art: dict, attempt: int, now: datetime
     ids = composer.story_ids(raw_day)                           # story id -> item id
     item_story = {item: sid for sid, item in ids.items()}
     hard, warnings, repairs, cost = [], [], {}, 0.0
+    if art.get("composed") and composer.empty_reply(art["composed"]):
+        # Nothing is graded or repaired on a structurally empty edition: that spends money rewriting nothing (2026-11-06) and cannot publish.
+        raise GateFailed(f"the stored composed edition is structurally empty ({composer.empty_reply(art['composed'])}); no grading or repair was run. "
+                         "Start a new attempt: --new-attempt --reuse-reader")
 
     # ---- the first pass: each story's why and 90-second summary
     fstore = repair.FramingStore(framing, raw_day, client, user_id=uid)
@@ -585,7 +662,8 @@ def claims_gates(conn, client, week: str, art: dict, attempt: int, now: datetime
         day["edition"] = edition
     if reader_out.get("window"):
         day["window"] = reader_out["window"]
-    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": hard, "warnings": warnings, "repairs": repairs}, runs._at(now))
+    runs.save_artifact(conn, week, "gates", attempt, {"day": day, "failures": hard, "warnings": warnings, "repairs": repairs,
+                                                       "refused": (reader_out.get("stats") or {}).get("refused") or []}, runs._at(now))
     if hard:
         raise GateFailed(f"{len(hard)} hard-gate failure(s): " + "; ".join(hard)[:350])
     return {"artifact": "gates", "items": len(day["items"]), "check_cost_usd": round(cost, 4), "gate": "claims",

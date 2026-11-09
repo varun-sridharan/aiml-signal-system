@@ -330,7 +330,10 @@ def checkpointed(conn, run_id: str, stage: str, now, work):
         except RunRefused:
             pass                # already marked failed: the SIGTERM handler does it from its own connection
         _active = None
-        _line(run_id, stage, attempt, f"failed after {(datetime.now(timezone.utc) - began).total_seconds():.0f}s ({type(e).__name__})")
+        # A model call that failed for a named reason says so on the line: its reason, the API's stop_reason, and the first 500 characters of the
+        # reply (agents/llm.py removes anything that looks like a credential), so Railway's log alone shows what came back.
+        detail = f" -- {e.log_detail()}" if hasattr(e, "log_detail") else ""
+        _line(run_id, stage, attempt, f"failed after {(datetime.now(timezone.utc) - began).total_seconds():.0f}s ({type(e).__name__}){detail}")
         raise
     _active = None
     finish_stage(conn, run_id, stage, attempt, output, _at(now))

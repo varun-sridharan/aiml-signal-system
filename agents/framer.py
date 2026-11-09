@@ -121,14 +121,15 @@ SPLIT_SCHEMA = {
 FRAMING_SCHEMA = {
     "type": "object",
     "properties": {
-        "thread": {"type": "string"},
-        "threadSplit": SPLIT_SCHEMA,
+        "thread": {"type": "string", "minLength": 1},      # Run 10: a reply may not leave the thread, its split or the stories empty
+        "threadSplit": {**SPLIT_SCHEMA, "minItems": 1},
         "items": {
             "type": "array",
+            "minItems": 1,
             "items": {
                 "type": "object",
                 "properties": {
-                    "id": {"type": "string"},
+                    "id": {"type": "string", "minLength": 1},
                     "why": _NULLABLE_STRING,
                     "example": _NULLABLE_STRING,
                     "connection": _NULLABLE_STRING,
@@ -176,7 +177,7 @@ FRAMING_SCHEMA = {
 CLAIM_SCHEMA = {
     "type": "object",
     "properties": {
-        "claim": {"type": "string"},
+        "claim": {"type": "string", "minLength": 1},
         "supporting_span": _NULLABLE_STRING,
         "supported": {"type": "boolean"},
     },
@@ -199,7 +200,7 @@ FAITHFULNESS_SCHEMA = {
             "type": "array",
             "items": {
                 "type": "object",
-                "properties": {"id": {"type": "string"}, **_VERDICT_PROPERTIES},
+                "properties": {"id": {"type": "string", "minLength": 1}, **_VERDICT_PROPERTIES},
                 "required": ["id", "claims", "confidence"],
                 "additionalProperties": False,
             },
@@ -353,6 +354,18 @@ def framing_request(system_prompt: str, profile: dict, raw_day: dict) -> dict:
             "effort": llm.FRAMER_EFFORT,
         },
     )
+
+
+def _missing_units(graded: dict, payload: dict) -> str:
+    """A grader reply that skipped a unit it was given, or enumerated no claim anywhere though the writing under test had facts in it, is
+    malformed (asked once more by llm.call), not a bill of health. One unit with no claims is the gate's to judge, not this check's."""
+    got = {v.get("id") for v in graded.get("items", [])}
+    missing = [u["id"] for u in payload["items"] if u["id"] not in got]
+    if missing:
+        return f"no verdict for unit(s) {', '.join(missing)}"
+    had_facts = any(u.get("writing_under_test") for u in payload["items"]) or bool((payload.get("thread") or {}).get("writing_under_test"))
+    claims = any(v.get("claims") for v in graded.get("items", [])) or bool((graded.get("thread") or {}).get("claims"))
+    return "the grader enumerated no claims for any unit" if had_facts and not claims else ""
 
 
 def frame_day(client, system_prompt: str, profile: dict, raw_day: dict):
@@ -641,7 +654,7 @@ def check_faithfulness(client, raw_day: dict, framing: dict, *, user_id: str, ph
     # A second pair of eyes is worth more than a bigger model marking its own work.
     # One call keeps the run at two API calls total, thread check included.
     payload = build_check_payload(raw_day, framing)
-    text, usage, _cost = llm.call(client, user_id=user_id, phase=phase, **check_request(payload))
+    text, usage, _cost = llm.call(client, user_id=user_id, phase=phase, validate=lambda g: _missing_units(g, payload), **check_request(payload))
     graded = json.loads(text)
     per_item_truth, union_truth = ground_truth_for(raw_day)
     # The grader saw only the fact clauses, so that is what "the writing" means when we

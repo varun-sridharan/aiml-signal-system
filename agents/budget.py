@@ -288,26 +288,49 @@ def reserve(conn, *, user_id: str, phase: str, model: str, estimate_usd, now: da
 
 
 @_retry_deadlock
-def settle(conn, reservation_id: uuid.UUID, model: str, usage) -> Decimal:
-    """Replace a reservation's worst case with the call's actual tokens and cost."""
+def settle(conn, reservation_id: uuid.UUID, model: str, usage, *, stop_reason: str | None = None, request_id: str | None = None) -> Decimal:
+    """Replace a reservation's worst case with the call's actual tokens and cost, and keep why it stopped and which request it was."""
     cost = _usd(estimate_cost_usd(model, usage))
     with conn.transaction():
         cur = conn.execute(
             "UPDATE spend_ledger SET input_tokens = %s, output_tokens = %s, "
             "cache_read_tokens = %s, cache_write_tokens = %s, estimated_cost_usd = %s, "
-            "state = 'settled' WHERE id = %s AND state = 'reserved'",
+            "state = 'settled', stop_reason = %s, request_id = %s WHERE id = %s AND state = 'reserved'",
             (
                 usage.input_tokens,
                 usage.output_tokens,
                 getattr(usage, "cache_read_input_tokens", 0) or 0,
                 getattr(usage, "cache_creation_input_tokens", 0) or 0,
                 cost,
+                stop_reason,
+                request_id,
                 reservation_id,
             ),
         )
         if cur.rowcount != 1:
             raise RuntimeError(f"reservation {reservation_id} is not open; nothing settled")
     return cost
+
+
+@_retry_deadlock
+def settle_unbilled(conn, reservation_id: uuid.UUID, reason: str, *, request_id: str | None = None) -> None:
+    """Close a reservation for a request the API refused before running it (a 4xx, or an overloaded reply): nothing was billed, so
+    its worst case must not stay in the month. 2026-11-08: a probe the API rejected for its max_tokens left $5.00 of reserved
+    worst case behind and pushed month-to-date past a budget rule. Never for a timeout or a dropped stream: those may have billed."""
+    with conn.transaction():
+        cur = conn.execute(
+            "UPDATE spend_ledger SET input_tokens = 0, output_tokens = 0, cache_read_tokens = 0, cache_write_tokens = 0, "
+            "estimated_cost_usd = 0, state = 'settled', stop_reason = %s, request_id = %s WHERE id = %s AND state = 'reserved'",
+            (reason[:80], request_id, reservation_id),
+        )
+        if cur.rowcount != 1:
+            raise RuntimeError(f"reservation {reservation_id} is not open; nothing settled")
+
+
+def spend_since(conn, since: datetime) -> Decimal:
+    """What the ledger holds from `since` on (reserved worst cases included), in USD."""
+    row = conn.execute("SELECT COALESCE(SUM(estimated_cost_usd), 0) FROM spend_ledger WHERE ts >= %s", (since,)).fetchone()
+    return Decimal(row[0])
 
 
 def ledger_reachable(connect_timeout: int = 3) -> bool:

@@ -164,7 +164,7 @@ class Quiet(unittest.TestCase):
             weekly.scheduled(saturday_03, connect=self.ok, build_client=lambda: self.fail("no client"), out=self.lines.append)
         self.assertIn("2026-W46 is already published", self.lines[-1])
 
-    def test_a_stopped_run_writes_one_line_and_exits_nonzero(self):
+    def test_a_stopped_run_writes_its_stop_and_a_failure_line_and_exits_nonzero(self):
         @contextmanager
         def connect():
             yield unittest.mock.Mock()
@@ -174,10 +174,10 @@ class Quiet(unittest.TestCase):
             for boom in (budget.BudgetExceeded("month ceiling"), weekly.GateFailed("2 hard failures"), RuntimeError("model returned no text")):
                 self.lines.clear()
                 code = weekly.scheduled(utc(2026, 10, 24, 2, 0), connect=connect, build_client=client, run=unittest.mock.Mock(side_effect=boom),
-                                        out=self.lines.append)
+                                        out=self.lines.append, sleep=lambda s: None, clock=lambda: utc(2026, 1, 1))
                 self.assertEqual(code, 1)
-                self.assertEqual(len(self.lines), 1)
                 self.assertIn("scheduled: 2026-W44 stopped:", self.lines[0])
+                self.assertIn("scheduled: 2026-W44 FAILED at stage", self.lines[-1])           # and, last, the failure line with the resume command
 
     def test_scheduled_takes_no_other_option(self):
         with unittest.mock.patch.object(sys, "argv", ["weekly", "--scheduled", "--week", "2026-W43"]), self.assertRaises(SystemExit) as e:
@@ -239,12 +239,15 @@ class ResumeAndIdempotence(Pipeline, unittest.TestCase):
 
         def run(conn, client, now, run_id, **kw):          # the fixture feeds are dated NOW, so the Reader's window is NOW's
             return weekly.run_week(conn, client, NOW, run_id, **kw)
-        return weekly.scheduled(FRIDAY, connect=connect, build_client=lambda: self.client, run=run, out=self.lines.append)
+        # The clock is outside the window, so a failed stage is not resumed here (tests/test_resilience.py covers the in-window resume).
+        return weekly.scheduled(FRIDAY, connect=connect, build_client=lambda: self.client, run=run, out=self.lines.append,
+                                sleep=lambda s: None, clock=lambda: utc(2026, 1, 1))
 
     def test_a_run_that_dies_resumes_at_its_checkpoint_then_publishes_then_is_a_no_op(self):
         self.fail_framer = 1
         self.assertEqual(self.go(), 1)
-        self.assertIn(f"scheduled: {WEEK} stopped: RuntimeError", self.lines[-1])
+        self.assertIn(f"scheduled: {WEEK} stopped: RuntimeError", self.lines[-2])
+        self.assertIn(f"scheduled: {WEEK} FAILED at stage framer: RuntimeError", self.lines[-1])
         fetches = len(self.client.requests)
         self.assertGreater(fetches, 0)
         self.assertEqual(runs.next_stage(self.conn, WEEK), "framer")

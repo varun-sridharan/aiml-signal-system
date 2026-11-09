@@ -108,7 +108,7 @@ def cite_fixed(client, profile, raw_day, framing, conn=None):
     content = [{"type": "document", "source": {"type": "text", "media_type": "text/plain", "data": d["text"]}, "title": d["title"], "citations": {"enabled": True}} for d in docs]
     content.append({"type": "text", "text": "\n".join(f"@@ {p}\n{t}" for p, t in wanted.items())})
     message, _usage, cost = llm.call_message(
-        client, model=llm.FRAMER_MODEL, max_tokens=16_000, user_id=profile["user_id"], phase="eval-citer", stream=True, conn=conn,
+        client, model=llm.FRAMER_MODEL, max_tokens=16_000, user_id=profile["user_id"], phase="eval-citer", stream=True, conn=conn, stop_policy=True,
         system=[{"type": "text", "text": CITER_SYSTEM}], messages=[{"role": "user", "content": content}], output_config={"effort": "low"})
     text, spans = citegate.read_blocks(message.content)
     sections = split_known(text, wanted)

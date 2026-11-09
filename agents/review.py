@@ -69,9 +69,15 @@ def revision_entries(rows: list) -> list:
     return out
 
 
+def refused_entries(refused) -> list:
+    """A story the model refused to read, twice, and so left out (Run 10): which page, and why, as a held entry."""
+    return [{"kind": "held", "stage": "reading the sources", "where": clean(r.get("domain")), "claim": clean(r.get("why")),
+             "reader": "", "before": "", "after": ""} for r in (refused or []) if isinstance(r, dict)]
+
+
 def edition_note(week: str, number: int, published_at, gates: dict, corrections: list | None = None) -> dict:
     repairs = (gates or {}).get("repairs") or {}
-    items = entries_from_repairs(repairs)
+    items = entries_from_repairs(repairs) + refused_entries((gates or {}).get("refused"))
     return {"week": week, "number": number, "published_at": published_at, "entries": items, "revisions": corrections or [],
             "flags": sum(int(r.get("flags", 0)) for r in repairs.values() if isinstance(r, dict)),
             "warnings": len((gates or {}).get("warnings") or []),
