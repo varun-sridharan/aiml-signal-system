@@ -156,6 +156,8 @@ def canned_framing(raw_day):
 
 
 REAL_EDITION_FAILURES = composer.edition_failures
+REAL_COMPOSE = composer.compose_with_revision
+EMPTY_REPLY = {"thread": {"lines": [], "body": ""}, "learning": {"paras": []}, "closing": {"lines": [], "summary": ""}, "stories": []}
 
 
 def canned_composed(wide_day):
@@ -391,6 +393,63 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         self.assertEqual(self.stages(), [("reader", 1, "done"), ("framer", 1, "failed"), ("framer", 2, "done"),
                                          ("gates", 1, "done"), ("publish", 1, "done")])
         self.assertEqual(self.framer_calls[0]["items"], self.framer_calls[1]["items"])   # the same evidence both times
+
+    def real_composer_answering(self, answers):
+        """The real compose_with_revision over a faked model call that answers from `answers` in order; records each call's phase."""
+        self.compose_phases = []
+
+        real_request = composer.compose_request
+
+        def request(system_prompt, profile, raw_day, *a, **k):
+            self.wide_day = raw_day
+            return real_request(system_prompt, profile, raw_day, *a, **k)
+
+        def call(client, **kw):
+            self.compose_phases.append(kw["phase"])
+            answer = answers.pop(0)
+            return json.dumps(answer() if callable(answer) else answer), SimpleUsage(), 0.1
+        return [unittest.mock.patch.object(composer, "compose_with_revision", REAL_COMPOSE), unittest.mock.patch.object(composer.llm, "call", call),
+                unittest.mock.patch.object(composer, "compose_request", request),
+                unittest.mock.patch.object(composer, "revisable_problems", lambda *a, **k: {})]
+
+    def test_w2b_an_empty_first_composer_reply_is_retried_once_and_the_edition_publishes(self):
+        patches = self.real_composer_answering([EMPTY_REPLY, lambda: canned_composed(self.wide_day)])
+        for p in patches:
+            p.start()
+        try:
+            self.run_week()
+        finally:
+            for p in patches:
+                p.stop()
+        self.assertEqual(self.compose_phases, ["composing", "composing-retry"])
+        self.assertEqual([r[2] for r in self.stages()], ["done"] * 4)
+
+    def test_w2c_two_empty_composer_replies_fail_the_framer_stage_and_a_resume_composes_again(self):
+        good = lambda: canned_composed(self.wide_day)
+        patches = self.real_composer_answering([EMPTY_REPLY, EMPTY_REPLY])
+        for p in patches:
+            p.start()
+        try:
+            with self.assertRaises(composer.EmptyComposerReply) as failed:
+                self.run_week()
+        finally:
+            for p in patches:
+                p.stop()
+        self.assertIn("answered empty twice", str(failed.exception))
+        self.assertIn("no stories", str(failed.exception))
+        self.assertEqual(self.compose_phases, ["composing", "composing-retry"])
+        self.assertEqual(self.stages(), [("reader", 1, "done"), ("framer", 1, "failed")])            # the framer failed, not the gates
+        self.assertEqual(self.conn.execute("SELECT count(*) FROM run_artifacts WHERE run_id = %s AND stage = 'framer'", (WEEK,)).fetchone()[0], 0)
+        patches = self.real_composer_answering([good])
+        for p in patches:
+            p.start()
+        try:
+            self.run_week()
+        finally:
+            for p in patches:
+                p.stop()
+        self.assertEqual(self.compose_phases, ["composing"])                                         # composed again, nothing read back
+        self.assertEqual([r[2] for r in self.stages()], ["done", "failed", "done", "done", "done"])
 
     def test_w3_stop_after_a_stage_then_resume(self):
         self.run_week(stop_after="reader")

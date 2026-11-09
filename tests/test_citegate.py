@@ -424,6 +424,19 @@ class NoCitations(unittest.TestCase):
         self.assertEqual(r["revision"]["rewrites_for_no_citations"], 1)
         self.assertTrue(r["decision"]["publishable"])
 
+    def test_two_answers_with_no_sections_raise_so_the_framer_stage_fails(self):
+        calls = []
+
+        def call_message(client, **kw):
+            calls.append(kw)
+            return NS(content=[block("I could not write this.")], stop_reason="end_turn", usage=NS()), NS(), 0.5
+        with unittest.mock.patch.object(composer_cited.llm, "call_message", call_message):
+            with self.assertRaises(composer.EmptyComposerReply) as failed:
+                composer_cited.compose_draft(object(), "SYSTEM", {"user_id": "t", "role": "r", "goals": [], "interests": [], "preferences": {}}, raw_day(5),
+                                             {"items": []}, "Oct 10 – Oct 18, 2026", None)
+        self.assertEqual(len(calls), 2)
+        self.assertAlmostEqual(failed.exception.cost, 1.0)
+
     def test_the_request_asks_for_citations_and_sends_documents(self):
         req = composer_cited.compose_request("SYSTEM", {"role": "r", "goals": [], "interests": []}, raw_day(5), {"items": []}, "L", None)
         self.assertIn("answer_through_citations", req["messages"][0]["content"][-1]["text"])

@@ -547,6 +547,35 @@ class Revision(unittest.TestCase):
         self.assertEqual(composed["learning"]["paras"][1], paragraph(2))
         self.assertAlmostEqual(cost, 0.4)
 
+    def test_a_structurally_empty_reply_is_named_and_a_full_one_is_not(self):
+        self.assertEqual(composer.empty_reply(valid()), "")
+        self.assertEqual(composer.empty_reply({"stories": [], "thread": {"body": "x"}}), "no stories")
+        self.assertEqual(composer.empty_reply([]), "the reply is not an object")
+        bare = valid()
+        bare["thread"]["body"], bare["learning"]["paras"] = "", []
+        self.assertEqual(composer.empty_reply(bare), "no thread.body, learning.paras")
+
+    def test_an_empty_reply_is_retried_once_under_the_retry_phase_and_two_raise_with_both_costs(self):
+        profile = framer.load_json(framer.PROFILE_PATH)
+        empty = {"thread": {"lines": [], "body": ""}, "learning": {"paras": []}, "closing": {"summary": ""}, "stories": []}
+        answers, calls = [empty, valid()], []
+
+        def call(client, **kw):
+            calls.append(kw["phase"])
+            return json.dumps(answers.pop(0)), TinyUsage(), 0.3
+        with unittest.mock.patch.object(composer.llm, "call", call):
+            composed, record, cost = composer.compose_with_revision(object(), "S", profile, raw_day(), {"items": []}, "w", None)
+        self.assertEqual(calls, [composer.COMPOSE_PHASE, composer.COMPOSE_PHASE + "-retry"])
+        self.assertEqual(record["empty_retry"], {"first_reason": "no stories", "second_reason": ""})
+        self.assertAlmostEqual(cost, 0.6)
+        answers, calls = [empty, empty], []
+        with unittest.mock.patch.object(composer.llm, "call", call):
+            with self.assertRaises(composer.EmptyComposerReply) as failed:
+                composer.compose_with_revision(object(), "S", profile, raw_day(), {"items": []}, "w", None)
+        self.assertEqual(calls, [composer.COMPOSE_PHASE, composer.COMPOSE_PHASE + "-retry"])          # asked twice, never a third time
+        self.assertIn("answered empty twice", str(failed.exception))
+        self.assertAlmostEqual(failed.exception.cost, 0.6)
+
     def test_one_repair_round_only_and_what_survives_it_is_left_for_a_warning(self):
         profile = framer.load_json(framer.PROFILE_PATH)
         broken = valid()

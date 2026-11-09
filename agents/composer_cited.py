@@ -260,6 +260,8 @@ def compose_draft(client, system_prompt, profile, raw_day, framing, window_label
         draft = draft_from(text, spans)
         record["rewrites_for_no_citations"] = 1
         record["first_text_chars"] = len(text)
+        if not draft["fields"]:     # asked twice and nothing written: fail the framer stage, so a resume composes again (bk-empty-composer-reply)
+            raise composer.EmptyComposerReply(f"the cited writer answered with no sections twice ({record['first_text_chars']} characters the second time)", cost)
     composed, missing = build_composed(draft, ids)
     for number in range(MAX_REVISIONS):
         problems = revise_problems(composed, ids) if not missing else {}

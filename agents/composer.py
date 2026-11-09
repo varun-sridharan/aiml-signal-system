@@ -174,8 +174,8 @@ def compose_request(system_prompt: str, profile: dict, raw_day: dict, framing: d
 
 
 def compose(client, system_prompt: str, profile: dict, raw_day: dict, framing: dict, window_label: str,
-            published: dict | None = None, *, conn=None):
-    text, usage, cost = llm.call(client, user_id=profile["user_id"], phase=COMPOSE_PHASE, conn=conn,
+            published: dict | None = None, *, conn=None, phase: str = COMPOSE_PHASE):
+    text, usage, cost = llm.call(client, user_id=profile["user_id"], phase=phase, conn=conn,
                                  **compose_request(system_prompt, profile, raw_day, framing, window_label, published))
     return json.loads(text), usage, cost
 
@@ -713,6 +713,25 @@ def revise(client, system_prompt: str, profile: dict, raw_day: dict, framing: di
     return out, usage, cost, replaced
 
 
+class EmptyComposerReply(RuntimeError):
+    """The composing call answered with no stories or no required sections, twice. `cost` is what both calls cost."""
+    def __init__(self, message: str, cost: float = 0.0):
+        super().__init__(message)
+        self.cost = cost
+
+
+def empty_reply(composed) -> str:
+    """Why a composing reply is structurally empty ('' when it is not): no stories, or no thread, essay or closing text at all."""
+    if not isinstance(composed, dict):
+        return "the reply is not an object"
+    if not composed.get("stories"):
+        return "no stories"
+    thread, learning, closing = (composed.get(k) or {} for k in ("thread", "learning", "closing"))
+    missing = [name for name, value in (("thread.body", thread.get("body")), ("learning.paras", learning.get("paras")),
+                                        ("closing.summary", closing.get("summary"))) if not value]
+    return "no " + ", ".join(missing) if missing else ""
+
+
 MAX_REVISIONS = 1     # one automatic repair attempt (Run 5): a style, length or split problem that survives it is a warning, not a block
 
 
@@ -725,6 +744,19 @@ def compose_with_revision(client, system_prompt: str, profile: dict, raw_day: di
     """
     composed, _usage, cost = compose(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn)
     record = {"first_draft": composed, "problems": {}, "replaced": [], "rounds": []}
+    # bk-empty-composer-reply: a reply with no stories or none of the required sections is the writer failing, not a draft to repair
+    # (the 2026-W46 run's first answer was 120 tokens of empty fields). It is asked once more, booked under `composing-retry`.
+    # A second empty reply fails the framer stage, so a resume composes again instead of reading an empty draft back.
+    if empty_reply(composed):
+        record["empty_retry"] = {"first_reason": empty_reply(composed)}
+        composed, _usage, extra = compose(client, system_prompt, profile, raw_day, framing, window_label, published, conn=conn,
+                                          phase=COMPOSE_PHASE + "-retry")
+        cost += extra
+        record["first_draft"] = composed
+        reason = empty_reply(composed)
+        record["empty_retry"]["second_reason"] = reason
+        if reason:
+            raise EmptyComposerReply(f"the composing pass answered empty twice ({record['empty_retry']['first_reason']}; then {reason})", cost)
     for number in range(MAX_REVISIONS):
         problems = revisable_problems(composed, story_ids(raw_day))
         if number == 0:

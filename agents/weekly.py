@@ -402,7 +402,7 @@ def framer_stage(conn, client, week: str, now: datetime, profile: dict) -> dict:
             else:
                 composed, revision, composer_cost = composer.compose_with_revision(
                     client, composer.load_system_prompt(), profile, wide_day, framing, label, published)
-        except (budget.BudgetExceeded, budget.LedgerUnavailable):
+        except (budget.BudgetExceeded, budget.LedgerUnavailable, composer.EmptyComposerReply):
             raise
         except Exception as e:     # noqa: BLE001
             composer_error = f"{type(e).__name__}: {str(e)[:200]}"
