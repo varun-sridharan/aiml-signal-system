@@ -426,5 +426,19 @@ class EditionTypeScale(unittest.TestCase):
         self.assertGreaterEqual(len(re.findall(r'class="big sec-headline', html)), 2)
 
 
+class LeadersSection(unittest.TestCase):
+    def test_no_template_or_view_says_nothing_quotable_surfaced(self):
+        # 2026-11-09: that line implied the system looked and found nothing; the M2 agent that would look does not exist yet.
+        for path in (REPO / "templates" / "digest.template.html", REPO / "agents" / "digest.py"):
+            self.assertNotIn("Nothing quotable surfaced", path.read_text(encoding="utf-8"), path.name)
+
+    @needs_db
+    def test_the_live_edition_shows_the_leaders_section_as_arriving_with_m2(self):
+        html = TestClient(site.app).get("/weekly-digest").text
+        self.assertNotIn("Nothing quotable surfaced this week.", html)
+        self.assertIn("Arrives with M2: what named people actually said, word for word.", html)
+        self.assertIn('<span class="subpill">M2</span>', html)
+
+
 if __name__ == "__main__":
     unittest.main()

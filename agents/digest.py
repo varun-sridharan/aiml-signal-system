@@ -286,14 +286,31 @@ def edition_view(brief_id: str, body: dict, published_at, number: int | None) ->
     for field, section in (("thread.lines", "thread"), ("learning.headline", "learning"), ("stories.title", "stories")):
         if corrections.get(field) and isinstance(view.get(section), dict):
             view[section]["correction"] = _text(corrections[field], "correction")      # when and why a headline was corrected, never the old text
-    view["leaders"] = {"count": 0, "preview": "Nothing quotable surfaced this week.", "empty": True}
+    view["leaders"] = _leaders(edition)
     view["sections"] = [k for k in ("thread", "learning", "stories", "leaders") if view.get(k)]
     labels = {"thread": "THE WEEK IN ONE THREAD", "learning": "LEARNING FOR THE WEEK", "stories": "THIS WEEK'S STORIES",
               "leaders": "WHAT ARE INDUSTRY LEADERS TALKING?"}
-    counts = {"thread": None, "learning": None, "stories": (view.get("stories") or {}).get("count"), "leaders": 0}
+    counts = {"thread": None, "learning": None, "stories": (view.get("stories") or {}).get("count"), "leaders": view["leaders"]["count"]}
     view["subnav"] = [(k, labels[k], counts[k]) for k in view["sections"]]
     view["colours"] = {k: SECTION_COLOURS[k][0] for k in SECTION_COLOURS}
     return view
+
+
+LEADERS_PENDING = "Arrives with M2: what named people actually said, word for word."
+
+
+def _leaders(edition) -> dict:
+    """The leaders section's view. No edition carries leaders content until the M2 Thought Leadership agent exists, so the section says it
+    is coming rather than "nothing surfaced", which would claim the system looked. An edition that does carry quotes
+    (`edition["leaders"]["quotes"]`, each {"text", "who"}) shows its count and them."""
+    quotes = []
+    raw = edition.get("leaders") if isinstance(edition, dict) else None
+    if isinstance(raw, dict) and isinstance(raw.get("quotes"), list):
+        quotes = [{"text": _text(q["text"], "leaders.quote"), "who": _text(q.get("who", ""), "leaders.who")}
+                  for q in raw["quotes"] if isinstance(q, dict) and isinstance(q.get("text"), str) and q["text"].strip()]
+    if not quotes:
+        return {"count": "M2", "preview": LEADERS_PENDING, "empty": True}
+    return {"count": len(quotes), "preview": f"{len(quotes)} {'quote' if len(quotes) == 1 else 'quotes'} from named people", "empty": False, "quotes": quotes}
 
 
 def _composed_sections(edition: dict, by_item: dict) -> dict:

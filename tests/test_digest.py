@@ -61,14 +61,14 @@ class View(unittest.TestCase):
         self.assertEqual([k for k, _ in rows[2]["ninety"]], ["METHOD", "RESULT", "CAVEAT"])
         self.assertTrue(all(len(r["sources"]) >= 1 and sum(s["primary"] for s in r["sources"]) == 1 for r in rows))
         self.assertTrue(all(r["hashtags"] == [] and not r["feature"] for r in rows))
-        self.assertEqual(v["leaders"]["count"], 0)
+        self.assertEqual((v["leaders"]["count"], v["leaders"]["empty"]), ("M2", True))        # M2 has not been built: "coming", never "nothing surfaced"
 
     def test_a_composed_edition_carries_every_slot(self):
         body = composed_body()
         v = digest.view(WEEK, body, None, 2)
         self.assertEqual((v["number"], v["composed"], v["range_line"]), ("02", True, "OCT-12-2026 TO OCT-20-2026"))
         self.assertEqual(v["sections"], ["thread", "learning", "stories", "leaders"])
-        self.assertEqual([(k, c) for k, _, c in v["subnav"]], [("thread", None), ("learning", None), ("stories", 5), ("leaders", 0)])
+        self.assertEqual([(k, c) for k, _, c in v["subnav"]], [("thread", None), ("learning", None), ("stories", 5), ("leaders", "M2")])
         lines = v["thread"]["lines"]
         self.assertEqual(len(lines), 2)
         self.assertEqual(v["thread"]["count"], "5 signals")
@@ -310,13 +310,32 @@ class Routes(unittest.TestCase):
         self.assertEqual(r.text.count('action="/weekly-digest/vote"'), 2 * len(GOLDEN["items"]))   # an up form and a down form each
         self.assertLess(r.text.index(">METHOD<"), r.text.index(">CAVEAT<"))                       # reading order survives jsonb
 
+    def test_d2a2_no_edition_says_nothing_quotable_surfaced_and_the_leaders_chip_reads_m2(self):
+        for body, week in ((composed_body(), WEEK), (GOLDEN, "1998-W21")):
+            self.publish(body, week=week)
+            r = self.client.get(f"/weekly-digest?week={week}")
+            self.assertNotIn("Nothing quotable surfaced this week.", r.text)
+            self.assertIn('<span class="subpill">M2</span>', r.text)
+            self.assertIn('<span class="pill">M2</span>', r.text)
+            self.assertIn('<span class="preview">Arrives with M2: what named people actually said, word for word.</span>', r.text)
+
+    def test_d2a3_an_edition_that_carries_quotes_renders_them_with_their_count(self):
+        body = composed_body()
+        body["edition"]["leaders"] = {"quotes": [{"text": "We ship on Fridays.", "who": "A. Person, Helio Labs"}, {"text": "", "who": "nobody"}]}
+        self.publish(body)
+        r = self.client.get(f"/weekly-digest?week={WEEK}")
+        self.assertIn('<span class="subpill">1</span>', r.text)
+        self.assertIn("&ldquo;We ship on Fridays.&rdquo;", r.text)
+        self.assertIn("A. Person, Helio Labs", r.text)
+        self.assertNotIn("Arrives with M2", r.text)
+
     def test_d2a_a_composed_edition_renders_every_slot_and_only_news_and_archive(self):
         self.publish(composed_body())
         r = self.client.get(f"/weekly-digest?week={WEEK}")
         self.assertEqual(r.status_code, 200)
         for needle in ("LEARNING FOR THE WEEK", "WHAT TO DO DIFFERENTLY THIS WEEK", "WHAT IT WAS DRAWN FROM", "HOW THIS EDITION WAS MADE", "THE THREAD THROUGH IT ALL",
                        "TRY THIS WEEK /", "WHY IT MATTERS /", "TRY IT", "FEATURE", "Ties to 02", "Smaller releases", "#Agents", "checked against source",
-                       'id="note-queue"', 'role="tooltip"', "Nothing quotable surfaced this week.", "WHAT ARE INDUSTRY LEADERS TALKING?"):
+                       'id="note-queue"', 'role="tooltip"', "Arrives with M2: what named people actually said, word for word.", "WHAT ARE INDUSTRY LEADERS TALKING?"):
             self.assertIn(needle, r.text, needle)
         self.assertEqual(r.text.count('role="tab"'), 2)                                         # NEWS and ARCHIVE; nothing else is built
         for absent in ("PREDICTION", "HOMEWORK", "RETIRED PREDICTIONS", "React", "__bundler"):

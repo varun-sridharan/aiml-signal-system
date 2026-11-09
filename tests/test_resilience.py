@@ -65,7 +65,7 @@ class Script:
 
         class Context:
             def __enter__(self_inner):
-                return NS(get_final_message=lambda: message)
+                return NS(get_final_message=lambda: message, request_id="req_from_the_stream")
 
             def __exit__(self_inner, *a):
                 return False
@@ -317,16 +317,12 @@ class Transient(LedgerCase):
         self.assertEqual(len(client.requests), 1)                                           # 119 s in, a 5 s wait would end past 120 s
         self.assertEqual(self.slept, [])
 
-    def test_a_5xx_is_settled_at_zero_but_a_timeout_keeps_its_worst_case_because_it_may_have_billed(self):
+    def test_a_5xx_is_settled_at_zero(self):
         before = budget.month_to_date_spend(self.conn)
         with self.assertRaises(llm.ModelUnavailable):
             self.ask(Script(status_error(500), status_error(502), status_error(503)))
         self.assertEqual(budget.month_to_date_spend(self.conn), before)
         self.assertEqual({r[1] for r in self.booked()}, {"settled"})
-        timeout = anthropic.APITimeoutError(request=REQUEST)
-        with self.assertRaises(llm.ModelUnavailable):
-            self.ask(Script(timeout, timeout, timeout), user_id="t")
-        self.assertIn("reserved", {r[1] for r in self.booked()})
 
     def test_a_rejected_request_is_not_retried_and_leaves_nothing_in_the_month(self):
         client = Script(status_error(400))
@@ -336,6 +332,69 @@ class Transient(LedgerCase):
         self.assertEqual((e.exception.reason, len(client.requests), self.slept), ("rejected", 1, []))
         self.assertEqual(budget.month_to_date_spend(self.conn), before)                    # 2026-11-08: a rejected probe had left $5.00 behind
         self.assertEqual(self.booked()[0][1:3], ("settled", "rejected 400"))
+
+
+class EveryOutcomeSettles(LedgerCase):
+    """2026-11-09: whatever a request ends in, its reservation is closed. Nothing stays 'reserved' to inflate the month."""
+
+    def assert_closed(self, expected_state_reason, cost_at_most=None, user="t"):
+        rows = self.conn.execute("SELECT phase, state, stop_reason, request_id, output_tokens, estimated_cost_usd FROM spend_ledger "
+                                 "WHERE user_id = %s ORDER BY ts, id", (user,)).fetchall()
+        self.assertEqual({r[1] for r in rows}, {"settled"}, rows)
+        self.assertNotIn("reserved", {r[1] for r in rows})
+        if expected_state_reason:
+            self.assertTrue(any(expected_state_reason in (r[2] or "") for r in rows), rows)
+        if cost_at_most is not None:
+            self.assertLessEqual(sum(r[5] for r in rows), Decimal(str(cost_at_most)))
+
+    def test_a_4xx_rejection(self):
+        with self.assertRaises(llm.ModelRejected):
+            self.ask(Script(status_error(400)), model=llm.FRAMER_MODEL, max_tokens=100_000)
+        self.assert_closed("rejected 400", 0)
+
+    def test_a_429_and_a_529_and_a_5xx(self):
+        for code in (429, 529, 500):
+            with self.assertRaises(llm.ModelUnavailable):
+                self.ask(Script(*[status_error(code)] * 3), user_id=f"t{code}")
+            self.assert_closed(f"error {code}", 0, user=f"t{code}")
+
+    def test_a_timeout_and_a_dropped_connection_are_closed_at_their_input_cost_not_their_worst_case(self):
+        for error, word in ((anthropic.APITimeoutError(request=REQUEST), "timed out"), (anthropic.APIConnectionError(request=REQUEST), "connection failed")):
+            user = "t-" + word.split()[0]
+            with self.assertRaises(llm.ModelUnavailable):
+                self.ask(Script(error, error, error), model=llm.FRAMER_MODEL, max_tokens=40_000, user_id=user)
+            self.assert_closed(word + "; output unknown", 0.01, user=user)       # the worst case of 40,000 Opus output tokens would be $1.00 each
+            rows = self.conn.execute("SELECT estimated_cost_usd FROM spend_ledger WHERE user_id = %s", (user,)).fetchall()
+            self.assertTrue(all(r[0] > 0 for r in rows))                         # but not zero: the input was sent
+
+    def test_an_error_event_inside_a_stream(self):
+        event = anthropic.APIStatusError("overloaded", response=httpx.Response(200, request=REQUEST), body=None)
+        with self.assertRaises(llm.ModelUnavailable):
+            self.ask(Script(event, event, event))
+        self.assert_closed("server error in the stream; output unknown", 0.01)
+
+    def test_a_refusal_is_settled_with_its_real_usage(self):
+        client = Script(reply("", stop="refusal", out=0), reply("", stop="refusal", out=0))
+        with self.assertRaises(llm.ModelRefusal):
+            self.ask(client)
+        self.assert_closed("refusal", 0.01)
+
+    def test_a_streamed_reply_books_the_streams_request_id(self):
+        self.ask(Script(reply(rid=None)), stream=True, user_id="t-stream")
+        rows = self.conn.execute("SELECT request_id, stop_reason FROM spend_ledger WHERE user_id = 't-stream'").fetchall()
+        self.assertEqual(rows, [("req_from_the_stream", "end_turn")])        # 2026-11-09: it was NULL for every streamed call
+
+    def test_the_input_estimate_covers_dense_json_at_two_and_a_half_characters_a_token(self):
+        # measured 2026-11-09 on the W46-r2 framing call: 6,000 input tokens for 15,033 characters
+        request = {"messages": [{"role": "user", "content": "x" * 15_033}]}
+        self.assertGreaterEqual(budget.estimate_input_tokens(request), 6_000)
+
+    def test_a_client_side_error_before_send(self):
+        def broken(request):
+            raise ValueError("max_tokens is too large for a non-streamed request")
+        with self.assertRaises(ValueError):
+            self.ask(Script(broken))
+        self.assert_closed("client error before send", 0)
 
 
 class NoRevisionOfNothing(unittest.TestCase):
@@ -563,7 +622,7 @@ class Faulty:
 
         class Context:
             def __enter__(self_inner):
-                return NS(get_final_message=lambda: message)
+                return NS(get_final_message=lambda: message, request_id="req_from_the_stream")
 
             def __exit__(self_inner, *a):
                 return False

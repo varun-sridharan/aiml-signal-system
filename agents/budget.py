@@ -55,7 +55,10 @@ CACHE_WRITE_MULTIPLIER = 1.25
 # WHAT: the pre-flight estimate's assumption about how densely text tokenises.
 # CONCEPT: loop — conservative by construction. English prose runs nearer four
 # characters a token; assuming three over-counts the input, which is the safe side.
-CHARS_PER_TOKEN_ESTIMATE = 3
+# 2026-11-09: it did not, for the dense JSON these calls send. Measured on the W46-r2 inputs, the framing call
+# billed 6,000 input tokens against an estimate of 5,011 (2.5 characters a token), so its $0.156 reservation came in
+# $0.003 under the $0.1594 it cost. Two is the safe side for that text.
+CHARS_PER_TOKEN_ESTIMATE = 2
 
 # Advisory lock keys. Arbitrary but fixed: every process that reserves spend takes the
 # same lock, so the check-then-insert is serial across runs, machines and deploys.
@@ -325,6 +328,26 @@ def settle_unbilled(conn, reservation_id: uuid.UUID, reason: str, *, request_id:
         )
         if cur.rowcount != 1:
             raise RuntimeError(f"reservation {reservation_id} is not open; nothing settled")
+
+
+@_retry_deadlock
+def settle_estimated(conn, reservation_id: uuid.UUID, cost_usd, reason: str, *, request_id: str | None = None) -> None:
+    """Close a reservation for a request whose outcome is unknown (a timeout, a dropped connection, an error inside a stream) at a stated
+    cost instead of its worst case. 2026-11-09: such a reservation stayed open for ever and inflated the month; it is now closed at the
+    input cost, the one part known, and the reason says the output is unknown."""
+    with conn.transaction():
+        cur = conn.execute(
+            "UPDATE spend_ledger SET input_tokens = 0, output_tokens = 0, cache_read_tokens = 0, cache_write_tokens = 0, "
+            "estimated_cost_usd = %s, state = 'settled', stop_reason = %s, request_id = %s WHERE id = %s AND state = 'reserved'",
+            (_usd(cost_usd), reason[:80], request_id, reservation_id),
+        )
+        if cur.rowcount != 1:
+            raise RuntimeError(f"reservation {reservation_id} is not open; nothing settled")
+
+
+def estimate_input_only_usd(model: str, request: dict, extra_input_tokens: int = 0) -> float:
+    """What a request costs for its input alone, at the dearest input rate: the floor of a call whose reply never arrived."""
+    return (estimate_input_tokens(request) + extra_input_tokens) * PRICING_PER_MTOK[model]["input"] * CACHE_WRITE_MULTIPLIER / 1_000_000
 
 
 def spend_since(conn, since: datetime) -> Decimal:

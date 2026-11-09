@@ -192,6 +192,11 @@ def _status_of(error) -> int:
     return getattr(error, "status_code", 0) or 0
 
 
+def _close_unknown(conn, reservation, model, request, extra_input_tokens, kind):
+    """A request that may or may not have billed: its reservation is closed at the input cost, never left open at the worst case."""
+    budget.settle_estimated(conn, reservation, budget.estimate_input_only_usd(model, request, extra_input_tokens), f"{kind}; output unknown")
+
+
 def _request(client, conn, *, model, max_tokens, user_id, phase, stream, extra_input_tokens, request):
     """One booked request. Reserves the worst case, calls, settles with the API's stop_reason and request id. Overload (429, 529), a 5xx,
     a dropped connection and a timeout are tried up to TRANSIENT_TRIES times with a backoff, each try booked (the second and third under
@@ -208,6 +213,9 @@ def _request(client, conn, *, model, max_tokens, user_id, phase, stream, extra_i
             if stream:
                 with client.messages.stream(model=model, max_tokens=max_tokens, **request) as s:
                     message = s.get_final_message()
+                    # a streamed reply does not carry its request id on the message; the stream does (2026-11-09: the ledger column was empty for the composer and framer)
+                    if getattr(s, "request_id", None) and not getattr(message, "_request_id", None):
+                        message._request_id = s.request_id
             else:
                 message = client.messages.create(model=model, max_tokens=max_tokens, **request)
         except anthropic.APIStatusError as e:
@@ -221,10 +229,15 @@ def _request(client, conn, *, model, max_tokens, user_id, phase, stream, extra_i
             elif code >= 500:        # a 5xx is an error the API did not bill: settled at zero, so it leaves nothing in the month
                 budget.settle_unbilled(conn, reservation, f"error {code}", request_id=rid)
                 kind, last = f"server error {code}", e
-            else:      # an error event inside a stream (status 200): it may have billed, so the reservation stays at its worst case
+            else:      # an error event inside a stream (status 200): it may have billed; closed at its input cost, output unknown
                 kind, last = "server error in the stream", e
+                _close_unknown(conn, reservation, model, request, extra_input_tokens, kind)
         except (anthropic.APITimeoutError, anthropic.APIConnectionError) as e:
             kind, last = ("timed out" if isinstance(e, anthropic.APITimeoutError) else "connection failed"), e
+            _close_unknown(conn, reservation, model, request, extra_input_tokens, kind)
+        except Exception:       # an error on our side before the request left (the SDK refusing a parameter, a bad argument): nothing was sent
+            budget.settle_unbilled(conn, reservation, "client error before send")
+            raise
         else:
             cost = budget.settle(conn, reservation, model, message.usage, stop_reason=message.stop_reason, request_id=getattr(message, "_request_id", None))
             return message, float(cost)
