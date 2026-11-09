@@ -246,7 +246,8 @@ class ResumeAndIdempotence(Pipeline, unittest.TestCase):
     def test_a_run_that_dies_resumes_at_its_checkpoint_then_publishes_then_is_a_no_op(self):
         self.fail_framer = 1
         self.assertEqual(self.go(), 1)
-        self.assertIn(f"scheduled: {WEEK} stopped: RuntimeError", self.lines[-2])
+        self.assertTrue(any(l.startswith(f"scheduled: {WEEK} stopped: RuntimeError") for l in self.lines))
+        self.assertIn("not resumed: the 5-minute wait would end outside Friday", self.lines[-2])
         self.assertIn(f"scheduled: {WEEK} FAILED at stage framer: RuntimeError", self.lines[-1])
         fetches = len(self.client.requests)
         self.assertGreater(fetches, 0)

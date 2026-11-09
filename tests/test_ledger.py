@@ -204,13 +204,15 @@ class LedgerInRolledBackTransaction(unittest.TestCase):
         self.assertAlmostEqual(cost, budget.estimate_cost_usd("claude-haiku-4-5", u), places=6)
 
     @live_headroom
-    def test_truncated_response_is_still_booked_before_the_run_exits(self):
+    def test_truncated_response_is_still_booked_before_the_run_stops(self):
+        # Run 10: a truncated reply is retried once with the cap doubled, and a second truncation is a named ModelMaxTokens (not a SystemExit).
         client = FakeClient(stop_reason="max_tokens", usage_=usage(out=1000))
-        with self.assertRaises(SystemExit):
+        with self.assertRaises(llm.ModelMaxTokens):
             llm.call(client, model="claude-haiku-4-5", max_tokens=1000, user_id="test",
                      phase="test-truncated", conn=self.conn, messages=[])
-        state = self.conn.execute("SELECT state FROM spend_ledger WHERE phase='test-truncated'").fetchone()
-        self.assertEqual(state, ("settled",), "a billed-but-truncated call went unrecorded")
+        rows = self.conn.execute("SELECT phase, state, stop_reason FROM spend_ledger WHERE phase LIKE 'test-truncated%' ORDER BY ts, id").fetchall()
+        self.assertEqual(rows, [("test-truncated", "settled", "max_tokens"), ("test-truncated-retry", "settled", "max_tokens")],
+                         "a billed-but-truncated call went unrecorded")
 
     @live_headroom
     def test_request_that_raises_leaves_the_worst_case_reserved(self):
