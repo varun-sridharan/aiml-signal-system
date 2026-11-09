@@ -226,6 +226,48 @@ class Malformed(LedgerCase):
         self.assertLessEqual(len(e.exception.log_detail()), llm.LOG_HEAD_CHARS + 120)
 
 
+class QaFixes(LedgerCase):
+    def test_a_large_doubled_retry_is_streamed_because_the_sdk_refuses_it_otherwise(self):
+        streams = []
+        client = Script(reply("{", "max_tokens"), reply())
+        real_create, real_stream = client.messages.create, client.messages.stream
+        client.messages.create = lambda **kw: (streams.append(False), real_create(**kw))[1]
+        client.messages.stream = lambda **kw: (streams.append(True), real_stream(**kw))[1]
+        self.ask(client, max_tokens=16_000)
+        self.assertEqual(streams, [False, True])            # 16,000 as asked; the doubled 32,000 is streamed
+        self.assertEqual([r["max_tokens"] for r in client.requests], [16_000, 32_000])
+
+    def test_a_structural_retry_after_a_doubling_keeps_the_doubled_cap(self):
+        client = Script(reply("{", "max_tokens"), reply(json.dumps({"things": []})), reply())
+        self.ask(client, max_tokens=8000)
+        self.assertEqual([r["max_tokens"] for r in client.requests], [8000, 16000, 16000])
+
+    def test_any_400_that_names_the_schema_gets_the_unbounded_retry(self):
+        err = anthropic.APIStatusError("Invalid request: minLength is not supported here", response=httpx.Response(400, request=REQUEST), body=None)
+        client = Script(err, reply())
+        self.assertEqual(self.ask(client)[0], GOOD)
+        self.assertNotIn("minLength", json.dumps(client.requests[1]["output_config"]))
+
+    def test_a_named_failure_of_the_lift_retry_keeps_the_first_verdict(self):
+        verdict = {"claims": [{"claim": "c", "supported": True, "supporting_span": "s", "span_verified": True}], "lifted_claims": ["x"], "unsupported_claims": []}
+        raw_day = {"items": [{"id": "a", "headline": "h", "source_excerpt": "text"}]}
+        calls = []
+
+        def call(client, **kw):
+            calls.append(kw["phase"])
+            if kw["phase"].endswith("-retry"):
+                raise llm.ModelRefusal("refused twice")
+            return json.dumps({"items": [{"id": "a", "claims": [], "confidence": 0.9}], "thread": {"claims": [], "confidence": 0.9}}), NS(), 0.0
+        with unittest.mock.patch.object(framer.llm, "call", call), unittest.mock.patch.object(framer, "RETRY_ON_LIFT", True), unittest.mock.patch.object(framer, "build_check_payload", return_value={"items": [], "thread": {"writing_under_test": ""}}), \
+                unittest.mock.patch.object(framer, "ground_truth_for", return_value=({"a": "t"}, "t")), \
+                unittest.mock.patch.object(framer, "normalise_verdict", lambda v, *a, **k: dict(verdict) if v.get("id") == "a" else {**verdict, "lifted_claims": []}), \
+                unittest.mock.patch.object(framer, "_unit_payload", return_value={"items": [{"writing_under_test": "x"}], "thread": {"writing_under_test": ""}}), \
+                unittest.mock.patch.object(framer, "_add_usage", lambda a, b: a):
+            verdicts, _thread, _usage = framer.check_faithfulness(object(), raw_day, {"items": []}, user_id="t", phase="faithfulness")[:3]
+        self.assertEqual(calls, ["faithfulness", "faithfulness-retry"])
+        self.assertIn("first kept", verdicts["a"]["retried"]["result"])
+
+
 class SchemaBoundsRejected(LedgerCase):
     def test_an_api_that_refuses_the_bounds_is_asked_again_without_them_and_the_reply_is_still_checked(self):
         refusal = anthropic.APIStatusError("output_config.format.schema: minItems is not supported", response=httpx.Response(400, request=REQUEST), body=None)
@@ -275,10 +317,16 @@ class Transient(LedgerCase):
         self.assertEqual(len(client.requests), 1)                                           # 119 s in, a 5 s wait would end past 120 s
         self.assertEqual(self.slept, [])
 
-    def test_a_server_error_keeps_its_worst_case_reserved_because_it_may_have_billed(self):
+    def test_a_5xx_is_settled_at_zero_but_a_timeout_keeps_its_worst_case_because_it_may_have_billed(self):
+        before = budget.month_to_date_spend(self.conn)
         with self.assertRaises(llm.ModelUnavailable):
-            self.ask(Script(status_error(500), status_error(500), status_error(500)))
-        self.assertEqual({r[1] for r in self.booked()}, {"reserved"})
+            self.ask(Script(status_error(500), status_error(502), status_error(503)))
+        self.assertEqual(budget.month_to_date_spend(self.conn), before)
+        self.assertEqual({r[1] for r in self.booked()}, {"settled"})
+        timeout = anthropic.APITimeoutError(request=REQUEST)
+        with self.assertRaises(llm.ModelUnavailable):
+            self.ask(Script(timeout, timeout, timeout), user_id="t")
+        self.assertIn("reserved", {r[1] for r in self.booked()})
 
     def test_a_rejected_request_is_not_retried_and_leaves_nothing_in_the_month(self):
         client = Script(status_error(400))

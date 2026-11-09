@@ -672,7 +672,11 @@ def check_faithfulness(client, raw_day: dict, framing: dict, *, user_id: str, ph
             ["thread"] if thread_verdict["lifted_claims"] else [])) if RETRY_ON_LIFT else []:
         first = thread_verdict if unit_id == "thread" else verdicts[unit_id]
         retry_payload = _unit_payload(raw_day, framing, unit_id, first["lifted_claims"])
-        retry_text, retry_usage, _ = llm.call(client, user_id=user_id, phase=f"{phase}-retry", **check_request(retry_payload))
+        try:
+            retry_text, retry_usage, _ = llm.call(client, user_id=user_id, phase=f"{phase}-retry", **check_request(retry_payload))
+        except llm.ModelCallError as e:      # a named failure of the retry keeps the paid first verdict, as an unusable retry always did
+            first["retried"] = {"lifted_before": first["lifted_claims"], "result": f"retry failed ({e.reason}); first kept"}
+            continue
         usage = _add_usage(usage, retry_usage)
         # A retry that comes back unusable must not throw away a first pass that was paid for and valid.
         try:

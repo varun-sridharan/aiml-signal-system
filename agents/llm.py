@@ -55,6 +55,7 @@ TRANSIENT_TRIES = 3
 TRANSIENT_BACKOFF_S = (5, 20)
 TRANSIENT_WINDOW_S = 120
 LOG_HEAD_CHARS = 500
+STREAM_ABOVE = 20_000                # a request asking for more than this is streamed
 _sleep = time.sleep                  # tests replace these two, so a backoff takes no real time
 _monotonic = time.monotonic
 
@@ -103,7 +104,7 @@ class ModelRejected(ModelCallError):
     reason = "rejected"
 
 
-_SECRET = re.compile(r"sk-ant-[\w-]+|postgres(?:ql)?://\S+|(?:API_KEY|DATABASE_URL|TOKEN|SECRET|PASSWORD)\s*[=:]\s*\S+", re.I)
+_SECRET = re.compile(r"Bearer\s+\S+|sk-ant-[\w-]+|postgres(?:ql)?://\S+|(?:API_KEY|DATABASE_URL|TOKEN|SECRET|PASSWORD)\s*[=:]\s*\S+", re.I)
 
 
 def log_head(text, limit: int = LOG_HEAD_CHARS) -> str:
@@ -217,8 +218,11 @@ def _request(client, conn, *, model, max_tokens, user_id, phase, stream, extra_i
             elif 400 <= code < 500:
                 budget.settle_unbilled(conn, reservation, f"rejected {code}", request_id=rid)
                 raise ModelRejected(f"the API rejected the request ({code}): {str(e)[:300]}", stop_reason=f"rejected {code}", request_id=rid) from e
-            else:      # a 5xx (or an error event inside a stream): it may have billed, so the reservation stays at its worst case
-                kind, last = f"server error {code or 'in the stream'}", e
+            elif code >= 500:        # a 5xx is an error the API did not bill: settled at zero, so it leaves nothing in the month
+                budget.settle_unbilled(conn, reservation, f"error {code}", request_id=rid)
+                kind, last = f"server error {code}", e
+            else:      # an error event inside a stream (status 200): it may have billed, so the reservation stays at its worst case
+                kind, last = "server error in the stream", e
         except (anthropic.APITimeoutError, anthropic.APIConnectionError) as e:
             kind, last = ("timed out" if isinstance(e, anthropic.APITimeoutError) else "connection failed"), e
         else:
@@ -238,6 +242,7 @@ def _stop_policy(client, conn, message, cost, *, model, max_tokens, user_id, pha
     and a second truncation (or no room to double) is ModelMaxTokens. Each retry is booked under the retry phase."""
     again = dict(client=client, conn=conn, model=model, user_id=user_id, phase=retry_phase(phase), stream=stream,
                  extra_input_tokens=extra_input_tokens, request=request)
+    again_big = {**again, "stream": True}      # the SDK refuses a non-streamed request above ~21,000 max_tokens (a bare ValueError)
     if message.stop_reason == "refusal":
         message, extra = _request(max_tokens=max_tokens, **again)
         cost += extra
@@ -248,7 +253,8 @@ def _stop_policy(client, conn, message, cost, *, model, max_tokens, user_id, pha
         doubled = min(max_tokens * 2, room)
         if doubled <= max_tokens:
             raise _stop_error(ModelMaxTokens, message, f"the reply hit max_tokens ({max_tokens}), which is the most {model} allows", cost)
-        message, extra = _request(max_tokens=doubled, **again)
+        message, extra = _request(max_tokens=doubled, **(again_big if doubled > STREAM_ABOVE else again))
+        message._max_tokens_used = doubled      # a later structural retry keeps this cap
         cost += extra
         if message.stop_reason == "max_tokens":
             raise _stop_error(ModelMaxTokens, message, f"the reply hit max_tokens again at {doubled}", cost)
@@ -338,7 +344,7 @@ def call(client, *, model: str, max_tokens: int, user_id: str, phase: str, strea
     A reply that is empty, not valid JSON, or does not conform to its own schema (including its minItems and minLength) is asked for once
     more, booked under the retry phase; a second one raises ModelEmptyReply or ModelMalformedReply with the API's stop_reason and the first
     500 characters of what came back. Refusal and max_tokens follow `_stop_policy`. `validate(parsed)` returns a reason or ''.
-    If the API itself rejects the schema's bounds (a 400 naming output_config.format.schema; not billed), the call is repeated once without
+    If the API itself rejects the schema's bounds (a 400 that names the schema, output_config, minItems or minLength; not billed), the call is repeated once without
     them and the reply is still checked against the full schema here.
     """
     args = dict(model=model, max_tokens=max_tokens, user_id=user_id, stream=stream, conn=conn, stop_policy=True)
@@ -349,7 +355,7 @@ def call(client, *, model: str, max_tokens: int, user_id: str, phase: str, strea
             return call_message(client, phase=booked_as, **args, **sent[0])
         except ModelRejected as e:
             relaxed = _relaxed(sent[0])
-            if relaxed is None or "output_config.format.schema" not in str(e):
+            if relaxed is None or not any(w in str(e) for w in ("output_config", "schema", "minItems", "minLength")):
                 raise
             sent[0] = relaxed
             return call_message(client, phase=retry_phase(booked_as), **args, **relaxed)
@@ -368,5 +374,6 @@ def call(client, *, model: str, max_tokens: int, user_id: str, phase: str, strea
         if attempt == 2:
             error.cost = cost
             raise error
+        args["max_tokens"] = getattr(message, "_max_tokens_used", args["max_tokens"])
         message, usage, extra = send(retry_phase(phase))
         cost += extra

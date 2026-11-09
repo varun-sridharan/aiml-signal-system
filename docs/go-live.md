@@ -49,7 +49,7 @@ The scheduled entrypoint refuses to run outside Friday 19:00 Pacific, on purpose
   Add `--status` to see every attempt at the week without any model call.
 - Or, to exercise the Railway service itself, redeploy or run it from the dashboard during the Friday hour (what Railway offers for a cron service is its own; outside the hour the job does nothing by design).
 
-A run that stopped (`scheduled: ... stopped: ...`) is not retried until next Friday. Read the reason, fix it if it needs fixing, and run the plain command by hand; it resumes where the stopped run left off.
+A stage that fails is resumed once by the job itself, five minutes later, if that is still inside the Friday hour and within the ledger and the run's $4 (a gates failure, a ledger stop and a held stage are not). If it fails again the job's last log line reads `scheduled: ... FAILED at stage ...` with the reason and the exact resume command; nobody is emailed (`bk-failure-alert`). Read the reason, fix it if it needs fixing, and run that command by hand; it resumes where the stopped run left off.
 
 ## What success looks like
 
