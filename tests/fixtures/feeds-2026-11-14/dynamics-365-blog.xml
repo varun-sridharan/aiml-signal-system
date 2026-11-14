@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:cloud="https://cloudblogs.microsoft.com"
+>
+
+<channel>
+	<title>Microsoft Dynamics 365 Blog</title>
+	<atom:link href="https://www.microsoft.com/en-us/dynamics-365/blog/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.microsoft.com/en-us/dynamics-365/blog/</link>
+	<description>The future of agentic CRM and ERP</description>
+	<lastBuildDate>Tue, 10 Nov 2026 12:13:33 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2018/08/cropped-cropped-microsoft_logo_element.png</url>
+	<title>Microsoft Dynamics 365 Blog</title>
+	<link>https://www.microsoft.com/en-us/dynamics-365/blog/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<cloud:contentStyles><![CDATA[
+		<style>
+			.cloudblogs .cta-box>.link {
+				font-size: 15px;
+				font-weight: 600;
+				display: inline-block;
+				background: #008272;
+				line-height: 1;
+				text-transform: none;
+				padding: 15px 20px;
+				text-decoration: none;
+				color: white;
+			}
+
+			.cloudblogs img {
+				height: auto;
+			}
+
+			.cloudblogs img.alignright {
+				float:right;
+			}
+
+			.cloudblogs img.alignleft {
+				float:right;
+			}
+
+			.cloudblogs figcaption {
+				padding: 9px;
+				color: #737373;
+				text-align: left;
+				font-size: 13px;
+				font-size: 1.3rem;
+			}
+
+			.cloudblogs .cta-box.-center {
+				text-align: center;
+			}
+
+			.cloudblogs .cta-box.-left {
+				padding: 20px 0;
+			}
+
+			.cloudblogs .cta-box.-right {
+				padding: 20px 0;
+				text-align:right;
+			}
+
+			.cloudblogs .cta-box {
+				margin-top: 20px;
+				margin-bottom: 20px;
+				padding: 20px;
+			}
+
+			.cloudblogs .cta-box.-image {
+				position:relative;
+			}
+
+			.cloudblogs .cta-box.-image>.link {
+				position: absolute;
+				top: auto;
+				left: 50%;
+				-webkit-transform: translate(-50%,0);
+				transform: translate(-50%,0);
+				bottom: 0;
+			}
+
+			.cloudblogs table {
+				width: 100%;
+			}
+
+			.cloudblogs table tr {
+				border-bottom: 1px solid #eee;
+				padding: 8px 0;
+			}
+		</style>
+		]]></cloud:contentStyles>
+		<item>
+		<title>Microsoft is named a Leader in 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</title>
+		<link>https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/10/microsoft-is-named-a-leader-in-2026-gartner-magic-quadrant-for-crm-customer-engagement-center/</link>
+		
+		<dc:creator><![CDATA[Deva Rajamohan]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 16:00:00 +0000</pubDate>
+				<category><![CDATA[CRM]]></category>
+		<guid isPermaLink="false">https://www.microsoft.com/en-us/dynamics-365/blog/?p=203732</guid>
+
+					<description><![CDATA[<p>Microsoft is named a Leader in the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center. Explore how Dynamics 365 Customer Service is helping organizations scale agentic service and deliver connected customer experiences.</p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/10/microsoft-is-named-a-leader-in-2026-gartner-magic-quadrant-for-crm-customer-engagement-center/">Microsoft is named a Leader in 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="cloudblogs">
+<p class="wp-block-paragraph"><em>With this recognition, Microsoft is the only vendor included in both the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center and the 2026 Gartner® Magic Quadrant™ for Contact Center as a Service.</em>
+</p>
+
+
+
+<p class="wp-block-paragraph">
+  A year ago, many service organizations were piloting AI agents. Today, more are using them in production to resolve routine requests, support representatives on complex cases, and keep knowledge and workflows current. The question is no longer just what agents can do, but how to scale agentic service with confidence.
+</p>
+
+
+
+<p class="wp-block-paragraph">
+  That takes more than adding agents. It requires trusted customer data and business processes, a workforce model that plans for people and AI agents together, and experiences that help every employee serve customers in the tools they already use.
+</p>
+
+
+
+<p class="wp-block-paragraph">That’s the foundation we’re building with <a href="https://www.microsoft.com/en-us/dynamics-365/products/customer-service" id="https://www.microsoft.com/en-us/dynamics-365/products/customer-service" target="_blank" rel="noopener noreferrer">Microsoft Dynamics 365 Customer Service</a>. It connects service experiences across <a href="https://www.microsoft.com/en-us/copilot" id="https://www.microsoft.com/en-us/copilot" target="_blank" rel="noopener noreferrer">Microsoft Copilot</a> and <a href="https://www.microsoft.com/en-us/microsoft-365/microsoft-365-business" id="https://www.microsoft.com/en-us/microsoft-365/microsoft-365-business" target="_blank" rel="noopener noreferrer">Microsoft 365</a>, powered by <a href="https://www.microsoft.com/en-us/copilot/features/work-iq" id="https://www.microsoft.com/en-us/copilot/features/work-iq" target="_blank" rel="noopener noreferrer">Work IQ</a>. This <a href="https://www.microsoft.com/en-us/dynamics-365/blog/it-professional/2026/09/25/work-iq-business-and-workplace-intelligence-in-the-flow-of-work/" target="_blank" rel="noreferrer noopener">brings together business intelligence from Dynamics 365 and workplace intelligence from Microsoft 365</a>. Together, they help customers turn agentic service from ambition into measurable outcomes.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Today, we&#8217;re delighted to announce that Microsoft has been named a Leader in the <a href="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" id="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" target="_blank" rel="noopener noreferrer">2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</a>.</strong><sup>1</sup></p>
+
+
+
+<p class="wp-block-paragraph"><strong>With this recognition, Microsoft is the only vendor included in both the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center and the <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/10/22/microsoft-is-named-a-visionary-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/" id="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/10/22/microsoft-is-named-a-visionary-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/" target="_blank" rel="noopener noreferrer">2026 Gartner® Magic Quadrant™ for Contact Center as a Service</a>. </strong>As service organizations bring the contact center and broader customer service operations closer together, the convergence of CEC and Contact Center as a Service (CCaaS) is becoming increasingly important. That makes Microsoft’s position across both markets particularly notable.</p>
+
+
+
+<div class="is-style-inline wp-block-bloginabox-theme-promotional">
+	
+<div class="promotional promotional--has-media promotional--media-right">
+	<div class="promotional__wrapper">
+		<div class="promotional__content-wrapper">
+			<div class="promotional__content">
+				
+
+<h2 class="wp-block-heading"></h2>
+
+
+
+<p class="wp-block-paragraph">Microsoft is named a Leader in the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a data-bi-an="Global CTA" data-bi-ct="cta link" data-bi-id="cta-block" class="wp-block-button__link wp-element-button" href="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the report</a></div>
+</div>
+
+			</div>
+		</div>
+					<div class="promotional__media-wrapper">
+				<div class="promotional__media">
+											<img decoding="async" width="600" height="600" src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/CLO25-SCI-Lifestyle-010-600.jpg" class="attachment-full size-full" alt="" loading="lazy" srcset="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/CLO25-SCI-Lifestyle-010-600.jpg 600w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/CLO25-SCI-Lifestyle-010-600-300x300.jpg 300w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/CLO25-SCI-Lifestyle-010-600-150x150.jpg 150w" sizes="auto, (max-width: 600px) 100vw, 600px" role="presentation" />									</div>
+			</div>
+			</div>
+</div>
+</div>
+
+
+
+<p class="wp-block-paragraph">We believe this placement recognizes the successes our customers are achieving with Dynamics 365 Customer Service. It also reflects a deliberate priority for us: strengthening the core of customer service while continuing to innovate around it. In Dynamics 365 Customer Service, we’re bringing together a more complete view of the customer and essential service processes on the Microsoft foundation customers already trust, helping teams deliver better service experiences.</p>
+
+
+
+<p class="wp-block-paragraph">
+  Delivering those experiences also means giving service leaders the tools to support their workforce. Workforce engagement management puts that priority into practice. It brings forecasting, scheduling, real-time operations, and quality management into Dynamics 365 Customer Service, helping leaders plan for people and AI agents together, adapt to changing demand, and continuously improve service quality.
+</p>
+
+
+<figure data-wp-context="{&quot;imageId&quot;:&quot;6af759cec4160&quot;}" data-wp-interactive="core/image" data-wp-key="6af759cec4160" class="wp-block-image size-large wp-lightbox-container"><img decoding="async" data-wp-class--hide="state.isContentHidden" data-wp-class--show="state.isContentVisible" data-wp-init="callbacks.setButtonStyles" data-wp-on--click="actions.showLightbox" data-wp-on--load="callbacks.setButtonStyles" data-wp-on--pointerdown="actions.preloadImage" data-wp-on--pointerenter="actions.preloadImageWithDelay" data-wp-on--pointerleave="actions.cancelPreload" data-wp-on-window--resize="callbacks.setButtonStyles" src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center-950x1024.webp" alt="The Magic Quadrant for CRM Customer Engagement Center 2026" class="wp-image-203813 webp-format" srcset="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center-950x1024.webp 950w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center-278x300.webp 278w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center-768x828.webp 768w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center.webp 1200w" data-orig-src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/Figure_1_Magic_Quadrant_for_the_CRM_Customer_Engagement_Center-950x1024.webp"><button
+			class="lightbox-trigger"
+			type="button"
+			aria-haspopup="dialog"
+			data-wp-bind--aria-label="state.thisImage.triggerButtonAriaLabel"
+			data-wp-init="callbacks.initTriggerButton"
+			data-wp-on--click="actions.showLightbox"
+			data-wp-style--right="state.thisImage.buttonRight"
+			data-wp-style--top="state.thisImage.buttonTop"
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12">
+				<path fill="#fff" d="M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z" />
+			</svg>
+		</button><figcaption class="wp-element-caption">Figure 1. Gartner Magic Quadrant for CRM Customer Engagement Center. Source: Gartner, 2 November 2026.<sup>2</sup></figcaption></figure>
+
+
+
+<h2 id="the-agentic-shift-reimagining-customer-service" class="wp-block-heading">The agentic shift: Reimagining customer service</h2>
+
+
+
+<p class="wp-block-paragraph" id="delivering-on-our-agentic-vision-means-empowering-service-representatives-and-every-employee-who-touches-a-customer-that-s-why-we-re-bringing-dynamics-365-customer-context-and-actions-into-microsoft-365-copilot-and-microsoft-365-where-people-already-work-and-putting-ai-agents-to-work-on-processes-that-span-teams-and-systems-our-october-announcement-shows-how-that-vision-is-taking-shape-bringing-crm-into-the-flow-of-work-and-agents-into-business-processes">Our agentic vision extends beyond the service organization to every employee who touches a customer. That&#8217;s why we&#8217;re bringing Dynamics 365 customer context and actions into Microsoft Copilot and Microsoft 365, where people already work, and putting AI agents to work on processes that span teams and systems. Our October announcement shows how that vision is taking shape: <a href="https://www.microsoft.com/en-us/copilot/blog/2026/10/08/bringing-crm-into-the-flow-of-work-and-agents-into-business-process-for-sales-and-service-teams/" target="_blank" rel="noreferrer noopener">Bringing CRM into the flow of work and agents into business processes</a>.</p>
+
+
+
+<h3 id="skills-for-dynamics-365-crm" class="wp-block-heading"><strong>Skills for Dynamics 365 CRM</strong></h3>
+
+
+
+<p class="wp-block-paragraph">We have added <a href="https://www.microsoft.com/en-us/dynamics-365/blog/it-professional/2026/10/08/bring-microsoft-dynamics-365-into-the-flow-of-work-with-30-new-crm-skills/" target="_blank" rel="noreferrer noopener">pre-built CRM skills across Dynamics 365 Sales, Dynamics 365 Customer Service, and Dynamics 365 Customer Insights</a> to Microsoft Copilot. The service skills let service representatives review case history, research answers, and draft responses without leaving Copilot. These skills are generally available in <a href="https://www.microsoft.com/en-us/copilot/features/cowork" id="https://www.microsoft.com/en-us/copilot/features/cowork" target="_blank" rel="noopener noreferrer">Cowork</a>, with Autopilot in private preview and Code available through the Frontier Program.</p>
+
+
+
+<figure class="wp-block-bloginabox-theme-ump-embed wp-block-msx-ump-embed" class="wp-block-bloginabox-theme-ump-embed" data-bi-mto="true" role="presentation">
+	<div class="wp-block-embed__wrapper">
+		<universal-media-player id="ump-6af759cec4793"></universal-media-player>
+		<script type="module">
+			const currentTheme =
+				localStorage.getItem('blogInABoxCurrentTheme') ||
+				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+			// Modify player theme based on localStorage value.
+			let options = {"autoplay":false,"hideControls":null,"language":"en-us","loop":false,"partnerName":"cloud-blogs","poster":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/image\/microsoftcorp\/1307545-microsoftcrm_tbmnl_en-us?wid=1280","title":"Microsoft CRM Skills","sources":[{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm-0x1080-6439k","type":"video\/mp4","quality":"HQ"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm-0x720-3266k","type":"video\/mp4","quality":"HD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm-0x540-2160k","type":"video\/mp4","quality":"SD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm-0x360-958k","type":"video\/mp4","quality":"LO"}],"ccFiles":[{"url":"https:\/\/www.microsoft.com\/en-us\/dynamics-365\/blog\/wp-json\/bloginabox\/v1\/get-captions?url=https%3A%2F%2Fwww.microsoft.com%2Fcontent%2Fdam%2Fmicrosoft%2Fbade%2Fvideos%2Fproducts-and-services%2Fen-us%2Fmicrosoft-365%2F1307545-microsoftcrm%2F1307545-microsoftcrm_cc_en-us.ttml","locale":"en-us","ccType":"TTML"}],"downloadableFiles":[{"url":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm_transcript_en-us","locale":"en-us","mediaType":"transcript"},{"url":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-microsoftcrm_audio_en-us","locale":"en-us","mediaType":"audio"}]};
+
+			if (currentTheme) {
+				options.playButtonTheme = currentTheme;
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				ump("ump-6af759cec4793", options);
+			});
+		</script>
+	</div>
+	</figure>
+
+
+
+<h3 id="dynamics-365-crm-in-the-flow-of-teams" class="wp-block-heading">Dynamics 365 CRM in the flow of Teams</h3>
+
+
+
+<p class="wp-block-paragraph">This experience, now in public preview, brings sales and service context into Teams. Once a channel is connected to a customer account, AI agents deliver real-time updates such as case notifications, so everyone works from a shared view of the customer.</p>
+
+
+
+<figure class="wp-block-bloginabox-theme-ump-embed wp-block-msx-ump-embed" class="wp-block-bloginabox-theme-ump-embed" data-bi-mto="true" role="presentation">
+	<div class="wp-block-embed__wrapper">
+		<universal-media-player id="ump-6af759cec49ca"></universal-media-player>
+		<script type="module">
+			const currentTheme =
+				localStorage.getItem('blogInABoxCurrentTheme') ||
+				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+			// Modify player theme based on localStorage value.
+			let options = {"autoplay":true,"hideControls":null,"language":"en-us","loop":true,"partnerName":"cloud-blogs","poster":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/image\/microsoftcorp\/1307545-crmteams_tbmnl_en-us?wid=1280","title":"1307545-crmteams","sources":[{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-crmteams-0x1080-6439k","type":"video\/mp4","quality":"HQ"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-crmteams-0x720-3266k","type":"video\/mp4","quality":"HD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-crmteams-0x540-2160k","type":"video\/mp4","quality":"SD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-crmteams-0x360-958k","type":"video\/mp4","quality":"LO"}]};
+
+			if (currentTheme) {
+				options.playButtonTheme = currentTheme;
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				ump("ump-6af759cec49ca", options);
+			});
+		</script>
+	</div>
+	</figure>
+
+
+
+<h3 id="service-agent-in-microsoft-365" class="wp-block-heading"><strong>Service Agent in Microsoft 365</strong></h3>
+
+
+
+<p class="wp-block-paragraph">Service Agent has new autonomous capabilities that extend customer service beyond the traditional support team. As customer care becomes a shared responsibility across the organization, Service Agent in Microsoft 365 now equips customer success managers, account teams, subject matter experts, and other employees with the context, knowledge, and actions they need to help customers directly in Outlook, Teams, Word, Excel, and PowerPoint. We are extending the early experience of Service Agent in Microsoft 365 to a select group of Frontier customers in private preview.</p>
+
+
+
+<figure class="wp-block-bloginabox-theme-ump-embed wp-block-msx-ump-embed" class="wp-block-bloginabox-theme-ump-embed" data-bi-mto="true" role="presentation">
+	<div class="wp-block-embed__wrapper">
+		<universal-media-player id="ump-6af759cec4b68"></universal-media-player>
+		<script type="module">
+			const currentTheme =
+				localStorage.getItem('blogInABoxCurrentTheme') ||
+				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+			// Modify player theme based on localStorage value.
+			let options = {"autoplay":false,"hideControls":null,"language":"en-us","loop":false,"partnerName":"cloud-blogs","poster":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/image\/microsoftcorp\/1307545-salesagentsizzle_tbmnl_en-us?wid=1280","title":"Sales Agent Sizzle","sources":[{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle-0x1080-6439k","type":"video\/mp4","quality":"HQ"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle-0x720-3266k","type":"video\/mp4","quality":"HD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle-0x540-2160k","type":"video\/mp4","quality":"SD"},{"src":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle-0x360-958k","type":"video\/mp4","quality":"LO"}],"ccFiles":[{"url":"https:\/\/www.microsoft.com\/en-us\/dynamics-365\/blog\/wp-json\/bloginabox\/v1\/get-captions?url=https%3A%2F%2Fwww.microsoft.com%2Fcontent%2Fdam%2Fmicrosoft%2Fbade%2Fvideos%2Fproducts-and-services%2Fen-us%2Fmicrosoft-365%2F1307545-salesagentsizzle%2F1307545-salesagentsizzle_cc_en-us.ttml","locale":"en-us","ccType":"TTML"}],"downloadableFiles":[{"url":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle_transcript_en-us","locale":"en-us","mediaType":"transcript"},{"url":"https:\/\/cdn-dynmedia-1.microsoft.com\/is\/content\/microsoftcorp\/1307545-salesagentsizzle_audio_en-us","locale":"en-us","mediaType":"audio"}]};
+
+			if (currentTheme) {
+				options.playButtonTheme = currentTheme;
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				ump("ump-6af759cec4b68", options);
+			});
+		</script>
+	</div>
+	</figure>
+
+
+
+<h2 id="building-the-next-chapter-of-service-together" class="wp-block-heading">Building the next chapter of service, together </h2>
+
+
+
+<p class="wp-block-paragraph">
+  Being named a Leader in the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center is a milestone we share with our customers and partners, whose results show what agentic service can achieve. Next, we&#8217;re focused on making those outcomes easier to reach for every organization, putting customer context and AI agents in the hands of everyone who serves a customer. We look forward to building what comes next with you.
+</p>
+
+
+
+<h2 id="next-steps" class="wp-block-heading">Next steps</h2>
+
+
+
+<ul class="wp-block-list">
+<li class="wp-block-list-item"><a href="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" id="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center report</a>. </li>
+
+
+
+<li class="wp-block-list-item">Join us at <a href="https://ignite.microsoft.com/en-US/home" target="_blank" rel="noreferrer noopener">Microsoft Ignite 2026</a>, November 17–20 in San Francisco and online, to connect with industry leaders, explore hands-on demos, and see how agentic business applications are reshaping customer service—including my session on <a href="https://ignite.microsoft.com/en-US/sessions/BRK385" target="_blank" rel="noreferrer noopener">What’s new in Dynamics 365 CX</a>.</li>
+</ul>
+
+
+
+<div class="is-style-compact wp-block-bloginabox-theme-promotional">
+	
+<div class="promotional">
+	<div class="promotional__wrapper">
+		<div class="promotional__content-wrapper">
+			<div class="promotional__content">
+				
+
+<h2 id="explore-the-2026-gartner-magic-quadrant-for-crm-customer-engagement-center" class="wp-block-heading">Explore the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</h2>
+
+
+
+<p class="wp-block-paragraph">Read the report to learn more about the 2026 Gartner® Magic Quadrant™ evaluation for CRM Customer Engagement Center and Microsoft’s recognition as a Leader.</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a aria-label="Read the report: Explore the 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center" data-bi-an="Global CTA" data-bi-ct="cta link" data-bi-id="cta-block" class="wp-block-button__link wp-element-button" href="https://www.gartner.com/reprints/?id=00ThR00000S1xquUAB&amp;ct=261102&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the report</a></div>
+</div>
+
+			</div>
+		</div>
+			</div>
+</div>
+</div>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+
+
+
+<p class="wp-block-paragraph">
+  ¹ <em>Gartner, Magic Quadrant for CRM Customer Engagement Center, Pri Rathnayake, Jim Robinson, Drew Kraus, Francesco Vicchi, Devra Struzenberg, November 2, 2026.</em>
+</p>
+
+
+
+<p class="wp-block-paragraph">Gartner and Magic Quadrant are trademarks of Gartner, Inc., and/or its affiliates. </p>
+
+
+
+<p class="wp-block-paragraph">
+  Gartner does not endorse any company, vendor, product or service depicted in its publications, and does not advise technology users to select only those vendors with the highest ratings or other designation. Gartner publications consist of the opinions of Gartner’s business and technology insights organization and should not be construed as statements of fact. Gartner disclaims all warranties, expressed or implied, with respect to this publication, including any warranties of merchantability or fitness for a particular purpose.
+</p>
+
+
+
+<p class="wp-block-paragraph"><sup>2</sup> This graphic was published by Gartner, Inc. as part of a larger research document and should be evaluated in the context of the entire document. The Gartner document is available upon request from Microsoft.</p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/10/microsoft-is-named-a-leader-in-2026-gartner-magic-quadrant-for-crm-customer-engagement-center/">Microsoft is named a Leader in 2026 Gartner® Magic Quadrant™ for CRM Customer Engagement Center</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+</div>]]></content:encoded>
+					
+		
+		<enclosure url="https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/1307545-microsoftcrm" length="149191390" type="image/webp" />
+<enclosure url="https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/1307545-crmteams" length="3330662" type="image/webp" />
+<enclosure url="https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/1307545-salesagentsizzle" length="265025968" type="image/webp" />
+
+			</item><item>
+		<title>Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises</title>
+		<link>https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/</link>
+					<comments>https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/#respond</comments>
+		
+		<dc:creator><![CDATA[Georg Glantschnig]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 19:00:00 +0000</pubDate>
+				<category><![CDATA[ERP]]></category>
+		<guid isPermaLink="false">https://www.microsoft.com/en-us/dynamics-365/blog/?p=203681</guid>
+
+					<description><![CDATA[<p>Microsoft is named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises. Explore how Dynamics 365 helps manufacturers and distributors adapt operations with connected ERP, Copilot, and agents.</p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/">Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="cloudblogs">
+<p class="wp-block-paragraph">Microsoft has been named a Leader in the <a href="https://www.gartner.com/reprints/?id=00ThR00000STZf2UAH&amp;ct=261106&amp;st=sb" target="_blank" rel="noopener noreferrer">2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises</a>.¹ Gartner evaluates vendors on two dimensions: Ability to Execute and Completeness of Vision. We feel we focus on both because our customers need technology that runs their operations reliably today and can adapt as their markets, supply chains, and business models change. That balance is becoming increasingly important as manufacturers and distributors navigate shifting tariffs and trade policy, longer and less predictable lead times, a shortage of skilled workers, and mounting pressure on costs, cash flow, and margins.</p>
+
+
+<figure class="wp-block-image size-large"><img decoding="async" src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-902x1024.webp" alt="Gartner Magic Quadrant for Cloud ERP for Product-Centric Enterprises where Microsoft is a Leader" class="wp-image-203738 webp-format" srcset="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-902x1024.webp 902w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-264x300.webp 264w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-767x871.webp 767w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-1353x1536.webp 1353w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-1804x2048.webp 1804w" data-orig-src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/MQ-ERP-Product-Centric-902x1024.webp"></figure>
+
+
+
+<p class="wp-block-paragraph"><em>Figure 1. Gartner Magic Quadrant for Cloud ERP for Product-Centric Enterprises. Source: Gartner, 2 November 2026.</em></p>
+
+
+
+<p class="wp-block-paragraph">No two manufacturers or distributors run their businesses exactly alike, but they share a growing need to make informed decisions and act on them across increasingly complex operations. Recording transactions remains essential, but it&#8217;s no longer enough. Supplier disruptions can threaten production schedules and customer commitments, shifting demand can leave inventory in the wrong place, and changes in trade policy can force difficult sourcing and pricing decisions. As businesses expand into new channels, introduce asset-as-a-service models, or integrate acquisitions, those decisions reach further across the operation. We see the next evolution of ERP bringing together the operational depth businesses depend on with <a href="https://www.microsoft.com/en-us/copilot" id="https://www.microsoft.com/en-us/copilot" target="_blank" rel="noopener noreferrer">Microsoft Copilot</a> and agents that can help people understand what&#8217;s changing, evaluate its impact, and move from decisions to action across the business. </p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-ac48c7d9 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.gartner.com/reprints/?id=00ThR00000STZf2UAH&amp;ct=261106&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the 2026 Gartner® Magic Quadrant™ report</a></div>
+</div>
+
+
+
+<h2 id="copilot-and-agents-grounded-in-how-the-business-runs" class="wp-block-heading">Copilot and agents, grounded in how the business runs</h2>
+
+
+
+<p class="wp-block-paragraph">Planners, buyers, and plant managers spend much of their day gathering information, coordinating multistep work, and resolving exceptions. As <a href="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" id="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" target="_blank" rel="noopener noreferrer">Dynamics 365 ERP</a> applications join <a href="https://www.microsoft.com/en-us/copilot/features/work-iq" id="https://www.microsoft.com/en-us/copilot/features/work-iq" target="_blank" rel="noopener noreferrer">Work IQ</a>, Copilot, and agents help accomplish that work, based on enabled capabilities and available data. Microsoft Copilot Chat can help people find answers in the flow of work. <a href="https://www.microsoft.com/en-us/copilot/features/cowork" id="https://www.microsoft.com/en-us/copilot/features/cowork" target="_blank" rel="noopener noreferrer">Copilot Cowork</a> can execute multistep tasks, such as preparing a supply review, while people stay in control. And autonomous agents can help work through recurring exceptions, such as supplier changes, bringing people in when judgment is needed.</p>
+
+
+
+<p class="wp-block-paragraph">Two foundational investments make this possible. First, in January 2026, we made the <a href="https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/copilot/build-agent-mcp" id="https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/copilot/build-agent-mcp" target="_blank" rel="noopener noreferrer">Dynamics 365 ERP MCP server</a> generally available. It makes supported ERP capabilities accessible to agents through governed services, subject to each organization’s security and permissions. Second, through Work IQ, Copilot and agents can draw on business data and organizational context to provide more relevant assistance within applicable access controls. </p>
+
+
+
+<p class="wp-block-paragraph">
+  Here’s what that looks like in practice. When a supplier emails to push out a delivery date, a planner can use Copilot to investigate which customer orders may be at risk, drawing on relevant Dynamics 365 supply chain data and connected communications. In demand planning, generative insights can help explain what’s driving a forecast, including seasonality, trends, and external signals such as inflation and weather, giving planners more context before they act.
+</p>
+
+
+
+<p class="wp-block-paragraph">Agents can take this further. The Procurement Agent in <a href="https://www.microsoft.com/en-us/dynamics-365/products/supply-chain-management" id="https://www.microsoft.com/en-us/dynamics-365/products/supply-chain-management" target="_blank" rel="noopener noreferrer">Dynamics 365 Supply Chain Management</a>, currently in production-ready preview, can read supplier emails and summarize requested changes for purchaser review and approval. With impact analysis, buyers can assess how proposed changes may affect related sales, production, and transfer orders, helping them make decisions with a clearer view of the consequences. <a href="https://www.microsoft.com/en/customers/story/26293-farmlands-cooperative-dynamics-365-commerce" target="_blank" rel="noopener noreferrer">Farmlands Cooperative</a>, New Zealand’s largest farmer-owned rural supplier, consolidated seven ERP systems onto Dynamics 365. Today, the cooperative reports that the Procurement Agent handles half of its purchase-order-related email traffic, with people maintaining oversight, and expects Dynamics 365 to save the team about 20 hours a week.</p>
+
+
+
+<h2 id="a-deep-foundation-from-plan-to-ledger" class="wp-block-heading">A deep foundation, from plan to ledger</h2>
+
+
+
+<p class="wp-block-paragraph">
+  Every product business depends on planning, sourcing, production, inventory, fulfillment, and the financial results they drive. Dynamics 365 connects capabilities across plan to produce, source to pay, order to cash, and record to report. When a plan changes, connected operational and financial data can help teams understand the potential impact on production, inventory, orders, and costs. That foundation reaches from the plant floor to the trade counter and the store, with capabilities supporting project-driven manufacturing, equipment service, and sustainability reporting.
+</p>
+
+
+
+<p class="wp-block-paragraph">The foundation also supports new business models. As more manufacturers offer equipment as a service, <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/02/build-asset-as-a-service-models-with-rental-management-in-dynamics-365/" id="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/02/build-asset-as-a-service-models-with-rental-management-in-dynamics-365/" target="_blank" rel="noopener noreferrer">Rental Management in Dynamics 365 Supply Chain Management</a>, currently in public preview, can help connect activities across the rental lifecycle, from quote and contract through reservation, inspection, return, and billing, with related capabilities across Dynamics 365 applications.</p>
+
+
+
+<p class="wp-block-paragraph">That connected foundation can be particularly valuable when a business grows through acquisition. <a href="https://www.microsoft.com/en/customers/story/1725866759947911858-alltech-dynamics-365-alithya-discrete-manufacturing-usa" target="_blank" rel="noopener noreferrer">Alltech</a>, a global agricultural business, was running 16 ERP systems across 80 manufacturing sites after more than 20 acquisitions and is unifying them on Dynamics 365. “Microsoft Dynamics 365 has been the tool from the start because of its extraordinary flexibility,” said Christina Schull, Chief Information Officer at Alltech. Azelis, a specialty chemicals and food ingredients innovation service provider, went live on Dynamics 365 with 71 entities at once, helping reduce the time it spends integrating new entities. </p>
+
+
+
+<h2 id="extending-erp-capabilities-as-the-business-evolves" class="wp-block-heading">Extending ERP capabilities as the business evolves</h2>
+
+
+
+<p class="wp-block-paragraph">Fitting ERP to a business has traditionally meant custom code that could make every upgrade harder. Dynamics 365 takes a different approach. Built on the Microsoft Cloud, it brings together extensibility capabilities across <a href="https://www.microsoft.com/en-us/power-platform/dataverse" id="https://www.microsoft.com/en-us/power-platform/dataverse" target="_blank" rel="noopener noreferrer">Microsoft Dataverse</a>, <a href="https://www.microsoft.com/en-us/microsoft-fabric/" id="https://www.microsoft.com/en-us/microsoft-fabric/" target="_blank" rel="noopener noreferrer">Fabric</a>, <a href="https://www.microsoft.com/en-us/power-platform/" id="https://www.microsoft.com/en-us/power-platform/" target="_blank" rel="noopener noreferrer">Microsoft Power Platform</a>, and <a href="https://azure.microsoft.com/en-us" id="https://azure.microsoft.com/en-us" target="_blank" rel="noopener noreferrer">Azure</a>. With Copilot and Power Platform, organizations can explore ways to build extensions for their specific operations, such as a quality check for one product line or a view combining supplier performance with open orders. These extensions can use Dynamics 365 data and business logic while operating within applicable IT governance and security controls, configured for the relevant services, helping businesses adapt their processes while maintaining an upgradable ERP foundation.</p>
+
+
+
+<p class="wp-block-paragraph">Moving faster with agents shouldn’t mean giving up control. Dynamics 365 and the broader Microsoft Cloud provide identity, permissions, and compliance capabilities that can help organizations govern access to business data and supported actions. <a href="https://www.microsoft.com/en-us/microsoft-agent-365" id="https://www.microsoft.com/en-us/microsoft-agent-365" target="_blank" rel="noopener noreferrer">Microsoft Agent 365</a> is designed to help IT manage and govern agents across the organization, subject to applicable product availability and configuration. Our principle is simple, agents can recommend actions, people retain appropriate oversight and approval, and Dynamics 365 can record authorized transactions through established business process governance and controls.</p>
+
+
+
+<p class="wp-block-paragraph">Moving faster also shouldn’t mean taking on unnecessary implementation risk. Microsoft’s Success by Design framework provides guidance to help customers plan and implement Dynamics 365 solutions, and Dynamics 365 Activate is designed to support moving to Dynamics 365 with more confidence. To realize agentic value, FastTrack can offer templates to help provide a starting point for agent-supported scenarios. Our partners, from global systems integrators to independent software vendors (ISVs) and industry solution providers, bring localization and industry expertise to product-centric organizations.</p>
+
+
+
+<div class="is-style-compact wp-block-bloginabox-theme-promotional">
+	
+<div class="promotional">
+	<div class="promotional__wrapper">
+		<div class="promotional__content-wrapper">
+			<div class="promotional__content">
+				
+
+<h2 id="explore-the-2026-gartner-magic-quadrant-for-cloud-erp" class="wp-block-heading">Explore the 2026 Gartner® Magic Quadrant™ for Cloud ERP</h2>
+
+
+
+<p class="wp-block-paragraph">Explore the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises to learn more about the evaluation and Microsoft’s recognition as a Leader.</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a aria-label="Read the Gartner® report: Explore the 2026 Gartner® Magic Quadrant™ for Cloud ERP" data-bi-an="Global CTA" data-bi-ct="cta link" data-bi-id="cta-block" class="wp-block-button__link wp-element-button" href="https://www.gartner.com/reprints/?id=00ThR00000STZf2UAH&amp;ct=261106&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the Gartner® report</a></div>
+</div>
+
+			</div>
+		</div>
+			</div>
+</div>
+</div>
+
+
+
+<h2 id="looking-ahead" class="wp-block-heading">Looking ahead</h2>
+
+
+
+<p class="wp-block-paragraph">
+  Product-centric businesses will keep changing what they make, how they source it, and how they sell it. We believe the businesses that keep pace will be those with ERP systems that can adapt as their operations evolve, with Copilot and agents helping people work with trusted business data under appropriate controls. That’s the direction we’re taking with Dynamics 365, with ERP built for your business and AI built for work.
+</p>
+
+
+
+<ul class="wp-block-list">
+<li class="wp-block-list-item"><strong>Read the report:</strong> <a href="https://www.gartner.com/reprints/?id=00ThR00000STZf2UAH&amp;ct=261106&amp;st=sb" target="_blank" rel="noopener noreferrer">2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises</a>.</li>
+
+
+
+<li class="wp-block-list-item"><strong>Explore Dynamics 365:</strong> Learn more about <a href="https://www.microsoft.com/en-us/dynamics-365/products/supply-chain-management" target="_blank" rel="noopener noreferrer">Dynamics 365 Supply Chain Management</a> and <a href="https://www.microsoft.com/en-us/dynamics-365/products/commerce" target="_blank" rel="noopener noreferrer">Dynamics 365 Commerce</a>, or <a href="https://www.microsoft.com/en-us/dynamics-365/contact-us" target="_blank" rel="noopener noreferrer">take a guided tour</a>. [links]</li>
+
+
+
+<li class="wp-block-list-item"><strong>Join us at <a href="https://ignite.microsoft.com/en-US/home" target="_blank" rel="noopener noreferrer">Microsoft Ignite</a>:</strong> November 17–20, 2026. </li>
+
+
+
+<li class="wp-block-list-item"><strong>Explore our other perspectives:</strong> Read our blogs on the 2026 <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/10/22/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-finance/" target="_blank" rel="noopener noreferrer">Gartner® Magic Quadrant™ for Cloud ERP for Finance</a> and <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/05/microsoft-dynamics-365-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-service-centric-enterprises/" target="_blank" rel="noopener noreferrer">Cloud ERP for Service-Centric Enterprises</a>.</li>
+</ul>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<p class="wp-block-paragraph">¹ Gartner, Magic Quadrant for Cloud ERP for Product-Centric Enterprises, Tomas Kienast, Johan Jartelius, Dennis Gaughan, Greg Leiter, Dixie John, 2 November 2026.</p>
+
+
+
+<p class="wp-block-paragraph">Gartner does not endorse any company, vendor, product or service depicted in its publications, and does not advise technology users to select only those vendors with the highest ratings or other designation. Gartner publications consist of the opinions of Gartner’s business and technology insights organization and should not be construed as statements of fact. Gartner disclaims all warranties, expressed or implied, with respect to this publication, including any warranties of merchantability or fitness for a particular purpose. </p>
+
+
+
+<p class="wp-block-paragraph">Gartner and Magic Quadrant are trademarks of Gartner, Inc., and/or its affiliates. </p>
+
+
+
+<p class="wp-block-paragraph">
+  This graphic was published by Gartner, Inc. as part of a larger research document and should be evaluated in the context of the entire document. The Gartner document is available upon request from Microsoft.
+</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/">Microsoft named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Product-Centric Enterprises</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+</div>]]></content:encoded>
+					
+					<wfw:commentRss>https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item><item>
+		<title>Microsoft Dynamics 365 named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises</title>
+		<link>https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/05/microsoft-dynamics-365-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-service-centric-enterprises/</link>
+		
+		<dc:creator><![CDATA[Georg Glantschnig]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 18:30:00 +0000</pubDate>
+				<category><![CDATA[ERP]]></category>
+		<category><![CDATA[Microsoft Copilot]]></category>
+		<guid isPermaLink="false">https://www.microsoft.com/en-us/dynamics-365/blog/?p=203598</guid>
+
+					<description><![CDATA[<p>See why Dynamics 365 was named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises.</p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/05/microsoft-dynamics-365-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-service-centric-enterprises/">Microsoft Dynamics 365 named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<div class="cloudblogs">
+<p class="wp-block-paragraph">
+  Microsoft has been named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises.¹ We are proud of the recognition, and we believe it reflects a shift we see across professional services, IT services, staffing, and managed services: clients are changing what they buy.
+</p>
+
+
+
+<p class="wp-block-paragraph">Clients that once bought hours increasingly want outcomes, such as a completed implementation, a defined level of service, or a managed operation for a fixed monthly fee. This can shift more delivery risk from the client to the service provider. When the price is fixed and the effort is not, margin is decided after the contract is signed. It depends on who is staffed on the work, what is purchased to deliver it, and how quickly changes reach billing. Those decisions are made by different teams, often in different systems. <a href="https://www.microsoft.com/en-us/dynamics-365" id="https://www.microsoft.com/en-us/dynamics-365" target="_blank" rel="noopener noreferrer">Dynamics 365</a> is designed to help bring those teams and decisions together on a connected foundation. </p>
+
+
+
+<p class="wp-block-paragraph">Gartner evaluates vendors on their Completeness of Vision and Ability to Execute. </p>
+
+
+
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-ac48c7d9 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link has-text-align-center wp-element-button" href="https://www.gartner.com/doc/reprints?id=00ThR00000SUYfaUAH&amp;ct=261105&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the Gartner® Magic Quadrant™ report</a></div>
+</div>
+
+
+<figure data-wp-context="{&quot;imageId&quot;:&quot;6af759cecda19&quot;}" data-wp-interactive="core/image" data-wp-key="6af759cecda19" class="wp-block-image size-large wp-lightbox-container"><img decoding="async" data-wp-class--hide="state.isContentHidden" data-wp-class--show="state.isContentVisible" data-wp-init="callbacks.setButtonStyles" data-wp-on--click="actions.showLightbox" data-wp-on--load="callbacks.setButtonStyles" data-wp-on--pointerdown="actions.preloadImage" data-wp-on--pointerenter="actions.preloadImageWithDelay" data-wp-on--pointerleave="actions.cancelPreload" data-wp-on-window--resize="callbacks.setButtonStyles" src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-902x1024.webp" alt="2026 Gartner Magic Quadrant for Cloud ERP for Service-Centric Enterprises, showing vendors positioned across the Leaders, Challengers, Visionaries, and Niche Players quadrants." class="wp-image-203700 webp-format" srcset="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-902x1024.webp 902w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-264x300.webp 264w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-768x872.webp 768w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-1353x1536.webp 1353w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-1804x2048.webp 1804w, https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1.webp 2000w" data-orig-src="https://www.microsoft.com/en-us/dynamics-365/blog/wp-content/uploads/2026/11/figure1-902x1024.webp"><button
+			class="lightbox-trigger"
+			type="button"
+			aria-haspopup="dialog"
+			data-wp-bind--aria-label="state.thisImage.triggerButtonAriaLabel"
+			data-wp-init="callbacks.initTriggerButton"
+			data-wp-on--click="actions.showLightbox"
+			data-wp-style--right="state.thisImage.buttonRight"
+			data-wp-style--top="state.thisImage.buttonTop"
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 12 12">
+				<path fill="#fff" d="M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z" />
+			</svg>
+		</button></figure>
+
+
+
+<h2 id="running-a-services-business-takes-the-whole-erp" class="wp-block-heading">
+  Running a services business takes the whole ERP
+</h2>
+
+
+
+<p class="wp-block-paragraph">
+  A consulting firm, a staffing company, an IT services provider, and a facilities management business deliver very different services. What they share is an operating model in which people are both the main source of value and the largest cost. Their profitability depends on how well they connect their workforce, client commitments, purchasing, and financial management. A change in labor rates or supplier pricing can affect multiple contracts, each with its own terms, and the consequences can extend from workforce planning to revenue, margin, and working capital.
+</p>
+
+
+
+<p class="wp-block-paragraph">That is why we approach Service-Centric ERP as a connected portfolio. <a href="https://www.microsoft.com/en-us/dynamics-365/products/finance" id="https://www.microsoft.com/en-us/dynamics-365/products/finance" target="_blank" rel="noopener noreferrer">Dynamics 365 Finance</a> supports financial management, order to cash, and revenue recognition across legal entities and countries. <a href="https://www.microsoft.com/en-us/dynamics-365/products/project-operations" id="https://www.microsoft.com/en-us/dynamics-365/products/project-operations" target="_blank" rel="noopener noreferrer">Dynamics 365 Project Operations</a> connects contracts, planning, resourcing, delivery, and project accounting. <a href="https://www.microsoft.com/en-us/dynamics-365/products/human-resources" id="https://www.microsoft.com/en-us/dynamics-365/products/human-resources" target="_blank" rel="noopener noreferrer">Dynamics 365 Human Resources</a> supports the workforce from hiring to retirement; <a href="https://www.microsoft.com/en-us/dynamics-365/products/supply-chain-management" id="https://www.microsoft.com/en-us/dynamics-365/products/supply-chain-management" target="_blank" rel="noopener noreferrer">Dynamics 365 Supply Chain Management</a> brings sourcing and procurement onto the same platform; and <a href="https://www.microsoft.com/en-us/dynamics-365/products/field-service" id="https://www.microsoft.com/en-us/dynamics-365/products/field-service" target="_blank" rel="noopener noreferrer">Dynamics 365 Field Service</a> extends delivery to customer sites. Because these applications share a common platform and data foundation, organizations can connect relevant information and processes across the business, with visibility governed by configuration and user permissions. </p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://www.microsoft.com/en/customers/story/23234-lenovo-pccw-solutions-dynamics-365-project-operations">Lenovo PCCW Solutions</a>, an IT services provider serving customers across Asia-Pacific, shows why that connection matters. As its business expanded, the company needed greater visibility into project performance and more consistent processes across its operations. With Dynamics 365 Project Operations, Lenovo PCCW Solutions brought project quotes, contracts, resource management, delivery, billing, and financial information together. The company reports achieving 100% contract compliance, improving resource utilization, and gaining real-time visibility into project revenue, costs, and profitability. These improvements help its teams manage projects more efficiently and make faster, data-driven decisions.
+</p>
+
+
+
+<h2 id="software-that-fits-the-way-service-work-happens" class="wp-block-heading">
+  Software that fits the way service work happens
+</h2>
+
+
+
+<p class="wp-block-paragraph">
+  For years, service professionals have had to fit their work to their software, stopping client work to open an application, find the right form, and re-enter what they already know. In a business whose product is its people&#8217;s time, that cost can affect utilization and margin. Consultants, project managers, and service leaders often work in Microsoft Teams, Outlook, and client meetings, so bringing relevant business context into those workflows can reduce unnecessary application switching.
+</p>
+
+
+
+<p class="wp-block-paragraph">Copilot can help enable that experience. As we evolve <a href="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" id="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" target="_blank" rel="noopener noreferrer">Dynamics 365 ERP</a> applications to use <a href="https://www.microsoft.com/en-us/copilot/features/work-iq" id="https://www.microsoft.com/en-us/copilot/features/work-iq" target="_blank" rel="noopener noreferrer">Work IQ</a>, Copilot can bring project, workforce, and financial context into the tools people already use. For example, a project manager can check budget, bookings, and billing status for an engagement from Teams, and a practice leader can ask how utilization is trending across a region without waiting for a report. Where supported and appropriately configured, Copilot grounds responses in authorized business data and respects applicable user permissions. </p>
+
+
+
+<p class="wp-block-paragraph">
+  Within Dynamics 365, AI can help with the administration that surrounds delivery. A time-phased staffing view in Dynamics 365 Project Operations brings task assignments, project bookings, and available capacity into a single timeline for resource managers. The Time Entry, Expense, and Approvals agents can draft time entries from assignments and past patterns, prepare expense entries from receipts, and review entries against configured policies, helping managers focus on the ones that need attention. In Dynamics 365 Human Resources, AI-assisted candidate assessment and onboarding can help prepare new team members for client work.
+</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://www.microsoft.com/en/customers/story/23521-long-view-dynamics-365-project-operations" target="_blank" rel="noopener noreferrer">Long View</a>, an IT services provider with nearly 1,300 employees, most of them on billable projects, runs on Dynamics 365 Finance, Dynamics 365 Project Operations, Dynamics 365 Human Resources, and <a href="https://www.microsoft.com/en-us/dynamics-365/products/sales" id="https://www.microsoft.com/en-us/dynamics-365/products/sales" target="_blank" rel="noopener noreferrer">Dynamics 365 Sales</a>. Long View reports reducing the time required to prepare 100 invoices from approximately 10 hours to two hours, while saving $440,000 by eliminating 22 customizations.</p>
+
+
+
+<h2 id="keeping-contracts-delivery-and-billing-in-step" class="wp-block-heading">
+  Keeping contracts, delivery, and billing in step
+</h2>
+
+
+
+<p class="wp-block-paragraph">
+  Outcome-based and recurring services are more likely to support expected business results when commercial changes reach the financials as quickly as they reach the work. Change order management in Dynamics 365 Project Operations provides a structured, auditable process for incorporating contract changes into billing schedules, helping organizations reflect approved scope changes as added revenue instead of unbilled effort. Subscription billing for projects supports recurring billing schedules and flexible, tiered pricing for firms that combine project work with managed services. Organizations may also recognize project revenue against the original cost estimate where that accounting approach applies. For service organizations whose work extends into the field, work orders can be created directly from project tasks, helping organizations plan, cost, and bill field work as part of the same engagement.
+</p>
+
+
+
+<h2 id="what-comes-next" class="wp-block-heading">
+  What comes next
+</h2>
+
+
+
+<p class="wp-block-paragraph">
+  As more clients buy outcomes, service organizations will increasingly be measured by the results they deliver. Success requires a clear understanding of what they&#8217;ve committed to deliver, who is doing the work, what it costs, and what they earn across every engagement. It also means giving people more time to focus on the work clients value.
+</p>
+
+
+
+<p class="wp-block-paragraph">
+  That is the future we are building toward with Dynamics 365, connecting workforce, delivery, purchasing, and financial operations on a trusted foundation. With Copilot, relevant business context becomes accessible in the tools people already use, bringing ERP into the flow of work. And as agentic capabilities extend ERP data and business logic to other agents and experiences, organizations gain new ways to execute business processes. These capabilities will operate within the security and governance of Dynamics 365, with experiences dependent on product availability, configuration, access, and permissions.
+</p>
+
+
+
+<ul class="wp-block-list">
+<li class="wp-block-list-item"><a href="https://www.gartner.com/doc/reprints?id=00ThR00000SUYfaUAH&amp;ct=261105&amp;st=sb" id="https://www.gartner.com/doc/reprints?id=00ThR00000SUYfaUAH&amp;ct=261105&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the report: 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises</a>.</li>
+
+
+
+<li class="wp-block-list-item"><a href="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" id="https://www.microsoft.com/en-us/dynamics-365/solutions/erp" target="_blank" rel="noopener noreferrer">Explore Dynamics 365 ERP for service-centric organizations</a> or <a href="https://www.microsoft.com/en-us/dynamics-365/contact-us" id="https://www.microsoft.com/en-us/dynamics-365/contact-us" target="_blank" rel="noopener noreferrer">request a demo</a>.</li>
+
+
+
+<li class="wp-block-list-item">See Dynamics 365 at <a href="https://ignite.microsoft.com/en-US/home" id="https://ignite.microsoft.com/en-US/home" target="_blank" rel="noopener noreferrer">Microsoft Ignite, November 17–20, 2026</a>.</li>
+
+
+
+<li class="wp-block-list-item"> <strong>Explore our other perspectives:</strong> Read our blogs on the 2026 <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/10/22/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-finance/" target="_blank" rel="noopener">Gartner® Magic Quadrant™ for Cloud ERP for Finance</a> and <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/06/microsoft-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-product-centric-enterprises/" target="_blank" rel="noopener">Cloud ERP for Product-Centric Enterprises</a>.</li>
+</ul>
+
+
+
+<div class="is-style-compact wp-block-bloginabox-theme-promotional">
+	
+<div class="promotional">
+	<div class="promotional__wrapper">
+		<div class="promotional__content-wrapper">
+			<div class="promotional__content">
+				
+
+<h2 id="microsoft-named-a-leader-by-gartner" class="wp-block-heading">Microsoft named a Leader by Gartner®</h2>
+
+
+
+<p class="wp-block-paragraph">Read the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises to explore Gartner evaluation of Microsoft and the cloud ERP market for service-centric enterprises.</p>
+
+
+
+<div class="wp-block-buttons is-layout-flex wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a aria-label="Read the Gartner® Magic Quadrant™ report: Microsoft named a Leader by Gartner®" data-bi-an="Global CTA" data-bi-ct="cta link" data-bi-id="cta-block" class="wp-block-button__link wp-element-button" href="https://www.gartner.com/doc/reprints?id=00ThR00000SUYfaUAH&amp;ct=261105&amp;st=sb" target="_blank" rel="noopener noreferrer">Read the Gartner® Magic Quadrant™ report</a></div>
+</div>
+
+			</div>
+		</div>
+			</div>
+</div>
+</div>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<p class="wp-block-paragraph">¹ Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises, Johan Jartelius, Dixie John, Tomas Kienast, Greg Leiter, Sam Grinter, Chaithanya Paradarami, 2 November 2026.</p>
+
+
+
+<p class="wp-block-paragraph"><em>Gartner and Magic Quadrant are trademarks of Gartner, Inc. and/or its affiliates. Gartner does not endorse any company, vendor, product or service depicted in its publications, and does not advise technology users to select only those vendors with the highest ratings or other designation. Gartner publications consist of the opinions of Gartner&#8217;s business and technology insights organization and should not be construed as statements of fact. Gartner disclaims all warranties, expressed or implied, with respect to this publication, including any warranties of merchantability or fitness for a particular purpose. This graphic was published by Gartner, Inc. as part of a larger research document and should be evaluated in the context of the entire document. The Gartner document is available upon request from Microsoft.</em>
+</p>
+<p>The post <a href="https://www.microsoft.com/en-us/dynamics-365/blog/business-leader/2026/11/05/microsoft-dynamics-365-named-a-leader-in-the-2026-gartner-magic-quadrant-for-cloud-erp-for-service-centric-enterprises/">Microsoft Dynamics 365 named a Leader in the 2026 Gartner® Magic Quadrant™ for Cloud ERP for Service-Centric Enterprises</a> appeared first on <a href="https://www.microsoft.com/en-us/dynamics-365/blog">Microsoft Dynamics 365 Blog</a>.</p>
+</div>]]></content:encoded>
+					
+		
+		
+			</item>
+	</channel>
+</rss>

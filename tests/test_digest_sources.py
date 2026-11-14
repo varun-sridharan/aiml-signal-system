@@ -55,7 +55,7 @@ class Transcription(unittest.TestCase):
 
     def test_a_source_without_an_address_has_none(self):
         by_name = {r.name: r for r in sources.load_digest_rows()}
-        self.assertIsNone(by_name["SAP"].domain)
+        self.assertEqual(by_name["SAP"].domain, "news.sap.com")      # 2026-11-14: its feed was read
         self.assertIsNone(by_name["Ollama"].domain)
         self.assertEqual(by_name["The New Stack"].domain, "thenewstack.io")
 
@@ -88,7 +88,7 @@ class Seeding(unittest.TestCase):
         sources.seed_digest(self.conn)
         again = sources.seed_digest(self.conn)
         self.assertEqual(again, 0)                                           # idempotent
-        self.assertEqual(self.conn.execute("SELECT tier, domain FROM sources WHERE id = 'sap'").fetchone(), ("A", None))
+        self.assertEqual(self.conn.execute("SELECT tier, domain FROM sources WHERE id = 'sap'").fetchone(), ("A", "news.sap.com"))
         self.assertEqual(self.conn.execute("SELECT id, tier, domain FROM sources WHERE id = 'anthropic'").fetchone(), before)
         row = self.conn.execute("SELECT tier, reputation_prior, domain FROM sources WHERE id = 'the-new-stack'").fetchone()
         self.assertEqual(row, ("C", "medium", "thenewstack.io"))

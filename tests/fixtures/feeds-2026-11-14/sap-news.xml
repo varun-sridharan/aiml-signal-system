@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>SAP News Center</title>
+	<atom:link href="https://news.sap.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://news.sap.com/</link>
+	<description>Company &#38; Customer Stories &#124; Press Room</description>
+	<lastBuildDate>Thu, 12 Nov 2026 16:57:22 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>SAP Named a Leader in Two 2026 IDC MarketScapes: Worldwide Warehouse Management for Manufacturing and for Retail</title>
+		<link>https://news.sap.com/2026/11/sap-leader-idc-marketscapes-warehouse-management-manufacturing-retail/</link>
+		
+		<dc:creator><![CDATA[Till Dengel]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 12:15:00 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Industries]]></category>
+		<category><![CDATA[Solutions]]></category>
+		<category><![CDATA[Supply chain management]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[IDC]]></category>
+		<category><![CDATA[IDC Marketscape]]></category>
+		<category><![CDATA[Manufacturing]]></category>
+		<category><![CDATA[Retail]]></category>
+		<category><![CDATA[SAP Extended Warehouse Management]]></category>
+		<category><![CDATA[SAP Logistics Management]]></category>
+		<category><![CDATA[Warehouse management]]></category>
+		<guid isPermaLink="false">https://news.sap.com/?p=249689</guid>
+
+					<description><![CDATA[We continue to work with our customers to turn innovation into better warehouse operations and business outcomes.]]></description>
+										<content:encoded><![CDATA[
+<p class="has-large-font-size wp-block-paragraph">SAP has been named a Leader in both the 2026 IDC MarketScape for Worldwide Warehouse Management for Manufacturing* and the 2026 IDC MarketScape for Worldwide Warehouse Management for Retail**. We believe this recognition reflects SAP’s continued focus on helping companies run increasingly complex warehouse operations while connecting logistics more closely with the rest of the business.</p>
+
+
+
+<p class="wp-block-paragraph">Warehouse operations are being reshaped by rising fulfillment expectations, labor constraints, automation, and AI. At the same time, warehouses need to coordinate with a growing number of processes and systems beyond their four walls.</p>
+
+
+
+<p class="wp-block-paragraph">The requirements can look very different depending on the industry. Manufacturers need to synchronize warehouse operations with production, material availability, quality processes, and automated equipment. Retailers need to manage inventory and fulfillment across stores, distribution centers, e-commerce, and other channels, often while navigating dramatic changes in volume during peak periods.</p>
+
+
+
+<p class="wp-block-paragraph">Modern warehouse management needs to bring these pieces together.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner alignleft cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">Keep pace with demand, minimize costs, and maintain sustainable, risk-resilient warehouse operations</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-right is-layout-flex wp-container-core-buttons-is-layout-b507c051 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/products/scm/extended-warehouse-management.html" target="_blank" rel="noopener">Learn how</a></div>
+</div>
+</div></div>
+
+
+
+<h2 id="h-connecting-warehouse-operations-across-the-business" class="wp-block-heading"><strong>Connecting warehouse operations across the business</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Modelling end-to-end workflows has long been central to our approach to warehouse management at SAP. <a href="https://www.sap.com/products/scm/extended-warehouse-management.html" target="_blank" rel="noreferrer noopener">SAP Extended Warehouse Management</a> (SAP EWM) helps companies manage high-volume warehouse operations while connecting warehousing with processes across production, transportation, quality management, and the broader SAP S/4HANA environment.</p>
+
+
+
+<p class="wp-block-paragraph">For manufacturing, this can include staging materials for production, just-in-time and just-in-sequence supply, managing quality-controlled inventory, and tracking batches and serial numbers. SAP EWM also supports integration with warehouse automation, helping companies coordinate inventory and warehouse tasks with conveyors, sorters, automated storage and retrieval systems, and other equipment.</p>
+
+
+
+<p class="wp-block-paragraph">Retail brings a different set of demands. SAP EWM can support retail and omnichannel warehouse operations and connect with <a href="https://www.sap.com/products/scm/retail-merchandise-mgmt.html" target="_blank" rel="noreferrer noopener">SAP S/4HANA Retail</a>, <a href="https://www.sap.com/products/crm/commerce-cloud.html" target="_blank" rel="noreferrer noopener">SAP Commerce Cloud</a>, and order management capabilities. SAP also offers <a href="https://www.sap.com/products/scm/logistics-management.html" target="_blank" rel="noreferrer noopener">SAP Logistics Management</a> for companies looking to address less complex warehouse operations. </p>
+
+
+
+<p class="wp-block-paragraph">Together, these capabilities can give companies flexibility to support different warehouse requirements while helping to keep logistics connected with the processes that surround it.</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://www.sap.com/documents/1359013" target="_blank" rel="noreferrer noopener">Mondelēz Australia shows what this can look like at scale</a>. At its new 47,000-square-meter Melbourne distribution center, SAP EWM integrates with an automated storage and retrieval system that orchestrates more than 56,000 pallets in automated storage, while the operation maintains more than 95% on-time, in-full delivery performance.</p>
+
+
+
+<p class="wp-block-paragraph">“The collaborative partnership enabled Mondelēz to realize the full potential of SAP’s warehouse and supply chain capabilities,” said Anna Reid, director, Customer Service &amp; Logistics, Mondelēz Australia.</p>
+
+
+
+<h2 id="h-bringing-more-intelligence-into-the-warehouse" class="wp-block-heading"><strong>Bringing more intelligence into the warehouse</strong></h2>
+
+
+
+<p class="wp-block-paragraph">AI is adding another dimension to warehouse management. Warehouses create enormous amounts of operational data. The opportunity is to use that data to help teams understand what is happening, anticipate what is likely to happen next, and take action more efficiently.</p>
+
+
+
+<p class="wp-block-paragraph">SAP continues to bring AI into warehouse operations in practical ways. Predictive capabilities can support areas such as product slotting and labor planning, while analytics and simulation can help companies identify opportunities to improve warehouse processes. SAP EWM also integrates with <a href="https://www.signavio.com/products/process-intelligence/" target="_blank" rel="noreferrer noopener">SAP Signavio Process Intelligence</a> to help organizations analyze process performance and identify inefficiencies.</p>
+
+
+
+<p class="wp-block-paragraph">We are building on that foundation with Joule and agentic AI. Agents can help warehouse teams address routine tasks and exceptions with less manual coordination, connecting decisions with relevant business data and processes.</p>
+
+
+
+<p class="wp-block-paragraph">SAP’s WMS solutions already can deliver a broad set of generative AI and AI-assisted predictive capabilities, along with agentic AI capabilities available to customers today, backed by a robust roadmap of AI innovations designed to help keep customers at the forefront of warehouse innovation.</p>
+
+
+
+<p class="wp-block-paragraph">SAP is also bringing AI into the physical world. With <a href="https://news.sap.com/2026/10/sap-unveils-physical-ai-extends-autonomous-enterprise-real-world-sap-teched/" target="_blank" rel="noreferrer noopener">physical AI</a>, SAP is working to connect business processes and context with robots and other physical systems. In warehouse scenarios, this can enable tasks from SAP EWM to help drive physical execution and return operational results back into SAP, working to create a closed loop between enterprise decisions and warehouse operations.</p>
+
+
+
+<p class="wp-block-paragraph">As AI and automation take on a greater role in the warehouse, people remain central to operations. Trust and governance are essential, with people continuing to provide oversight and control while these technologies help warehouse teams reduce manual work, improve productivity, and respond more quickly to changing conditions.</p>
+
+
+
+<h2 id="h-delivering-value-across-warehouse-operations" class="wp-block-heading"><strong>Delivering value across warehouse operations</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Warehouse management continues to evolve as companies connect operations more closely with production, transportation, and fulfillment while introducing new levels of automation and intelligence.</p>
+
+
+
+<p class="wp-block-paragraph">We believe the opportunity is to bring these capabilities together in ways that deliver practical results. That means helping companies move goods more efficiently, make better use of people and assets, maintain visibility and control over inventory, and adapt warehouse operations as business needs change.</p>
+
+
+
+<p class="wp-block-paragraph">We are proud to be recognized as a Leader in both of these IDC MarketScape vendor assessments. We believe the recognition reinforces the direction we are taking with SAP Extended Warehouse Management and SAP Logistics Management, and we will continue working with our customers to turn innovation into better warehouse operations and business outcomes.</p>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+
+
+
+<p class="has-small-font-size wp-block-paragraph">Till Dengel is global head of Product Marketing for Logistics and Asset &amp; Service Management at SAP.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">Get weekly updates from the SAP News Center, delivered straight to your inbox</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-3e41869c wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/campaigns/nl/sap-news-center-newsletter" target="_blank" rel="noopener">Sign up for the newsletter</a></div>
+</div>
+</div></div>
+
+
+
+<p class="has-small-font-size wp-block-paragraph">*<em>IDC MarketScape: Worldwide Warehouse Management for Manufacturing 2026 Vendor Assessment</em>, October 2026, IDC #US53013526<br>**<em>IDC MarketScape: Worldwide Warehouse Management for Retail 2026 Vendor Assessment</em>, October 2026, IDC #US53701926</p>
+]]></content:encoded>
+					
+		
+		
+			</item><item>
+		<title>Successful SAP Transformation Starts With Business Processes, Not Tech</title>
+		<link>https://news.sap.com/2026/11/successful-sap-transformation-business-processes/</link>
+		
+		<dc:creator><![CDATA[Tim Clark]]></dc:creator>
+		<pubDate>Fri, 13 Nov 2026 11:15:00 +0000</pubDate>
+				<category><![CDATA[Artificial Intelligence]]></category>
+		<category><![CDATA[Business Technology Platform]]></category>
+		<category><![CDATA[Technology]]></category>
+		<category><![CDATA[Transformation management]]></category>
+		<category><![CDATA[SAP BTP]]></category>
+		<category><![CDATA[SAP LeanIX]]></category>
+		<category><![CDATA[SAP Signavio]]></category>
+		<guid isPermaLink="false">https://news.sap.com/?p=249423</guid>
+
+					<description><![CDATA[Connecting business processes, architecture, data, and human decision-making are key to successful transformation.]]></description>
+										<content:encoded><![CDATA[
+<p class="has-large-font-size wp-block-paragraph">As enterprises embrace AI and modernize their SAP systems, a new book suggests that connecting business processes, architecture, data, and human decision-making is key to successful transformation.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner alignleft cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">SAP BTP: Powering applications, data, and AI to move business forward</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-right is-layout-flex wp-container-core-buttons-is-layout-b507c051 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/products/technology-platform.html" target="_blank" rel="noopener">Learn how</a></div>
+</div>
+</div></div>
+
+
+
+<p class="wp-block-paragraph">Enterprise transformation has never suffered from a shortage of technology. Businesses the world over have spent decades investing in new applications, modernizing infrastructure, and implementing systems designed to make business operations faster, smarter, and more efficient.</p>
+
+
+
+<p class="wp-block-paragraph">However, connecting those investments to measurable business outcomes remains an ongoing challenge. As artificial intelligence introduces daily innovations and opportunities for automation and decision-making, the stakes couldn’t be higher.</p>
+
+
+
+<p class="wp-block-paragraph">For Kumar Piraviperumal, semiconductor industry leader in the IBM HiTech practice, addressing these challenges begins not with technology, but with understanding how a business actually operates. &#8220;My belief is process is the base of all transformation,&#8221; he said during a recent SAP PRESS book launch webcast.</p>
+
+
+
+<p class="wp-block-paragraph">That primary belief is central to his new book, <a href="https://www.amazon.com/Integrating-Architecture-Processes-SAP-BTP/dp/1493228803" target="_blank" rel="noreferrer noopener">Integrating Architecture, Processes, and AI on SAP BTP</a>, which explores how organizations can connect business processes, enterprise architecture, data, AI, and employee adoption into meaningful transformation. </p>
+
+
+
+<p class="wp-block-paragraph">Instead of categorizing these capabilities as separate technology initiatives, Piraviperumal believes organizations need a connected foundation that carries business intent from process design through application development, deployment, and ongoing governance.</p>
+
+
+
+<h2 id="h-turning-transformation-theory-into-practice" class="wp-block-heading"><strong>Turning transformation theory into practice</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">Piraviperumal&#8217;s book is based on an experience he had working on a transformation program for an $8 billion media company operating across 47 countries.</p>
+
+
+
+<p class="wp-block-paragraph">The organization ran complex business processes, and his team was among the early adopters attempting to connect SAP Signavio for process modeling with SAP LeanIX for enterprise architecture.</p>
+
+
+
+<p class="wp-block-paragraph">The work proved challenging. As the team encountered integration problems, missing information, and inconsistent approaches, Piraviperumal documented what worked, what failed, and how to standardize the process.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;The motivation was basically trying to create a practical book for everybody,&#8221; he explained.</p>
+
+
+
+<p class="wp-block-paragraph">The end result is a guide intended for practitioners who need to translate business requirements into functioning enterprise applications.</p>
+
+
+
+<p class="wp-block-paragraph">Its central theme is that transformation requires more than documentation or architectural diagrams. Organizations must create continuity between the processes, systems and the people responsible for using them.</p>
+
+
+
+<h2 id="h-connecting-the-enterprise-from-end-to-end" class="wp-block-heading"><strong>Connecting the enterprise from end to end</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">Piraviperumal believes enterprise transformation is a progression that begins with business strategy and extends through value streams, capabilities, processes, resources, data, and technology in the following ways:</p>
+
+
+
+<ul class="wp-block-list">
+<li><strong>SAP Signavio</strong> provides the process foundation, enabling organizations to analyze how work is performed and identify opportunities for improvement using operational data.</li>
+
+
+
+<li><strong>SAP LeanIX</strong> connects those processes to the underlying application architecture, while SAP Business Technology Platform (SAP BTP) provides capabilities for integration, development, and AI-enabled execution.</li>
+
+
+
+<li><strong>WalkMe</strong> adds another critical dimension: helping employees adopt new processes and applications.</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">This begs the question: How do you make these different technologies work together without losing the connections between business requirements and technical execution?</p>
+
+
+
+<p class="wp-block-paragraph">One method is through identifiers. A process modeled in SAP Signavio may have a different identifier in SAP LeanIX and another in WalkMe, making it difficult to maintain a consistent view across systems.</p>
+
+
+
+<p class="wp-block-paragraph">Piraviperumal’s team created identifier consistency by creating a common data structure that maps identifiers and connects them to the applications being developed.</p>
+
+
+
+<p class="wp-block-paragraph">This “canonical data spine” strategy establishes traceability across the transformation life cycle, which becomes extremely valuable when something goes wrong.</p>
+
+
+
+<p class="wp-block-paragraph">A defect in a business application, for example, might originate in the software itself, the original process design, or a business process that has become outdated. Properly managing those connections helps organizations identify the source of a problem rather than treating every issue as an isolated technical failure.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Traceability is one thing which I keep stressing in this book,&#8221; said Piraviperumal.</p>
+
+
+
+<h2 id="h-employee-adoption-before-deployment" class="wp-block-heading"><strong>Employee adoption before deployment</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">Piraviperumal emphasizes that organizations should consider how employees will interact with new systems before development begins, rather than treating change management as a final implementation activity.</p>
+
+
+
+<p class="wp-block-paragraph">His book underscores the importance of digital adoption concepts before moving into the technical build.</p>
+
+
+
+<p class="wp-block-paragraph">Using WalkMe, organizations can connect employee guidance and adoption information to the business processes being transformed. The objective is to understand how new workflows will affect employees, anticipate friction, and improve the likelihood that technology investments deliver their intended value.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Business is not interested in SAP,&#8221; said Piraviperumal. &#8220;They are interested in outcomes.&#8221;</p>
+
+
+
+<h2 id="h-from-process-models-to-ai-generated-applications" class="wp-block-heading"><strong>From process models to AI-generated applications</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">One of the book&#8217;s most practical themes is the opportunity to use existing business process models as inputs for AI-assisted application development.</p>
+
+
+
+<p class="wp-block-paragraph">During the webcast, Piraviperumal demonstrated how a process designed in SAP Signavio could help generate an application for SAP Analytics Cloud, using a financial close-to-rolling-forecast process.</p>
+
+
+
+<p class="wp-block-paragraph">By exporting the approved process model and combining it with architectural information from SAP LeanIX, his team used AI capabilities to identify process issues, generate configuration information, and produce code supporting application development.</p>
+
+
+
+<p class="wp-block-paragraph">The demonstration also incorporated IBM watsonx and other tools developed by Cognitus.</p>
+
+
+
+<p class="wp-block-paragraph">Instead of relying on an open-ended natural language prompt, the approach instead relies on an existing business process model as the foundation for generating the application. This strategy gives developers a structured starting point while preserving connections to the original business requirements.</p>
+
+
+
+<p class="wp-block-paragraph">It also illustrates how AI reduces manual effort involved in translating process documentation into functional specifications, technical configurations, and executable applications.</p>
+
+
+
+<p class="wp-block-paragraph">However, Piraviperumal stressed that AI-assisted development does not eliminate the need for developers, configurators, or business validation.</p>
+
+
+
+<h2 id="h-keeping-humans-in-control-of-ai" class="wp-block-heading"><strong>Keeping humans in control of AI</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">For all of the cautionary attention surrounding autonomous AI, Piraviperumal believes governance and human oversight remain essential.</p>
+
+
+
+<p class="wp-block-paragraph">His transformation framework recognizes three broad constraints: economics, technology, and social adoption. Even when a solution is technically feasible, organizations must consider its cost and whether employees will accept it.</p>
+
+
+
+<p class="wp-block-paragraph">AI adds another layer of complexity because automated systems must operate within clearly defined boundaries.</p>
+
+
+
+<p class="wp-block-paragraph">Piraviperumal dedicates the book&#8217;s final chapters to operational governance, security controls, and audit requirements, arguing that these capabilities are fundamental to trustworthy deployment.</p>
+
+
+
+<p class="wp-block-paragraph">He also describes incorporating human validation checkpoints into the code examples included in the book.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;AI can only do so much,&#8221; he said. &#8220;AI cannot make decisions. It can help you with options to make a decision but not on decisions itself.&#8221;</p>
+
+
+
+<h2 id="h-a-more-connected-future-for-enterprise-transformation" class="wp-block-heading"><strong>A more connected future for enterprise transformation</strong><strong></strong></h2>
+
+
+
+<p class="wp-block-paragraph">The book’s broader message underscores the importance of successful transformation and how it depends on preserving the relationship between business intent and technology execution.</p>
+
+
+
+<p class="wp-block-paragraph">Process modeling, enterprise architecture, application development, AI, and employee adoption cannot operate effectively as disconnected disciplines. It must support a continuous, governed system that enables organizations to understand what they are changing, why they are changing it, and whether the results deliver value.</p>
+
+
+
+<p class="wp-block-paragraph">For practitioners, the opportunity is to use that connected foundation to make enterprise transformation more repeatable, traceable, and responsive to changing business needs.</p>
+
+
+
+<p class="wp-block-paragraph">And even as AI becomes more capable of generating applications and supporting business decisions, Piraviperumal sees human judgment as an enduring part of that equation.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Always remember that human control is still important even in this AI world,&#8221; he said.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">Sign up for our newsletter to receive weekly news highlights from the SAP News Center</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-3e41869c wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/campaigns/nl/sap-news-center-newsletter" target="_blank" rel="noopener">Subscribe today</a></div>
+</div>
+</div></div>
+]]></content:encoded>
+					
+		
+		
+			</item><item>
+		<title>SAP Puts Product-Level Cloud Emissions and Energy Data in Customers’ Hands</title>
+		<link>https://news.sap.com/2026/11/sap-product-level-cloud-emissions-energy-data-customers/</link>
+		
+		<dc:creator><![CDATA[Matthias Medert]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 13:15:00 +0000</pubDate>
+				<category><![CDATA[Cloud]]></category>
+		<category><![CDATA[Solutions]]></category>
+		<category><![CDATA[Sustainability]]></category>
+		<category><![CDATA[Carbon emissions]]></category>
+		<category><![CDATA[Carbon footprint]]></category>
+		<category><![CDATA[SAP Sustainability solutions]]></category>
+		<guid isPermaLink="false">https://news.sap.com/?p=249649</guid>
+
+					<description><![CDATA[SAP is making the carbon footprint of cloud software visible product by product, customer by customer.]]></description>
+										<content:encoded><![CDATA[
+<p class="has-large-font-size wp-block-paragraph">SAP is making the carbon footprint of cloud software visible product by product, customer by customer.</p>
+
+
+
+<p class="wp-block-paragraph">As climate disclosure requirements tighten and AI-driven workloads reshape cloud infrastructure, organizations need granular, credible emissions data across their value chains. Cloud software is now a material part of most companies&#8217; IT landscapes, yet the industry default remains spend-based estimation: a single carbon intensity factor applied uniformly, regardless of which product a customer runs, where it is hosted, or how much infrastructure it actually consumes. Spend-based data meets minimum reporting thresholds, but it cannot reveal where emissions concentrate or where reduction levers exist.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner alignleft cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">Calculate your corporate and product carbon footprint at scale with ERP-centric, AI-enabled carbon management</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-right is-layout-flex wp-container-core-buttons-is-layout-b507c051 wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/products/scm/sustainability-footprint-management.html">Learn how</a></div>
+</div>
+</div></div>
+
+
+
+<p class="wp-block-paragraph">With SAP’s cloud product carbon footprint, customers can see the emissions and energy consumption associated with their use of supported SAP cloud products, calculated from the infrastructure activity that serves them. This moves beyond spend-based averages to help give customers a clearer view of their cloud footprint and where potential opportunities to reduce it exist.</p>
+
+
+
+<h2 id="h-a-new-methodology" class="wp-block-heading"><strong>A new methodology</strong></h2>
+
+
+
+<p class="wp-block-paragraph">SAP&#8217;s cloud product carbon footprint (PCF) helps provide customers with activity-based emissions and energy data for selected SAP cloud products.</p>
+
+
+
+<p class="wp-block-paragraph">The core of the approach is a bottom-up energy model. Every day, SAP calculates the electrical consumption of each physical and virtual server running its cloud products, based on CPU utilization, memory allocation, and the power usage effectiveness (PUE) of each data center.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Based on the data foundation in SAP’s corporate Configuration Management Database CCIR, the server-level energy figure is then allocated to specific products and customer tenants through SAP&#8217;s infrastructure dependency mapping, a graph-based model that traces which hardware resources serve which customers based on the products and services consumed by them. The result: each customer sees the emissions and energy consumption associated with its use of each SAP cloud product. It’s a product-specific, customer-specific figure, grounded in actual infrastructure activity.</p>
+
+
+
+<p class="wp-block-paragraph">The methodology is aligned to the GHG Protocol ICT Sector Guidance. The approach, which uses electricity consumption as the leading allocation metric, has been developed with awareness of how leading cloud infrastructure providers structure their own activity-based methodologies. The full methodology document is publicly available for customers and auditors to review.</p>
+
+
+
+<h2 id="h-what-this-means-for-customers" class="wp-block-heading"><strong>What this means for customers</strong></h2>
+
+
+
+<p class="wp-block-paragraph">SAP developed this methodology in close collaboration with customers across industries, including financial services, consumer goods, media, and healthcare, as well as cloud infrastructure experts. Through this validation process, customers consistently highlighted a key limitation of spend-based approaches. While these provide a reporting number, they do not reveal where emissions concentrate or where reduction opportunities exist. Several customers described spend-based data as essentially &#8220;blind&#8221; when it comes to identifying which products or deployment regions drive their cloud footprint.</p>
+
+
+
+<p class="wp-block-paragraph">Activity-based, product-level data helps address that gap. For the first time, it can give customers the ability to identify emissions hotspots and potential reduction levers at the level of individual cloud products and deployment locations.</p>
+
+
+
+<p class="wp-block-paragraph">The shift also reflects a broader dynamic in supply chain emissions reporting. When customers report their Scope 3 emissions, their cloud software providers are part of that calculation. SAP is one of its customers&#8217; suppliers, and customers are increasingly asking their suppliers for primary, activity-based data rather than estimates. Building the PCF is SAP providing to its customers the same quality of data it asks of its own suppliers.</p>
+
+
+
+<h2 id="h-sap-as-customer-zero" class="wp-block-heading"><strong>SAP as customer zero</strong></h2>
+
+
+
+<p class="wp-block-paragraph">SAP uses the same PCF methodology and data for its own cloud portfolio. The visibility we offer customers is the same visibility we apply internally to measure the <a href="https://news.sap.com/topics/sustainability/" target="_blank" rel="noreferrer noopener">sustainability</a> performance of our products and to inform our net-zero journey.</p>
+
+
+
+<p class="wp-block-paragraph">What the PCF provides internally is a level of granularity that did not previously exist: emissions and energy data specific to each product, each customer, and each region. The leverage points for reducing a product&#8217;s footprint, such as infrastructure efficiency, workload optimization, and deployment choices, can now be identified and prioritized at the product level rather than addressed through broad, portfolio-wide measures.</p>
+
+
+
+<h2 id="h-what-is-available-today" class="wp-block-heading"><strong>What is available today</strong></h2>
+
+
+
+<p class="wp-block-paragraph">SAP&#8217;s cloud product carbon footprint is accessible now through the Finance &amp; Legal section of <a href="https://me.sap.com/" target="_blank" rel="noreferrer noopener">SAP for Me</a> for a growing list of cloud products, including SAP S/4HANA Cloud, SAP Integrated Business Planning, SAP HANA Cloud, SAP Datasphere, SAP Analytics Cloud, and SAP Commerce Cloud. The underlying methodology is published, aligned to the GHG Protocol ICT Sector Guidance, and publicly available. The full and up-to-date list of covered products is published in the methodology document, which is updated quarterly.</p>
+
+
+
+<p class="wp-block-paragraph">For customers using the activity-based PCF alongside SAP&#8217;s existing spend-based carbon intensity factor, the spend-based method continues to be available and remains the reference approach for emissions reporting at this stage. Over time, as the activity-based methodology matures and product coverage expands, SAP&#8217;s positioning on this will evolve accordingly. As with any carbon accounting methodology, customers should assess their approach in line with their own reporting frameworks and auditor expectations.</p>
+
+
+
+<h2 id="h-outlook" class="wp-block-heading"><strong>Outlook</strong></h2>
+
+
+
+<p class="wp-block-paragraph">With a published methodology, a growing product portfolio, and data already accessible to customers, the cloud product carbon footprint is an established capability that SAP intends to continue developing.</p>
+
+
+
+<p class="wp-block-paragraph">In the coming quarters, SAP plans to expand product coverage across its cloud portfolio. Work toward ISO 14067 alignment and external audit readiness is underway. The roadmap includes more detailed scope breakdowns, higher time-resolution data, and integration-ready formats for customers embedding carbon data into their own reporting and operational workflows. SAP is also actively working to reflect the specific emissions profile of AI workloads within the PCF framework. As customers increasingly adopt AI-powered cloud services, extending coverage to these workloads is a near-term priority.</p>
+
+
+
+<p class="wp-block-paragraph">For questions about how product-level emissions data can support sustainability and cloud decisions, customers are welcome to reach out to their local SAP contact. SAP also welcomes dialogue with ecosystem peers working on green software or ICT carbon standards.</p>
+
+
+
+<p class="wp-block-paragraph">Cloud transformation is increasingly measured on carbon transparency alongside performance, cost, and security. As a frontrunner in activity-based SaaS carbon footprinting, SAP is committed to building that capability openly and to evolving it together with customers and partners.</p>
+
+
+
+<p class="wp-block-paragraph">For questions, contact <a href="mailto:sustainability@sap.com">sustainability@sap.com</a>.</p>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity" />
+
+
+
+<p class="has-small-font-size wp-block-paragraph">Matthias Medert is global head of Sustainability at SAP.</p>
+
+
+
+<div class="wp-block-sap-news-cta-banner cta-banner"><div class="cta-banner__content"><div class="cta-banner__title">Sign up to receive weekly news highlights from the SAP News Center</div></div><div class="cta-banner__action">
+<div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-3e41869c wp-block-buttons-is-layout-flex">
+<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.sap.com/campaigns/nl/sap-news-center-newsletter" target="_blank" rel="noopener">Subscribe to the newsletter</a></div>
+</div>
+</div></div>
+]]></content:encoded>
+					
+		
+		
+			</item>
+	</channel>
+</rss>

@@ -47,13 +47,22 @@ ALIASES = {
                             "kv cache", "speculative decoding"],
     "evals": ["eval", "evals", "benchmark", "benchmarks", "leaderboard", "evaluation"],
     "harness engineering": ["harness", "scaffold", "agent loop", "tool use", "tool-use", "tool calling", "context engineering"],
+    # Added 2026-11-14 (Edition 05 missed "Anthropic launches Claude for Manufacturing"). Generous, as above, but never a bare word that
+    # means something else in this feed: "dynamics" is physics, "chain" is blockchain, "product" is every headline.
+    "enterprise ai and erp": ["enterprise ai", "enterprise agents", "enterprise software", "erp", "cloud erp", "enterprise resource planning"],
+    "vertical ai agents (manufacturing, supply chain)": ["vertical ai", "vertical agents", "manufacturing", "manufacturer", "manufacturers",
+                                                          "supply chain", "supply chains", "shop floor", "industrial ai"],
+    "ai vendor product launches": ["product launch", "product launches", "launches", "unveils", "generally available"],
+    "erp competitor moves (sap, oracle, workday, microsoft dynamics)": ["sap", "oracle", "workday", "infor", "microsoft dynamics",
+                                                                        "dynamics 365", "erp"],
 }
 
 
 # Words that appear in topic names but recognise nothing on their own ("model" is in most
 # AI headlines). A topic is recognised by its full name, its aliases and its distinctive words.
 GENERIC_WORDS = frozenset({"systems", "architecture", "learning", "engineering", "serving", "inference", "coding",
-                           "model", "models", "releases", "agents", "agentic"})
+                           "model", "models", "releases", "agents", "agentic",
+                           "enterprise", "vertical", "supply", "chain", "vendor", "product", "competitor", "moves", "microsoft", "dynamics"})
 
 
 def terms_for(topic: str) -> list[str]:

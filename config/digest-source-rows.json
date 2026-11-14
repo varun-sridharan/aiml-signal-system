@@ -270,7 +270,8 @@
    "name": "SAP",
    "tier": "A",
    "section": "Enterprise",
-   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+   "note": "vendor newsroom: the vendor's own announcements; its feed answered on 2026-11-14 though SAP's often blocks fetchers",
+   "domain": "news.sap.com"
   },
   {
    "name": "Oracle",
@@ -282,13 +283,15 @@
    "name": "Workday",
    "tier": "A",
    "section": "Enterprise",
-   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers",
+   "domain": "newsroom.workday.com"
   },
   {
    "name": "Infor",
    "tier": "A",
    "section": "Enterprise",
-   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers"
+   "note": "vendor newsroom: the vendor's own announcements; SAP's often blocks fetchers",
+   "domain": "infor.com"
   },
   {
    "name": "Microsoft Copilot",
@@ -488,6 +491,27 @@
    "tier": "D",
    "section": "Discovery",
    "note": "discovery only, never cited as primary"
+  },
+  {
+   "name": "manufacturingdive.com",
+   "tier": "C",
+   "section": "Varun's own additions",
+   "domain": "manufacturingdive.com",
+   "note": "original reporting on manufacturing; follow through to the vendor's own page as primary"
+  },
+  {
+   "name": "claude.com",
+   "tier": "A",
+   "section": "Frontier labs",
+   "domain": "claude.com",
+   "note": "Anthropic's product launches (resources/product-updates)"
+  },
+  {
+   "name": "Microsoft Dynamics 365",
+   "tier": "A",
+   "section": "Enterprise",
+   "domain": "microsoft.com",
+   "note": "vendor blog: the vendor's own announcements"
   }
  ],
  "_judgements": "Where the catalogue gives one label to a heading of mixed sources, tiers here are a reading, not a quote: Tooling is headed (A/B) and MCP, GitHub and NVIDIA are called primary in the text, so they are A and the SDKs, frameworks and evals are B; Enterprise is headed A for vendors' own statements and C for coverage, so vendors are A and the buyer-side outlets C; VentureBeat is listed both as buyer-side coverage (C) and as discovery (D) and is D here, the safer prior; TechCrunch AI is C under Funding and the category appears again under Discovery, and is C here."

@@ -104,7 +104,7 @@ class Feed:
 
 # The first nine verified reachable on 2026-10-18 (HTTP 200, expected content type). Still not
 # discovered: Qwen, DeepSeek, Moonshot, xAI, Ai2, Z.ai, The Batch, the benchmarks, the agent
-# frameworks, the two subreddits, and the enterprise vendors (no address in the catalogue, and an
+# frameworks, the two subreddits, and the enterprise vendors not named below (no address in the catalogue, and an
 # address is never guessed); see the debrief.
 FEEDS = [
     Feed("arxiv", "arxiv", "arxiv.org",
@@ -137,7 +137,25 @@ FEEDS = [
          r"https://developer\.nvidia\.com/blog/(?!page/)[a-z0-9][a-z0-9-]*/"),
     Feed("microsoft-ai", "microsoft-ai", "microsoft.ai", "https://microsoft.ai/news/", "index",
          r"https://microsoft\.ai/news/[a-z0-9][a-z0-9-]*/"),
+    # Added 2026-11-14, after Edition 05 missed "Anthropic launches Claude for Manufacturing" (Run 11, debrief 19). The story was never
+    # discovered: Anthropic posts product launches at claude.com/resources, which no feed read, and Manufacturing Dive's feed was not read
+    # either. Each address below was fetched once on 2026-11-14 and read, and its articles parsed with this module's own parsers
+    # (recorded in tests/fixtures/feeds-2026-11-14). None is guessed: the three RSS feeds are advertised by their own pages
+    # (<link rel="alternate">), the claude.com and Infor indexes are linked from claude.com's own article and from infor.com, and the
+    # Manufacturing Dive feed carries the missed story itself.
+    Feed("claude-product-updates", "claude-com", "claude.com", "https://claude.com/resources/product-updates", "index",
+         r"https://claude\.com/resources/articles/[a-z0-9][a-z0-9-]*"),      # 10 dated cards; the missed story is the newest
+    Feed("manufacturing-dive", "manufacturingdive-com", "manufacturingdive.com", "https://www.manufacturingdive.com/feeds/news/", "rss"),
+    Feed("sap-news", "sap", "news.sap.com", "https://news.sap.com/feed/", "rss"),                                     # 30 items, dated
+    Feed("workday-newsroom", "workday", "newsroom.workday.com", "https://newsroom.workday.com/press-releases?pagetemplate=rss", "rss"),
+    Feed("dynamics-365-blog", "microsoft-dynamics-365", "microsoft.com", "https://www.microsoft.com/en-us/dynamics-365/blog/feed/", "rss"),
+    Feed("infor-blog", "infor", "infor.com", "https://www.infor.com/blog", "index",
+         r"https://www\.infor\.com/blog/[a-z0-9][a-z0-9-]*"),                 # 9 dated cards; its own post on Claude in manufacturing is there
 ]
+# Left out of that batch, and why. Oracle: oracle.com/news is server-rendered but lists three releases with the label "Read the release" for
+# a title and no date (the date is only in the address), so the relevance filter would score a button label; it needs a parser of its own,
+# and Oracle publishes no feed that its page advertises. claude.com/resources/articles (the second index) carries the same launches plus
+# customer stories and guides; product-updates is the launches list. infor.com/about/news is a 404; the blog index above is what Infor serves.
 # Not discovered, and why. OpenAI's second index (openai.com/research) answers fetchers 403 and the catalogue
 # calls it curated and often months stale; real research posts appear in the /news feed above. The Gemini API
 # changelog is one page of dated entries, and the item store's identity is the canonical URL with the fragment

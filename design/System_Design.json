@@ -217,7 +217,7 @@
           "rows": [
             [
               "<span class=\"gloss\" data-term=\"reader\">Reader</span>",
-              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 17 feeds and index pages{window_sources}, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
+              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 23 feeds and index pages{window_sources}, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
               "pipeline",
               "<span class=\"pill ok\">BUILT</span>"
             ],
@@ -378,7 +378,7 @@
             ],
             [
               "PROCESS",
-              "<code>agents/reader.py</code><br><span style=\"color:var(--soft)\">Discovers candidates from 17 feeds and index pages, keeps the relevant, fetches the few worth reading through Claude's web fetch, stores the excerpt once.</span>",
+              "<code>agents/reader.py</code><br><span style=\"color:var(--soft)\">Discovers candidates from 23 feeds and index pages, keeps the relevant, fetches the few worth reading through Claude's web fetch, stores the excerpt once.</span>",
               "<span class=\"pill ok\">BUILT</span>"
             ],
             [
@@ -679,7 +679,7 @@
         },
         {
           "t": "p",
-          "html": "Scout and Gatekeeper, merged. They were two agents with one job and a handoff that bought nothing: everything from a URL arriving to a verified item landing in the pool. <b>In:</b> seventeen feeds, APIs and index pages, the sources the old digest's catalogue and <code>config/scout-sources.md</code> name, and every URL you hand it through <code>/add-news</code>. <b>Process:</b> discover → <span class=\"gloss\" data-term=\"canonicalisation\">canonicalise</span> → deduplicate → filter against the interest graph → fetch the few that may surface through Claude's web fetch → deduplicate again by content → store the excerpt, once; provenance and corroboration are recorded per item. <b>Out:</b> the verified pool, in Postgres. <b>Open:</b> OpenAI's research index, the Gemini API changelog and several labs still have no discovery."
+          "html": "Scout and Gatekeeper, merged. They were two agents with one job and a handoff that bought nothing: everything from a URL arriving to a verified item landing in the pool. <b>In:</b> twenty-three feeds, APIs and index pages, the sources the old digest's catalogue and <code>config/scout-sources.md</code> name, and every URL you hand it through <code>/add-news</code>. <b>Process:</b> discover → <span class=\"gloss\" data-term=\"canonicalisation\">canonicalise</span> → deduplicate → filter against the interest graph → fetch the few that may surface through Claude's web fetch → deduplicate again by content → store the excerpt, once; provenance and corroboration are recorded per item. <b>Out:</b> the verified pool, in Postgres. <b>Open:</b> OpenAI's research index, the Gemini API changelog and several labs still have no discovery."
         },
         {
           "t": "h4",
@@ -830,7 +830,7 @@
                 {
                   "id": "crawl",
                   "label": "Weekly run",
-                  "sub": "reads all 17 feeds and index pages",
+                  "sub": "reads all 23 feeds and index pages",
                   "icon": "clock"
                 },
                 {

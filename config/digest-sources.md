@@ -22,10 +22,14 @@ This is the "91 tiered domains" the plan refers to: a prose catalogue, not a tab
 - **AI consciousness and model welfare**: reciprocalresearch.org, ai-frontiers.org (C). Anchor claims to
   the researcher's own arXiv paper or organisation site.
 - **Ollama** release notes and GitHub releases (B).
+- **manufacturingdive.com** (C, original reporting on manufacturing, added 2026-11-14). Its news feed
+  (manufacturingdive.com/feeds/news/, advertised on its own pages, same shape as CIO Dive's) carried
+  "Anthropic launches Claude for Manufacturing" a day after it was posted, which Edition 05 missed.
 
 ## Frontier labs (A)
 
-- **Anthropic: two indexes, check both every run.** anthropic.com/news and anthropic.com/research. A
+- **Anthropic: three indexes, check all every run.** claude.com/resources/product-updates is where Anthropic now posts product
+  launches (added 2026-11-14: "Introducing Claude for Manufacturing" was there on 2026-11-12 and no index read it). Then anthropic.com/news and anthropic.com/research. A
   research post does not reliably appear on the news index. Slugs cannot be derived from headlines:
   resolve the URL by search, never by guessing.
 - **OpenAI: two indexes**, openai.com/news and openai.com/research. The research index is a curated,
@@ -57,7 +61,12 @@ This is the "91 tiered domains" the plan refers to: a prose catalogue, not a tab
 
 ## Enterprise (A for vendors' own statements, C for coverage)
 
-- Vendor newsrooms: SAP (often blocks fetchers), Oracle, Workday, Infor, Microsoft Copilot / Azure AI,
+- Vendor newsrooms read on 2026-11-14 (each address fetched once and read): SAP, news.sap.com/feed/ (advertised by
+  its page; it answered the Reader's fetcher, though it often blocks others); Workday,
+  newsroom.workday.com/press-releases?pagetemplate=rss (advertised); Microsoft Dynamics 365, microsoft.com/en-us/dynamics-365/blog/feed/
+  (advertised); Infor, infor.com/blog (a server-rendered index; infor.com/about/news is a 404). Oracle is left out:
+  its news page lists three releases titled "Read the release" with no date and advertises no feed.
+- Other vendor newsrooms: Oracle, Microsoft Copilot / Azure AI,
   Salesforce Agentforce, ServiceNow, Snowflake, Databricks, UiPath, Sierra, Glean, Palantir, Decagon,
   Harvey.
 - Buyer-side reporting, which fixes this track's known weakness: CIO Dive (above), the Gartner

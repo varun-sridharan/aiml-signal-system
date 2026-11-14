@@ -155,6 +155,11 @@ def seed_digest(conn, path: Path = DIGEST_ROWS_PATH) -> int:
                 "VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
                 (s.id, s.name, s.domain, s.tier, s.reputation_prior, s.notes[:500] or None))
             added += cur.rowcount
+            if s.domain and not cur.rowcount:
+                # WHAT: a domain Reader met before the list named it was recorded 'unrated'; the list now rates it.
+                # CONCEPT: the list is the only authority on tier. Only an 'unrated' row is ever changed, never a rating someone set.
+                conn.execute("UPDATE sources SET tier = %s, reputation_prior = %s, notes = %s WHERE domain = %s AND tier = 'unrated'",
+                             (s.tier, s.reputation_prior, s.notes[:500] or None, s.domain))
     return added
 
 
