@@ -176,13 +176,13 @@ class Page(unittest.TestCase):
         note = self.get(self.RESULT).split('class="stats-note"', 1)[1].split("</p>", 1)[0]
         self.assertIn("from 7 of the 99 sources it lists", note)                  # 7 produced items in the window; 99 are listed in the sources table
         sd = self.system_design(self.RESULT)
-        self.assertIn("Reads 26 feeds and index pages; of the 99 sources it lists, 7 produced items in the latest edition's window", sd)
+        self.assertIn("Reads 27 feeds and index pages; of the 99 sources it lists, 7 produced items in the latest edition's window", sd)
         from agents import reader
-        self.assertEqual(len(reader.FEEDS), 26)                                    # the constant behind "26 feeds and index pages"
+        self.assertEqual(len(reader.FEEDS), 27)                                    # the constant behind "27 feeds and index pages"
 
     def test_system_design_without_a_count_drops_the_clause_and_leaves_no_placeholder(self):
         sd = self.system_design(None)
-        self.assertIn("Reads 26 feeds and index pages, seeded from", sd)
+        self.assertIn("Reads 27 feeds and index pages, seeded from", sd)
         self.assertNotIn("{window_sources}", sd)
         self.assertNotIn("sources it lists", sd)
 

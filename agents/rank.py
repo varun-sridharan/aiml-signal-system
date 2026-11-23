@@ -81,6 +81,8 @@ def cluster_of(topics, rings: dict) -> str | None:
 LAB_DOMAINS = {"openai.com", "anthropic.com", "claude.com", "deepmind.google", "ai.meta.com", "mistral.ai", "microsoft.ai"}
 LAB_DOMAINS_NEED_AI_CUE = {"blog.google", "ai.google.dev"}
 EVALUATOR_DOMAINS = {"metr.org"}
+PAPER_DOMAINS = {"arxiv.org", "huggingface.co"}      # a research paper: one of the edition's stories is kept for one (RESERVED_PAPER_SLOTS)
+RESERVED_PAPER_SLOTS = 1
 AGGREGATOR_DOMAINS = {"huggingface.co", "news.ycombinator.com"}      # say where it was seen, not who else reported it
 
 LAUNCH_CUE = re.compile(r"\b(introducing|introduces|introduced|launch(?:es|ed)?|announc(?:es|ing|ed)|unveil(?:s|ed|ing)?|now available|"
@@ -226,19 +228,50 @@ def choose_fetches(cands: list, rings: dict, limit: int, *, surfaceable, blocked
     return _order(chosen, rings)
 
 
+def is_paper(c: dict) -> bool:
+    return (c.get("domain") or "").lower() in PAPER_DOMAINS
+
+
+def walk_stories(cands: list, rings: dict, limit: int, take, reserved: int = RESERVED_PAPER_SLOTS) -> list:
+    """Offer candidates to `take` until `limit` are taken, with `reserved` places held for papers. Returns the taken candidates, best rank first.
+
+    `take(c)` applies the caller's caps and checks and returns True when it took the candidate. The papers (arXiv and Hugging Face) that score
+    above zero on relevance are offered first, best first, until `reserved` are taken; then everyone else, best first. Offering the paper first
+    is what makes the place real: the caps are shared, and on 2026-11-22's replay the three launches that came first filled the agents cluster's
+    three places, so a paper offered afterwards could never fit. The caps still hold (a paper counts against its company and its cluster like
+    any story), and a paper the caller refuses, or a week without one, gives the place back to the rest."""
+    ordered = _order(cands, rings)
+    taken: list = []
+    if reserved:
+        for c in ordered:
+            if len(taken) >= min(reserved, limit):
+                break
+            if is_paper(c) and relevance(c.get("topics"), rings) > 0 and take(c):
+                taken.append(c)
+    for c in ordered:
+        if len(taken) >= limit:
+            break
+        if c not in taken and take(c):
+            taken.append(c)
+    position = {id(c): i for i, c in enumerate(ordered)}
+    return sorted(taken, key=lambda c: position[id(c)])
+
+
 def choose_stories(cands: list, rings: dict, limit: int, *, per_company: int = MAX_STORIES_PER_COMPANY, per_cluster: int = MAX_PER_CLUSTER,
-                   usable=lambda c: True) -> list:
-    """The stories of the edition from the fetched candidates: at most `per_company` of one company and `per_cluster` of one interest cluster."""
+                   usable=lambda c: True, reserved_papers: int = RESERVED_PAPER_SLOTS) -> list:
+    """The stories of the edition from the fetched candidates: at most `per_company` of one company and `per_cluster` of one interest cluster,
+    and a place kept for a paper (arXiv or Hugging Face) that scores above zero, inside those same caps."""
     chosen, caps = [], Caps(company=per_company, cluster=per_cluster)
-    for c in _order(cands, rings):
+
+    def take(c) -> bool:
         keys = {"company": company_of(c["domain"]), "cluster": cluster_of(c.get("topics"), rings)}
         if not caps.allows(**keys) or not usable(c) or any(near_duplicate(c, o) for o in chosen):
-            continue
+            return False
         caps.take(**keys)
         chosen.append(c)
-        if len(chosen) >= limit:
-            break
-    return chosen
+        return True
+
+    return walk_stories(cands, rings, limit, take, reserved_papers)
 
 
 # --- loading from the database -----------------------------------------------------------------------------------------------------------

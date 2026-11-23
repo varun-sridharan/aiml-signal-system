@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>AI News &amp; Artificial Intelligence | TechCrunch</title>
+	<atom:link href="https://techcrunch.com/category/artificial-intelligence/feed/" rel="self" type="application/rss+xml" />
+	<link>https://techcrunch.com/category/artificial-intelligence/</link>
+	<description>Startup and Technology News</description>
+	<lastBuildDate>Mon, 23 Nov 2026 15:48:09 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.9.12</generator>
+
+<image>
+	<url>https://techcrunch.com/wp-content/uploads/2015/02/cropped-cropped-favicon-gradient.png?w=32</url>
+	<title>AI News &amp; Artificial Intelligence | TechCrunch</title>
+	<link>https://techcrunch.com/category/artificial-intelligence/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Trump endorses Jensen Huang&#8217;s return to Nvidia, says US has no evidence of wrongdoing</title>
+		<link>https://techcrunch.com/2026/11/23/trump-endorses-jensen-huangs-return-to-nvidia-says-us-has-no-evidence-of-wrongdoing/</link>
+		
+		<dc:creator><![CDATA[Sarah Perez]]></dc:creator>
+		<pubDate>Mon, 23 Nov 2026 15:04:01 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[Government & Policy]]></category>
+		<category><![CDATA[nvidia]]></category>
+		<category><![CDATA[Jensen Huang]]></category>
+		<category><![CDATA[Trump]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191257</guid>
+
+					<description><![CDATA[The president cited the U.S. Attorney General in defending Huang's return, while urging Nvidia to continue its export-control investigation.]]></description>
+		
+		
+		
+			</item>
+<item>
+		<title>Sierra doubles valuation to $30B within six months as demand for AI in CX takes off</title>
+		<link>https://techcrunch.com/2026/11/23/sierra-doubles-valuation-to-30b-within-six-months-as-demand-for-ai-in-cx-takes-off/</link>
+		
+		<dc:creator><![CDATA[Ivan Mehta]]></dc:creator>
+		<pubDate>Mon, 23 Nov 2026 14:43:03 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[Enterprise]]></category>
+		<category><![CDATA[Fundraising]]></category>
+		<category><![CDATA[Bret Taylor]]></category>
+		<category><![CDATA[customer experience]]></category>
+		<category><![CDATA[sierra]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191185</guid>
+
+					<description><![CDATA[Enterprise customer experience company Sierra, co-founded by former Salesforce co-CEO Bret Taylor, said on Monday that it has raised $1.75 billion in a Series F round.]]></description>
+		
+		
+		
+			</item>
+<item>
+		<title>Nvidia reverses course and brings Jensen Huang back as CEO</title>
+		<link>https://techcrunch.com/2026/11/23/nvidia-reverses-course-and-brings-jensen-huang-back-as-ceo/</link>
+		
+		<dc:creator><![CDATA[Kirsten Korosec]]></dc:creator>
+		<pubDate>Mon, 23 Nov 2026 14:21:59 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[Hardware]]></category>
+		<category><![CDATA[Jensen Huang]]></category>
+		<category><![CDATA[nvidia]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191219</guid>
+
+					<description><![CDATA[The stunning reversal was supported by senior officials in the U.S. government. ]]></description>
+		
+		
+		
+			</item>
+<item>
+		<title>How Notable Capital, GIC, and Baillie Gifford bet big on Anthropic before its IPO</title>
+		<link>https://techcrunch.com/2026/11/22/how-notable-capital-gic-and-baillie-gifford-bet-big-on-anthropic-before-its-ipo/</link>
+		
+		<dc:creator><![CDATA[Marina Temkin]]></dc:creator>
+		<pubDate>Mon, 23 Nov 2026 01:25:53 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[Venture]]></category>
+		<category><![CDATA[Anthropic]]></category>
+		<category><![CDATA[anthropic ipo]]></category>
+		<category><![CDATA[Baillie Gifford]]></category>
+		<category><![CDATA[ggv capital]]></category>
+		<category><![CDATA[GIC]]></category>
+		<category><![CDATA[Notable Capital]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191173</guid>
+
+					<description><![CDATA[Three significant backers share what gave them conviction to bet billions on Anthropic.]]></description>
+		
+		
+		
+			</item>
+<item>
+		<title>OpenAI’s chief scientist has thoughts on how to limit AI development</title>
+		<link>https://techcrunch.com/2026/11/22/openais-chief-scientist-has-thoughts-on-how-to-limit-ai-development/</link>
+		
+		<dc:creator><![CDATA[Anthony Ha]]></dc:creator>
+		<pubDate>Sun, 22 Nov 2026 21:14:07 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[OpenAI]]></category>
+		<category><![CDATA[sam altman]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191164</guid>
+
+					<description><![CDATA[To establish a speed limit on AI development, you need to agree on how to measure speed.]]></description>
+		
+		
+		
+			</item>
+<item>
+		<title>Why data centers are at the center of the Big Tech backlash</title>
+		<link>https://techcrunch.com/2026/11/22/why-data-centers-are-at-the-center-of-the-big-tech-backlash/</link>
+		
+		<dc:creator><![CDATA[Anthony Ha]]></dc:creator>
+		<pubDate>Sun, 22 Nov 2026 18:08:43 +0000</pubDate>
+				<category><![CDATA[AI]]></category>
+		<category><![CDATA[Government & Policy]]></category>
+		<category><![CDATA[Media & Entertainment]]></category>
+		<category><![CDATA[data centers]]></category>
+		<guid isPermaLink="false">https://techcrunch.com/?p=3191157</guid>
+
+					<description><![CDATA[Journalist Paris Marx unpacks his new book "Hyperscale."]]></description>
+		
+		
+		
+			</item>
+</channel>
+</rss>

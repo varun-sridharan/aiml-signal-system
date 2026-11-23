@@ -11,7 +11,7 @@ an item may reach a reader on its own.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 try:
     from . import excerpts, sources
@@ -56,6 +56,26 @@ def upsert(conn, url: str, title: str, now: datetime, *, source_id: str | None =
 def record_hn_points(conn, item_id: uuid.UUID, points: int) -> None:
     """Remember the most Hacker News points the front page showed for this item (agents/rank.py reads it as significance)."""
     conn.execute("UPDATE items SET hn_points = GREATEST(hn_points, %s) WHERE id = %s", (max(0, int(points)), item_id))
+
+
+DISCOVERY_KEEP_DAYS = 60
+
+
+def record_discovery(conn, url: str, title: str, domain: str, feed: str, score: int, terms: list[str], hn_points: int, outcome: str,
+                     now: datetime) -> None:
+    """Remember a discovered candidate whatever became of it: its score, the terms that matched, and whether it was kept.
+    Seen again on a later run it is updated (the latest score and the most points), and first_seen stays."""
+    conn.execute(
+        "INSERT INTO discoveries (url, title, domain, feed, score, terms, hn_points, outcome, first_seen, last_seen) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+        "ON CONFLICT (url) DO UPDATE SET title = EXCLUDED.title, feed = EXCLUDED.feed, score = EXCLUDED.score, terms = EXCLUDED.terms, "
+        "hn_points = GREATEST(discoveries.hn_points, EXCLUDED.hn_points), outcome = EXCLUDED.outcome, last_seen = EXCLUDED.last_seen",
+        (excerpts.canonicalise(url), title[:500], domain, feed, score, terms, max(0, int(hn_points)), outcome, now, now))
+
+
+def prune_discoveries(conn, now: datetime, days: int = DISCOVERY_KEEP_DAYS) -> int:
+    """Delete discovery rows not seen for `days` days. Returns the count removed."""
+    return conn.execute("DELETE FROM discoveries WHERE last_seen < %s", (now - timedelta(days=days),)).rowcount
 
 
 def add_provenance(conn, item_id: uuid.UUID, url: str, now: datetime, *, source_id: str | None = None,

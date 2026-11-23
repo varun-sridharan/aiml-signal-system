@@ -162,6 +162,11 @@ FEEDS = [
     Feed("metr", "metr", "metr.org", "https://metr.org/feed.xml", "rss"),
     Feed("entra-blog", "microsoft-tech-community", "techcommunity.microsoft.com",
          "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=microsoft-entra-blog", "rss"),
+    # Added 2026-11-23 (debrief 21): TechCrunch's AI category, the address its own category page serves (fetched once on 2026-11-23: 200, RSS, 20 dated
+    # items), in tests/fixtures/feeds-2026-11-23. Tier C, so a story it alone reports is not surfaced, but its items count as another company
+    # reporting a launch (rank.significance). VentureBeat's AI feed is NOT here: both its feed and its category page answered 429 from a Vercel
+    # security checkpoint on 2026-11-23, so no address could be read; see debrief 21.
+    Feed("techcrunch-ai", "techcrunch-ai", "techcrunch.com", "https://techcrunch.com/category/artificial-intelligence/feed/", "rss"),
 ]
 # Left out of that batch, and why. Oracle: oracle.com/news is server-rendered but lists three releases with the label "Read the release" for
 # a title and no date (the date is only in the address), so the relevance filter would score a button label; it needs a parser of its own,
@@ -192,6 +197,7 @@ class Stats:
     candidates: int = 0
     out_of_window: int = 0
     irrelevant: int = 0
+    discoveries_pruned: int = 0   # evidence rows older than items.DISCOVERY_KEEP_DAYS removed this run
     new_items: int = 0
     known_items: int = 0
     corroborated: int = 0
@@ -474,15 +480,20 @@ def build_items(conn, candidates: list[Candidate], now: datetime, stats: Stats, 
     """Turn candidates into items: window, relevance, upsert, provenance, corroboration."""
     kept: list[tuple[object, Candidate]] = []
     for c in candidates:
+        score, topics = graph.score(conn, user_id, f"{c.title}. {c.summary}")
+        domain = sources.domain_of(c.url)
         if c.published is not None and now - c.published > WINDOW:
+            items.record_discovery(conn, c.url, c.title, domain, c.feed.id, score, topics, c.points, "out_of_window", now)
             stats.out_of_window += 1
             continue
-        score, topics = graph.score(conn, user_id, f"{c.title}. {c.summary}")
-        if score == 0 and not rank.worth_keeping(c.title, sources.domain_of(c.url), sources.tier_of(conn, sources.domain_of(c.url))):
+        if score == 0 and not rank.worth_keeping(c.title, domain, sources.tier_of(conn, domain)):
             # Matches none of the profile's terms and is nobody's own launch either. (Before 2026-11-22 this dropped every zero-score
-            # candidate, so OpenAI's MedChemBench and Anthropic's IPO post were discovered and thrown away unseen.)
+            # candidate, so OpenAI's MedChemBench and Anthropic's IPO post were discovered and thrown away unseen.) Since 2026-11-23 the drop
+            # is written to `discoveries` with its score and terms, so a missed story can be explained from the database.
+            items.record_discovery(conn, c.url, c.title, domain, c.feed.id, score, topics, c.points, "irrelevant", now)
             stats.irrelevant += 1
             continue
+        items.record_discovery(conn, c.url, c.title, domain, c.feed.id, score, topics, c.points, "kept", now)
         iid, created = items.upsert(conn, c.url, c.title, now, relevance=(score, topics))
         if c.points:
             items.record_hn_points(conn, iid, c.points)
@@ -697,6 +708,7 @@ def run(conn, client, now: datetime, *, fetch=None, limit: int = MAX_FETCHES_PER
     stats = Stats()
     prepare(conn, profile)
     kept = build_items(conn, discover(stats, fetch or http_get), now, stats, user_id)
+    stats.discoveries_pruned = items.prune_discoveries(conn, now)
     # The most one fetch can be reserved at, times the count, must fit the run's ceiling.
     worst_case = budget.estimate_call_ceiling_usd(
         FETCH_MODEL, FETCH_MAX_TOKENS, {"tools": [{}], "messages": [{"role": "user", "content": "x" * 400}]},

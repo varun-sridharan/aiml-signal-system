@@ -385,7 +385,9 @@
   {
    "name": "TechCrunch AI",
    "tier": "C",
-   "section": "Funding"
+   "section": "Funding",
+   "domain": "techcrunch.com",
+   "note": "original reporting on funding and launches; its AI category feed is read for discovery and as corroboration, never as primary"
   },
   {
    "name": "Axios Pro Rata",

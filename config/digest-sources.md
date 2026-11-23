@@ -80,7 +80,7 @@ This is the "91 tiered domains" the plan refers to: a prose catalogue, not a tab
 
 ## Funding (C)
 
-Crunchbase News, TechCrunch AI, Axios Pro Rata, SEC Form D filings; fund announcements from a16z,
+Crunchbase News, TechCrunch AI (techcrunch.com), Axios Pro Rata, SEC Form D filings; fund announcements from a16z,
 Sequoia, Index, Accel, Lightspeed and Peak XV; Y Combinator launches.
 
 ## Discovery, then chase the primary source (D)

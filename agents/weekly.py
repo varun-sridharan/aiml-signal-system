@@ -402,28 +402,30 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
         "SELECT i.id, i.canonical_url, i.domain, i.title, i.relevance_terms, i.discovered_at, i.hn_points, s.tier, i.excerpt_id "
         "FROM items i JOIN sources s ON s.id = i.source_id WHERE i.id = ANY(%s::uuid[]) AND i.status = 'fetched'", (item_ids,)).fetchall()
     eids = {r[0]: r[8] for r in rows}
-    chosen, caps, do_this_left = [], rank.Caps(company=MAX_PER_COMPANY, cluster=MAX_PER_CLUSTER), MAX_DO_THIS
+    chosen, caps, do_this_left = [], rank.Caps(company=MAX_PER_COMPANY, cluster=MAX_PER_CLUSTER), [MAX_DO_THIS]
     # Best first by interest relevance plus significance (agents/rank.py), then the caps: two stories a company, three an interest cluster.
-    for cand in rank._order(rank.load_candidates(conn, [r[:8] for r in rows]), rings):
+    # One of the seven is kept for a paper (arXiv or Hugging Face) that scores above zero, inside the same caps and the same grounding checks.
+
+    def take(cand) -> bool:
         iid, url, domain, title, topics, eid = cand["id"], cand["url"], cand["domain"], cand["title"], cand["topics"], eids[cand["id"]]
         backlog = cand["backlog"]
         keys = {"company": rank.company_of(domain), "cluster": rank.cluster_of(topics, rings)}
         if not caps.allows(**keys) or not items.surfaceable(conn, iid):
-            continue
+            return False
         # The first pass is shown, and graded against, the same plain rendering of the page the composing pass is (straight_quotes):
         # on 2026-10-20 the grader read the non-breaking hyphens of "GPT\u20116 Astra" as "GPT\u201016" in two attempts, and a correct story
         # failed the literal span check for it. The stored excerpt is untouched; only what is shown and graded against is made plain.
         excerpt = straight_quotes(lead(excerpts.get(conn, eid), prefer_meta=(domain == "arxiv.org")))
         if not excerpt:
-            continue  # nothing readable on the page: not a story we can ground
+            return False  # nothing readable on the page: not a story we can ground
         title = page_title(title, excerpts.get(conn, eid))
         missing = headline_facts_missing(title, excerpt)
         if missing:  # the headline claims what the excerpt does not say: not verified
             if skipped is not None:
                 skipped.append(f"{title[:60]}: {', '.join(missing)} not in the excerpt")
-            continue
-        tags = tags_for(domain, topics, core, do_this_left)
-        do_this_left -= "DO THIS" in tags
+            return False
+        tags = tags_for(domain, topics, core, do_this_left[0])
+        do_this_left[0] -= "DO THIS" in tags
         caps.take(**keys)
         sources = [{"label": name, "url": src_url, "tier": "primary" if role == "primary" else "corroboration"}
                    for name, src_url, role in conn.execute(
@@ -431,8 +433,11 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
                        "WHERE i2.item_id = %s ORDER BY (i2.role = 'primary') DESC, s.name", (iid,)).fetchall()]
         chosen.append({"id": str(iid), "category": "AI", "headline": title, "tags": tags,
                        "source_excerpt": excerpt, "sources": sources, **({"fromBacklog": True} if backlog else {})})
-        if len(chosen) >= MAX_BRIEF_ITEMS:
-            break
+        return True
+
+    taken = rank.walk_stories(rank.load_candidates(conn, [r[:8] for r in rows]), rings, MAX_BRIEF_ITEMS, take)
+    order = {str(c["id"]): i for i, c in enumerate(taken)}
+    chosen.sort(key=lambda entry: order[entry["id"]])      # the reserved paper is taken first, and is shown where its rank puts it
     # The edition is dated the day it was made: what a run reads is the last days up to now,
     # whatever its week key says, so the key's Monday would date the brief wrongly.
     return {"date": (as_of or week_start(week)).isoformat(), "items": chosen}

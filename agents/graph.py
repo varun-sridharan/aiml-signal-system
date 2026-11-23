@@ -59,13 +59,18 @@ ALIASES = {
     "ai vendor product launches": ["product launch", "product launches", "unveils"],
     "erp competitor moves (sap, oracle, workday, microsoft dynamics)": ["sap", "oracle", "workday", "infor", "microsoft dynamics",
                                                                         "dynamics 365"],
+    # Added 2026-11-23 (Varun, debrief 21): Edition 06's Entra post matched nothing. Recognised by the phrases of the topic, never by the bare words
+    # "agent" or "security" (both are in GENERIC_WORDS), so a vendor post that mentions an agent, or a Windows security update, does not score.
+    "ai security and agent liability": ["ai security", "agent security", "agent identity", "agent identities", "agent liability", "ai liability",
+                                        "liability", "prompt injection", "microsoft entra", "entra", "zero trust", "agent governance",
+                                        "ai governance", "ai red team", "red teaming", "jailbreak", "jailbreaks", "secure ai agents"],
 }
 
 
 # Words that appear in topic names but recognise nothing on their own ("model" is in most
 # AI headlines). A topic is recognised by its full name, its aliases and its distinctive words.
 GENERIC_WORDS = frozenset({"systems", "architecture", "learning", "engineering", "serving", "inference", "coding",
-                           "model", "models", "releases", "launches", "agents", "agentic",
+                           "model", "models", "releases", "launches", "agents", "agentic", "agent", "security",
                            "enterprise", "vertical", "supply", "chain", "vendor", "product", "competitor", "moves", "microsoft", "dynamics"})
 
 

@@ -306,6 +306,22 @@ CREATE INDEX IF NOT EXISTS items_status_idx ON items (status, discovered_at);
 -- Hacker News points when the front page carried the item (agents/rank.py: a significance signal that does not depend on the profile).
 ALTER TABLE items ADD COLUMN IF NOT EXISTS hn_points integer NOT NULL DEFAULT 0 CHECK (hn_points >= 0);
 
+-- Every candidate a Reader pass discovered, kept or not, with its score and terms, so a story that was missed can be explained from the database
+-- (Edition 06's two score-0 drops could only be inferred). Evidence, not content: no page text, pruned after 60 days (items.prune_discoveries).
+CREATE TABLE IF NOT EXISTS discoveries (
+    url         text        PRIMARY KEY,
+    title       text        NOT NULL,
+    domain      text        NOT NULL,
+    feed        text        NOT NULL,
+    score       integer     NOT NULL DEFAULT 0 CHECK (score >= 0),
+    terms       text[]      NOT NULL DEFAULT '{}',
+    hn_points   integer     NOT NULL DEFAULT 0 CHECK (hn_points >= 0),
+    outcome     text        NOT NULL CHECK (outcome IN ('kept', 'irrelevant', 'out_of_window')),
+    first_seen  timestamptz NOT NULL,
+    last_seen   timestamptz NOT NULL
+);
+CREATE INDEX IF NOT EXISTS discoveries_last_seen_idx ON discoveries (last_seen);
+
 -- An item whose text has aged out of the excerpt store is 'expired': it keeps its identity and
 -- provenance, and its excerpt pointer is cleared. The CHECK above was first written without
 -- 'expired', and CREATE TABLE IF NOT EXISTS will not change a table that exists, so widen it once.

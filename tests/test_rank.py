@@ -26,6 +26,7 @@ from agents import budget, graph, items, rank, reader, sources, weekly  # noqa: 
 from tests._db import needs_db  # noqa: E402
 
 FIX = REPO / "tests" / "fixtures"
+NEW_TOPIC = "AI security and agent liability"
 RINGS = {"multi-agent systems": "core", "reinforcement learning": "core", "MCP architecture": "core", "agentic coding": "core",
          "enterprise AI and ERP": "core", "vertical AI agents (manufacturing, supply chain)": "core",
          "model releases": "adjacent", "serving & inference": "adjacent", "evals": "adjacent", "harness engineering": "adjacent",
@@ -324,9 +325,14 @@ class ReplayOfWeek48(unittest.TestCase):
     def setUpClass(cls):
         cls.rec = json.loads((FIX / "w48-candidates.json").read_text(encoding="utf-8"))
         cls.golden = json.loads((REPO / "tests" / "golden" / "w48-must-catch.json").read_text(encoding="utf-8"))
-        cls.rings = cls.rec["rings"]
+        cls.rings = dict(cls.rec["rings"], **{NEW_TOPIC: "adjacent"})
         run_at = datetime.fromisoformat(cls.rec["window"][1]).timestamp()
         everything = cls.rec["candidates"] + cls.rec["late_candidates"]
+        # The interest added on 2026-11-23: matched on the title, the recorded candidates holding no summary (pessimistic: the Entra post's
+        # feed text says more).
+        for c in everything:
+            if graph.topics_in(c["title"], [NEW_TOPIC]):
+                c["topics"] = sorted(set(c["topics"]) | {NEW_TOPIC})
         fetched_before = set(cls.rec["reader_fetched"])
         # What waited for a fetch: not already fetched earlier. (What a run fetched on its own pass was 'discovered' when it began.)
         cls.waiting = [c for c in everything if c.get("status_at_replay") != "fetched" or c["discovered_at"] >= run_at - 1]
@@ -379,6 +385,16 @@ class ReplayOfWeek48(unittest.TestCase):
         companies = {rank.company_of(c["domain"]) for c in self.stories}
         self.assertTrue({"openai", "google"} <= companies)
         self.assertIn("manufacturingdive.com", companies)
+
+    def test_the_seven_hold_exactly_one_paper_since_a_place_is_reserved_for_one(self):
+        self.assertEqual([c["domain"] for c in self.stories].count("arxiv.org"), 1)
+        without = rank.choose_stories(self.slots + self.before, self.rings, 7, reserved_papers=0)
+        self.assertEqual([c["domain"] for c in without].count("arxiv.org"), 0)        # the three launches had filled the agents cluster
+
+    def test_the_entra_post_now_scores_above_zero_through_the_new_interest(self):
+        entra = next(c for c in self.waiting if c["url"].endswith("/ba-p/4556456"))
+        self.assertEqual(entra["topics"], [NEW_TOPIC])
+        self.assertGreater(rank.rank_of(entra, self.rings), 0)
 
     def test_edition_06_would_have_been_the_opposite_of_these(self):
         published = {c["id"]: c for c in self.rec["candidates"] if c["id"] in set(self.rec["published"])}

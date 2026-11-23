@@ -38,8 +38,8 @@ class Registry(unittest.TestCase):
     def test_the_six_feeds_are_registered_with_their_evidence(self):
         for fid in ("claude-product-updates", "manufacturing-dive", "sap-news", "workday-newsroom", "dynamics-365-blog", "infor-blog"):
             self.assertIn(fid, FEEDS)
-        self.assertEqual(len(reader.FEEDS), 26)
-        self.assertEqual(len({f.id for f in reader.FEEDS}), 26)
+        self.assertEqual(len(reader.FEEDS), 27)
+        self.assertEqual(len({f.id for f in reader.FEEDS}), 27)
         self.assertNotIn("oracle", " ".join(FEEDS))                       # left out, with the reason in the FEEDS comment
         text = (REPO / "agents" / "reader.py").read_text(encoding="utf-8")
         self.assertIn("Left out of that batch, and why. Oracle", text)
