@@ -1,0 +1,73 @@
+{
+ "week": "2026-W48",
+ "note": "Varun's must-catch set for Edition 06 (2026-11-22). Pass bar: at least 7 of these 10 get a fetch slot in tests/test_rank.py's replay.",
+ "must_catch": [
+  {
+   "url": "https://openai.com/index/introducing-gpt-6-2-astra-sol",
+   "key": "introducing-gpt-6-2-astra-sol",
+   "discovered_in_w48": true
+  },
+  {
+   "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-neon",
+   "key": "introducing-gemini-4-neon",
+   "discovered_in_w48": true,
+   "equivalent": "the same launch was discovered on deepmind.google/blog/introducing-gemini-4-neon (score 2); a slot for either is a slot for the story"
+  },
+  {
+   "url": "https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456",
+   "key": "4556456",
+   "discovered_in_w48": false,
+   "why_not": "no feed read techcommunity.microsoft.com"
+  },
+  {
+   "url": "https://anthropic.com/news/ipo-close",
+   "key": "ipo-close",
+   "discovered_in_w48": false,
+   "why_not": "on the anthropic.com/news index; matched none of the profile's terms, so dropped before storage"
+  },
+  {
+   "url": "https://metr.org/blog/2026-11-20-q4-2026-capability-update",
+   "key": "q4-2026-capability-update",
+   "discovered_in_w48": false,
+   "why_not": "no feed read metr.org"
+  },
+  {
+   "url": "https://openai.com/index/research-acceleration-jagged-frontier",
+   "key": "research-acceleration-jagged-frontier",
+   "discovered_in_w48": true
+  },
+  {
+   "url": "https://openai.com/index/inside-the-codex-sandbox",
+   "key": "inside-the-codex-sandbox",
+   "discovered_in_w48": true
+  },
+  {
+   "url": "https://cosmosdb.microsoft.com/#updates",
+   "key": "cosmosdb.microsoft.com",
+   "discovered_in_w48": false,
+   "why_not": "one page of updates addressed by a fragment; the item store drops fragments, and no feed is advertised",
+   "catchable": false
+  },
+  {
+   "url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/genie-4-now-available-project-genie",
+   "key": "genie-4-now-available",
+   "discovered_in_w48": false,
+   "why_not": "no feed read blog.google"
+  },
+  {
+   "url": "https://openai.com/index/introducing-medchembench",
+   "key": "introducing-medchembench",
+   "discovered_in_w48": false,
+   "why_not": "in openai.com's feed; its title and summary matched none of the profile's terms, so dropped before storage"
+  }
+ ],
+ "saved_link": {
+  "url": "https://www.manufacturingdive.com/news/anthropic-launches-claude-for-manufacturing/874303/",
+  "key": "anthropic-launches-claude-for-manufacturing"
+ },
+ "pass_bar": {
+  "min_slots": 7,
+  "min_companies": 4,
+  "max_stories_per_company": 2
+ }
+}

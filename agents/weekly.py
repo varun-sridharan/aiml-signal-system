@@ -29,12 +29,13 @@ import re
 import signal
 import sys
 import time
+from urllib.parse import urlsplit
 from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
 try:
-    from . import briefs, budget, composer, composer_cited, counts, excerpts, framer, gates, items, llm, reader, repair, runs, style_check
+    from . import briefs, budget, composer, composer_cited, counts, excerpts, framer, gates, items, llm, rank, reader, repair, runs, style_check
 except ImportError:  # pragma: no cover
     import briefs
     import budget
@@ -46,13 +47,15 @@ except ImportError:  # pragma: no cover
     import gates
     import items
     import llm
+    import rank
     import reader
     import repair
     import runs
     import style_check
 
 MAX_BRIEF_ITEMS = 7        # the golden week's size: about five minutes of reading
-MAX_PER_DOMAIN = 3         # one publisher cannot be the whole edition
+MAX_PER_COMPANY = rank.MAX_STORIES_PER_COMPANY   # one company cannot be the edition (it was three Microsoft ERP posts and three arXiv papers)
+MAX_PER_CLUSTER = rank.MAX_PER_CLUSTER           # nor can one interest cluster (agents, models, enterprise)
 MAX_DO_THIS = 2
 LEAD_MAX_CHARS = 700       # what the Framer is shown of an article: its opening sentences, not the page
 LEAD_MAX_SENTENCES = 4     # the contract says 1-3 factual sentences; the golden excerpts run 248-393 characters
@@ -315,6 +318,8 @@ def lead(text: str, max_chars: int = LEAD_MAX_CHARS, prefer_meta: bool = False, 
         block = block.strip()
         if not block or block.startswith(("#", "- ", "* ", "!", "|", "```", ">", "[")) or "](" in block[:2]:
             continue
+        if block.endswith(":") and "\n" in block:
+            block = block.rsplit("\n", 1)[0]    # "...paragraph.\nOur biggest takeaways:" is a paragraph and a lead-in: keep the paragraph (OpenAI's jagged-frontier post lost its whole opening to this)
         plain = _plain(block)
         if (len(plain) >= LEAD_MIN_PARAGRAPH_CHARS and len(plain.split()) >= 12 and not plain.endswith(("•", ":"))
                 and not any(b in plain.lower() for b in _BOILERPLATE)):
@@ -372,19 +377,38 @@ def tags_for(domain: str, topics: list[str], core_topics: set[str], do_this_left
     return ["KNOW"]
 
 
+def page_title(title: str, page_text: str) -> str:
+    """The headline to frame. A link Varun saved arrives titled with its own address (/add-news has only the URL until the page is read), and the
+    address's digits ("874303") then fail the headline-facts check, which dropped his saved Manufacturing Dive story from Edition 06. The page's
+    own title (og:title, else the title tag) is the headline; with neither, the address's last words."""
+    if not title.startswith(("http://", "https://")):
+        return title
+    meta = dict(re.findall(r"^meta-([\w:.-]+):\s*(.+)$", page_text.split("\n---\n", 1)[0], re.M))
+    named = (meta.get("og:title") or meta.get("twitter:title") or meta.get("title") or "").strip()
+    if named:
+        return named
+    segments = [s for s in urlsplit(title).path.split("/") if re.search(r"[a-z]", s, re.I)]      # the address's last segment that has letters in it
+    words = [w for w in re.split(r"[-_]+", segments[-1]) if w and not w.isdigit()] if segments else []
+    return (" ".join(words).capitalize() or title) if words else title
+
+
 def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: list | None = None,
                   as_of: date | None = None) -> dict:
     """The Framer's input for a week, from verified items in the database."""
     core = {t for (t,) in conn.execute("SELECT topic FROM interest_nodes WHERE user_id = %s AND ring = 'core'",
                                        (profile["user_id"],)).fetchall()}
+    rings = rank.load_rings(conn, profile["user_id"])
     rows = conn.execute(
-        "SELECT i.id, i.canonical_url, i.domain, i.title, i.relevance_score, i.relevance_terms, i.excerpt_id "
-        "FROM items i WHERE i.id = ANY(%s::uuid[]) AND i.status = 'fetched' "
-        "ORDER BY i.relevance_score DESC, i.discovered_at DESC", (item_ids,)).fetchall()
-    chosen, per_domain, do_this_left = [], {}, MAX_DO_THIS
-    for iid, url, domain, title, _score, topics, eid in rows:
-        backlog = "from your backlog" in (topics or [])
-        if per_domain.get(domain, 0) >= MAX_PER_DOMAIN or not items.surfaceable(conn, iid):
+        "SELECT i.id, i.canonical_url, i.domain, i.title, i.relevance_terms, i.discovered_at, i.hn_points, s.tier, i.excerpt_id "
+        "FROM items i JOIN sources s ON s.id = i.source_id WHERE i.id = ANY(%s::uuid[]) AND i.status = 'fetched'", (item_ids,)).fetchall()
+    eids = {r[0]: r[8] for r in rows}
+    chosen, caps, do_this_left = [], rank.Caps(company=MAX_PER_COMPANY, cluster=MAX_PER_CLUSTER), MAX_DO_THIS
+    # Best first by interest relevance plus significance (agents/rank.py), then the caps: two stories a company, three an interest cluster.
+    for cand in rank._order(rank.load_candidates(conn, [r[:8] for r in rows]), rings):
+        iid, url, domain, title, topics, eid = cand["id"], cand["url"], cand["domain"], cand["title"], cand["topics"], eids[cand["id"]]
+        backlog = cand["backlog"]
+        keys = {"company": rank.company_of(domain), "cluster": rank.cluster_of(topics, rings)}
+        if not caps.allows(**keys) or not items.surfaceable(conn, iid):
             continue
         # The first pass is shown, and graded against, the same plain rendering of the page the composing pass is (straight_quotes):
         # on 2026-10-20 the grader read the non-breaking hyphens of "GPT\u20116 Astra" as "GPT\u201016" in two attempts, and a correct story
@@ -392,6 +416,7 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
         excerpt = straight_quotes(lead(excerpts.get(conn, eid), prefer_meta=(domain == "arxiv.org")))
         if not excerpt:
             continue  # nothing readable on the page: not a story we can ground
+        title = page_title(title, excerpts.get(conn, eid))
         missing = headline_facts_missing(title, excerpt)
         if missing:  # the headline claims what the excerpt does not say: not verified
             if skipped is not None:
@@ -399,7 +424,7 @@ def build_raw_day(conn, week: str, item_ids: list[str], profile: dict, skipped: 
             continue
         tags = tags_for(domain, topics, core, do_this_left)
         do_this_left -= "DO THIS" in tags
-        per_domain[domain] = per_domain.get(domain, 0) + 1
+        caps.take(**keys)
         sources = [{"label": name, "url": src_url, "tier": "primary" if role == "primary" else "corroboration"}
                    for name, src_url, role in conn.execute(
                        "SELECT s.name, i2.url, i2.role FROM item_sources i2 JOIN sources s ON s.id = i2.source_id "

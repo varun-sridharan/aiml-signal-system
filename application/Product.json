@@ -135,7 +135,7 @@
         }
       ],
       "statsNoteFallback": "Read left to right, that is the whole argument. The volume compounds, your week does not, and the gap between them doubles inside six years. The first three come from arXiv's own submission record, recomputed rather than quoted from one month. The fourth is the size of the latest edition, which carries at most seven items. <b>Every figure in this section is measured. The only illustrative numbers on the page are in the video, and they are labelled.</b>",
-      "_stats": "The fourth card is measured at request time (agents/reach.py): '{read} → {published}', with the fixed '7' as the fallback when the database cannot answer or the count is under 50. Three source counts exist and are labelled as what they are: 23 feeds and index pages are read each run (agents/reader.py FEEDS), {listed} sources are listed (the sources table), and {sources} of those produced items in the edition's window. System Design's Reader row uses the same numbers."
+      "_stats": "The fourth card is measured at request time (agents/reach.py): '{read} → {published}', with the fixed '7' as the fallback when the database cannot answer or the count is under 50. Three source counts exist and are labelled as what they are: 26 feeds and index pages are read each run (agents/reader.py FEEDS), {listed} sources are listed (the sources table), and {sources} of those produced items in the edition's window. System Design's Reader row uses the same numbers."
     },
     {
       "id": "why-the-obvious-fixes-failed",

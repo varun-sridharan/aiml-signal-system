@@ -303,6 +303,9 @@ CREATE TABLE IF NOT EXISTS items (
 );
 CREATE INDEX IF NOT EXISTS items_status_idx ON items (status, discovered_at);
 
+-- Hacker News points when the front page carried the item (agents/rank.py: a significance signal that does not depend on the profile).
+ALTER TABLE items ADD COLUMN IF NOT EXISTS hn_points integer NOT NULL DEFAULT 0 CHECK (hn_points >= 0);
+
 -- An item whose text has aged out of the excerpt store is 'expired': it keeps its identity and
 -- provenance, and its excerpt pointer is cleared. The CHECK above was first written without
 -- 'expired', and CREATE TABLE IF NOT EXISTS will not change a table that exists, so widen it once.

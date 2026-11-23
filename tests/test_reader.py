@@ -395,9 +395,9 @@ class ReaderAgainstDatabase(unittest.TestCase):
     def test_r9_one_domain_cannot_take_the_whole_fetch_budget(self):
         reader.prepare(self.conn)
         for i in range(7):
-            items.upsert(self.conn, f"https://arxiv.org/abs/2610.0010{i}", f"Paper {i} on agents", NOW, relevance=(9, ["x"]))
+            items.upsert(self.conn, f"https://arxiv.org/abs/2610.0010{i}", f"Paper {i} on agents", NOW, relevance=(9, ["MCP architecture"]))
         for i in range(2):
-            items.upsert(self.conn, f"https://openai.com/index/post-{i}", f"Post {i} on MCP", NOW, relevance=(3, ["x"]))
+            items.upsert(self.conn, f"https://openai.com/index/post-{i}", f"Post {i} on MCP", NOW, relevance=(3, ["MCP architecture"]))
         chosen = reader.select_for_fetch(self.conn, NOW, limit=20)
         domains = [reader.sources.domain_of(u) for _, u in chosen]
         self.assertEqual(domains.count("arxiv.org"), reader.MAX_FETCHES_PER_DOMAIN)
@@ -439,7 +439,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
         reader.prepare(self.conn)
         for name, error in (("a", "url_not_allowed"), ("b", "too_many_requests"), ("c", "unsupported_content_type:application/pdf"),
                             ("d", "unavailable")):
-            iid, _ = items.upsert(self.conn, f"https://openai.com/index/{name}", name, NOW, relevance=(5, ["x"]))
+            iid, _ = items.upsert(self.conn, f"https://openai.com/index/{name}", name, NOW, relevance=(5, ["MCP architecture"]))
             items.mark(self.conn, iid, "failed", error=error)
         urls = {u.rsplit("/", 1)[1] for _, u in reader.select_for_fetch(self.conn, NOW)}
         self.assertEqual(urls, {"b", "d"})
@@ -480,7 +480,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
     def test_r16_a_second_fetch_from_the_same_site_waits(self):
         reader.prepare(self.conn)
         for i in range(2):
-            items.upsert(self.conn, f"https://openai.com/index/pause-{i}", f"Post {i} on agents", NOW, relevance=(5, ["x"]))
+            items.upsert(self.conn, f"https://openai.com/index/pause-{i}", f"Post {i} on agents", NOW, relevance=(5, ["MCP architecture"]))
         slept = []
         with unittest.mock.patch.object(reader, "FETCH_PAUSE_SECONDS", 7), \
                 unittest.mock.patch.object(reader.time, "sleep", lambda s: slept.append(s)):
@@ -510,7 +510,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
 
     def test_r19_a_retried_item_found_to_be_old_can_still_be_skipped(self):
         reader.prepare(self.conn)
-        iid, _ = items.upsert(self.conn, "https://openai.com/index/was-busy", "Was busy", NOW, relevance=(3, ["x"]))
+        iid, _ = items.upsert(self.conn, "https://openai.com/index/was-busy", "Was busy", NOW, relevance=(3, ["MCP architecture"]))
         items.mark(self.conn, iid, "failed", error="too_many_requests")
         old = "---\nmeta-article:published_time: 2026-07-01T10:00:00+00:00\n---\n\nBody text."
         stats = reader.Stats()
@@ -524,7 +524,7 @@ class ReaderAgainstDatabase(unittest.TestCase):
 
     def test_r21_a_blocked_domain_is_never_fetched(self):
         reader.prepare(self.conn)
-        iid, _ = items.upsert(self.conn, "https://www.reuters.com/technology/ai-story", "Agents raise money", NOW, relevance=(9, ["agents"]))
+        iid, _ = items.upsert(self.conn, "https://www.reuters.com/technology/ai-story", "Agents raise money", NOW, relevance=(9, ["multi-agent systems"]))
         items.add_provenance(self.conn, iid, "https://openai.com/index/x", NOW, role="corroboration")   # even surfaceable...
         self.assertNotIn(iid, [i for i, _ in reader.select_for_fetch(self.conn, NOW)])               # ...it refuses fetchers
         self.assertTrue(sources.is_blocked("www.reuters.com") and sources.is_blocked("arstechnica.com"))

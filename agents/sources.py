@@ -184,6 +184,12 @@ def for_domain(conn, domain: str) -> str:
     return conn.execute("SELECT id FROM sources WHERE domain = %s", (domain,)).fetchone()[0]
 
 
+def tier_of(conn, domain: str) -> str:
+    """The tier of the source that holds a domain: 'unrated' when none does (a domain nobody has met has no tier yet)."""
+    row = conn.execute("SELECT tier FROM sources WHERE domain = %s", (domain.lower(),)).fetchone()
+    return row[0] if row else "unrated"
+
+
 def set_feed(conn, source_id: str, domain: str, feed_url: str) -> None:
     """Attach a verified feed to a listed source, and its address if the list gave none.
 

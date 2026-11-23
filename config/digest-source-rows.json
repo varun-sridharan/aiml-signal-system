@@ -512,6 +512,20 @@
    "section": "Enterprise",
    "domain": "microsoft.com",
    "note": "vendor blog: the vendor's own announcements"
+  },
+  {
+   "name": "METR",
+   "tier": "A",
+   "section": "Evals and observability",
+   "domain": "metr.org",
+   "note": "frontier-capability measurement; its own blog is the primary for its reports (feed advertised by the page)"
+  },
+  {
+   "name": "Microsoft Tech Community",
+   "tier": "A",
+   "section": "Enterprise",
+   "domain": "techcommunity.microsoft.com",
+   "note": "Microsoft's own product blogs (Entra, Security); the vendor's announcements, one feed per board"
   }
  ],
  "_judgements": "Where the catalogue gives one label to a heading of mixed sources, tiers here are a reading, not a quote: Tooling is headed (A/B) and MCP, GitHub and NVIDIA are called primary in the text, so they are A and the SDKs, frameworks and evals are B; Enterprise is headed A for vendors' own statements and C for coverage, so vendors are A and the buyer-side outlets C; VentureBeat is listed both as buyer-side coverage (C) and as discovery (D) and is D here, the safer prior; TechCrunch AI is C under Funding and the category appears again under Discovery, and is C here."

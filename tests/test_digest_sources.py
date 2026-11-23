@@ -83,12 +83,16 @@ class Seeding(unittest.TestCase):
         self.conn.close()
 
     def test_seeding_adds_what_is_missing_and_never_overwrites(self):
-        self.conn.execute("DELETE FROM sources WHERE id = 'sap'")          # inside the rolled-back transaction
+        # A listed source nothing references yet (items and sightings point at a source and block its deletion; the live ledger fills as runs go),
+        # deleted inside the rolled-back transaction and seeded back.
+        victim = next(s for s in sources.load_digest_rows() if s.domain and s.id not in ("anthropic", "the-new-stack") and not self.conn.execute(
+            "SELECT 1 FROM items WHERE source_id = %s UNION ALL SELECT 1 FROM item_sources WHERE source_id = %s", (s.id, s.id)).fetchone())
+        self.conn.execute("DELETE FROM sources WHERE id = %s", (victim.id,))
         before = self.conn.execute("SELECT id, tier, domain FROM sources WHERE id = 'anthropic'").fetchone()
         sources.seed_digest(self.conn)
         again = sources.seed_digest(self.conn)
         self.assertEqual(again, 0)                                           # idempotent
-        self.assertEqual(self.conn.execute("SELECT tier, domain FROM sources WHERE id = 'sap'").fetchone(), ("A", "news.sap.com"))
+        self.assertEqual(self.conn.execute("SELECT tier, domain FROM sources WHERE id = %s", (victim.id,)).fetchone(), (victim.tier, victim.domain))
         self.assertEqual(self.conn.execute("SELECT id, tier, domain FROM sources WHERE id = 'anthropic'").fetchone(), before)
         row = self.conn.execute("SELECT tier, reputation_prior, domain FROM sources WHERE id = 'the-new-stack'").fetchone()
         self.assertEqual(row, ("C", "medium", "thenewstack.io"))

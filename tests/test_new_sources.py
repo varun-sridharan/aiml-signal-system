@@ -38,8 +38,8 @@ class Registry(unittest.TestCase):
     def test_the_six_feeds_are_registered_with_their_evidence(self):
         for fid in ("claude-product-updates", "manufacturing-dive", "sap-news", "workday-newsroom", "dynamics-365-blog", "infor-blog"):
             self.assertIn(fid, FEEDS)
-        self.assertEqual(len(reader.FEEDS), 23)
-        self.assertEqual(len({f.id for f in reader.FEEDS}), 23)
+        self.assertEqual(len(reader.FEEDS), 26)
+        self.assertEqual(len({f.id for f in reader.FEEDS}), 26)
         self.assertNotIn("oracle", " ".join(FEEDS))                       # left out, with the reason in the FEEDS comment
         text = (REPO / "agents" / "reader.py").read_text(encoding="utf-8")
         self.assertIn("Left out of that batch, and why. Oracle", text)
@@ -136,8 +136,8 @@ class ScoringAndSurfacing(unittest.TestCase):
     def test_the_story_scores_above_zero_and_above_the_cut_off_the_week_needed(self):
         title_only = self.score(TITLE)
         self.assertGreater(title_only[0], 2)                     # it scored 2 before (model releases, through "claude"); 2 was below the fetch cut-off
-        self.assertEqual(title_only[0], 7)
-        self.assertEqual(title_only[1], ["AI vendor product launches", "model releases", "vertical AI agents (manufacturing, supply chain)"])
+        self.assertEqual(title_only[0], 5)               # was 7 until 2026-11-22, when "launches" stopped being a topic word (a launch's weight is agents/rank.py's significance)
+        self.assertEqual(title_only[1], ["model releases", "vertical AI agents (manufacturing, supply chain)"])
         with_excerpt = self.score(f"{TITLE}. {EXCERPT}")
         self.assertGreater(with_excerpt[0], title_only[0])
         self.assertIn("enterprise AI and ERP", with_excerpt[1])

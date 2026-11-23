@@ -217,7 +217,7 @@
           "rows": [
             [
               "<span class=\"gloss\" data-term=\"reader\">Reader</span>",
-              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 23 feeds and index pages{window_sources}, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
+              "Discover, fetch and verify. Canonicalise every URL to one form, deduplicate in layers, record provenance and corroboration, and kill the rest. Reads 26 feeds and index pages{window_sources}, seeded from the old digest's catalogue and <code>config/scout-sources.md</code>; every URL you hand it through <code>/add-news</code> is fetched on arrival.",
               "pipeline",
               "<span class=\"pill ok\">BUILT</span>"
             ],
@@ -378,7 +378,7 @@
             ],
             [
               "PROCESS",
-              "<code>agents/reader.py</code><br><span style=\"color:var(--soft)\">Discovers candidates from 23 feeds and index pages, keeps the relevant, fetches the few worth reading through Claude's web fetch, stores the excerpt once.</span>",
+              "<code>agents/reader.py</code><br><span style=\"color:var(--soft)\">Discovers candidates from 26 feeds and index pages, keeps the relevant, fetches the few worth reading through Claude's web fetch, stores the excerpt once.</span>",
               "<span class=\"pill ok\">BUILT</span>"
             ],
             [
@@ -830,7 +830,7 @@
                 {
                   "id": "crawl",
                   "label": "Weekly run",
-                  "sub": "reads all 23 feeds and index pages",
+                  "sub": "reads all 26 feeds and index pages",
                   "icon": "clock"
                 },
                 {

@@ -66,6 +66,11 @@ This is the "91 tiered domains" the plan refers to: a prose catalogue, not a tab
   newsroom.workday.com/press-releases?pagetemplate=rss (advertised); Microsoft Dynamics 365, microsoft.com/en-us/dynamics-365/blog/feed/
   (advertised); Infor, infor.com/blog (a server-rendered index; infor.com/about/news is a 404). Oracle is left out:
   its news page lists three releases titled "Read the release" with no date and advertises no feed.
+- Read on 2026-11-22 after Edition 06 missed the week's main stories (each address fetched once and read): blog.google/rss/ (the page links
+  it; it carries Gemini 4 Neon and Genie 4, which deepmind.google's feed did not); METR, metr.org/feed.xml (advertised by its page;
+  4.6 MB with every post's full text); Microsoft Tech Community, techcommunity.microsoft.com, its Entra board (the board page links its RSS feed through a short link, which
+  redirects to a feed that carries the missed Entra post). Not added: the Cosmos DB updates page, an updates list on one page whose
+  address is a fragment, so its entries cannot be separate items (the item store drops the fragment on purpose).
 - Other vendor newsrooms: Oracle, Microsoft Copilot / Azure AI,
   Salesforce Agentforce, ServiceNow, Snowflake, Databricks, UiPath, Sierra, Glean, Palantir, Decagon,
   Harvey.

@@ -31,7 +31,7 @@ from email.utils import parsedate_to_datetime
 from urllib.parse import urljoin, urlsplit
 
 try:
-    from . import briefs, budget, dedupe, excerpts, graph, items, llm, runs, sources
+    from . import briefs, budget, dedupe, excerpts, graph, items, llm, rank, runs, sources
 except ImportError:  # pragma: no cover
     import briefs
     import budget
@@ -40,6 +40,7 @@ except ImportError:  # pragma: no cover
     import graph
     import items
     import llm
+    import rank
     import runs
     import sources
 
@@ -67,6 +68,7 @@ TRANSIENT_FETCH_ERRORS = ("too_many_requests", "unavailable", "no_fetch_result",
 # One domain cannot take the whole fetch budget: arXiv alone would otherwise fill all twenty
 # slots and leave the lab blogs, the MCP blog and the changelog unread.
 MAX_FETCHES_PER_DOMAIN = 4
+MAX_FETCHES_PER_COMPANY = rank.MAX_FETCHES_PER_COMPANY   # one company, whatever its domains, takes at most this many of a run's slots
 # A pause before a second fetch from the same site. The first real run had two of four arXiv
 # fetches answered 'too_many_requests'; spacing them is cheaper than retrying them.
 FETCH_PAUSE_SECONDS = 3.0
@@ -88,7 +90,7 @@ def window_of(now: datetime) -> dict:
     start = now - WINDOW
     return {"from": start.isoformat(), "to": now.isoformat(), "label": window_label(start, now)}
 FEED_TIMEOUT = 20
-FEED_MAX_BYTES = 3_000_000
+FEED_MAX_BYTES = 8_000_000   # METR's feed is 4.6 MB (every post in full); a feed cut short is not valid XML and would be dropped whole
 USER_AGENT = "aiml-signal-system/1.0 (feed reader; personal project)"
 
 
@@ -151,6 +153,15 @@ FEEDS = [
     Feed("dynamics-365-blog", "microsoft-dynamics-365", "microsoft.com", "https://www.microsoft.com/en-us/dynamics-365/blog/feed/", "rss"),
     Feed("infor-blog", "infor", "infor.com", "https://www.infor.com/blog", "index",
          r"https://www\.infor\.com/blog/[a-z0-9][a-z0-9-]*"),                 # 9 dated cards; its own post on Claude in manufacturing is there
+    # Added 2026-11-22, after Edition 06 (2026-W48) missed the week's main stories (Run 11, debrief 20). Each address was fetched once on
+    # 2026-11-22 and read; none is guessed. blog.google/rss/ is linked from its own page and carries Gemini 4 Neon and Genie 4 (deepmind.google's
+    # feed carried neither as its own post); metr.org/feed.xml is advertised by metr.org (<link rel="alternate">); the Entra board's RSS
+    # is the address that board's page links through a short link, and it carries the missed Entra post. The three feeds are in
+    # tests/fixtures/feeds-2026-11-22.
+    Feed("blog-google", "blog-google", "blog.google", "https://blog.google/rss/", "rss"),
+    Feed("metr", "metr", "metr.org", "https://metr.org/feed.xml", "rss"),
+    Feed("entra-blog", "microsoft-tech-community", "techcommunity.microsoft.com",
+         "https://techcommunity.microsoft.com/t5/s/gxcuf89792/rss/board?board.id=microsoft-entra-blog", "rss"),
 ]
 # Left out of that batch, and why. Oracle: oracle.com/news is server-rendered but lists three releases with the label "Read the release" for
 # a title and no date (the date is only in the address), so the relevance filter would score a button label; it needs a parser of its own,
@@ -159,7 +170,8 @@ FEEDS = [
 # Not discovered, and why. OpenAI's second index (openai.com/research) answers fetchers 403 and the catalogue
 # calls it curated and often months stale; real research posts appear in the /news feed above. The Gemini API
 # changelog is one page of dated entries, and the item store's identity is the canonical URL with the fragment
-# dropped (on purpose), so its entries cannot be separate items; it needs a decision (see the debrief).
+# dropped (on purpose), so its entries cannot be separate items; it needs a decision (see the debrief). The Cosmos DB updates page
+# (cosmosdb.microsoft.com/#updates) is the same case: one page, entries addressed by fragment, no feed advertised.
 
 
 @dataclass(frozen=True)
@@ -170,6 +182,7 @@ class Candidate:
     published: datetime | None
     feed: Feed
     seen_url: str | None = None   # where the discoverer saw it, when that is not the article itself
+    points: int = 0               # Hacker News points, where the discoverer reports them
 
 
 @dataclass
@@ -278,7 +291,7 @@ def parse_hn(payload: bytes, feed: Feed) -> list[Candidate]:
         if not url or not title:
             continue
         out.append(Candidate(url, title, "", _date(hit.get("created_at")), feed,
-                             seen_url=f"https://news.ycombinator.com/item?id={hit.get('objectID')}"))
+                             seen_url=f"https://news.ycombinator.com/item?id={hit.get('objectID')}", points=int(hit.get("points") or 0)))
     return out
 
 
@@ -465,10 +478,14 @@ def build_items(conn, candidates: list[Candidate], now: datetime, stats: Stats, 
             stats.out_of_window += 1
             continue
         score, topics = graph.score(conn, user_id, f"{c.title}. {c.summary}")
-        if score == 0:
+        if score == 0 and not rank.worth_keeping(c.title, sources.domain_of(c.url), sources.tier_of(conn, sources.domain_of(c.url))):
+            # Matches none of the profile's terms and is nobody's own launch either. (Before 2026-11-22 this dropped every zero-score
+            # candidate, so OpenAI's MedChemBench and Anthropic's IPO post were discovered and thrown away unseen.)
             stats.irrelevant += 1
             continue
         iid, created = items.upsert(conn, c.url, c.title, now, relevance=(score, topics))
+        if c.points:
+            items.record_hn_points(conn, iid, c.points)
         stats.new_items += created
         stats.known_items += not created
         # The publisher's own page is the item's primary provenance (upsert recorded it). An
@@ -629,32 +646,25 @@ def fetch_and_store(conn, client, item_id, url: str, now: datetime, stats: Stats
     return True
 
 
-def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN) -> list[tuple]:
+def select_for_fetch(conn, now: datetime, limit: int = MAX_FETCHES_PER_RUN, user_id: str = USER_ID) -> list[tuple]:
     """Items waiting for a body that may surface, best first. Anything else costs nothing.
 
     Only items first seen inside this run's window (the last WINDOW up to `now`) are
     considered: last month's news is not this week's story, and a run is judged by what it
     could see at its own time, not by whatever else the database holds.
+
+    Order and caps are agents/rank.py's: interest relevance plus significance, and no company over MAX_FETCHES_PER_COMPANY of the slots.
     """
     rows = conn.execute(
-        "SELECT i.id, i.canonical_url FROM items i WHERE (i.status = 'discovered' OR (i.status = 'failed' "
-        "AND split_part(i.fetch_error, ':', 1) = ANY(%s))) AND i.relevance_score > 0 "
-        "AND i.discovered_at > %s AND i.discovered_at <= %s ORDER BY i.relevance_score DESC, i.discovered_at DESC LIMIT 200",
+        "SELECT i.id, i.canonical_url, i.domain, i.title, i.relevance_terms, i.discovered_at, i.hn_points, s.tier "
+        "FROM items i JOIN sources s ON s.id = i.source_id WHERE (i.status = 'discovered' OR (i.status = 'failed' "
+        "AND split_part(i.fetch_error, ':', 1) = ANY(%s))) AND i.discovered_at > %s AND i.discovered_at <= %s",
         (list(TRANSIENT_FETCH_ERRORS), now - WINDOW, now)).fetchall()
-    chosen, per_domain = [], {}
     blocked = sources.blocked_domains()
-    for iid, url in rows:
-        domain = sources.domain_of(url)
-        if sources.is_blocked(domain, blocked):
-            continue                       # refuses fetchers: discovery and corroboration only
-        if per_domain.get(domain, 0) >= MAX_FETCHES_PER_DOMAIN:
-            continue
-        if items.surfaceable(conn, iid):
-            per_domain[domain] = per_domain.get(domain, 0) + 1
-            chosen.append((iid, url))
-            if len(chosen) >= limit:
-                break
-    return chosen
+    rings = rank.load_rings(conn, user_id)
+    chosen = rank.choose_fetches(rank.load_candidates(conn, rows), rings, limit, surfaceable=lambda c: items.surfaceable(conn, c["id"]),
+                                 blocked=lambda c: sources.is_blocked(c["domain"], blocked))   # a blocked domain refuses fetchers: discovery and corroboration only
+    return [(c["id"], c["url"]) for c in chosen]
 
 
 def prepare(conn, profile: dict | None = None) -> None:

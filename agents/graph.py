@@ -34,12 +34,15 @@ RING_WEIGHT = {"core": 3, "adjacent": 2, "explore": 1}
 # (The first real run, with a narrower table, matched nothing from the GitHub changelog,
 # the MCP blog or DeepMind in a week they published eighteen posts.)
 ALIASES = {
-    "multi-agent systems": ["multi-agent", "multi agent", "multiagent", "agent swarm", "agent orchestration", "agents",
-                            "ai agent", "ai agents", "agent", "agentic"],
+    # Narrowed 2026-11-22 (Edition 06, debrief 20): the bare words "agent", "agents", "agentic" and "ai agents" were here, and every vendor post and
+    # arXiv paper that mentions an agent scored a core 3 for it (Work IQ's launch posts, "agentic" security papers). The topic is systems of
+    # several agents, so it is recognised by that, not by the word every AI headline now carries.
+    "multi-agent systems": ["multi-agent", "multi agent", "multiagent", "agent swarm", "agent orchestration", "agent-to-agent", "a2a",
+                            "subagent", "subagents", "sub-agent", "sub-agents", "agent framework", "agent frameworks", "orchestrator agent"],
     "reinforcement learning": ["reinforcement learning", "rlhf", "rlvr", "grpo", "policy gradient", "rl training",
                                "reward model", "reward"],
     "mcp architecture": ["mcp", "model context protocol"],
-    "agentic coding": ["agentic coding", "coding agent", "coding agents", "claude code", "codex", "copilot", "swe-bench",
+    "agentic coding": ["agentic coding", "coding agent", "coding agents", "claude code", "codex", "github copilot", "copilot coding agent", "copilot cli", "swe-bench",
                        "terminal-bench", "code review", "autofix", "ai-assisted coding", "vibe coding"],
     "model releases": ["model release", "new model", "open-weight", "open weights", "gemini", "gpt", "claude", "llama",
                        "qwen", "deepseek", "mistral", "kimi", "opus", "sonnet", "haiku", "grok", "frontier model"],
@@ -52,16 +55,17 @@ ALIASES = {
     "enterprise ai and erp": ["enterprise ai", "enterprise agents", "enterprise software", "erp", "cloud erp", "enterprise resource planning"],
     "vertical ai agents (manufacturing, supply chain)": ["vertical ai", "vertical agents", "manufacturing", "manufacturer", "manufacturers",
                                                           "supply chain", "supply chains", "shop floor", "industrial ai"],
-    "ai vendor product launches": ["product launch", "product launches", "launches", "unveils", "generally available"],
+    # "launches" and "generally available" were here and matched every launch post; a launch's weight now comes from agents/rank.py's significance.
+    "ai vendor product launches": ["product launch", "product launches", "unveils"],
     "erp competitor moves (sap, oracle, workday, microsoft dynamics)": ["sap", "oracle", "workday", "infor", "microsoft dynamics",
-                                                                        "dynamics 365", "erp"],
+                                                                        "dynamics 365"],
 }
 
 
 # Words that appear in topic names but recognise nothing on their own ("model" is in most
 # AI headlines). A topic is recognised by its full name, its aliases and its distinctive words.
 GENERIC_WORDS = frozenset({"systems", "architecture", "learning", "engineering", "serving", "inference", "coding",
-                           "model", "models", "releases", "agents", "agentic",
+                           "model", "models", "releases", "launches", "agents", "agentic",
                            "enterprise", "vertical", "supply", "chain", "vendor", "product", "competitor", "moves", "microsoft", "dynamics"})
 
 
@@ -73,6 +77,13 @@ def terms_for(topic: str) -> list[str]:
         if word not in GENERIC_WORDS:
             terms.add(word)
     return sorted(t for t in terms if len(t) >= 2)
+
+
+def topics_in(text: str, topics) -> list[str]:
+    """The topics, of those given, whose terms appear in a text. No database: the same match `score` makes, for replaying recorded candidates."""
+    haystack = " " + re.sub(r"[^a-z0-9&+#]+", " ", text.lower()) + " "
+    return sorted(topic for topic in topics
+                  if any(" " + re.sub(r"[^a-z0-9&+#]+", " ", term).strip() + " " in haystack for term in terms_for(topic)))
 
 
 def load_profile(path: Path = PROFILE_PATH) -> dict:

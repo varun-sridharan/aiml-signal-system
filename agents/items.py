@@ -53,6 +53,11 @@ def upsert(conn, url: str, title: str, now: datetime, *, source_id: str | None =
         return conn.execute("SELECT id FROM items WHERE canonical_url = %s", (canonical,)).fetchone()[0], False
 
 
+def record_hn_points(conn, item_id: uuid.UUID, points: int) -> None:
+    """Remember the most Hacker News points the front page showed for this item (agents/rank.py reads it as significance)."""
+    conn.execute("UPDATE items SET hn_points = GREATEST(hn_points, %s) WHERE id = %s", (max(0, int(points)), item_id))
+
+
 def add_provenance(conn, item_id: uuid.UUID, url: str, now: datetime, *, source_id: str | None = None,
                    role: str = "corroboration") -> bool:
     """Record that another page reports this item. Returns False if already recorded."""

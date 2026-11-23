@@ -754,7 +754,7 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         ids = []
         for n, title in enumerate(("Grounded story with no figures", "Deprecation of models in mid-November")):
             url = f"https://openai.com/index/ground-{n}"
-            iid, _ = items.upsert(self.conn, url, title, NOW, relevance=(5, ["x"]))
+            iid, _ = items.upsert(self.conn, url, title, NOW, relevance=(5, ["MCP architecture"]))
             items.attach_excerpt(self.conn, iid, excerpts.store(self.conn, url, text, NOW))
             ids.append(str(iid))
         raw = weekly.build_raw_day(self.conn, WEEK, ids, framer.load_json(framer.PROFILE_PATH))
@@ -765,7 +765,7 @@ class WeeklyRun(Pipeline, unittest.TestCase):
         text = ("Amp builds on GPT\u20116 Astra and GPT\u2011Live\u20111, and the team\u2019s \u201cSign in with ChatGPT\u201d option gives users more tokens "
                 "to spend on larger tasks than before.")
         url = "https://openai.com/index/amp-customer"
-        iid, _ = items.upsert(self.conn, url, "Amp story with no figures in the headline", NOW, relevance=(5, ["x"]))
+        iid, _ = items.upsert(self.conn, url, "Amp story with no figures in the headline", NOW, relevance=(5, ["MCP architecture"]))
         eid = excerpts.store(self.conn, url, text, NOW)
         items.attach_excerpt(self.conn, iid, eid)
         raw = weekly.build_raw_day(self.conn, WEEK, [str(iid)], framer.load_json(framer.PROFILE_PATH))

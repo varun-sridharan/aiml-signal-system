@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+
+    <channel>
+        <title>METR</title>
+        <link>https://metr.org</link>
+        <atom:link href="https://metr.org/feed.xml" rel="self" type="application/rss+xml" />
+        <description>METR studies the most advanced AI agents to understand whether their developers are on track to lose control of them.</description>
+        <lastBuildDate>Sun, 22 Nov 2026 16:54:47 -0800</lastBuildDate>
+        
+          
+            <item>
+              <title>AI R&amp;D-relevant model capabilities are improving rapidly and are getting harder to measure</title>
+              <link>https://metr.org/blog/2026-11-20-q4-2026-capability-update/</link>
+                
+              <pubDate>Fri, 20 Nov 2026 00:00:00 -0800</pubDate>
+              <guid>https://metr.org/blog/2026-11-20-q4-2026-capability-update/</guid>
+            </item>
+<item>
+              <title>Measuring alignment eval tells</title>
+              <link>https://metr.org/notes/2026-11-16-measuring-alignment-eval-tells/</link>
+                
+              <pubDate>Mon, 16 Nov 2026 00:00:00 -0800</pubDate>
+              <guid>https://metr.org/notes/2026-11-16-measuring-alignment-eval-tells/</guid>
+            </item>
+<item>
+              <title>Review of the &quot;Risks from automated R&amp;D&quot; section in Anthropic&#39;s Risk Report (August 2026)</title>
+              <link>https://metr.org/blog/2026-11-05-rd-section-anthropic-risk-report-august-2026-review/</link>
+                
+              <pubDate>Thu, 05 Nov 2026 00:00:00 -0800</pubDate>
+              <guid>https://metr.org/blog/2026-11-05-rd-section-anthropic-risk-report-august-2026-review/</guid>
+            </item>
+          
+        
+    </channel>
+</rss>
+
