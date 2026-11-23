@@ -253,9 +253,10 @@ class Storage(unittest.TestCase):
         graph.sync(self.conn, {**full, "user_id": "storage-test"})
         for title, topic in (("Agentic autofix for code scanning alerts", "agentic coding"),
                              ("Gemini 4 Argon: built to solve your hardest problems", "model releases"),
-                             ("Amp puts AI agents to work beyond code", "multi-agent systems"),
+                             ("Amp puts sub-agents to work beyond code", "multi-agent systems"),
                              ("DeepSeek-v4.1-Flash-1017", "model releases")):
             self.assertIn(topic, graph.score(self.conn, "storage-test", title)[1], title)
+        self.assertNotIn("multi-agent systems", graph.score(self.conn, "storage-test", "Amp puts AI agents to work beyond code")[1])   # the bare word no longer counts (2026-11-22)
         self.assertEqual(graph.score(self.conn, "storage-test", "Solar surpasses nuclear power globally for first time")[0], 0)
         graph.sync(self.conn, PROFILE)
         self.assertEqual(graph.score(self.conn, "storage-test", "The mcpserver mcps")[0], 0)  # whole terms only
